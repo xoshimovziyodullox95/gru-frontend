@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getUserProfile } from '../services/user';
 import { getSocket, registerSocketUser } from '../lib/socket';
 import { registerPush } from '../services/push';
-import '../../styles/Notificationspage.css'
+import "../../styles/notificationsPage.css";
 
 export default function NotificationListener() {
   const { user } = useAuth();
