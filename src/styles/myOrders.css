@@ -1,0 +1,27 @@
+.mo-page { max-width: 800px; margin: 0 auto; padding: 2rem 1.2rem; }
+.mo-title { font-size: 1.4rem; margin: 1.5rem 0 1rem; }
+.mo-empty { text-align: center; padding: 3rem; color: var(--textMuted); }
+.mo-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.mo-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1rem 1.2rem; background: var(--card); border: 1px solid var(--border); border-radius: 1rem;
+}
+.mo-item-archived { opacity: 0.7; }
+.mo-item-info { display: flex; flex-direction: column; gap: 3px; }
+.mo-item-title { font-weight: 700; font-size: 0.95rem; }
+.mo-item-meta { font-size: 0.8rem; color: var(--textMuted); }
+.mo-item-seller { font-size: 0.78rem; color: var(--cyan); }
+.mo-current-status { font-size: 0.75rem; color: var(--textMuted); }
+.mo-status-badge {
+  display: flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 700;
+  padding: 4px 10px; border-radius: 999px; border: 1px solid; flex-shrink: 0;
+}
+.mo-advance-btn {
+  padding: 0.55rem 1rem; border-radius: 0.7rem; border: none;
+  background: linear-gradient(135deg, #0055b3, var(--cyan)); color: #fff; font-weight: 700; font-size: 0.8rem;
+  cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 6px;
+}
+.mo-advance-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.mo-spin { animation: mo-spin-anim 1s linear infinite; }
+@keyframes mo-spin-anim { to { transform: rotate(360deg); } }
+.mo-archive-title { font-size: 1rem; margin: 2rem 0 1rem; color: var(--textMuted); }

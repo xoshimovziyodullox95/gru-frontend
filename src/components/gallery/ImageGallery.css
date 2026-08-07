@@ -1,0 +1,84 @@
+.HeroMediaFrame {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+.FeaturedImage {
+  width: 100%;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+.image-gallery-btn {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  border-radius: 2rem;
+  padding: 0.3rem 0.8rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.image-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+.modal-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+}
+.modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+.modal-prev, .modal-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  color: white;
+}
+.modal-prev { left: -50px; }
+.modal-next { right: -50px; }
+.modal-counter {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  background: rgba(0,0,0,0.6);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+@media (max-width: 768px) {
+  .modal-prev { left: 10px; }
+  .modal-next { right: 10px; }
+}

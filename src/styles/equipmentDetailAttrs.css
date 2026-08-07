@@ -1,0 +1,88 @@
+/* =============================================
+   EquipmentDetailPage — Mahsulot turiga qarab
+   xususiyatlar grid bo'limi (eqattr-*)
+   Mavjud equipmentDetail.css bilan birga ishlaydi,
+   hech qanday klass bilan to'qnashmaydi.
+   ============================================= */
+
+.eqattr-module {
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.4rem 1.3rem;
+  margin-bottom: 1.25rem;
+  transition: border-color 0.3s;
+  animation: eqattrIn 0.3s ease;
+}
+.eqattr-module:hover {
+  border-color: var(--cyan);
+}
+@keyframes eqattrIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.eqattr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+}
+
+.eqattr-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.65rem 0.75rem;
+  background: rgba(0, 130, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  transition: all 0.2s;
+}
+.eqattr-item:hover {
+  border-color: var(--cyan);
+  background: rgba(0, 130, 255, 0.09);
+}
+
+.eqattr-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 130, 255, 0.12);
+  color: var(--cyan);
+}
+
+.eqattr-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.eqattr-label {
+  font-size: 0.7rem;
+  color: var(--textMuted);
+}
+.eqattr-value {
+  font-size: 0.92rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  .eqattr-module {
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+  .eqattr-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.6rem;
+  }
+}

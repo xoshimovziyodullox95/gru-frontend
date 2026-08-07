@@ -1,0 +1,164 @@
+.pos-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.pos-products {
+  min-width: 0;
+}
+
+.pos-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.pos-product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.pos-product-card:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+
+.pos-product-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pos-product-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pos-product-price {
+  font-size: 0.85rem;
+  color: var(--cyan);
+}
+
+.pos-product-stock {
+  font-size: 0.75rem;
+  color: var(--textMuted);
+}
+
+.pos-out {
+  color: #ff5c5c;
+}
+
+.pos-cart {
+  position: sticky;
+  top: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pos-cart h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.pos-cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.pos-cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pos-cart-item-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+.pos-cart-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pos-cart-item-actions button {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.pos-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.pos-payment-types {
+  display: flex;
+  gap: 6px;
+}
+
+.pos-credit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pos-credit-fields select,
+.pos-credit-fields input {
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+@media (max-width: 760px) {
+  .pos-layout {
+    grid-template-columns: 1fr;
+  }
+  .pos-cart {
+    position: static;
+    order: -1; /* mobil'da savat mahsulotlar tepasida chiqsin, foydalanuvchi darhol jamini ko'rsin */
+  }
+  .pos-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}

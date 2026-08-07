@@ -1,0 +1,29 @@
+/* ============================================================
+   AI XULOSASI (NearbySuppliers ichida)
+   ============================================================ */
+.nearby-ai-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(0, 229, 255, 0.06);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.nearby-ai-icon {
+  color: var(--cyan);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.nearby-ai-summary p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.nearby-ai-loading {
+  align-items: center;
+  color: var(--textMuted);
+  font-size: 0.8rem;
+}

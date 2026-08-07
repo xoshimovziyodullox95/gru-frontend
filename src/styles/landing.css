@@ -1,0 +1,399 @@
+/* ============================================================
+   LANDING PAGE – FAQAT LANDINGPAGE UCHUN
+   Boshqa komponentlarga ta'sir qilmaydi
+   ============================================================ */
+/* ============================================================
+   TEPADAGI BO'SH JOYNI OLIB TASHLASH — global CSS'da (masalan
+   sticky Navbar uchun) body/#root'ga qo'yilgan padding-top yoki
+   margin, Landing sahifasida Navbar bo'lmagani uchun bo'sh
+   ko'k chiziq bo'lib ko'rinib qolyapti. LandingPage mount
+   bo'lganda shu klass orqali majburan 0'ga tushiramiz.
+   ============================================================ */
+body.landing-page-active,
+body.landing-page-active #root {
+  padding-top: 0 !important;
+  margin: 0 !important;
+}
+.landing-container {
+  min-height: 100vh;
+  background: #010515;
+  overflow: hidden;
+  position: relative;
+}
+
+
+/* ============================================================
+   YULDUZLAR ANIMATSIYASI (faqat .landing-container ichida)
+   ============================================================ */
+.landing-container .stars,
+.landing-container .stars2,
+.landing-container .stars3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-container .stars {
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='2' cy='2' r='1' fill='rgba(255,255,255,0.4)'/%3E%3C/svg%3E") repeat;
+  background-size: 100px 100px;
+  animation: starMove 80s linear infinite;
+}
+
+.landing-container .stars2 {
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Ccircle cx='3' cy='3' r='1.5' fill='rgba(255,255,255,0.2)'/%3E%3C/svg%3E") repeat;
+  background-size: 200px 200px;
+  animation: starMove 120s linear infinite reverse;
+}
+
+.landing-container .stars3 {
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3Ccircle cx='1' cy='1' r='0.6' fill='rgba(255,255,255,0.6)'/%3E%3C/svg%3E") repeat;
+  background-size: 60px 60px;
+  animation: starMove 50s linear infinite;
+}
+
+@keyframes starMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100px); }
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.landing-container .landing-hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.landing-container .landing-bg-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: 0;
+}
+
+.landing-container .landing-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center 30%,
+    rgba(1, 10, 40, 0.5) 0%,
+    rgba(1, 5, 21, 0.85) 60%,
+    #010515 100%
+  );
+  z-index: 1;
+}
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+.landing-container .landing-content {
+  position: relative;
+  z-index: 3;
+  max-width: 800px;
+  padding: 0 24px;
+  text-align: center;
+  color: #fff;
+}
+
+/* BADGE */
+.landing-container .landing-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 22px;
+  border-radius: 40px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #a0c8e8;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.landing-container .badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00e5ff;
+  animation: pulse-dot 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.6); }
+}
+
+/* TITLE */
+.landing-container .landing-title-wrapper {
+  position: relative;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.landing-container .landing-title {
+  font-size: 62px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #00e5ff 0%, #0096ff 40%, #6c5ce7 80%, #00e5ff 100%);
+  background-size: 300% 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: gradient-shift 6s ease-in-out infinite;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  margin: 0;
+  letter-spacing: -1px;
+  text-shadow: 0 0 60px rgba(0, 150, 255, 0.15);
+}
+
+.landing-container .landing-title.fade-out {
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+}
+
+.landing-container .landing-title.fade-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Glow effekt */
+.landing-container .title-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 200%;
+  background: radial-gradient(ellipse, rgba(0, 150, 255, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* DIVIDER */
+.landing-container .landing-divider {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.landing-container .landing-divider span {
+  display: block;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #0096ff, #00e5ff, transparent);
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+/* ============================================================
+   TUGMALAR
+   ============================================================ */
+.landing-container .landing-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.landing-container .landing-btn {
+  position: relative;
+  padding: 16px 40px;
+  border-radius: 60px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: none;
+  cursor: pointer;
+  min-width: 180px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* PRIMARY – Ro'yxatdan o'tish */
+.landing-container .landing-btn.primary {
+  background: linear-gradient(135deg, #0096ff, #6c5ce7);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 150, 255, 0.25);
+}
+
+.landing-container .landing-btn.primary:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 150, 255, 0.4);
+}
+
+.landing-container .landing-btn.primary .btn-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.2) 0%, transparent 60%);
+  pointer-events: none;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.landing-container .landing-btn.primary:hover .btn-glow {
+  opacity: 1;
+}
+
+/* SECONDARY – Kirish */
+.landing-container .landing-btn.secondary {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.landing-container .landing-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* GLASS – Tizimga kirish */
+.landing-container .landing-btn.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.landing-container .landing-btn.glass:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* TUGMALAR ORASIDAGI "yoki" */
+.landing-container .btn-divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .landing-container .landing-title {
+    font-size: 38px;
+  }
+  .landing-container .landing-title-wrapper {
+    height: 60px;
+  }
+  .landing-container .landing-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .landing-container .landing-btn {
+    min-width: 220px;
+    padding: 14px 28px;
+    font-size: 14px;
+  }
+  .landing-container .btn-divider {
+    margin: 4px 0;
+  }
+  .landing-container .landing-badge {
+    font-size: 11px;
+    padding: 6px 16px;
+  }
+  .landing-container .title-glow {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-container .landing-title {
+    font-size: 28px;
+  }
+  .landing-container .landing-title-wrapper {
+    height: 45px;
+  }
+  .landing-container .landing-btn {
+    min-width: 180px;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+  .landing-container .landing-divider span {
+    width: 50px;
+  }
+
+}
+
+
+/* ============================================================
+   TUGMALAR ANIMATSIYASI – shimmer effekt (Kirish ham kiradi)
+   ============================================================ */
+.landing-container .landing-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-container .landing-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+
+.landing-container .landing-btn:hover::after {
+  animation: btn-shimmer 0.9s ease forwards;
+}
+
+@keyframes btn-shimmer {
+  0% { left: -75%; }
+  100% { left: 125%; }
+}

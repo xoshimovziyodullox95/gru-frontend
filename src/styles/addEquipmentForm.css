@@ -1,0 +1,228 @@
+/* =============================================
+   AddEquipmentForm — qo'shimcha uslublar
+   (mavjud forms.css bilan birga ishlaydi)
+   ============================================= */
+
+/* ===== Konteyner va karta (forms.css'da yo'q edi — shuning uchun forma
+   butun ekranga cho'zilib, chegarasiz ko'rinayotgan edi) ===== */
+.add-equipment-form-container {
+  max-width: 820px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+.add-equipment-form {
+  background: rgba(8, 16, 35, 0.85);
+  backdrop-filter: blur(16px);
+  border-radius: 2rem;
+  padding: 2.2rem 2.5rem;
+  border: 1px solid rgba(0, 150, 255, 0.2);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  animation: aefCardIn 0.35s ease;
+}
+@keyframes aefCardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.add-equipment-form:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6);
+}
+
+
+
+.form-group .price-currency-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  width: 100%;
+}
+.form-group .price-currency-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+}
+.form-group .price-currency-row select.currency-select {
+  flex: 0 0 110px;
+  width: 110px;
+  min-width: 110px;
+}
+/* ══════════════════════════════════════════════
+   ORQAGA QAYTISH TUGMASI (AddEquipmentForm uchun,
+   aef- prefiksi bilan, boshqa komponentlarga
+   tegmaydigan alohida stil)
+══════════════════════════════════════════════ */
+.aef-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  color: var(--cyan);
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 auto 1.25rem;
+  max-width: 720px;
+}
+
+.aef-back-btn:hover {
+  background: rgba(0, 100, 200, 0.2);
+  border-color: var(--cyan);
+  transform: translateX(-3px);
+  color: var(--text);
+}
+
+.aef-back-btn:active {
+  transform: translateX(-3px) scale(0.97);
+}
+
+@media (max-width: 768px) {
+  .aef-back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.add-equipment-form h2 {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff, #4dc8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 1.8rem;
+  letter-spacing: -0.3px;
+}
+@media (max-width: 768px) {
+  .add-equipment-form { padding: 1.5rem 1.2rem; }
+  .add-equipment-form h2 { font-size: 1.3rem; }
+}
+
+/* ===== Mahsulot turi tanlovi ===== */
+.aef-type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.7rem;
+}
+.aef-type-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 0.6rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+.aef-type-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.45);
+  transition: all 0.25s ease;
+}
+.aef-type-title {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: inherit;
+  text-align: center;
+}
+.aef-type-desc {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  line-height: 1.25;
+}
+.aef-type-card.active {
+  background: rgba(0, 229, 255, 0.08);
+  border-color: #00e5ff;
+  color: #fff;
+}
+.aef-type-card.active .aef-type-icon {
+  background: linear-gradient(135deg, #0096ff, #00e5ff);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.35);
+}
+.aef-type-card.active .aef-type-desc {
+  color: rgba(255, 255, 255, 0.55);
+}
+.aef-type-card:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+.aef-type-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00e5ff, #7c5cff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #04101f;
+  animation: ptPopIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes ptPopIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ===== Turga qarab chiqadigan qo'shimcha maydonlar bloki ===== */
+.aef-dynamic-fields {
+  border-left: 2px solid rgba(0, 229, 255, 0.25);
+  padding-left: 1rem;
+  margin: 0.2rem 0 1.2rem;
+  animation: dynFieldsIn 0.3s ease;
+}
+@keyframes dynFieldsIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== O'lchamlar qatori (mebel uchun: uzunligi x eni x balandligi) ===== */
+.aef-dimensions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.aef-dimensions-row input {
+  flex: 1;
+  min-width: 0;
+}
+.aef-dimensions-x {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .aef-type-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 420px) {
+  .aef-dimensions-row {
+    flex-wrap: wrap;
+  }
+  .aef-dimensions-row input {
+    min-width: 80px;
+  }
+}

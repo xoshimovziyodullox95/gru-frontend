@@ -1,0 +1,5 @@
+import api from './api';
+
+export const getMyOrders = () => api.get('/orders/my-orders');
+export const getReceivedOrders = () => api.get('/orders/received');
+export const updateOrderStatus = (id, status) => api.put(`/orders/${id}/status`, { status });

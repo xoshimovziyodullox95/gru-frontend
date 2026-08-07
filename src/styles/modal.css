@@ -1,0 +1,133 @@
+/* src/styles/modal.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+.modal-container {
+  background: linear-gradient(135deg, #0a1128, #061530);
+  border-radius: 2rem;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 40px rgba(0, 229, 255, 0.2);
+}
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 229, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: #00e5ff;
+}
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+}
+.modal-header h2 {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #fff, #4dc8ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.modal-address {
+  color: #b0c4de;
+  margin-top: 0.5rem;
+}
+.modal-body {
+  padding: 1.5rem;
+}
+.info-section h3, .contact-section h3, .equipment-section h3 {
+  font-size: 1.2rem;
+  color: #4dc8ff;
+  margin-bottom: 1rem;
+}
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.features span {
+  background: rgba(0, 229, 255, 0.1);
+  padding: 0.2rem 0.8rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+}
+.contact-section {
+  background: rgba(10, 17, 40, 0.5);
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+.seller-info {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+.show-phone-btn {
+  background: #0096ff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  color: white;
+  cursor: pointer;
+}
+.phone-link {
+  font-size: 1.2rem;
+  color: #00e5ff;
+  text-decoration: none;
+}
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.equipment-item {
+  display: flex;
+  gap: 1rem;
+  background: rgba(10, 17, 40, 0.6);
+  border-radius: 1rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+.equipment-icon {
+  font-size: 2rem;
+}
+.equipment-info h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+.equipment-info p {
+  font-size: 0.75rem;
+  color: #b0c4de;
+}
+.price {
+  color: #4dc8ff;
+  font-weight: bold;
+}
+@media (max-width: 640px) {
+  .modal-container {
+    max-width: 95%;
+  }
+  .equipment-grid {
+    grid-template-columns: 1fr;
+  }
+}

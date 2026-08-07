@@ -1,0 +1,409 @@
+/* src/styles/universalCard.css (premium bilan bog‘liq stillar olib tashlandi) */
+.uc-card {
+  display: block;
+  text-decoration: none;
+  background: var(--card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 4px 16px var(--shadow);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.uc-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--cyan);
+  box-shadow: 0 16px 40px var(--shadow);
+}
+
+
+
+/* ===== Rasm ===== */
+.uc-image-wrap {
+  position: relative;
+  padding-top: 62%;
+  overflow: hidden;
+  background: var(--bg);
+}
+.uc-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s ease;
+}
+.bsc-chip-details-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--textMuted);
+}
+.uc-card:hover .uc-image { transform: scale(1.07); }
+
+/* Turi belgisi */
+.uc-type-badge {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.2rem 0.7rem;
+  border-radius: 2rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.uc-type-badge--location {
+  background: rgba(59, 130, 246, 0.18);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+}
+.uc-type-badge--equipment {
+  background: rgba(251, 146, 60, 0.18);
+  border: 1px solid rgba(251, 146, 60, 0.35);
+  color: #fb923c;
+}
+.uc-type-badge--service {
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  color: var(--cyan);
+}
+
+/* Sevimlilar */
+.uc-fav-btn {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.7rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+.uc-fav-btn:hover {
+  background: rgba(255, 60, 90, 0.35);
+  border-color: #ff5c7a;
+  transform: scale(1.08);
+}
+.uc-fav-btn.is-active {
+  background: rgba(255, 60, 90, 0.9);
+  border-color: #ff5c7a;
+  color: #fff;
+}
+
+/* Top / Tasdiqlangan */
+.uc-badges {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0.6rem;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.uc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+.uc-badge--top {
+  background: rgba(245, 158, 11, 0.25);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fbbf24;
+}
+.uc-badge--verified {
+  background: rgba(0, 150, 255, 0.2);
+  border: 1px solid rgba(0, 150, 255, 0.45);
+  color: #60b4ff;
+}
+
+/* Matn qismi */
+.uc-body {
+  padding: 1rem 1.1rem 1.15rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.uc-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+  min-height: 2.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.uc-desc {
+  font-size: 0.8rem;
+  color: var(--textMuted);
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.uc-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.76rem;
+  color: var(--textMuted);
+}
+.uc-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.uc-meta-item svg { color: var(--cyan); flex-shrink: 0; }
+
+.uc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+.uc-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.uc-rating {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+.uc-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.uc-date {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--textMuted);
+}
+
+.uc-btn {
+  margin-top: 0.3rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 2rem;
+  background: linear-gradient(95deg, #0055b3, var(--cyan));
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  width: 100%;
+}
+.uc-btn:hover {
+  box-shadow: 0 4px 16px var(--shadow);
+  transform: scale(1.015);
+}
+
+/* Equipment uchun savat qatori */
+.uc-cart-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+.uc-cart-row .uc-btn--secondary {
+  flex: 1;
+  margin-top: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.uc-cart-row .uc-btn--secondary:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Grid */
+.uc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .uc-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.9rem; }
+  .uc-title { font-size: 0.92rem; }
+  .uc-body { padding: 0.8rem 0.9rem 1rem; }
+  .uc-cart-row { flex-wrap: wrap; }
+}
+
+/* ===== BankServiceCard - logo bloki (uc-image-wrap o'rnini bosadi) ===== */
+
+/* ===== BankServiceCard - "chip card" konsepsiyasi, o'ziga xos dizayn ===== */
+.bsc-chip-card {
+  position: relative;
+  padding: 1.2rem 1.2rem 1.3rem;
+  background: linear-gradient(150deg, #0c1f3d 0%, #0a1730 55%, #071022 100%);
+  border: 1px solid rgba(0, 229, 255, 0.15);
+  overflow: hidden;
+}
+.bsc-chip-card:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+}
+
+/* Fon naqshi - konsentrik yoylar */
+.bsc-chip-pattern {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(0, 229, 255, 0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Yuqori qator */
+.bsc-chip-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+/* Chip belgisi - kartadagi metall chipga o'xshab */
+.bsc-chip-icon {
+  width: 34px;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #ffd166, #f7a94c);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 5px;
+}
+.bsc-chip-icon span {
+  display: block;
+  height: 1.5px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 1px;
+}
+
+/* Logo nishon */
+.bsc-chip-logo-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--textMuted);
+  overflow: hidden;
+}
+.bsc-chip-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+.bsc-chip-provider {
+  display: block;
+  margin-top: 0.9rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  position: relative;
+  z-index: 1;
+}
+
+.bsc-chip-body {
+  padding: 0;
+  margin-top: 0.4rem;
+  position: relative;
+  z-index: 1;
+  gap: 0.5rem;
+}
+.bsc-chip-title {
+  color: #fff;
+}
+.bsc-chip-desc {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.bsc-chip-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.8rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+.bsc-chip-commission {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.bsc-chip-commission-label {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+.bsc-chip-commission-value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.bsc-chip-arrow-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--cyan);
+  color: #071022;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+.bsc-chip-card:hover .bsc-chip-arrow-btn {
+  transform: rotate(45deg) scale(1.08);
+}
+

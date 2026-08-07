@@ -1,0 +1,357 @@
+/* Admin Dashboard Styles - To'liq */
+:root {
+  --cyan: #00E5FF;
+  --text: #0a0a0a;
+  --textMuted: #6b7280;
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --border: #e5e7eb;
+}
+
+.ad-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.2rem 4rem;
+}
+
+.ad-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 5rem 1rem;
+  color: var(--textMuted);
+}
+
+.ad-spin {
+  animation: ad-spin-anim 1s linear infinite;
+}
+
+@keyframes ad-spin-anim {
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.ad-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.ad-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.4rem;
+  margin: 0;
+  color: #fbbf24;
+}
+
+.ad-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.ad-welcome {
+  color: var(--textMuted);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Chiqish tugmasi */
+.ad-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.ad-logout-btn:hover {
+  background: #dc2626;
+  transform: scale(1.03);
+}
+
+.ad-logout-btn:active {
+  transform: scale(0.97);
+}
+
+/* Statistika kartalari */
+.ad-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.ad-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem 1.2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  color: var(--cyan);
+}
+
+.ad-stat-value {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.ad-stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--textMuted);
+}
+
+/* Bosiladigan karta (statistika) */
+.ad-stat-clickable {
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+}
+
+.ad-stat-clickable:hover {
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+}
+
+/* Rol taqsimoti */
+.ad-role-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.ad-role-pill {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--textMuted);
+}
+
+.ad-role-pill strong {
+  color: var(--text);
+}
+
+/* Tablar */
+.ad-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ad-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.7rem 1.1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--textMuted);
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.ad-tabs button.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+.ad-tabs button:hover {
+  color: var(--text);
+}
+
+/* Qidiruv */
+.ad-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.6rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  margin-bottom: 1rem;
+  color: var(--textMuted);
+}
+
+.ad-search-wrap input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.ad-search-wrap input::placeholder {
+  color: var(--textMuted);
+}
+
+/* Jadvallar */
+.ad-users-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ad-users-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.6fr 1.2fr 0.4fr;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  font-size: 0.85rem;
+}
+
+.ad-users-head {
+  background: transparent;
+  border: none;
+  color: var(--textMuted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  padding: 0 0.9rem;
+}
+
+.ad-user-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ad-user-email {
+  color: var(--textMuted);
+  font-size: 0.8rem;
+}
+
+.ad-role-select {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.ad-delete-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  justify-self: end;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ad-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #dc2626;
+}
+
+/* Logs */
+.ad-logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ad-log-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  font-size: 0.8rem;
+  align-items: center;
+}
+
+.ad-log-action {
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.ad-log-detail {
+  color: var(--textMuted);
+}
+
+.ad-log-time {
+  color: var(--textMuted);
+  text-align: right;
+  font-size: 0.72rem;
+}
+
+/* Bo'sh holat */
+.ad-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--textMuted);
+}
+
+/* Mobil moslashuv */
+@media (max-width: 700px) {
+  .ad-users-row,
+  .ad-users-head {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+  
+  .ad-log-item {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  
+  .ad-log-time {
+    text-align: left;
+  }
+  
+  .ad-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .ad-header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .ad-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

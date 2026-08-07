@@ -1,0 +1,54 @@
+.user-profile-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+.user-profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+.user-stats span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.listing-card {
+  background: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: 0.2s;
+}
+.listing-card:hover {
+  transform: translateY(-3px);
+}
+.listing-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+.listing-card h4 {
+  margin: 0.5rem;
+}
+.listing-card p {
+  margin: 0 0.5rem 0.5rem;
+  color: #666;
+}

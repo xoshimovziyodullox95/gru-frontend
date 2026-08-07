@@ -1,0 +1,419 @@
+.add-location-form-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: rgba(5,20,55,0.65);
+  backdrop-filter: blur(12px);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(0,150,255,0.3);
+}
+.add-location-form h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: white;
+}
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #a0dcff;
+  font-weight: 500;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 0.6rem;
+  background: rgba(0,20,50,0.8);
+  border: 1px solid rgba(0,150,255,0.4);
+  border-radius: 0.75rem;
+  color: white;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+.form-group .price-currency-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  width: 100%;
+}
+.form-group .price-currency-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+}
+.form-group .price-currency-row select.currency-select {
+  flex: 0 0 110px;
+  width: 110px;
+  min-width: 110px;
+}
+
+/* ══════════════════════════════════════════════
+   ORQAGA QAYTISH TUGMASI (AddLocationForm uchun,
+   alf- prefiksi bilan, boshqa komponentlarga
+   tegmaydigan alohida stil)
+══════════════════════════════════════════════ */
+.alf-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  color: var(--cyan);
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 auto 1.25rem;
+  max-width: 720px;
+}
+
+.alf-back-btn:hover {
+  background: rgba(0, 100, 200, 0.2);
+  border-color: var(--cyan);
+  transform: translateX(-3px);
+  color: var(--text);
+}
+
+.alf-back-btn:active {
+  transform: translateX(-3px) scale(0.97);
+}
+
+@media (max-width: 768px) {
+  .alf-back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.media-upload-area {
+  border: 2px dashed rgba(0,150,255,0.5);
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+}
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,150,255,0.2);
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  color: #a0dcff;
+  margin-bottom: 1rem;
+}
+.media-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+.media-preview {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #0a1128;
+}
+.media-preview img, .media-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.remove-media {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  border-radius: 50%;
+  padding: 4px;
+  cursor: pointer;
+  color: white;
+}
+.progress-bar {
+  height: 6px;
+  background: #1e2a3a;
+  border-radius: 3px;
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0096ff, #00e5ff);
+  transition: width 0.3s;
+}
+.submit-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: linear-gradient(95deg, #0055b3, #0096ff);
+  border: none;
+  border-radius: 2rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,150,255,0.4);
+}
+
+/* ==================== YANGI BO'LIMLAR (3, 4, 5, 6-blok) ==================== */
+.section-block {
+  margin: 1.75rem 0;
+  padding: 1.25rem;
+  background: rgba(0,30,70,0.4);
+  border: 1px solid rgba(0,150,255,0.25);
+  border-radius: 1.25rem;
+}
+.section-title {
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-left: 3px solid #0096ff;
+  padding-left: 0.6rem;
+}
+.section-hint {
+  margin: 0 0 1rem 0;
+  color: #7fb8e0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.section-hint strong {
+  color: #00e5ff;
+}
+
+/* Manzil - xarita orqali tanlash */
+.map-picker {
+  border: 1px solid rgba(0,150,255,0.3);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: rgba(0,20,50,0.6);
+}
+.map-search-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  background: rgba(0,10,30,0.6);
+}
+.map-search-row input {
+  flex: 1;
+  padding: 0.55rem 0.7rem;
+  background: rgba(0,20,50,0.8);
+  border: 1px solid rgba(0,150,255,0.4);
+  border-radius: 0.6rem;
+  color: white;
+  font-size: 0.85rem;
+}
+.map-search-row button {
+  padding: 0.55rem 1rem;
+  background: linear-gradient(95deg, #0055b3, #0096ff);
+  border: none;
+  border-radius: 0.6rem;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.map-search-row button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.map-container {
+  width: 100%;
+  height: 320px;
+  background: #0a1128;
+}
+.map-loading {
+  padding: 0.8rem;
+  text-align: center;
+  color: #7fb8e0;
+  font-size: 0.85rem;
+}
+.map-hint {
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.78rem;
+  color: #7fb8e0;
+  background: rgba(0,10,30,0.4);
+}
+
+/* Ventilyatsiya bor/yo'q toggle va pastga ochiladigan modul */
+.toggle-group {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.toggle-btn {
+  flex: 1;
+  padding: 0.55rem;
+  background: rgba(0,20,50,0.8);
+  border: 1px solid rgba(0,150,255,0.4);
+  border-radius: 0.6rem;
+  color: #a0dcff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.toggle-btn.active {
+  background: linear-gradient(95deg, #0055b3, #0096ff);
+  border-color: #0096ff;
+  color: white;
+}
+.collapse-field {
+  margin-top: 0.7rem;
+  padding: 0.8rem;
+  background: rgba(0,150,255,0.08);
+  border: 1px dashed rgba(0,150,255,0.4);
+  border-radius: 0.75rem;
+  animation: collapse-drop 0.2s ease-out;
+}
+.collapse-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #a0dcff;
+  font-size: 0.85rem;
+}
+.collapse-field input {
+  width: 100%;
+  padding: 0.5rem;
+  background: rgba(0,20,50,0.8);
+  border: 1px solid rgba(0,150,255,0.4);
+  border-radius: 0.6rem;
+  color: white;
+  box-sizing: border-box;
+}
+@keyframes collapse-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.inline-icon {
+  vertical-align: -2px;
+  margin-right: 0.2rem;
+  color: #00e5ff;
+}
+
+/* 500 metr radiusidagi obyektlar */
+.nearby-row {
+  display: grid;
+  grid-template-columns: auto 1.2fr 2fr 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+.nearby-icon-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0,150,255,0.15);
+  border: 1px solid rgba(0,150,255,0.3);
+  border-radius: 0.6rem;
+  color: #00e5ff;
+}
+.nearby-type, .nearby-name, .nearby-distance {
+  padding: 0.55rem 0.6rem;
+  background: rgba(0,20,50,0.8);
+  border: 1px solid rgba(0,150,255,0.4);
+  border-radius: 0.6rem;
+  color: white;
+  font-size: 0.85rem;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(0,150,255,0.3);
+  border-radius: 0.6rem;
+  cursor: pointer;
+  color: #a0dcff;
+  transition: all 0.2s;
+}
+.icon-btn.remove:hover {
+  background: rgba(255,60,60,0.2);
+  border-color: rgba(255,60,60,0.5);
+  color: #ff8080;
+}
+.add-row-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(0,150,255,0.15);
+  border: 1px dashed rgba(0,150,255,0.5);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  color: #a0dcff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  transition: all 0.2s;
+}
+.add-row-btn:hover {
+  background: rgba(0,150,255,0.25);
+}
+
+/* 6-blok: odam qatnovi grid */
+.traffic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 0.6rem;
+}
+.traffic-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+.traffic-cell label {
+  font-size: 0.72rem;
+  color: #7fb8e0;
+}
+.traffic-cell input {
+  width: 100%;
+  padding: 0.4rem 0.2rem;
+  text-align: center;
+  background: rgba(0,20,50,0.8);
+  border: 1px solid rgba(0,150,255,0.4);
+  border-radius: 0.5rem;
+  color: white;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .nearby-row {
+    grid-template-columns: auto 1fr 1fr;
+    grid-template-areas:
+      "icon type dist"
+      "name name name"
+      "remove remove remove";
+  }
+  .nearby-icon-preview { grid-area: icon; }
+  .nearby-type { grid-area: type; }
+  .nearby-distance { grid-area: dist; }
+  .nearby-name { grid-area: name; }
+  .icon-btn { grid-area: remove; width: 100%; }
+  .map-container { height: 260px; }
+}

@@ -1,0 +1,742 @@
+/* ============================================================
+   REELS STRIP (galereya)
+   ============================================================ */
+.reels-section {
+  padding: 20px 0;
+}
+.reel-video-placeholder {
+  background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+  width: 100%;
+  height: 100%;
+}
+
+/* Views */
+.reel-views {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Kommentlar - kichikroq */
+.reel-comment-text {
+  font-size: 13px;
+}
+.reel-comment-author {
+  font-size: 13px;
+}
+
+.reel-modal-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* video uchun */
+  border: 0;         /* iframe uchun */
+}
+
+
+
+/* YouTube source badge */
+.reel-source-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255, 0, 0, 0.85);
+  color: #fff;
+  font-size: 0.6rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  z-index: 2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.reel-source-badge.inline {
+  position: relative;
+  top: auto;
+  left: auto;
+  margin-left: 8px;
+  background: rgba(255, 0, 0, 0.7);
+  font-size: 0.55rem;
+  padding: 1px 8px;
+  display: inline-block;
+}
+
+/* Iframe uchun */
+.reel-modal-video iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  object-fit: cover;
+    pointer-events: none;
+}
+
+/* YouTube thumb uchun */
+.reel-video-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Reply tugmasi */
+.reel-comment-reply-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+}
+.reel-comment-reply-btn:hover {
+  color: #0095f6;
+}
+
+/* Reply qatorlari */
+.reel-comment-row.reply {
+  padding-left: 40px;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  margin-left: 10px;
+}
+.reel-comment-avatar.small {
+  width: 20px;
+  height: 20px;
+}
+
+
+.reels-track-grid2 {
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  grid-auto-columns: 190px;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.reel-card-priority {
+  outline: 2px solid #0095f6;
+  outline-offset: 2px;
+}
+
+.reel-priority-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: #0095f6;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  z-index: 2;
+}
+
+/* Reply form */
+.reel-reply-form {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0 8px 40px;
+}
+.reel-reply-form input {
+  flex: 1;
+  padding: 4px 10px;
+  border-radius: 16px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  outline: none;
+  font-size: 12px;
+}
+.reel-reply-form button {
+  background: #0095f6;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+}
+.reel-reply-form button:disabled {
+  opacity: 0.4;
+}
+
+/* Emoji tugmasi */
+.reel-emoji-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.reels-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px 16px;
+}
+
+.reels-title-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.reels-count {
+  font-size: 14px;
+  color: #6a8099;
+}
+
+.reels-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* iOS uchun silliq scroll */
+  scroll-snap-type: x proximity;
+  will-change: transform;
+  contain: layout style paint; /* browser'ga bu qism mustaqil ekanini aytadi, reflow kamayadi */
+}
+
+.reels-track::-webkit-scrollbar {
+  height: 4px;
+}
+
+.reels-track::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* ============================================================
+   REEL CARD (thumb) — kattalashtirilgan, Reels/TikTok uslubi
+   ============================================================ */
+.reel-card {
+  position: relative;
+  width: 230px;
+  height: 400px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  scroll-snap-align: start;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  contain: layout style paint;
+  transform: translateZ(0);
+}
+.reel-card:hover {
+  transform: translateZ(0) translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
+}
+
+.reel-card:hover {
+  transform: scale(1.03) translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5);
+}
+
+.reel-card .reel-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.yt-icon-shape{
+display: none !important;
+}
+
+.reel-card .reel-fade-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  pointer-events: none;
+}
+
+.reel-card .reel-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.reel-card:hover .reel-play-icon {
+  background: rgba(0, 149, 246, 0.55);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.reel-card .reel-type-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 5px 11px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.reel-card .reel-title {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   REEL MODAL (Instagram uslubi)
+   ============================================================ */
+.reel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reel-modal-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  z-index: 10001;
+  transition: background 0.2s;
+}
+
+.reel-modal-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.reel-modal-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 229, 255, 0.18);
+  border: 1.5px solid rgba(0, 229, 255, 0.5);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  z-index: 10001;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+.reel-modal-nav:hover {
+  background: rgba(0, 229, 255, 0.32);
+  border-color: rgba(0, 229, 255, 0.8);
+  transform: translateX(-50%) scale(1.08);
+}
+
+
+.reel-modal-nav.up {
+  top: 80px;
+}
+
+.reel-modal-nav.down {
+  bottom: 80px;
+}
+
+/* Player */
+.reel-modal-player {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  max-height: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.reel-modal-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.reel-modal-video.reel-slide-down {
+  animation: slideDown 0.3s ease;
+}
+
+.reel-modal-video.reel-slide-up {
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(-100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fade effektlari */
+.reel-modal-fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent);
+  pointer-events: none;
+}
+
+.reel-modal-fade-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  pointer-events: none;
+}
+
+/* Pastki qism - user va sarlavha */
+.reel-bottom-info {
+  position: absolute;
+  bottom: 100px;
+  left: 16px;
+  right: 80px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reel-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.reel-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+.reel-username {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.reel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.reel-type-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.reel-title-text {
+  font-size: 14px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* O'ng tomondagi tugmalar */
+.reel-actions-right {
+  position: absolute;
+  bottom: 160px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+}
+
+.reel-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  gap: 2px;
+  transition: transform 0.15s;
+}
+
+.reel-action-btn:hover {
+  transform: scale(1.05);
+}
+
+.reel-action-btn span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* COMMENT SHEET */
+.reel-comments-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 60vh;
+  background: linear-gradient(to top, #1a1a2e, #0d0d1a);
+  border-radius: 20px 20px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.reel-comments-sheet.open {
+  transform: translateY(0);
+}
+
+.reel-comments-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  margin: 10px auto 6px;
+  cursor: pointer;
+}
+
+.reel-comments-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px 12px;
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.reel-comments-sheet-close {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.reel-comments-sheet-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  max-height: 40vh;
+}
+
+.reel-comments-empty {
+  color: #6a8099;
+  text-align: center;
+  padding: 30px 0;
+  font-size: 14px;
+}
+
+.reel-comment-row {
+  display: flex;
+  gap: 10px;
+  padding: 6px 0;
+  align-items: flex-start;
+}
+
+.reel-comment-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.reel-comment-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reel-comment-author {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.reel-comment-text {
+  font-size: 13px;
+  color: #c0dff5;
+  word-break: break-word;
+}
+
+.reel-comments-sheet-form {
+  display: flex;
+  gap: 10px;
+  padding: 10px 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: #0d0d1a;
+}
+
+.reel-comments-sheet-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+.reel-comments-sheet-form input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.reel-comments-sheet-form button {
+  background: #0095f6;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.reel-comments-sheet-form button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   RESPONSIVE — kattaroq bo'lsa ham mobil ekranlarga moslashtirish
+   ============================================================ */
+@media (max-width: 900px) {
+  .reel-card {
+    width: 170px;
+    height: 290px;
+  }
+  .reels-track-grid2 {
+    grid-auto-columns: 160px;
+  }
+}
+
+@media (max-width: 600px) {
+  .reel-card {
+    width: 150px;
+    height: 255px;
+    border-radius: 14px;
+  }
+
+  .reel-card .reel-play-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .reels-track-grid2 {
+    grid-auto-columns: 130px;
+    gap: 10px;
+  }
+
+  .reels-header {
+    padding: 0 12px 12px;
+  }
+  .reels-title-heading {
+    font-size: 18px;
+  }
+
+  .reel-modal-player {
+    max-width: 100%;
+  }
+  
+  .reel-bottom-info {
+    bottom: 80px;
+    left: 12px;
+    right: 70px;
+  }
+  
+  .reel-actions-right {
+    bottom: 130px;
+    right: 8px;
+    gap: 12px;
+  }
+  
+  .reel-actions-right .reel-action-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .reel-modal-nav {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .reel-modal-nav.up {
+    top: 60px;
+  }
+  
+  .reel-modal-nav.down {
+    bottom: 60px;
+  }
+}

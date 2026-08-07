@@ -1,0 +1,65 @@
+.bsw-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.2rem;
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.2rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.bsw-card:hover { border-color: var(--cyan); }
+
+.bsw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: var(--cyan);
+}
+.bsw-title { font-size: 0.85rem; font-weight: 700; }
+
+.bsw-branches-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--cyan);
+  text-decoration: none;
+  margin: -0.6rem 0 1.2rem;
+  padding-left: 0.2rem;
+}
+.bsw-branches-link:hover { text-decoration: underline; }
+
+.bsw-branches-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--cyan);
+  text-decoration: none;
+  margin: -0.6rem 0 1.2rem;
+  padding-left: 0.2rem;
+}
+.bsw-branches-link:hover { text-decoration: underline; }
+
+.bsw-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+}
+.bsw-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bsw-stat-value { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text); }
+.bsw-stat-label { display: block; font-size: 0.68rem; color: var(--textMuted); }
+.bsw-icon-green { color: #4ade80; }
+.bsw-icon-red { color: #f87171; }
+.bsw-icon-amber { color: #fbbf24; }
+.bsw-positive { color: #4ade80; }
+.bsw-negative { color: #f87171; }
+
+@media (max-width: 500px) {
+  .bsw-stats { grid-template-columns: 1fr; gap: 0.6rem; }
+}

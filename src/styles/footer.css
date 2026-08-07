@@ -1,0 +1,450 @@
+/* ============================================================
+   FOOTER – G.R.U  (navbar bilan bir xil ko'k/oq/siyan palitra)
+   ============================================================ */
+
+.footer {
+  position: relative;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding-top: 3.5rem;
+  padding-bottom: 1.5rem;
+  margin-top: 4rem;
+  color: var(--textMuted);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow: hidden;
+}
+
+/* Yumshoq ko'k nur — orqa fonda */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 240px;
+  background: radial-gradient(ellipse at center, rgba(0, 150, 255, 0.10), transparent 70%);
+  pointer-events: none;
+}
+
+.footer-container {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ===== GRID ===== */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: 2rem;
+  }
+}
+
+.footer-col {
+  min-width: 0;
+}
+
+/* ===== KOMPANIYA BO'LIMI ===== */
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.footer-brand span:first-child {
+  background: linear-gradient(135deg, var(--text), var(--cyan));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.footer-brand .badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(0, 229, 255, 0.10);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  color: var(--cyan);
+  letter-spacing: 0.3px;
+}
+
+.footer-description {
+  font-size: 0.875rem;
+  color: var(--textMuted);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  max-width: 30ch;
+}
+
+/* ===== IJTIMOIY TARMOQLAR ===== */
+.footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.footer-socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--textMuted);
+  transition: all 0.25s ease;
+}
+
+.footer-socials a:hover {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--cyan), #00e5ff);
+  border-color: transparent;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+/* ===== SARLAVHALAR ===== */
+.footer-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 1.1rem;
+  position: relative;
+  padding-bottom: 0.6rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 28px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), #00e5ff);
+  border-radius: 2px;
+}
+
+/* ===== HAVOLALAR ===== */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.footer-links li a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--textMuted);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  width: fit-content;
+}
+
+.footer-links li a:hover {
+  color: var(--cyan);
+  transform: translateX(3px);
+}
+
+.footer-links li a svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* ===== ILOVA TUGMALARI ===== */
+.footer-apps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.footer-apps a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 0.65rem;
+  padding: 0.55rem 0.9rem;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.footer-apps a:hover {
+  background: rgba(0, 150, 255, 0.08);
+  border-color: rgba(0, 229, 255, 0.30);
+  transform: translateY(-2px);
+}
+
+.footer-apps a svg {
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.footer-apps a span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.footer-apps a small {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--textMuted);
+}
+
+/* ===== ALOQA MA'LUMOTLARI ===== */
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--textMuted);
+}
+
+.footer-contact p {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.footer-contact svg {
+  flex-shrink: 0;
+  color: var(--cyan);
+}
+
+/* ===== OBUNA FORMASI ===== */
+.footer-subscribe {
+  border-top: 1px solid var(--border);
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .footer-subscribe {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.footer-subscribe-text span {
+  display: block;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.footer-subscribe-text p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--textMuted);
+}
+
+.footer-subscribe-form {
+  display: flex;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .footer-subscribe-form {
+    width: auto;
+  }
+}
+
+.footer-subscribe-form input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-right: none;
+  border-radius: 0.6rem 0 0 0.6rem;
+  padding: 0.65rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.footer-subscribe-form input::placeholder {
+  color: var(--textMuted);
+}
+
+.footer-subscribe-form input:focus {
+  border-color: var(--cyan);
+}
+
+@media (min-width: 768px) {
+  .footer-subscribe-form input {
+    width: 15rem;
+  }
+}
+
+.footer-subscribe-form button {
+  background: linear-gradient(95deg, #0066cc, var(--cyan));
+  color: #ffffff;
+  padding: 0.65rem 1.2rem;
+  border: none;
+  border-radius: 0 0.6rem 0.6rem 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  min-width: 9.5rem;
+}
+
+.footer-subscribe-form button:hover {
+  box-shadow: 0 6px 18px var(--shadow);
+  transform: translateY(-1px);
+}
+
+/* ===== COPYRIGHT ===== */
+.footer-copyright {
+  border-top: 1px solid var(--border);
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--textMuted);
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .footer-copyright {
+    flex-direction: row;
+    text-align: left;
+  }
+}
+
+.footer-made-with {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.footer-made-with .heart {
+  color: #ff5c7a;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.footer-made-with .love {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+/* ===== YUQORIGA QAYTISH TUGMASI ===== */
+.footer-to-top {
+  position: fixed;           /* footer ichida bo‘lsa ham ekranga mahkamlanadi */
+  bottom: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 229, 255, 0.30);
+  background: linear-gradient(135deg, var(--cyan), #00c2ff);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--shadow);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+.footer-to-top:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px var(--shadow);
+}
+
+/* ===== ANIMATSIYA ===== */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* ===== RESPONSIVE QO'SHIMCHA ===== */
+@media (max-width: 640px) {
+  .footer {
+    padding-top: 3rem;
+  }
+  .footer-socials {
+    justify-content: flex-start;
+  }
+  .footer-to-top {
+    right: 1.25rem;
+    bottom: 1.5rem;        /* biroz ichkariga olish mumkin */
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-subscribe-form {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .footer-subscribe-form input {
+    border-radius: 0.6rem;
+    border-right: 1px solid var(--border);
+  }
+  .footer-subscribe-form button {
+    border-radius: 0.6rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer {
+    padding-top: 3rem;
+  }
+  .footer-socials {
+    justify-content: flex-start;
+  }
+  .footer-to-top {
+    display: none;   /* Mobilda butunlay yashiriladi */
+  }
+}

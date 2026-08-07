@@ -1,0 +1,58 @@
+/* src/styles/globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --dark-bg: #0A1128;
+  --card-bg: rgba(12, 20, 45, 0.85);
+  --neon-white: #E0F2FE;
+  --neon-cyan: #00E5FF;
+  --border-glow: rgba(0, 229, 255, 0.3);
+  --input-bg: rgba(2, 8, 23, 0.6);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(circle at 30% 20%, #0F1A3A, var(--dark-bg));
+  color: #F0F3FF;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--dark-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--neon-cyan), #0088CC);
+  border-radius: 10px;
+}
+
+/* Glassmorphism card asosiy klass */
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-glow);
+  border-radius: 1.5rem;
+  transition: all 0.3s ease;
+}
+.glass-card:hover {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+  transform: translateY(-4px);
+}
+
+/* Neon tekst */
+.neon-text {
+  background: linear-gradient(135deg, #FFFFFF, var(--neon-cyan));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}

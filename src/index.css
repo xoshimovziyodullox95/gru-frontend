@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== CSS VARIABLES ===== */
+:root {
+  --bg: #0A1628;
+  --card: #0F2040;
+  --border: #1A3A6A;
+  --text: #E8F4FD;
+  --textMuted: #8AB4D0;
+  --cyan: #00D4FF;
+  --shadow: rgba(0, 212, 255, 0.1);
+}
+
+html:not(.dark) {
+  --bg: #F0F6FC;
+  --card: #FFFFFF;
+  --border: #1A3A6A;
+  --text: #0A1628;
+  --textMuted: #4A6A8A;
+  --cyan: #00AACC;
+  --shadow: rgba(10, 22, 40, 0.08);
+}
+
+html.dark {
+  --bg: #0A1628;
+  --card: #0F2040;
+  --border: #1A3A6A;
+  --text: #E8F4FD;
+  --textMuted: #8AB4D0;
+  --cyan: #00D4FF;
+  --shadow: rgba(0, 212, 255, 0.1);
+}
+
+/* ===== GLOBAL ===== */
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: all 0.4s ease;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--cyan);
+  border-radius: 10px;
+}
+
+/* ===== CYBER-CARD ===== */
+.cyber-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px var(--shadow);
+}
+.cyber-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 40px rgba(0, 212, 255, 0.08);
+}
+
+/* ===== NEON TEXT ===== */
+.neon-text {
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+/* ===== BUTTON ===== */
+.btn-cyber {
+  background: var(--cyan);
+  color: #0A1628;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.15);
+}
+.btn-cyber:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.25);
+}
+.btn-cyber.outline {
+  background: transparent;
+  color: var(--cyan);
+  border: 1.5px solid var(--cyan);
+  box-shadow: none;
+}
+.btn-cyber.outline:hover {
+  background: var(--cyan);
+  color: #0A1628;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out;
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.2); }
+}
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* index.css yoki App.css */
+
+/* ===== NAVBAR OFFSET ===== */
+body {
+  padding-top: 70px; /* desktop */
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-top: 56px;
+  }
+}

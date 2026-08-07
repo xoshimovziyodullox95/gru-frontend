@@ -1,0 +1,11 @@
+/* supplierStats.css */
+.ss-page { max-width: 800px; margin: 0 auto; padding: 2rem 1.2rem; }
+.ss-title { display: flex; align-items: center; gap: 10px; font-size: 1.4rem; margin: 1.5rem 0; }
+.ss-stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.ss-stat-card { display: flex; align-items: center; gap: 12px; padding: 1.2rem; background: var(--card); border: 1px solid var(--border); border-radius: 1rem; color: var(--cyan); }
+.ss-stat-value { display: block; font-size: 1.4rem; font-weight: 800; color: var(--text); }
+.ss-stat-label { display: block; font-size: 0.75rem; color: var(--textMuted); }
+.ss-archive-title { font-size: 1rem; margin-bottom: 0.8rem; }
+.ss-orders-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.ss-order-item { display: grid; grid-template-columns: 2fr 1.2fr 0.8fr 1fr; gap: 0.6rem; padding: 0.7rem 0.9rem; background: var(--card); border: 1px solid var(--border); border-radius: 0.7rem; font-size: 0.82rem; }
+.ss-empty { text-align: center; padding: 3rem; color: var(--textMuted); }

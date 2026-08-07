@@ -1,0 +1,520 @@
+/* ============================================================
+   Digitalization Page – to'liq stil
+   Loyiha o'zgaruvchilari: --bg, --card, --border, --cyan, --text, --textMuted, --shadow
+   ============================================================ */
+.digitalization-page {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* Orqaga tugma */
+.dig-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 1.5rem 2rem;
+  padding: 0.5rem 1.2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.dig-back-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* ===== Hero ===== */
+.dig-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 2rem;
+  text-align: center;
+}
+.dig-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.dig-hero-grid {
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.dig-hero-glow {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.dig-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.dig-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.4rem 1.2rem;
+  background: rgba(0,229,255,0.1);
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 2rem;
+  color: var(--cyan);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+.dig-hero-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1.2rem;
+}
+.dig-hero-title span {
+  color: #ff5c5c;
+  position: relative;
+}
+.dig-hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--textMuted);
+  line-height: 1.6;
+  max-width: 650px;
+  margin: 0 auto 2rem;
+}
+.dig-hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.dig-stat-item {
+  text-align: center;
+}
+.dig-stat-num {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--cyan);
+}
+.dig-stat-label {
+  font-size: 0.85rem;
+  color: var(--textMuted);
+}
+.dig-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #0055b3, var(--cyan));
+  color: #fff;
+  border: none;
+  border-radius: 3rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 8px 32px rgba(0,229,255,0.25);
+}
+.dig-cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,229,255,0.4);
+}
+
+/* ===== Umumiy section sarlavhalari ===== */
+.dig-section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.dig-section-sub {
+  text-align: center;
+  color: var(--textMuted);
+  margin-bottom: 3rem;
+  font-size: 1rem;
+}
+
+/* ===== Eski vs Yangi ===== */
+.dig-compare {
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.dig-compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.dig-compare-card {
+  padding: 2rem;
+  border-radius: 1.5rem;
+  border: 1px solid var(--border);
+}
+.dig-compare-old {
+  background: rgba(255,92,92,0.05);
+  border-color: rgba(255,92,92,0.2);
+}
+.dig-compare-new {
+  background: rgba(0,200,100,0.05);
+  border-color: rgba(0,200,100,0.2);
+}
+.dig-compare-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+.dig-compare-old .dig-compare-header { color: #ff5c5c; }
+.dig-compare-new .dig-compare-header { color: #00c864; }
+.dig-compare-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.dig-compare-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.dig-compare-old .dig-compare-list li svg { color: #ff5c5c; flex-shrink: 0; margin-top: 2px; }
+.dig-compare-new .dig-compare-list li svg { color: #00c864; flex-shrink: 0; margin-top: 2px; }
+
+/* ===== Standartlar ===== */
+.dig-standards {
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.dig-standard-block {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+}
+.dig-standard-icon {
+  display: inline-flex;
+  padding: 0.8rem;
+  background: rgba(0,229,255,0.1);
+  border-radius: 1rem;
+  color: var(--cyan);
+  margin-bottom: 1rem;
+}
+.dig-standard-block h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: var(--cyan);
+}
+.dig-standard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.dig-standard-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0.8rem 1rem;
+  background: var(--bg);
+  border-radius: 0.8rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.dig-standard-item svg {
+  color: var(--cyan);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ===== Dasturlar ===== */
+.dig-software {
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.dig-software-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.dig-software-card {
+  padding: 1.8rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  transition: all 0.3s;
+}
+.dig-software-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 8px 24px var(--shadow);
+}
+.dig-software-icon {
+  display: inline-flex;
+  padding: 0.7rem;
+  background: rgba(0,229,255,0.1);
+  border-radius: 0.8rem;
+  color: var(--cyan);
+  margin-bottom: 1rem;
+}
+.dig-software-card h4 {
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+.dig-software-card p {
+  font-size: 0.88rem;
+  color: var(--textMuted);
+  line-height: 1.5;
+}
+
+/* ===== Ish bosqichlari ===== */
+.dig-steps {
+  padding: 4rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.dig-steps-timeline {
+  position: relative;
+  padding-left: 3rem;
+}
+.dig-steps-timeline::before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.dig-step {
+  position: relative;
+  margin-bottom: 2.5rem;
+}
+.dig-step-num {
+  position: absolute;
+  left: -3rem;
+  width: 3rem;
+  height: 3rem;
+  background: var(--cyan);
+  color: #000;
+  font-weight: 800;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+.dig-step-content {
+  padding: 1.2rem 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+.dig-step-content h4 {
+  margin-bottom: 0.4rem;
+}
+.dig-step-content p {
+  font-size: 0.9rem;
+  color: var(--textMuted);
+  line-height: 1.5;
+}
+.dig-step-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--cyan);
+  margin-top: 0.6rem;
+}
+
+/* ===== FAQ ===== */
+.dig-faq {
+  padding: 4rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.dig-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.dig-faq-item {
+  padding: 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+.dig-faq-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 0.8rem;
+}
+.dig-faq-question svg {
+  color: var(--cyan);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.dig-faq-question h4 {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.dig-faq-answer p {
+  font-size: 0.9rem;
+  color: var(--textMuted);
+  line-height: 1.6;
+  margin-left: 2rem;
+}
+
+/* ===== Konsultatsiya formasi ===== */
+.dig-consultation {
+  padding: 4rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.dig-consultation-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 3rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  box-shadow: 0 8px 32px var(--shadow);
+}
+.dig-consultation-info h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+.dig-consultation-info p {
+  color: var(--textMuted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+.dig-consultation-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.dig-consultation-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+}
+.dig-consultation-list li svg { color: #00c864; }
+
+.dig-consultation-form {
+  padding: 2rem;
+  background: var(--bg);
+  border-radius: 1.5rem;
+  border: 1px solid var(--border);
+}
+.dig-consultation-form h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+.dig-form-group {
+  margin-bottom: 1.2rem;
+}
+.dig-form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+.dig-form-group input,
+.dig-form-group select,
+.dig-form-group textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.2s;
+}
+.dig-form-group input:focus,
+.dig-form-group select:focus,
+.dig-form-group textarea:focus {
+  border-color: var(--cyan);
+}
+.dig-submit-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #0055b3, var(--cyan));
+  color: #fff;
+  border: none;
+  border-radius: 0.8rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+.dig-submit-btn:hover { opacity: 0.9; }
+.dig-form-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background: rgba(0,200,100,0.1);
+  border: 1px solid rgba(0,200,100,0.3);
+  border-radius: 0.8rem;
+  color: #00c864;
+  font-size: 0.88rem;
+}
+.dig-form-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background: rgba(255,92,92,0.1);
+  border: 1px solid rgba(255,92,92,0.3);
+  border-radius: 0.8rem;
+  color: #ff5c5c;
+  font-size: 0.88rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .dig-hero-title { font-size: 1.8rem; }
+  .dig-hero-stats { gap: 1.5rem; }
+  .dig-compare-grid { grid-template-columns: 1fr; }
+  .dig-consultation-card { grid-template-columns: 1fr; padding: 1.5rem; }
+  .dig-steps-timeline { padding-left: 2.5rem; }
+  .dig-step-num { left: -2.5rem; width: 2.5rem; height: 2.5rem; font-size: 1rem; }
+}

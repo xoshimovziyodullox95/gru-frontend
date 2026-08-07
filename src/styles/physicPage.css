@@ -1,0 +1,634 @@
+/* ============================================================
+   PHYSIC PAGE — FON + KARTALAR + TUGMALAR
+   ============================================================ */
+
+/* ===== WRAPPER ===== */
+.physic-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ===== FON – HARAKATLANUVCHI RANGLI KARTALAR ===== */
+.physic-bg-cards {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.physic-bg-card {
+  position: absolute;
+  border-radius: 30%;
+  animation: floatCard linear infinite alternate;
+  filter: blur(2px);
+  transform-origin: center;
+  will-change: transform;
+}
+
+@keyframes floatCard {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(30px, -40px) rotate(10deg) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) rotate(-5deg) scale(0.9);
+  }
+  75% {
+    transform: translate(40px, 30px) rotate(15deg) scale(1.05);
+  }
+  100% {
+    transform: translate(-30px, -20px) rotate(-10deg) scale(0.95);
+  }
+}
+
+/* ===== MATOVIY QOPLAMA ===== */
+.physic-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ===== ASOSIY KONTENT ===== */
+.physic-content {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* ===== HERO ===== */
+.physic-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.physic-hero-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--text), var(--cyan));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.physic-hero-sub {
+  font-size: 1.1rem;
+  color: var(--textMuted);
+}
+
+/* ===== KATEGORIYALAR BO'LIMI ===== */
+.physic-cats-section {
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.physic-cats-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.physic-cats-title {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+
+.physic-cats-sub {
+  color: var(--textMuted);
+  font-size: 1rem;
+}
+
+/* ===== GRID – 4 USTUN ===== */
+.physic-cats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem 1.5rem;
+  justify-items: center;
+}
+
+/* ===== KARTA (MODERN) ===== */
+.physic-card-modern {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1/1;
+  max-width: 140px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 1.2rem;
+  cursor: pointer;
+  animation: fadeInUp 0.5s ease both;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.4s ease;
+  text-decoration: none;
+  border: none;
+}
+
+.physic-card-modern:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== SHISHA EFFEKTI ===== */
+.physic-card-glass {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 24px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.physic-card-modern:hover .physic-card-glass {
+  opacity: 1;
+}
+
+/* ===== GLOW (YORUG'LIK) ===== */
+.physic-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.physic-card-modern:hover .physic-card-glow {
+  opacity: 1;
+}
+
+/* ===== SHIMMER ===== */
+.physic-card-shimmer {
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 80%
+  );
+  animation: shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 3;
+  border-radius: 24px;
+}
+
+@keyframes shimmer {
+  0% { left: -150%; }
+  100% { left: 150%; }
+}
+
+/* ===== AYLANUVCHI CHEGARA ===== */
+.physic-card-border {
+  position: absolute;
+  inset: -2px;
+  border-radius: 26px;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.6)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.physic-card-modern:hover .physic-card-border {
+  opacity: 1;
+  animation: spinBorder 3s linear infinite;
+}
+
+@keyframes spinBorder {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== EMOJI VA MATN ===== */
+.physic-card-emoji {
+  position: relative;
+  z-index: 5;
+  font-size: 2.8rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.physic-card-modern:hover .physic-card-emoji {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+.physic-card-title {
+  position: relative;
+  z-index: 5;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+  max-width: 90%;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== BADGE "TEZ KUNDA" ===== */
+.physic-card-badge {
+  position: relative;
+  z-index: 5;
+  margin-top: 2px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 2px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+}
+
+.physic-card-modern:hover .physic-card-badge {
+  background: rgba(0, 229, 255, 0.25);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* ===== TUGMALAR ===== */
+.physic-actions {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+
+.physic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  border-radius: 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+.physic-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.physic-btn-back {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.physic-btn-back:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.physic-btn-coming {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.3);
+  color: var(--cyan);
+}
+
+.physic-btn-coming:hover {
+  background: rgba(0, 229, 255, 0.25);
+  border-color: var(--cyan);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.2);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Planshet */
+@media (max-width: 1024px) {
+  .physic-cats-grid {
+    gap: 1.8rem 1.2rem;
+    max-width: 680px;
+  }
+  .physic-card-modern {
+    max-width: 110px;
+    border-radius: 20px;
+    padding: 1rem;
+  }
+  .physic-card-emoji {
+    font-size: 2.2rem;
+  }
+  .physic-card-title {
+    font-size: 0.78rem;
+  }
+  .physic-card-badge {
+    font-size: 0.55rem;
+    padding: 2px 8px;
+  }
+}
+
+/* Telefon */
+@media (max-width: 768px) {
+  .physic-cats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem 1rem;
+    max-width: 420px;
+  }
+  .physic-card-modern {
+    max-width: 100px;
+    border-radius: 16px;
+    padding: 0.8rem;
+  }
+  .physic-card-emoji {
+    font-size: 1.8rem;
+  }
+  .physic-card-title {
+    font-size: 0.7rem;
+  }
+  .physic-card-badge {
+    font-size: 0.5rem;
+    padding: 1px 6px;
+  }
+  .physic-hero-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* Kichik telefon */
+@media (max-width: 480px) {
+  .physic-cats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 0.8rem;
+    max-width: 320px;
+  }
+  .physic-card-modern {
+    max-width: 80px;
+    border-radius: 14px;
+    padding: 0.6rem;
+  }
+  .physic-card-emoji {
+    font-size: 1.5rem;
+  }
+  .physic-card-title {
+    font-size: 0.6rem;
+  }
+  .physic-card-badge {
+    font-size: 0.45rem;
+    padding: 1px 5px;
+  }
+  .physic-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .physic-btn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+}
+
+/* ============================================================
+   ANIMASYALAR (home.css dan olingan)
+   ============================================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== PHYSIC CATEGORY PAGE ===== */
+.physic-category-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.physic-category-content {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  padding: 3rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.physic-category-hero {
+  margin-bottom: 3rem;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.physic-category-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.physic-category-emoji {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.physic-category-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.physic-category-desc {
+  font-size: 1.1rem;
+  color: var(--textMuted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.physic-category-placeholder {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 3rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.physic-category-coming {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--textMuted);
+}
+
+.physic-category-coming h2 {
+  font-size: 1.5rem;
+  color: var(--text);
+}
+
+.physic-category-coming p {
+  font-size: 1rem;
+}
+
+.physic-category-coming svg {
+  color: var(--cyan);
+  opacity: 0.7;
+}
+
+.physic-not-found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  color: var(--textMuted);
+}
+
+/* ===== TUGMALAR ===== */
+.physic-actions {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+
+.physic-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  border-radius: 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+.physic-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.physic-btn-back {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.physic-btn-back:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.physic-btn-coming {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.3);
+  color: var(--cyan);
+}
+
+.physic-btn-coming:hover {
+  background: rgba(0, 229, 255, 0.25);
+  border-color: var(--cyan);
+  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.2);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .physic-category-icon {
+    width: 80px;
+    height: 80px;
+  }
+  .physic-category-emoji {
+    font-size: 2.8rem;
+  }
+  .physic-category-placeholder {
+    padding: 2rem 1.5rem;
+  }
+  .physic-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  .physic-btn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+}

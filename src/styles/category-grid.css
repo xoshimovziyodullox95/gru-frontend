@@ -1,0 +1,277 @@
+.cat-page {
+min-height: 100vh;
+background: linear-gradient(135deg, #020b1f 0%, #061530 100%);
+padding: 2rem 1.5rem;
+}
+
+.cat-header {
+text-align: center;
+margin-bottom: 2rem;
+position: relative;
+}
+.cat-back-btn {
+position: absolute;
+left: 0;
+top: 0;
+display: inline-flex;
+align-items: center;
+gap: 0.3rem;
+color: #60c8ff;
+text-decoration: none;
+font-weight: 500;
+transition: 0.3s;
+}
+.cat-back-btn:hover {
+color: #00e5ff;
+transform: translateX(-3px);
+}
+.cat-title {
+font-size: 2.5rem;
+background: linear-gradient(135deg, #ffffff, #4dc8ff);
+background-clip: text;
+-webkit-background-clip: text;
+color: transparent;
+margin-top: 0.5rem;
+}
+.cat-desc {
+color: #c0d8f0;
+font-size: 1rem;
+margin-top: 0.3rem;
+}
+
+.cat-search-bar {
+max-width: 450px;
+margin: 2rem auto 2.5rem;
+position: relative;
+}
+.cat-search-icon {
+position: absolute;
+left: 1rem;
+top: 50%;
+transform: translateY(-50%);
+color: #5e88a8;
+}
+.cat-search-input {
+width: 100%;
+padding: 0.8rem 1rem 0.8rem 2.8rem;
+background: rgba(5, 20, 55, 0.8);
+border: 1px solid rgba(0, 130, 255, 0.4);
+border-radius: 2rem;
+color: white;
+font-size: 0.9rem;
+backdrop-filter: blur(5px);
+transition: 0.3s;
+}
+.cat-search-input:focus {
+outline: none;
+border-color: #0096ff;
+box-shadow: 0 0 12px rgba(0, 150, 255, 0.4);
+}
+
+/* Grid - 5 ta karta katta ekranda */
+.cat-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+gap: 1.8rem;
+margin: 2rem auto 4rem auto;
+max-width: 1400px;
+width: 100%;
+padding: 0 1rem;
+}
+
+@media (min-width: 1400px) {
+.cat-grid {
+grid-template-columns: repeat(5, 1fr);
+}
+}
+@media (max-width: 1200px) {
+.cat-grid {
+grid-template-columns: repeat(4, 1fr);
+}
+}
+@media (max-width: 900px) {
+.cat-grid {
+grid-template-columns: repeat(3, 1fr);
+}
+}
+@media (max-width: 600px) {
+.cat-grid {
+grid-template-columns: repeat(2, 1fr);
+gap: 1rem;
+}
+}
+@media (max-width: 400px) {
+.cat-grid {
+grid-template-columns: 1fr;
+}
+}
+
+/* Card - zamonaviy glassmorfizm, rasm to'liq fon, nom pastda */
+.cat-card {
+display: block;
+text-decoration: none;
+position: relative;
+border-radius: 1.25rem;
+overflow: hidden;
+aspect-ratio: 4 / 5;
+background: #0a1128;
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+will-change: transform;
+}
+.cat-card:hover {
+transform: translateY(-8px) scale(1.02);
+box-shadow: 0 20px 32px rgba(0, 150, 255, 0.3);
+}
+
+/* Rasm wrapper - to'liq maydon */
+.cat-img-wrapper {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+overflow: hidden;
+}
+.cat-img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.cat-card:hover .cat-img {
+transform: scale(1.08);
+}
+
+/* Placeholder rasm bo'lmaganda */
+.cat-placeholder {
+width: 100%;
+height: 100%;
+background: linear-gradient(135deg, #0a2a4a, #051530);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 3.5rem;
+font-weight: bold;
+color: #4dc8ff;
+}
+
+/* Overlay - gradient yumshoq, pastki qismi quyuqroq (matn uchun) */
+.cat-overlay {
+position: absolute;
+inset: 0;
+background: linear-gradient(
+to top,
+rgba(0, 0, 0, 0.8) 0%,
+rgba(0, 0, 0, 0.3) 50%,
+rgba(0, 0, 0, 0.1) 100%
+);
+z-index: 1;
+transition: opacity 0.3s;
+}
+.cat-card:hover .cat-overlay {
+background: linear-gradient(
+to top,
+rgba(0, 0, 0, 0.85) 0%,
+rgba(0, 0, 0, 0.2) 60%,
+rgba(0, 0, 0, 0.05) 100%
+);
+}
+
+/* Info - matn joylashuvi (pastki qismda) */
+.cat-info {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+padding: 1.2rem;
+z-index: 2;
+transform: translateY(0);
+transition: transform 0.3s ease;
+}
+.cat-card:hover .cat-info {
+transform: translateY(-4px);
+}
+
+/* Badge "Kategoriya" */
+.cat-badge {
+display: inline-block;
+font-size: 0.65rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+color: #7ddcff;
+background: rgba(0, 0, 0, 0.5);
+backdrop-filter: blur(4px);
+padding: 0.2rem 0.6rem;
+border-radius: 20px;
+margin-bottom: 0.5rem;
+}
+
+/* Kategoriya nomi */
+.cat-name {
+font-size: 1.2rem;
+font-weight: 700;
+color: white;
+text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+margin-bottom: 0.4rem;
+line-height: 1.3;
+letter-spacing: -0.2px;
+}
+
+/* Invest oralig'i */
+.cat-invest {
+display: inline-flex;
+align-items: center;
+gap: 0.25rem;
+font-size: 0.75rem;
+font-weight: 500;
+color: #b0e0ff;
+background: rgba(0, 0, 0, 0.45);
+backdrop-filter: blur(4px);
+padding: 0.2rem 0.6rem;
+border-radius: 20px;
+}
+
+/* Animatsiya kartalarning paydo bo'lishi */
+@keyframes fadeInUpCard {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.cat-card {
+animation: fadeInUpCard 0.5s ease-out both;
+}
+
+.cat-no-results {
+text-align: center;
+padding: 3rem;
+color: #c0d8f0;
+}
+
+.cat-loading-spinner {
+width: 48px;
+height: 48px;
+border: 3px solid rgba(0, 229, 255, 0.2);
+border-top-color: #00e5ff;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin: 20vh auto;
+}
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+.cat-page { padding: 1rem; }
+.cat-title { font-size: 2rem; }
+.cat-name { font-size: 1rem; }
+.cat-info { padding: 0.8rem; }
+.cat-badge { font-size: 0.6rem; }
+.cat-invest { font-size: 0.65rem; }
+}

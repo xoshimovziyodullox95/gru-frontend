@@ -1,0 +1,373 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.auth-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: var(--bg);
+  padding: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+
+/* ===== ROLE SELECT – 2 ta tugma bir qatorda ===== */
+.role-select {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: var(--textMuted);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Radio input ni yashirish */
+.role-option input {
+  display: none;
+}
+
+/* Icon */
+.role-option svg {
+  flex-shrink: 0;
+  color: var(--textMuted);
+  transition: color 0.25s;
+}
+
+/* Matn */
+.role-option div {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.role-option div span {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+  transition: color 0.25s;
+}
+.role-option div small {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  color: var(--textMuted);
+  transition: color 0.25s;
+}
+
+/* Active holat */
+.role-option.active {
+  border-color: var(--cyan);
+  background: rgba(0, 212, 255, 0.06);
+  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.08);
+}
+.role-option.active svg {
+  color: var(--cyan);
+}
+.role-option.active div span {
+  color: var(--cyan);
+}
+.role-option.active div small {
+  color: var(--cyan);
+  opacity: 0.8;
+}
+
+/* Hover */
+.role-option:hover:not(.active) {
+  border-color: rgba(0, 212, 255, 0.3);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Responsive – kichik ekranda ustun bo‘lib qoladi */
+@media (max-width: 480px) {
+  .role-select {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Burchakdan yorug'lik */
+.auth-container::before {
+  content: '';
+  position: fixed;
+  top: -15%;
+  right: -15%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(var(--cyan-rgb), 0.15), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  border-radius: 2rem;
+  padding: 2rem 1.8rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 25px 45px var(--shadow), 0 0 15px rgba(var(--cyan-rgb), 0.15);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.auth-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px rgba(var(--cyan-rgb), 0.25), 0 25px 45px var(--shadow);
+  transform: translateY(-3px);
+}
+
+.auth-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(135deg, var(--text), var(--cyan));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 8px rgba(var(--cyan-rgb), 0.2);
+}
+
+.auth-subtitle {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  opacity: 0.85;
+  margin-bottom: 1.8rem;
+}
+
+/* Google tugmasi */
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 2.5rem;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 5px var(--shadow);
+}
+
+.google-btn:hover {
+  background: rgba(var(--cyan-rgb), 0.08);
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(var(--cyan-rgb), 0.15);
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 1rem 0 1.5rem;
+  position: relative;
+}
+
+.divider span {
+  background: transparent;
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+  color: var(--textMuted);
+  position: relative;
+  z-index: 1;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Input guruhlari */
+.input-group {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--textMuted);
+  z-index: 2;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.8rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 2.5rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: inset 0 1px 2px var(--shadow), 0 1px 1px rgba(255, 255, 255, 0.02);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(var(--cyan-rgb), 0.12), inset 0 1px 2px var(--shadow);
+  background: var(--bg);
+}
+
+.auth-input::placeholder {
+  color: var(--textMuted);
+}
+
+/* Parol ko'rsatish tugmasi */
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--textMuted);
+  cursor: pointer;
+}
+
+/* Tugma (Sign in / Sign up) */
+.auth-button {
+  width: 100%;
+  background: linear-gradient(95deg, #0088CC, var(--cyan));
+  border: none;
+  border-radius: 2.5rem;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0A1128;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 10px var(--shadow);
+}
+
+.auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(var(--cyan-rgb), 0.3);
+  background: linear-gradient(95deg, var(--cyan), #0088CC);
+}
+
+/* Xatolik va muvaffaqiyat xabarlari */
+.error-message,
+.success-message {
+  border-radius: 2rem;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.8rem;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+
+.error-message {
+  background: rgba(255, 80, 80, 0.12);
+  border: 1px solid #ff5252;
+  color: #ffb3b3;
+}
+
+.success-message {
+  background: rgba(var(--cyan-rgb), 0.08);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+}
+
+/* Havolalar */
+.signup-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--textMuted);
+}
+
+.signup-link a,
+.forgot-link {
+  color: var(--cyan);
+  text-decoration: none;
+  font-weight: 500;
+  text-shadow: 0 0 2px rgba(var(--cyan-rgb), 0.3);
+}
+
+.signup-link a:hover,
+.forgot-link:hover {
+  text-decoration: underline;
+  color: var(--text);
+}
+
+/* Remember me qatori */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.8rem;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--textMuted);
+  cursor: pointer;
+}
+
+/* Animatsiya */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .auth-card {
+    padding: 1.5rem;
+  }
+  .auth-title {
+    font-size: 1.8rem;
+  }
+}

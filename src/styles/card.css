@@ -1,0 +1,100 @@
+/* src/styles/card.css */
+:root {
+  /* Default color scheme – "Cyber Sunset" (qora + amber + neon green) */
+  --card-bg: #0E1015;
+  --card-border: rgba(255, 160, 0, 0.5);
+  --card-border-hover: #00FFAA;
+  --card-glow: rgba(0, 255, 170, 0.4);
+  --card-accent: #FFA000;
+}
+
+/* Asosiy karta */
+.cyber-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+}
+
+.cyber-card:hover {
+  border-color: var(--card-border-hover);
+  box-shadow: 0 0 18px var(--card-glow);
+}
+
+/* 3D efektli karta */
+.cyber-card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.cyber-card-3d:hover {
+  transform: rotateX(3deg) rotateY(1deg) translateY(-6px);
+  box-shadow: 0 20px 30px -15px rgba(0, 0, 0, 0.5);
+}
+
+/* Glassmorphism kartasi (shaffof) */
+.cyber-card-glass {
+  background: rgba(14, 16, 21, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 160, 0, 0.3);
+}
+
+.cyber-card-glass:hover {
+  background: rgba(14, 16, 21, 0.85);
+  border-color: var(--card-border-hover);
+}
+
+/* Neon borderli karta */
+.cyber-card-neon {
+  border: 1px solid var(--card-accent);
+  animation: neonPulse 2s infinite alternate;
+}
+@keyframes neonPulse {
+  0% { border-color: rgba(255, 160, 0, 0.4); box-shadow: 0 0 2px rgba(255, 160, 0, 0.3); }
+  100% { border-color: #00FFAA; box-shadow: 0 0 15px #00FFAA; }
+}
+
+/* Qo‘shimcha hover effekti (transform) */
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Rang o‘zgaruvchilarini o‘zgartirish uchun qulaylik */
+[data-theme="amethyst"] {
+  --card-border: rgba(156, 39, 176, 0.6);
+  --card-border-hover: #FF4081;
+  --card-glow: rgba(255, 64, 129, 0.5);
+  --card-accent: #9C27B0;
+}
+
+.card {
+  @apply bg-card/80 backdrop-blur-sm rounded-xl border border-neonPink/30 transition-all duration-300;
+}
+
+.card:hover {
+  @apply border-neonCyan shadow-[0_0_15px_#00F0FF];
+  transform: translateY(-4px);
+}
+
+.card-glass {
+  @apply bg-dark-card/70 backdrop-blur-md;
+}
+
+.card-neon {
+  animation: cardPulse 2s infinite alternate;
+}
+
+@keyframes cardPulse {
+  0% { border-color: #FF2D75; box-shadow: 0 0 5px #FF2D75; }
+  100% { border-color: #00F0FF; box-shadow: 0 0 20px #00F0FF; }
+}
+
+/* Grid responsive */
+.card-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+}
+@media (max-width: 640px) {
+  .card-grid { @apply gap-3; }
+}

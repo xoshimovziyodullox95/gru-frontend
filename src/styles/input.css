@@ -1,0 +1,85 @@
+/* src/styles/input.css */
+:root {
+  --input-bg: #111318;
+  --input-border: #FF2D75;
+  --input-focus: #00F0FF;
+}
+
+/* Standart input */
+.cyber-input {
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 45, 117, 0.4);
+  transition: all 0.2s ease;
+}
+.cyber-input:focus {
+  border-color: var(--input-focus);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+.cyber-input:hover:not(:focus):not(:disabled) {
+  border-color: rgba(255, 45, 117, 0.7);
+}
+
+/* Neon input – doimiy yonib turuvchi effekt */
+.cyber-input-neon {
+  background: var(--input-bg);
+  border: 1px solid #FF2D75;
+  box-shadow: 0 0 5px #FF2D75;
+  animation: inputPulse 2s infinite alternate;
+}
+@keyframes inputPulse {
+  0% { border-color: #FF2D75; box-shadow: 0 0 2px #FF2D75; }
+  100% { border-color: #00F0FF; box-shadow: 0 0 12px #00F0FF; }
+}
+.cyber-input-neon:focus {
+  animation: none;
+  border-color: #00F0FF;
+  box-shadow: 0 0 15px #00F0FF;
+}
+
+/* Glass input – shaffof */
+.cyber-input-glass {
+  background: rgba(17, 19, 24, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 45, 117, 0.3);
+}
+.cyber-input-glass:focus {
+  background: rgba(17, 19, 24, 0.8);
+  border-color: #00F0FF;
+}
+
+/* Auto-fill stilini o‘chirish (agar kerak) */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 0s 600000s, color 0s 600000s;
+}
+
+.input {
+  @apply w-full rounded-lg bg-dark border border-neonPink/30 text-textLight placeholder-gray-500 px-4 py-2 transition-all focus:outline-none focus:ring-2 focus:ring-neonCyan/60;
+}
+
+.input-sm { @apply px-2 py-1 text-sm; }
+.input-md { @apply px-4 py-2 text-base; }
+.input-lg { @apply px-5 py-3 text-lg; }
+
+.input-glass {
+  @apply bg-dark/50 backdrop-blur-sm;
+}
+
+.input-neon {
+  animation: inputGlow 2s infinite alternate;
+}
+
+@keyframes inputGlow {
+  0% { border-color: #FF2D75; box-shadow: 0 0 2px #FF2D75; }
+  100% { border-color: #00F0FF; box-shadow: 0 0 10px #00F0FF; }
+}
+
+/* Error state */
+.input-error {
+  @apply border-red-500 focus:ring-red-500;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .input { @apply px-3 py-1.5 text-sm; }
+}
