@@ -49,7 +49,7 @@ export default function CelebrityMotivationCard({ category }) {
   return (
     <div className="celebrity-card">
       <div className="celebrity-photo-wrap">
-         <img src={getImageUrl(celebrity.image)}
+         <img src={getImageUrl(celebrity.photo)}
           className="celebrity-photo"
           onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-avatar.jpg'; }}
         />
