@@ -1,6 +1,5 @@
 /* ============================================================
-   marketplace.css – TO‘LIQ VERSIYA (tuzatilgan header)
-   Barcha elementlar: Header, Search, Filter, Grid, Card, Reels
+   marketplace.css – TO‘LIQ VERSIYA (tuzatilgan, responsiv)
    ============================================================ */
 
 /* ---------- GLOBAL ---------- */
@@ -155,6 +154,11 @@
   color: var(--text);
   font-size: 0.85rem;
   cursor: pointer;
+  transition: all 0.2s;
+}
+.mp-mobile-filter-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
 }
 
 /* ============================================================
@@ -511,13 +515,18 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
   z-index: 1000;
-  display: flex;
+  display: none; /* default yopiq */
   align-items: flex-end;
+  justify-content: center;
+}
+.mp-mobile-filter-overlay.open {
+  display: flex;
 }
 
 .mp-mobile-filter-sheet {
   background: var(--bg);
   width: 100%;
+  max-width: 500px;
   max-height: 85vh;
   overflow-y: auto;
   border-radius: 1.5rem 1.5rem 0 0;
@@ -545,12 +554,15 @@
   border: none;
   color: var(--textMuted);
   cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0 8px;
 }
 
 .mp-mobile-filter-sheet .mp-filters-panel {
   position: static;
   border: none;
   padding: 0;
+  background: transparent;
 }
 
 .mp-mobile-filter-apply {
@@ -563,6 +575,10 @@
   color: #0a1128;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s;
+}
+.mp-mobile-filter-apply:hover {
+  opacity: 0.85;
 }
 
 /* ============================================================
@@ -599,15 +615,26 @@
 /* ============================================================
    RESPONSIV
    ============================================================ */
+
+/* 900px dan kichik */
 @media (max-width: 900px) {
   .marketplace-body {
     grid-template-columns: 1fr;
   }
+
   .mp-filters-panel {
-    display: none;
+    display: none; /* desktop filter panel yashiriladi */
   }
+
   .mp-mobile-filter-btn {
-    display: inline-flex;
+    display: inline-flex; /* mobil tugma ko'rsatiladi */
+  }
+
+  .mp-mobile-filter-overlay {
+    display: none; /* default yopiq, JS orqali ochiladi */
+  }
+  .mp-mobile-filter-overlay.open {
+    display: flex;
   }
 
   .marketplace-search-bar {
@@ -617,6 +644,7 @@
     flex-basis: 100%;
   }
 
+  /* Mobil flyout – pastga tushadi */
   .mp-provider-overlay {
     display: none;
   }
@@ -655,6 +683,7 @@
   }
 }
 
+/* 600px dan kichik */
 @media (max-width: 600px) {
   .marketplace-page {
     padding: 1rem 0.75rem 3rem;
@@ -704,6 +733,9 @@
   border-radius: 8px;
 }
 
+/* ============================================================
+   BANK SERVICE TABS (agar ishlatilsa)
+   ============================================================ */
 .bsl-tabs {
   display: flex;
   flex-wrap: wrap;
