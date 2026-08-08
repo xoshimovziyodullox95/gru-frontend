@@ -54,6 +54,7 @@ import MyOrdersPage from './components/pages/MyOrdersPage';
 import ReceivedOrdersPage from './components/pages/ReceivedOrdersPage';
 import PhysicPage from './components/pages/PhysicPage';
 import PhysicCategoryPage from './components/pages/PhysicCategoryPage';
+import ScrollToTop from './components/common/ScrollToTop';
 
 let appHasMounted = false;
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
@@ -179,6 +180,8 @@ function App() {
         <CartProvider>
           <ChatProvider>
             <BrowserRouter>
+              <ScrollToTop />
+
               <EntryGate>
                 <NotificationListener />
                 <MainRoutes />
