@@ -33,7 +33,7 @@ import { formatPrice } from '../utils/formatPrice';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend);
 
 // ============================================================
-// MAHSULOT TURI META (i18next bilan)
+// MAHSULOT TURI META
 // ============================================================
 const getProductTypeMeta = (type, t) => {
   const mapping = {
@@ -100,7 +100,7 @@ const DocumentModal = ({ isOpen, onClose, title, docList, t }) => {
 };
 
 // ============================================================
-// 2. IMAGE VIEWER MODAL (getImageUrl qo'llanildi)
+// 2. IMAGE VIEWER MODAL (to'g'irlangan)
 // ============================================================
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const { t } = useTranslation();
@@ -131,6 +131,9 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
   if (!isOpen) return null;
 
+  const currentImage = images?.[activeIndex] || '/images/placeholder-equipment.jpg';
+  const safeImageUrl = getImageUrl(currentImage) || '/images/placeholder-equipment.jpg';
+
   return (
     <div className="ImageViewerOverlay">
       <button className="ImageViewerBackBtn" onClick={onClose}>
@@ -151,29 +154,38 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
       )}
       <div className="ImageViewerScroll" onClick={onClose}>
         <img
-          src={getImageUrl(images[activeImageIndex])}
+          src={safeImageUrl}
           alt={title}
           className="ImageViewerImg"
           decoding="async"
           onClick={(e) => e.stopPropagation()}
-          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/images/placeholder-equipment.jpg';
+          }}
         />
       </div>
       {images.length > 1 && (
         <div className="ImageViewerThumbs" onClick={(e) => e.stopPropagation()}>
-          {images.map((img, idx) => (
-            <button
-              key={idx}
-              className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
-              onClick={() => setActiveIndex(idx)}
-            >
-              <img
-                src={getImageUrl(img)}
-                alt={`thumb-${idx}`}
-                onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
-              />
-            </button>
-          ))}
+          {images.map((img, idx) => {
+            const thumbSrc = getImageUrl(img) || '/images/placeholder-equipment.jpg';
+            return (
+              <button
+                key={idx}
+                className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
+                onClick={() => setActiveIndex(idx)}
+              >
+                <img
+                  src={thumbSrc}
+                  alt={`thumb-${idx}`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/images/placeholder-equipment.jpg';
+                  }}
+                />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
@@ -479,17 +491,20 @@ export default function EquipmentDetailPage() {
           <ArrowLeft size={16} /> {t('equipment.back')}
         </button>
 
-        {/* ===== YANGI GALEREYA (getImageUrl qo'llanildi) ===== */}
+        {/* GALEREYA */}
         <div className="equipment-gallery">
           <div className="equipment-gallery-main" onClick={() => setImageModalOpen(true)}>
-           <img
-  src={getImageUrl(images[activeImageIndex])}
-  alt={title}
-  className="ImageViewerImg"
-  decoding="async"
-  onClick={(e) => e.stopPropagation()}
-  onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
-/>
+            <img
+              src={getImageUrl(images[activeImageIndex]) || '/images/placeholder-equipment.jpg'}
+              alt={equipment.title}
+              className="equipment-gallery-img"
+              loading="eager"
+              decoding="async"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = '/images/placeholder-equipment.jpg';
+              }}
+            />
             <div className="image-gallery-zoom-hint">
               <Maximize2 size={14} /> {t('equipment.viewFull') || "Kattalashtirib ko'rish"}
             </div>
@@ -497,18 +512,22 @@ export default function EquipmentDetailPage() {
           {images.length > 1 && (
             <div className="equipment-gallery-thumbs">
               {images.map((img, idx) => (
-  <button
-    key={idx}
-    className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
-    onClick={() => setActiveIndex(idx)}
-  >
-    <img
-      src={getImageUrl(img)}
-      alt={`thumb-${idx}`}
-      onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
-    />
-  </button>
-))}
+                <button
+                  key={idx}
+                  className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`}
+                  onClick={() => setActiveImageIndex(idx)}
+                >
+                  <img
+                    src={getImageUrl(img) || '/images/placeholder-equipment.jpg'}
+                    alt={`thumb-${idx}`}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/images/placeholder-equipment.jpg';
+                    }}
+                  />
+                </button>
+              ))}
             </div>
           )}
         </div>

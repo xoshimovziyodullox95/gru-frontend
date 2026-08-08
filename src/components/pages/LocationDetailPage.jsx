@@ -48,7 +48,7 @@ const CertificateModal = ({ isOpen, onClose, title, url, isPdf }) => {
 };
 
 // ============================================================
-// 2. IMAGE VIEWER MODAL (getImageUrl qo'llanildi)
+// 2. IMAGE VIEWER MODAL (to'g'irlangan)
 // ============================================================
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const { t } = useTranslation();
@@ -83,6 +83,10 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
   if (!isOpen) return null;
 
+  // Xavfsiz rasm olish
+  const currentImage = images?.[activeIndex] || '/images/placeholder.jpg';
+  const safeImageUrl = getImageUrl(currentImage) || '/images/placeholder.jpg';
+
   return (
     <div className="ImageViewerOverlay">
       <button className="ImageViewerBackBtn" onClick={onClose}>
@@ -105,30 +109,39 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
       <div className="ImageViewerScroll" onClick={onClose}>
         <img
-  src={getImageUrl(images[activeIndex])}
-  alt={title}
-  className="ImageViewerImg"
-  decoding="async"
-  onClick={(e) => e.stopPropagation()}
-  onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
-/>
+          src={safeImageUrl}
+          alt={title}
+          className="ImageViewerImg"
+          decoding="async"
+          onClick={(e) => e.stopPropagation()}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/images/placeholder.jpg';
+          }}
+        />
       </div>
 
       {images.length > 1 && (
         <div className="ImageViewerThumbs" onClick={(e) => e.stopPropagation()}>
-          {images.map((img, idx) => (
-  <button
-    key={idx}
-    className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
-    onClick={() => setActiveIndex(idx)}
-  >
-    <img
-      src={getImageUrl(img)}
-      alt={`thumb-${idx}`}
-      onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
-    />
-  </button>
-))}
+          {images.map((img, idx) => {
+            const thumbSrc = getImageUrl(img) || '/images/placeholder.jpg';
+            return (
+              <button
+                key={idx}
+                className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
+                onClick={() => setActiveIndex(idx)}
+              >
+                <img
+                  src={thumbSrc}
+                  alt={`thumb-${idx}`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/images/placeholder.jpg';
+                  }}
+                />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
@@ -562,11 +575,11 @@ export default function LocationDetailPage() {
           <ArrowLeft size={16} /> {t('location.back')}
         </button>
 
-        {/* GALEREYA (getImageUrl qo'llanildi) */}
+        {/* GALEREYA */}
         <div className="image-gallery">
           <div className="image-gallery-main-wrap" onClick={() => setImageModalOpen(true)}>
             <img
-              src={getImageUrl(images[activeImageIndex])}
+              src={getImageUrl(images[activeImageIndex]) || '/images/placeholder.jpg'}
               alt={location.title}
               className="image-gallery-main"
               loading="eager"
@@ -586,7 +599,7 @@ export default function LocationDetailPage() {
                   onClick={() => setActiveImageIndex(idx)}
                 >
                   <img
-                    src={getImageUrl(img)}
+                    src={getImageUrl(img) || '/images/placeholder.jpg'}
                     alt={`thumb-${idx}`}
                     loading="lazy"
                     onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
