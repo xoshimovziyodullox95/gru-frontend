@@ -483,7 +483,7 @@ export default function EquipmentDetailPage() {
         <div className="equipment-gallery">
           <div className="equipment-gallery-main" onClick={() => setImageModalOpen(true)}>
            <img
-  src={getImageUrl(images[activeIndex])}
+  src={getImageUrl(images[activeImageIndex])}
   alt={title}
   className="ImageViewerImg"
   decoding="async"
