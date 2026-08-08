@@ -559,10 +559,33 @@
 }
 
 .mp-mobile-filter-sheet .mp-filters-panel {
-  position: static;
+  position: static !important;
+  z-index: auto !important;
   border: none;
   padding: 0;
   background: transparent;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: auto !important;
+}
+
+.mp-mobile-filter-sheet .mp-filters-section {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.mp-mobile-filter-sheet .mp-filters-section h4 {
+  color: var(--text) !important;
+  display: block !important;
+}
+
+.mp-mobile-filter-sheet .mp-filter-checkbox {
+  display: flex !important;
+  color: var(--textMuted) !important;
+  visibility: visible !important;
 }
 
 .mp-mobile-filter-apply {
