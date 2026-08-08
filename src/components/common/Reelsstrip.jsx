@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ChevronLeft, ChevronRight, Play, Heart, MessageCircle, Send, Share2, ThumbsDown } from 'lucide-react';
 import '../../styles/reels.css';
+import { getImageUrl } from '../utils/imageUrl';
 
 function ReelThumb({ reel, onOpen }) {
   const videoRef = useRef(null);
@@ -24,7 +25,7 @@ function ReelThumb({ reel, onOpen }) {
     >
       <video
         ref={videoRef}
-        src={reel.videoUrl}
+        src={getImageUrl(reel.videoUrl)}
         className="reel-video"
         muted
         loop
