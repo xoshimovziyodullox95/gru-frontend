@@ -5,12 +5,18 @@ import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import api from '../services/api';
 import '../../styles/cart.css';
+import OrderWaitingModal from '../common/OrderWaitingModal';
+import { useState } from 'react';
+import { formatPrice } from '../utils/formatPrice'; 
 
 export default function CartPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { cart, increment, decrement, removeItem, clearCart, totalItems, totalPrice } = useCart();
+
+  // Order waiting modal state
+  const [waitingOrderId, setWaitingOrderId] = useState(null);
 
   const handleCheckout = async () => {
     if (!user) {
@@ -32,8 +38,8 @@ export default function CartPage() {
     try {
       const res = await api.post('/orders', payload);
       console.log('ORDER RESPONSE:', res.data);
-      alert(t('cartPage.orderSuccess'));
-      clearCart();
+      // Show waiting modal with order ID
+      setWaitingOrderId(res.data.orderId);
     } catch (err) {
       console.error('ORDER ERROR:', err.response?.data || err.message);
       alert(t('cartPage.orderError'));
@@ -72,7 +78,7 @@ export default function CartPage() {
                       {t('cartPage.application', 'Ariza')} — {item.provider}
                     </p>
                   ) : (
-                    <p className="cart-item-price">{item.price} {t('cartPage.currency')}</p>
+                    <p className="cart-item-price">{formatPrice(item.price, item.currency)}</p>
                   )}
                 </div>
                 <div className="cart-item-actions">
@@ -105,6 +111,14 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
+      {/* Order waiting modal */}
+      {waitingOrderId && (
+        <OrderWaitingModal
+          orderId={waitingOrderId}
+          onClose={() => setWaitingOrderId(null)}
+        />
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import SettingsModal from './SettingsModal';
 import BusinessSummaryWidget from '../business/BusinessSummaryWidget';
 import SupplierStatsWidget from '../business/SupplierStatsWidget';
+import { formatPrice } from '../utils/formatPrice';
 import {
   getUserProfile,
   updateUserProfile,
@@ -507,10 +508,11 @@ export default function ProfilePage() {
             <h4 className="olx-item-title" onClick={() => navigate(`/${detailPath}/${item._id}`)}>
               {item.title}
             </h4>
-
-            {(item.price || item.price_range) && (
-              <span className="olx-item-price">{item.price || item.price_range} so'm</span>
-            )}
+{(item.price || item.price_range) && (
+  <span className="olx-item-price">
+    {formatPrice(item.price || item.price_range, item.currency)}
+  </span>
+)}
 
             <div className="olx-item-stats">
               <span><MessageCircle size={14} /> {commentsCount}</span>

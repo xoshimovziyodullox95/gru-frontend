@@ -118,17 +118,18 @@ export default function Marketplace({ initialLimit = 15 }) {
         }));
 
         const equipment = eqRes.data.map(item => ({
-          id: item._id,
-          type: 'equipment',
-          title: item.title,
-          description: item.description || 'Texnika haqida maʼlumot',
-          price: formatPrice(item.price, item.currency) || 'Narxi mavjud emas',
-          image: item.images?.[0] || '/images/placeholder-equipment.jpg',
-          link: `/equipment/${item._id}`,
-          createdAt: item.createdAt,
-          meta: [],
-          maxQuantity: typeof item.stockQuantity === 'number' ? item.stockQuantity : undefined,
-        }));
+  id: item._id,
+  type: 'equipment',
+  title: item.title,
+  description: item.description || 'Texnika haqida maʼlumot',
+  price: item.price,
+  currency: item.currency,   // <-- YANGI
+  image: item.images?.[0] || '/images/placeholder-equipment.jpg',
+  link: `/equipment/${item._id}`,
+  createdAt: item.createdAt,
+  meta: [],
+  maxQuantity: typeof item.stockQuantity === 'number' ? item.stockQuantity : undefined,
+}));
 
         const services = servRes.data.map(item => ({
           id: item._id,
