@@ -12,6 +12,7 @@ import '../../styles/locationPage.css';
 import '../../styles/serviceProviderDetail.css';
 import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
 import ServiceProviderCard from '../marketplace/ServiceProviderCard';
+import { getImageUrl } from '../utils/imageUrl';
 
 // ============================================================
 // IMAGE VIEWER MODAL
@@ -59,8 +60,8 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
         </>
       )}
       <div className="ImageViewerScroll" onClick={onClose}>
-        <img
-          src={images[activeIndex] || '/images/placeholder.jpg'}
+       <img
+  src={getImageUrl(image)}
           alt={title}
           className="ImageViewerImg"
           onClick={(e) => e.stopPropagation()}

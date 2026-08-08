@@ -21,6 +21,7 @@ import Reels from '../marketplace/MarketplaceReels';
 import UniversalCard from './UniversalCard';
 import NearbySuppliers from '../common/Nearbysuppliers';
 import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
+import { getImageUrl } from '../utils/imageUrl';
 
 // ============================================================
 // 1. CERTIFICATE MODAL
@@ -103,8 +104,8 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
       )}
 
       <div className="ImageViewerScroll" onClick={onClose}>
-        <img
-          src={images[activeIndex] || '/images/placeholder.jpg'}
+      <img
+  src={getImageUrl(image)}
           alt={title}
           className="ImageViewerImg"
           decoding="async"

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getEquipmentById, getEquipment } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
 import { getPosts } from '../services/videos';
+import { getImageUrl } from '../utils/imageUrl';
 import {
   MapPin, Phone, TrendingUp, ArrowLeft, ShieldCheck,
   Award, Briefcase, Calendar, Quote, X,
@@ -150,7 +151,8 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
       )}
       <div className="ImageViewerScroll" onClick={onClose}>
         <img
-          src={images[activeIndex] || '/images/placeholder-equipment.jpg'}
+  src={getImageUrl(image)}
+  
           alt={title}
           className="ImageViewerImg"
           decoding="async"

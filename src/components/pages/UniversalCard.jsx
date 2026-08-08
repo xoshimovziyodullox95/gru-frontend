@@ -13,7 +13,7 @@ const TYPE_LABELS = {
   equipment: 'universalCard.typeEquipment',
   service: 'universalCard.typeService',
 };
-
+import { getImageUrl } from '../utils/imageUrl';
 export default function UniversalCard({
   id,
   type = 'location',
@@ -56,7 +56,7 @@ export default function UniversalCard({
     <Link to={link} className="uc-card">
       <div className="uc-image-wrap">
         <img
-          src={image || '/images/placeholder.jpg'}
+  src={getImageUrl(image)}
           alt={title}
           className="uc-image"
           onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
