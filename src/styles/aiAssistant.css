@@ -466,3 +466,63 @@
   .gru-ai-messages, .gru-ai-input-area { padding-left: 14px; padding-right: 14px; }
   .gru-ai-landing-title { font-size: 26px; }
 }
+
+/* ===== ORQAGA QAYTISH TUGMASI (HEADER) ===== */
+.gru-ai-back-header-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #a9b8d0;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+.gru-ai-back-header-btn:hover {
+  background: rgba(56, 189, 248, 0.1);
+  color: #22d3ee;
+}
+
+/* ===== MOBIL VA PLANSHDAGI TUZATISHLAR ===== */
+@media (max-width: 820px) {
+  .gru-ai-header {
+    padding: 12px 16px;
+  }
+
+  /* Orqaga tugmasi va menu tugmasi yonma-yon */
+  .gru-ai-back-header-btn {
+    display: flex; /* har doim ko'rinadi */
+  }
+
+  .gru-ai-menu-btn {
+    display: block; /* faqat mobil ko'rinadi */
+    margin-left: 8px;
+  }
+
+  .gru-ai-header-title {
+    margin: 0 auto; /* markazda qoladi */
+  }
+
+  /* Sidеbar sozlamalari avvalgidek */
+  .gru-ai-sidebar {
+    position: fixed;
+    inset: 0 25% 0 0;
+    z-index: 20;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+  }
+  .gru-ai-sidebar.open { transform: translateX(0); }
+
+  .gru-ai-sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 15;
+  }
+
+  .gru-ai-back-btn { display: none; } /* sidebar ichidagi 'Back' tugmasi yashiriladi */
+}

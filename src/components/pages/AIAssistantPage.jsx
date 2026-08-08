@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // <-- qo'shildi
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Plus, Send, Paperclip, Sparkles, Menu, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -9,7 +9,7 @@ import '../../styles/aiAssistant.css';
 export default function AIAssistantPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { t } = useTranslation(); // <-- qo'shildi
+  const { t } = useTranslation();
 
   const userName = user?.user_metadata?.full_name || '';
   const avatarUrl = user?.user_metadata?.avatar_url || '';
@@ -161,6 +161,11 @@ export default function AIAssistantPage() {
     }
   }
 
+  // Back tugmasi bosilganda oldingi sahifaga qaytish
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   const inputBar = (
     <div className="gru-ai-input-row">
       <button
@@ -252,13 +257,22 @@ export default function AIAssistantPage() {
       {/* ===== MAIN CHAT AREA ===== */}
       <div className="gru-ai-main">
         <header className="gru-ai-header">
+          {/* 🔥 YANGI: Orqaga qaytish tugmasi (har doim ko'rinadi) */}
+          <button className="gru-ai-back-header-btn" onClick={handleGoBack} aria-label="Orqaga">
+            <ArrowLeft size={20} />
+          </button>
+
+          {/* Menu tugmasi (faqat mobil va planshetda ko'rinadi) */}
           <button className="gru-ai-menu-btn" onClick={() => setSidebarOpen(true)}>
             <Menu size={20} />
           </button>
+
           <div className="gru-ai-header-title">
             <Sparkles size={18} />
             <span>{t('aiAssistant.title')}</span>
           </div>
+
+          {/* Bo'sh joy – o'ng tomondan balanslash uchun */}
           <div style={{ width: 36 }} />
         </header>
 
