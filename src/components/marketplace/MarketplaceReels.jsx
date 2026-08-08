@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getImageUrl } from '../utils/imageUrl';
 import {
   X, ChevronUp, ChevronDown, Play,
   ThumbsUp, ThumbsDown, MessageCircle,
@@ -61,10 +62,10 @@ function ReelThumb({ reel, onOpen, isPriority, t }) {
           loading="lazy"
         />
       ) : showVideo ? (
-        <video
-          ref={videoRef}
-          src={reel.videoUrl}
-          className="reel-video"
+       <video
+  ref={videoRef}
+  src={getImageUrl(reel.videoUrl)}
+  className="reel-video"
           muted
           loop
           playsInline
@@ -258,10 +259,10 @@ src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&playsinline=1&l
             style={{ border: 0, width: '100%', height: '100%' }}
           />
         ) : (
-          <video
-            key={reel.id}
-            src={reel.videoUrl}
-            className={`reel-modal-video reel-slide-${slideDir}`}
+<video
+  key={reel.id}
+  src={getImageUrl(reel.videoUrl)}
+  className={`reel-modal-video reel-slide-${slideDir}`}
             autoPlay
             controls
             controlsList="nofullscreen nodownload"

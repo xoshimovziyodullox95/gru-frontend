@@ -138,10 +138,11 @@ function ReelViewer({ reels, index, onClose, onNavigateIndex, showProfileLink, o
       )}
 
       <div className="reel-modal-player" onClick={(e) => e.stopPropagation()}>
-        <video
-          key={reel.id}
-          src={reel.videoUrl}
-          className="reel-modal-video"
+<video
+  key={reel.id}
+  src={getImageUrl(reel.videoUrl)}
+  className="reel-modal-video"
+  
           autoPlay
           controls
           playsInline
