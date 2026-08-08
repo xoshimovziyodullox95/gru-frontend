@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { ShieldCheck, Quote, Award, TrendingUp } from 'lucide-react';
 import { getCelebrityByCategory } from '../services/celebrities';
+import { getImageUrl } from '../utils/imageUrl';
 
 const CATEGORY_LABELS = {
   agriculture: "Qishloq xo'jaligi",
@@ -48,9 +49,7 @@ export default function CelebrityMotivationCard({ category }) {
   return (
     <div className="celebrity-card">
       <div className="celebrity-photo-wrap">
-        <img
-          src={celebrity.photo}
-          alt={celebrity.name}
+         <img src={getImageUrl(celebrity.image)}
           className="celebrity-photo"
           onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-avatar.jpg'; }}
         />
