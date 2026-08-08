@@ -5,6 +5,7 @@ import { getLocationById, uploadLocationMedia, getLocations } from '../services/
 import { getEquipment } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
+import { getImageUrl } from '../utils/imageUrl';
 import {
   MapPin, Phone, TrendingUp, ArrowLeft, ShieldCheck,
   Award, Briefcase, Calendar, Quote, X,
@@ -21,7 +22,6 @@ import Reels from '../marketplace/MarketplaceReels';
 import UniversalCard from './UniversalCard';
 import NearbySuppliers from '../common/Nearbysuppliers';
 import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
-import { getImageUrl } from '../utils/imageUrl';
 
 // ============================================================
 // 1. CERTIFICATE MODAL
@@ -48,7 +48,7 @@ const CertificateModal = ({ isOpen, onClose, title, url, isPdf }) => {
 };
 
 // ============================================================
-// 2. IMAGE VIEWER MODAL
+// 2. IMAGE VIEWER MODAL (getImageUrl qo'llanildi)
 // ============================================================
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const { t } = useTranslation();
@@ -104,8 +104,8 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
       )}
 
       <div className="ImageViewerScroll" onClick={onClose}>
-      <img
-  src={getImageUrl(image)}
+        <img
+          src={getImageUrl(images[activeImageIndex])}
           alt={title}
           className="ImageViewerImg"
           decoding="async"
@@ -123,7 +123,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
               onClick={() => setActiveIndex(idx)}
             >
               <img
-                src={img}
+                src={getImageUrl(img)}
                 alt={`thumb-${idx}`}
                 onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
               />
@@ -275,9 +275,8 @@ const EquipmentCarousel = ({ items, location, onAddToCalculator }) => {
                   type="equipment"
                   maxQuantity={maxQuantity}
                   title={item.name || item.title || 'Nomsiz texnika'}
-                  image={item.images?.[0] || '/images/placeholder-equipment.jpg'}
-      // Eski: price={typeof item.price === 'number' ? `$${item.price}` : (item.price || 'Narxi mavjud emas')}
-price={formatPrice(item.price, item.currency) || 'Narxi mavjud emas'}
+                  image={item.images?.[0] ? getImageUrl(item.images[0]) : '/images/placeholder-equipment.jpg'}
+                  price={formatPrice(item.price, item.currency) || 'Narxi mavjud emas'}
                   link={`/equipment/${itemId}`}
                   createdAt={location?.createdAt}
                   meta={[{ icon: MapPin, text: location?.address || t('location.address') }]}
@@ -343,7 +342,7 @@ const MapPreview = ({ address, nearby = [] }) => {
 };
 
 // ============================================================
-// 7. ANALYTICS CARD – faqat soatlik (hourly) traffic
+// 7. ANALYTICS CARD
 // ============================================================
 const AnalyticsCard = ({ hourlyTraffic = [] }) => {
   const { t } = useTranslation();
@@ -395,7 +394,7 @@ export default function LocationDetailPage() {
 
   const isOwner = location?.userId?._id === user?.id || user?.email === 'xoshimovabdullox95@gmail.com';
 
-  // ---------- savat ----------
+  // savat
   const addToCart = (item) => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const existingIndex = cart.findIndex((i) => i.id === item.id);
@@ -413,11 +412,11 @@ export default function LocationDetailPage() {
       title: location.title,
       price: parseFloat(location.price_range?.replace(/[^\d]/g, '')) || 0,
       type: 'location',
-      image: location.images?.[0] || '/images/placeholder.jpg',
+      image: location.images?.[0] ? getImageUrl(location.images[0]) : '/images/placeholder.jpg',
     });
   };
 
-  // ---------- chat ----------
+  // chat
   const handleChat = () => {
     const targetId = location?.userId?._id || location?.userId;
     if (!targetId) {
@@ -427,7 +426,7 @@ export default function LocationDetailPage() {
     navigate(`/chat?userId=${targetId}`);
   };
 
-  // ---------- rasm/video yuklash ----------
+  // media yuklash
   const handleMediaUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
@@ -447,7 +446,7 @@ export default function LocationDetailPage() {
     }
   };
 
-  // ---------- location va equipment yuklash ----------
+  // location va equipment yuklash
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -476,7 +475,7 @@ export default function LocationDetailPage() {
     loadData();
   }, [id, t]);
 
-  // ---------- reels yuklash ----------
+  // reels yuklash
   useEffect(() => {
     const loadReels = async () => {
       try {
@@ -493,7 +492,7 @@ export default function LocationDetailPage() {
     loadReels();
   }, []);
 
-  // ---------- kalkulyator ----------
+  // kalkulyator
   const addToCalculator = (item) => {
     setSelectedItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
@@ -529,7 +528,7 @@ export default function LocationDetailPage() {
     });
   };
 
-  // ---------- sertifikat modallari ----------
+  // sertifikat modallari
   const openLexModal = () =>
     setModal({ open: true, title: t('location.certificateSubsidy'), url: 'https://lex.uz/docs/-5841077', isPdf: false });
   const openPdfModal = () =>
@@ -550,7 +549,6 @@ export default function LocationDetailPage() {
     );
   }
 
-  // ---------- rasmlar ----------
   const images = location?.images?.filter((img) => img !== '/images/placeholder-location.jpg')?.length
     ? location.images
     : [`/images/locations/${location?.title?.toLowerCase().replace(/\s+/g, '-') || 'default'}.jpg`];
@@ -564,11 +562,11 @@ export default function LocationDetailPage() {
           <ArrowLeft size={16} /> {t('location.back')}
         </button>
 
-        {/* GALEREYA */}
+        {/* GALEREYA (getImageUrl qo'llanildi) */}
         <div className="image-gallery">
           <div className="image-gallery-main-wrap" onClick={() => setImageModalOpen(true)}>
             <img
-              src={images[activeImageIndex] || '/images/placeholder.jpg'}
+              src={getImageUrl(images[activeImageIndex])}
               alt={location.title}
               className="image-gallery-main"
               loading="eager"
@@ -588,7 +586,7 @@ export default function LocationDetailPage() {
                   onClick={() => setActiveImageIndex(idx)}
                 >
                   <img
-                    src={img}
+                    src={getImageUrl(img)}
                     alt={`thumb-${idx}`}
                     loading="lazy"
                     onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
@@ -601,7 +599,6 @@ export default function LocationDetailPage() {
 
         {/* ASOSIY GRID */}
         <div className="LayoutGrid">
-          {/* CHAP USTUN */}
           <div className="InformationContent">
             <div className="DetailsModule">
               <h2 className="ModuleHeading">{location.title}</h2>
@@ -640,7 +637,6 @@ export default function LocationDetailPage() {
                 </div>
               </div>
 
-              {/* ✅ creative-reason ENDI SHU YERDA (DetailsModule ichida) */}
               <div className="creative-reason">
                 <h4><Lightbulb size={16} /> {t('location.creativeReasonTitle')}</h4>
                 {creativeReason ? (
@@ -685,7 +681,6 @@ export default function LocationDetailPage() {
             <ServiceButtons />
           </div>
 
-          {/* O'NG USTUN */}
           <div className="ActionSidebar">
             <div className="PriceIndicatorCard">
               <span className="PriceTagLabel">{t('location.priceLabel')}</span>
@@ -734,7 +729,6 @@ export default function LocationDetailPage() {
 
             <MapPreview address={location.address} nearby={nearby} />
 
-            {/* ✅ AnalyticsCard endi faqat hourly traffic */}
             <AnalyticsCard hourlyTraffic={traffic} />
 
             <div className="ContactSurface">
@@ -786,7 +780,6 @@ export default function LocationDetailPage() {
           </div>
         </div>
 
-        {/* TEXNIKALAR KARUSELI */}
         <EquipmentCarousel items={equipment} location={location} onAddToCalculator={addToCalculator} />
       </div>
 

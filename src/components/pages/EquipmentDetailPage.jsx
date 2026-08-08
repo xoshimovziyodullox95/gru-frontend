@@ -26,7 +26,7 @@ import ReelsStrip from '../marketplace/MarketplaceReels';
 import { likePost, commentPost } from '../services/videos';
 import '../../styles/equipmentDetail.css';
 import '../../styles/equipmentDetailAttrs.css';
-import '../../styles/locationPage.css'; // <-- QO'SHILDI
+import '../../styles/locationPage.css';
 import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
 import { formatPrice } from '../utils/formatPrice';
 
@@ -100,7 +100,7 @@ const DocumentModal = ({ isOpen, onClose, title, docList, t }) => {
 };
 
 // ============================================================
-// 2. IMAGE VIEWER MODAL (LOCATION'DAN KO'CHIRILGAN)
+// 2. IMAGE VIEWER MODAL (getImageUrl qo'llanildi)
 // ============================================================
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const { t } = useTranslation();
@@ -151,8 +151,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
       )}
       <div className="ImageViewerScroll" onClick={onClose}>
         <img
-  src={getImageUrl(image)}
-  
+          src={getImageUrl(images[activeImageIndex])}
           alt={title}
           className="ImageViewerImg"
           decoding="async"
@@ -169,7 +168,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
               onClick={() => setActiveIndex(idx)}
             >
               <img
-                src={img}
+                src={getImageUrl(img)}
                 alt={`thumb-${idx}`}
                 onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
               />
@@ -284,7 +283,6 @@ export default function EquipmentDetailPage() {
   const [reels, setReels] = useState([]);
   const [reelsLoading, setReelsLoading] = useState(true);
 
-  // ===== YANGI STATE =====
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imageModalOpen, setImageModalOpen] = useState(false);
 
@@ -481,11 +479,11 @@ export default function EquipmentDetailPage() {
           <ArrowLeft size={16} /> {t('equipment.back')}
         </button>
 
-        {/* ===== YANGI GALEREYA ===== */}
+        {/* ===== YANGI GALEREYA (getImageUrl qo'llanildi) ===== */}
         <div className="equipment-gallery">
           <div className="equipment-gallery-main" onClick={() => setImageModalOpen(true)}>
             <img
-              src={images[activeImageIndex] || '/images/placeholder-equipment.jpg'}
+              src={getImageUrl(images[activeImageIndex])}
               alt={equipment.title}
               className="equipment-gallery-img"
               onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
@@ -502,7 +500,11 @@ export default function EquipmentDetailPage() {
                   className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`}
                   onClick={() => setActiveImageIndex(idx)}
                 >
-                  <img src={img} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }} />
+                  <img
+                    src={getImageUrl(img)}
+                    alt={`thumb-${idx}`}
+                    onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
+                  />
                 </button>
               ))}
             </div>
@@ -594,11 +596,9 @@ export default function EquipmentDetailPage() {
           </div>
 
           <div className="ActionSidebar">
-            {/* Narx */}
             <div className="PriceIndicatorCard">
               <span className="PriceTagLabel">{t('equipment.price')}</span>
-             
-<span className="PriceTagValue">{formatPrice(equipment.price, equipment.currency)}</span>
+              <span className="PriceTagValue">{formatPrice(equipment.price, equipment.currency)}</span>
             </div>
 
             <div className="ContactSurface">
@@ -674,7 +674,6 @@ export default function EquipmentDetailPage() {
         t={t}
       />
 
-      {/* ===== YANGI IMAGE VIEWER MODAL ===== */}
       <ImageViewerModal
         isOpen={imageModalOpen}
         onClose={() => setImageModalOpen(false)}
