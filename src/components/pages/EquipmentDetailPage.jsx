@@ -482,12 +482,14 @@ export default function EquipmentDetailPage() {
         {/* ===== YANGI GALEREYA (getImageUrl qo'llanildi) ===== */}
         <div className="equipment-gallery">
           <div className="equipment-gallery-main" onClick={() => setImageModalOpen(true)}>
-            <img
-              src={getImageUrl(images[activeImageIndex])}
-              alt={equipment.title}
-              className="equipment-gallery-img"
-              onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
-            />
+           <img
+  src={getImageUrl(images[activeIndex])}
+  alt={title}
+  className="ImageViewerImg"
+  decoding="async"
+  onClick={(e) => e.stopPropagation()}
+  onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
+/>
             <div className="image-gallery-zoom-hint">
               <Maximize2 size={14} /> {t('equipment.viewFull') || "Kattalashtirib ko'rish"}
             </div>
@@ -495,18 +497,18 @@ export default function EquipmentDetailPage() {
           {images.length > 1 && (
             <div className="equipment-gallery-thumbs">
               {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`}
-                  onClick={() => setActiveImageIndex(idx)}
-                >
-                  <img
-                    src={getImageUrl(img)}
-                    alt={`thumb-${idx}`}
-                    onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
-                  />
-                </button>
-              ))}
+  <button
+    key={idx}
+    className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
+    onClick={() => setActiveIndex(idx)}
+  >
+    <img
+      src={getImageUrl(img)}
+      alt={`thumb-${idx}`}
+      onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
+    />
+  </button>
+))}
             </div>
           )}
         </div>

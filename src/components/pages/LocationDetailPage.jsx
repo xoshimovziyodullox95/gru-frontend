@@ -105,30 +105,30 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
       <div className="ImageViewerScroll" onClick={onClose}>
         <img
-          src={getImageUrl(images[activeImageIndex])}
-          alt={title}
-          className="ImageViewerImg"
-          decoding="async"
-          onClick={(e) => e.stopPropagation()}
-          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
-        />
+  src={getImageUrl(images[activeIndex])}
+  alt={title}
+  className="ImageViewerImg"
+  decoding="async"
+  onClick={(e) => e.stopPropagation()}
+  onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+/>
       </div>
 
       {images.length > 1 && (
         <div className="ImageViewerThumbs" onClick={(e) => e.stopPropagation()}>
           {images.map((img, idx) => (
-            <button
-              key={idx}
-              className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
-              onClick={() => setActiveIndex(idx)}
-            >
-              <img
-                src={getImageUrl(img)}
-                alt={`thumb-${idx}`}
-                onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
-              />
-            </button>
-          ))}
+  <button
+    key={idx}
+    className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`}
+    onClick={() => setActiveIndex(idx)}
+  >
+    <img
+      src={getImageUrl(img)}
+      alt={`thumb-${idx}`}
+      onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+    />
+  </button>
+))}
         </div>
       )}
     </div>
