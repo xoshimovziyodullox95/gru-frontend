@@ -81,6 +81,24 @@
     "trending": "Ommabop"
     }
   },
+
+  "marketplace": {
+    "bank": {
+      "title": "Bank xizmatlari",
+      "individual": "Jismoniy shaxs",
+      "legal": "Yuridik shaxs",
+      "empty": "Bu bo'limda hozircha xizmat yo'q",
+      "scrollTop": "Yuqoriga",
+      "categories": {
+        "credit": "Kreditlar",
+        "cards": "Kartalar",
+        "deposits": "Depozitlar",
+        "pko": "Naqd pul / PKO",
+        "moneyTransfers": "Pul o‘tkazmalari",
+        "qrPayment": "QR to‘lovlar"
+      }
+    }
+  },
    "marketplaceReels": {
     "title": "Videolar",
     "count": "{{count}} ta",
