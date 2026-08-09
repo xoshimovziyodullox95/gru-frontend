@@ -1,25 +1,23 @@
 // src/components/pages/MarketplaceBank.jsx
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ArrowUp, User, Building2, CreditCard, Landmark, Wallet, Send, QrCode, PiggyBank } from 'lucide-react';
 import { getBankServices } from '../services/bankServices';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/marketplaceHub.css';
 
 const subCategoryMap = {
-  credit: { key: 'credit', icon: CreditCard },
-  cards: { key: 'cards', icon: CreditCard },
-  deposits: { key: 'deposits', icon: PiggyBank },
-  pko: { key: 'pko', icon: Wallet },
-  money_transfers: { key: 'moneyTransfers', icon: Send },
-  qr_payment: { key: 'qrPayment', icon: QrCode },
+  credit: { key: 'credit', icon: CreditCard, label: 'Kreditlar' },
+  cards: { key: 'cards', icon: CreditCard, label: 'Kartalar' },
+  deposits: { key: 'deposits', icon: PiggyBank, label: 'Depozitlar' },
+  pko: { key: 'pko', icon: Wallet, label: 'Naqd pul / PKO' },
+  money_transfers: { key: 'moneyTransfers', icon: Send, label: "Pul o'tkazmalari" },
+  qr_payment: { key: 'qrPayment', icon: QrCode, label: 'QR to‘lovlar' },
 };
 
 const order = ['credit', 'cards', 'deposits', 'pko', 'money_transfers', 'qr_payment'];
 
 export default function MarketplaceBank() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +32,6 @@ export default function MarketplaceBank() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Scroll holatini kuzatish
   useEffect(() => {
     const handleScroll = () => {
       if (pageRef.current) {
@@ -46,7 +43,7 @@ export default function MarketplaceBank() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (loading) return <div className="mph-loading">{t('common.loading')}</div>;
+  if (loading) return <div className="mph-loading">Yuklanmoqda...</div>;
 
   const displayedItems = items.filter(s => (s.customerType || 'individual') === customerType);
 
@@ -77,33 +74,30 @@ export default function MarketplaceBank() {
   return (
     <div className="mph-page" ref={pageRef}>
       <button className="mph-back" onClick={() => navigate(-1)}>
-        <ArrowLeft size={18} /> {t('common.back')}
+        <ArrowLeft size={18} /> Orqaga
       </button>
-      <h2 className="mph-subtitle">{t('marketplace.bank.title')}</h2>
+      <h2 className="mph-subtitle">Bank xizmatlari</h2>
 
-      {/* Jismoniy / Yuridik tab */}
       <div className="mph-customer-tabs">
         <button
           className={customerType === 'individual' ? 'active' : ''}
           onClick={() => setCustomerType('individual')}
         >
-          <User size={16} /> {t('marketplace.bank.individual')}
+          <User size={16} /> Jismoniy shaxs
         </button>
         <button
           className={customerType === 'legal' ? 'active' : ''}
           onClick={() => setCustomerType('legal')}
         >
-          <Building2 size={16} /> {t('marketplace.bank.legal')}
+          <Building2 size={16} /> Yuridik shaxs
         </button>
       </div>
 
-      {/* KATEGORIYA KARTALARI */}
       {sortedKeys.length > 0 && (
         <div className="mph-bank-category-grid">
           {sortedKeys.map(key => {
-            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark };
+            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark, label: 'Boshqa' };
             const Icon = meta.icon;
-            const label = t(`marketplace.bank.categories.${meta.key}`);
             return (
               <button
                 key={key}
@@ -111,23 +105,21 @@ export default function MarketplaceBank() {
                 onClick={() => scrollToSection(key)}
               >
                 <Icon size={28} />
-                <span>{label}</span>
+                <span>{meta.label}</span>
               </button>
             );
           })}
         </div>
       )}
 
-      {/* Bo‘limlar */}
       {sortedKeys.length === 0 ? (
-        <div className="mph-loading">{t('marketplace.bank.empty')}</div>
+        <div className="mph-loading">Bu bo'limda hozircha xizmat yo'q</div>
       ) : (
         <div className="mph-bank-groups">
           {sortedKeys.map(key => {
             const groupItems = grouped[key];
-            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark };
+            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark, label: 'Boshqa' };
             const Icon = meta.icon;
-            const label = t(`marketplace.bank.categories.${meta.key}`);
             return (
               <div
                 key={key}
@@ -136,7 +128,7 @@ export default function MarketplaceBank() {
               >
                 <div className="mph-bank-group-header">
                   <Icon size={20} />
-                  <h3>{label}</h3>
+                  <h3>{meta.label}</h3>
                 </div>
                 <div className="uc-grid">
                   {groupItems.map(s => (
@@ -157,11 +149,10 @@ export default function MarketplaceBank() {
         </div>
       )}
 
-      {/* YUQORIGA TUGMA */}
       {showScrollTop && (
-        <button className="mph-scroll-top-btn" onClick={scrollToTop} aria-label={t('marketplace.bank.scrollTop')}>
+        <button className="mph-scroll-top-btn" onClick={scrollToTop} aria-label="Yuqoriga">
           <ArrowUp size={22} />
-          <span>{t('marketplace.bank.scrollTop')}</span>
+          <span>Yuqoriga</span>
         </button>
       )}
     </div>
