@@ -563,7 +563,7 @@ export default function MarketplaceReels({
           <Clapperboard size={22} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
           {t('marketplaceReels.title')}
         </h2>
-        <span className="reels-count">{t('marketplaceReels.count', { count: orderedReels.length })}</span>
+      
       </div>
       <div className={trackClassName}>
         {orderedReels.map((reel, idx) => (

@@ -1,3 +1,4 @@
+// src/pages/EquipmentDetailPage.jsx
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -100,7 +101,7 @@ const DocumentModal = ({ isOpen, onClose, title, docList, t }) => {
 };
 
 // ============================================================
-// 2. IMAGE VIEWER MODAL (to'g'irlangan)
+// 2. IMAGE VIEWER MODAL
 // ============================================================
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const { t } = useTranslation();
@@ -222,54 +223,7 @@ const UserInfoCard = ({ user, t }) => {
 };
 
 // ============================================================
-// 4. SERVICE BUTTONS
-// ============================================================
-const ServiceButtons = ({ t }) => {
-  const navigate = useNavigate();
-  const [showAll, setShowAll] = useState(false);
-
-  const services = [
-    { name: t('services.repair', "Qurilish va santexnika"), slug: 'repair', icon: Hammer },
-    { name: t('services.smm', "Marketing"), slug: 'marketing', icon: Megaphone },
-    { name: t('services.event'), slug: 'event', icon: Calendar },
-    { name: t('services.bankServices', "Bank xizmatlari"), slug: 'bank-xizmatlari', icon: Landmark, isBank: true },
-    { name: t('services.accounting'), slug: 'accounting', icon: Calculator },
-    { name: t('services.website', "Sayt yaratish"), slug: 'website', icon: Monitor },
-    { name: t('services.internet'), slug: 'internet', icon: Wifi },
-  ];
-
-  const visible = showAll ? services : services.slice(0, 6);
-
-  return (
-    <div className="services-buttons-section">
-      <h3 className="ModuleHeading">{t('equipment.services')}</h3>
-      <div className="services-buttons-vertical">
-        {visible.map(service => {
-          const Icon = service.icon;
-          return (
-            <button
-              key={service.slug}
-              className="service-btn-vertical"
-              onClick={() => navigate(`/services/${service.slug}`)}
-            >
-              <Icon size={20} />
-              <span>{service.name}</span>
-            </button>
-          );
-        })}
-      </div>
-      {services.length > 6 && (
-        <button className="show-more-services-btn" onClick={() => setShowAll(!showAll)}>
-          {showAll ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          {showAll ? ` ${t('equipment.showLess')}` : ` ${t('equipment.showMore')}`}
-        </button>
-      )}
-    </div>
-  );
-};
-
-// ============================================================
-// 5. ANALYTICS CARD
+// 4. ANALYTICS CARD
 // ============================================================
 const AnalyticsCard = ({ trafficData, chartOptions, t }) => {
   return (
@@ -281,7 +235,7 @@ const AnalyticsCard = ({ trafficData, chartOptions, t }) => {
 };
 
 // ============================================================
-// 6. MAIN COMPONENT – EquipmentDetailPage
+// 5. MAIN COMPONENT – EquipmentDetailPage (ServiceButtons YO'Q)
 // ============================================================
 export default function EquipmentDetailPage() {
   const { id } = useParams();
@@ -613,7 +567,8 @@ export default function EquipmentDetailPage() {
 
             {equipment.userId && <UserInfoCard user={equipment.userId} t={t} />}
 
-            <ServiceButtons t={t} />
+            {/* ===== ServiceButtons O'CHIRILDI ===== */}
+
           </div>
 
           <div className="ActionSidebar">

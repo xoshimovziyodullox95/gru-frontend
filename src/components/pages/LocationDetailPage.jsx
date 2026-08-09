@@ -6,6 +6,7 @@ import { getEquipment } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
 import { getImageUrl } from '../utils/imageUrl';
+import MortgageCalculator from '../common/MortgageCalculator';
 import {
   MapPin, Phone, TrendingUp, ArrowLeft, ShieldCheck,
   Award, Briefcase, Calendar, Quote, X,
@@ -23,9 +24,13 @@ import UniversalCard from './UniversalCard';
 import NearbySuppliers from '../common/Nearbysuppliers';
 import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
 
-// ============================================================
-// 1. CERTIFICATE MODAL
-// ============================================================
+function getNumericPrice(location) {
+  return parseFloat(String(location?.price_range || '').replace(/[^\d.]/g, '')) || 0;
+}
+function isMortgageEligible(location) {
+  return location?.currency === 'UZS' && getNumericPrice(location) >= 2000000000;
+}
+
 const CertificateModal = ({ isOpen, onClose, title, url, isPdf }) => {
   if (!isOpen) return null;
   return (
@@ -47,9 +52,6 @@ const CertificateModal = ({ isOpen, onClose, title, url, isPdf }) => {
   );
 };
 
-// ============================================================
-// 2. IMAGE VIEWER MODAL (to'g'irlangan)
-// ============================================================
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const { t } = useTranslation();
 
@@ -83,7 +85,6 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
   if (!isOpen) return null;
 
-  // Xavfsiz rasm olish
   const currentImage = images?.[activeIndex] || '/images/placeholder.jpg';
   const safeImageUrl = getImageUrl(currentImage) || '/images/placeholder.jpg';
 
@@ -148,9 +149,6 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
   );
 };
 
-// ============================================================
-// 3. USER INFO CARD
-// ============================================================
 const UserInfoCard = ({ user }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -183,9 +181,6 @@ const UserInfoCard = ({ user }) => {
   );
 };
 
-// ============================================================
-// 4. SERVICE BUTTONS
-// ============================================================
 const ServiceButtons = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -239,9 +234,6 @@ const ServiceButtons = () => {
   );
 };
 
-// ============================================================
-// 5. EQUIPMENT CAROUSEL
-// ============================================================
 const EquipmentCarousel = ({ items, location, onAddToCalculator }) => {
   const { t } = useTranslation();
   const trackRef = useRef(null);
@@ -310,9 +302,6 @@ const EquipmentCarousel = ({ items, location, onAddToCalculator }) => {
   );
 };
 
-// ============================================================
-// 6. MAP PREVIEW
-// ============================================================
 const MapPreview = ({ address, nearby = [] }) => {
   const { t } = useTranslation();
   const openInMaps = () => {
@@ -354,9 +343,6 @@ const MapPreview = ({ address, nearby = [] }) => {
   );
 };
 
-// ============================================================
-// 7. ANALYTICS CARD
-// ============================================================
 const AnalyticsCard = ({ hourlyTraffic = [] }) => {
   const { t } = useTranslation();
   const maxTraffic = Math.max(...hourlyTraffic.map((h) => h.count), 1);
@@ -383,9 +369,6 @@ const AnalyticsCard = ({ hourlyTraffic = [] }) => {
   );
 };
 
-// ============================================================
-// 8. MAIN COMPONENT – LocationDetailPage
-// ============================================================
 export default function LocationDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -407,7 +390,6 @@ export default function LocationDetailPage() {
 
   const isOwner = location?.userId?._id === user?.id || user?.email === 'xoshimovabdullox95@gmail.com';
 
-  // savat
   const addToCart = (item) => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const existingIndex = cart.findIndex((i) => i.id === item.id);
@@ -429,7 +411,6 @@ export default function LocationDetailPage() {
     });
   };
 
-  // chat
   const handleChat = () => {
     const targetId = location?.userId?._id || location?.userId;
     if (!targetId) {
@@ -439,7 +420,6 @@ export default function LocationDetailPage() {
     navigate(`/chat?userId=${targetId}`);
   };
 
-  // media yuklash
   const handleMediaUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
@@ -459,7 +439,6 @@ export default function LocationDetailPage() {
     }
   };
 
-  // location va equipment yuklash
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -488,7 +467,6 @@ export default function LocationDetailPage() {
     loadData();
   }, [id, t]);
 
-  // reels yuklash
   useEffect(() => {
     const loadReels = async () => {
       try {
@@ -505,7 +483,6 @@ export default function LocationDetailPage() {
     loadReels();
   }, []);
 
-  // kalkulyator
   const addToCalculator = (item) => {
     setSelectedItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
@@ -541,7 +518,6 @@ export default function LocationDetailPage() {
     });
   };
 
-  // sertifikat modallari
   const openLexModal = () =>
     setModal({ open: true, title: t('location.certificateSubsidy'), url: 'https://lex.uz/docs/-5841077', isPdf: false });
   const openPdfModal = () =>
@@ -567,6 +543,7 @@ export default function LocationDetailPage() {
     : [`/images/locations/${location?.title?.toLowerCase().replace(/\s+/g, '-') || 'default'}.jpg`];
 
   const { details = {}, nearby = [], creativeReason = '', traffic = [], category } = location;
+  const showMortgage = isMortgageEligible(location);
 
   return (
     <div className="LocationPageWrapper">
@@ -575,7 +552,6 @@ export default function LocationDetailPage() {
           <ArrowLeft size={16} /> {t('location.back')}
         </button>
 
-        {/* GALEREYA */}
         <div className="image-gallery">
           <div className="image-gallery-main-wrap" onClick={() => setImageModalOpen(true)}>
             <img
@@ -610,7 +586,6 @@ export default function LocationDetailPage() {
           )}
         </div>
 
-        {/* ASOSIY GRID */}
         <div className="LayoutGrid">
           <div className="InformationContent">
             <div className="DetailsModule">
@@ -666,9 +641,22 @@ export default function LocationDetailPage() {
                   <span className="admin-badge"><ShieldCheck size={12} /> {t('location.creativeReasonAdmin')}</span>
                 )}
               </div>
+
+              {showMortgage && (
+                <div className="mortgage-info-block">
+                  <h4><Landmark size={16} /> Universal Bank — Biznes Ipoteka</h4>
+                  <p>
+                    Bu lokatsiyani to'liq summasiz ham sotib olish mumkin — Universal Bank'ning
+                    "Biznes Ipoteka" xizmati orqali, shartnoma summasining <strong>75%</strong>igacha
+                    kredit, yillik <strong>24%</strong> stavkada, <strong>120 oygacha</strong> muddatga,
+                    <strong> 12 oygacha imtiyozli davr</strong> bilan taqdim etiladi. Aniq hisob-kitobni
+                    o'ng tarafdagi kalkulyatorda ko'rishingiz mumkin.
+                  </p>
+                </div>
+              )}
             </div>
 
-            <CelebrityMotivationCard category={category} />
+            <CelebrityMotivationCard category={location.level1} />
 
             {location.documents?.length > 0 && (
               <div className="CertificatesModule">
@@ -739,6 +727,10 @@ export default function LocationDetailPage() {
 
               <NearbySuppliers location={location} selectedItems={selectedItems} onAdd={addToCalculator} />
             </div>
+
+            {showMortgage && (
+              <MortgageCalculator price={getNumericPrice(location)} />
+            )}
 
             <MapPreview address={location.address} nearby={nearby} />
 

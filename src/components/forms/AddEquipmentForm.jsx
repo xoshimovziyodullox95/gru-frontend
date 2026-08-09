@@ -7,6 +7,7 @@ import { getLevel1, getLevel2 } from '../services/categories';
 import { createEquipment, uploadEquipmentMedia } from '../services/equipment';
 import { Upload, X, Cpu, UtensilsCrossed, Sofa, Package, Check, ArrowLeft } from 'lucide-react';
 import SuccessModal from '../common/SuccessModal';
+import { FOOD_CATALOG } from '../utils/foodCatalog'; // <--- YANGI IMPORT
 import '../../styles/forms.css';
 import '../../styles/addEquipmentForm.css';
 
@@ -26,7 +27,7 @@ export default function AddEquipmentForm() {
     title: '',
     description: '',
     price: '',
-    currency: 'USD',   // <--- YANGI qo'shildi
+    currency: 'UZS', // default so'm
     level1: preSelectedLevel1,
     category: preSelectedLevel2,
     condition: 'new',
@@ -41,7 +42,11 @@ export default function AddEquipmentForm() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [successInfo, setSuccessInfo] = useState(null);
 
-  // Mahsulot turlari – t() bilan
+  // ===== JORIY YO'NALISHGA MOS KATALOG =====
+  const activeCatalog = FOOD_CATALOG[formData.level1] || null;
+  const showCatalog = activeCatalog && productType === activeCatalog.productType;
+
+  // Mahsulot turlari
   const PRODUCT_TYPES = [
     { id: 'texnika', label: t('addEquipment.productTypes.texnika.label'), desc: t('addEquipment.productTypes.texnika.desc'), icon: Cpu },
     { id: 'oziqovqat', label: t('addEquipment.productTypes.oziqovqat.label'), desc: t('addEquipment.productTypes.oziqovqat.desc'), icon: UtensilsCrossed },
@@ -57,6 +62,7 @@ export default function AddEquipmentForm() {
     { value: 'ml', label: t('addEquipment.units.ml') },
   ];
 
+  // Level1 ro'yxatini olish
   useEffect(() => {
     getLevel1().then(res => {
       const data = res.data.map(item => ({
@@ -67,6 +73,7 @@ export default function AddEquipmentForm() {
     }).catch(console.error);
   }, [t]);
 
+  // Level2 ro'yxatini olish (level1 o'zgarganda)
   useEffect(() => {
     if (formData.level1) {
       getLevel2(formData.level1).then(res => {
@@ -84,6 +91,7 @@ export default function AddEquipmentForm() {
     }
   }, [formData.level1, t]);
 
+  // productType o'zgarganda atributlarni tozalash
   useEffect(() => {
     setAttrs({});
   }, [productType]);
@@ -111,6 +119,7 @@ export default function AddEquipmentForm() {
     setMediaFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Atributlarni tekshirish
   function validateAttrs() {
     if (productType === 'oziqovqat') {
       if (!attrs.amount) return t('addEquipment.errors.attrAmount');
@@ -121,6 +130,7 @@ export default function AddEquipmentForm() {
     return null;
   }
 
+  // Formani yuborish
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
@@ -153,7 +163,7 @@ export default function AddEquipmentForm() {
     setUploadProgress(0);
     try {
       const payload = {
-        ...formData,       // bu yerda currency ham bor
+        ...formData,
         price: parseFloat(formData.price) || 0,
         stockQuantity: Math.max(1, parseInt(formData.stockQuantity, 10) || 1),
         userId: user.id,
@@ -181,10 +191,6 @@ export default function AddEquipmentForm() {
 
   const showCondition = productType === 'texnika' || productType === 'mebel';
 
-  // Tarjima qilingan level nomlari
-  const level1Display = t(`categories.${formData.level1}`, { defaultValue: formData.level1 });
-  const level2Display = t(`categoriesLevel2.${formData.category}`, { defaultValue: formData.category });
-
   return (
     <div className="add-equipment-form-container">
       <button type="button" className="aef-back-btn" onClick={() => navigate(-1)}>
@@ -195,6 +201,7 @@ export default function AddEquipmentForm() {
       <form onSubmit={handleSubmit} className="add-equipment-form">
         <h2>{t('addEquipment.title')}</h2>
 
+        {/* NOMI */}
         <div className="form-group">
           <label>{t('addEquipment.fields.name')}</label>
           <input
@@ -207,6 +214,7 @@ export default function AddEquipmentForm() {
           />
         </div>
 
+        {/* TAVSIFI */}
         <div className="form-group">
           <label>{t('addEquipment.fields.description')}</label>
           <textarea
@@ -218,6 +226,7 @@ export default function AddEquipmentForm() {
           />
         </div>
 
+        {/* YO'NALISH VA KATEGORIYA */}
         <div className="form-row">
           <div className="form-group">
             <label>{t('addEquipment.fields.direction')}</label>
@@ -252,6 +261,7 @@ export default function AddEquipmentForm() {
           </div>
         </div>
 
+        {/* MAHSULOT TURI */}
         <div className="form-group">
           <label>{t('addEquipment.fields.productType')}</label>
           <div className="aef-type-grid">
@@ -275,8 +285,43 @@ export default function AddEquipmentForm() {
           </div>
         </div>
 
+        {/* DINAMIK MAYDONLAR */}
         {productType && (
           <div className="aef-dynamic-fields">
+            {/* ===== KATALOG VA SUBKATALOG (faqat showCatalog = true bo'lsa) ===== */}
+            {showCatalog && (
+              <div className="form-row">
+                <div className="form-group">
+                  <label>{t('addEquipment.fields.foodCategory')}</label>
+                  <select
+                    name="foodCategory"
+                    value={attrs.foodCategory || ''}
+                    onChange={(e) => setAttrs({ ...attrs, foodCategory: e.target.value, foodSubcategory: '' })}
+                  >
+                    <option value="">{t('addEquipment.fields.foodCategoryPlaceholder')}</option>
+                    {Object.entries(activeCatalog.items).map(([key, label]) => (
+                      <option key={key} value={key}>{label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>{t('addEquipment.fields.foodSubcategory')}</label>
+                  <select
+                    name="foodSubcategory"
+                    value={attrs.foodSubcategory || ''}
+                    onChange={handleAttrChange}
+                    disabled={!attrs.foodCategory}
+                  >
+                    <option value="">{t('addEquipment.fields.foodSubcategoryPlaceholder')}</option>
+                    {activeCatalog.items[attrs.foodCategory]?.subs?.map(sub => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* HOLAT (texnika va mebel uchun) */}
             {showCondition && (
               <div className="form-group">
                 <label>{t('addEquipment.fields.condition')}</label>
@@ -287,6 +332,7 @@ export default function AddEquipmentForm() {
               </div>
             )}
 
+            {/* TEXNIKA */}
             {productType === 'texnika' && (
               <>
                 {formData.condition === 'used' && (
@@ -336,30 +382,34 @@ export default function AddEquipmentForm() {
               </>
             )}
 
+            {/* OZIQ-OVQAT */}
             {productType === 'oziqovqat' && (
               <>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>{t('addEquipment.fields.amount')}</label>
-                    <input
-                      type="number"
-                      name="amount"
-                      value={attrs.amount || ''}
-                      onChange={handleAttrChange}
-                      placeholder={t('addEquipment.fields.amountPlaceholder')}
-                      step="0.01"
-                      required
-                    />
+                {/* Agar katalog ko'rsatilmasa, amount/unit shu yerda */}
+                {!showCatalog && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>{t('addEquipment.fields.amount')}</label>
+                      <input
+                        type="number"
+                        name="amount"
+                        value={attrs.amount || ''}
+                        onChange={handleAttrChange}
+                        placeholder={t('addEquipment.fields.amountPlaceholder')}
+                        step="0.01"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>{t('addEquipment.fields.unit')}</label>
+                      <select name="unit" value={attrs.unit || 'kg'} onChange={handleAttrChange}>
+                        {UNIT_OPTIONS.map(u => (
+                          <option key={u.value} value={u.value}>{u.label}</option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label>{t('addEquipment.fields.unit')}</label>
-                    <select name="unit" value={attrs.unit || 'kg'} onChange={handleAttrChange}>
-                      {UNIT_OPTIONS.map(u => (
-                        <option key={u.value} value={u.value}>{u.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                )}
                 <div className="form-row">
                   <div className="form-group">
                     <label>{t('addEquipment.fields.expiryDate')}</label>
@@ -384,6 +434,7 @@ export default function AddEquipmentForm() {
               </>
             )}
 
+            {/* MEBEL */}
             {productType === 'mebel' && (
               <>
                 <div className="form-group">
@@ -441,7 +492,7 @@ export default function AddEquipmentForm() {
           </div>
         )}
 
-        {/* NARX MAYDONI - VALYUTA TANLASH QO'SHILDI */}
+        {/* NARX VA VALYUTA */}
         <div className="form-row">
           <div className="form-group">
             <label>{t('addEquipment.fields.price')}</label>
@@ -461,8 +512,8 @@ export default function AddEquipmentForm() {
                 onChange={handleChange}
                 className="currency-select"
               >
-                <option value="USD">USD ($)</option>
                 <option value="UZS">UZS (so'm)</option>
+                <option value="USD">USD ($)</option>
               </select>
             </div>
           </div>
@@ -479,6 +530,7 @@ export default function AddEquipmentForm() {
           </div>
         </div>
 
+        {/* SONI */}
         <div className="form-group">
           <label>{t('addEquipment.fields.stockQuantity')}</label>
           <input
@@ -494,6 +546,7 @@ export default function AddEquipmentForm() {
           <span className="aef-hint">{t('addEquipment.fields.stockHint')}</span>
         </div>
 
+        {/* YETKAZIB BERUVCHI */}
         <div className="form-group">
           <label>{t('addEquipment.fields.supplier')}</label>
           <input
@@ -505,6 +558,7 @@ export default function AddEquipmentForm() {
           />
         </div>
 
+        {/* MEDIA */}
         <div className="form-group">
           <label>{t('addEquipment.fields.media')}</label>
           <div className="media-upload-area">
@@ -539,6 +593,7 @@ export default function AddEquipmentForm() {
           </div>
         </div>
 
+        {/* PROGRESS BAR */}
         {uploadProgress > 0 && uploadProgress < 100 && (
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${uploadProgress}%` }}></div>

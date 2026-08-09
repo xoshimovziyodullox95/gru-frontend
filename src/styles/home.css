@@ -584,3 +584,152 @@ body {
     max-width: 78px;
   }
 }
+
+/* ===== BOZOR — KIRISH BO'LIMI (HomePage) ===== */
+.home-market-teaser {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  text-align: center;
+}
+
+.home-market-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.home-market-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1.6rem 0.8rem;
+  border-radius: 1.5rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ===== HAR BIR KARTA UCHUN RANGLAR ===== */
+/* 1-joylar – ko'k */
+.home-market-card:nth-child(1) {
+  background: linear-gradient(145deg, rgba(0, 200, 255, 0.15), rgba(0, 100, 255, 0.08));
+  border: 1px solid rgba(0, 200, 255, 0.25);
+}
+.home-market-card:nth-child(1) svg { color: #00bfff; }
+.home-market-card:nth-child(1):hover {
+  background: linear-gradient(145deg, rgba(0, 200, 255, 0.25), rgba(0, 100, 255, 0.15));
+  border-color: rgba(0, 200, 255, 0.5);
+  box-shadow: 0 12px 40px rgba(0, 200, 255, 0.25);
+}
+
+/* 2-tovarlar – sariq */
+.home-market-card:nth-child(2) {
+  background: linear-gradient(145deg, rgba(255, 200, 0, 0.15), rgba(255, 150, 0, 0.08));
+  border: 1px solid rgba(255, 200, 0, 0.25);
+}
+.home-market-card:nth-child(2) svg { color: #ffb300; }
+.home-market-card:nth-child(2):hover {
+  background: linear-gradient(145deg, rgba(255, 200, 0, 0.25), rgba(255, 150, 0, 0.15));
+  border-color: rgba(255, 200, 0, 0.5);
+  box-shadow: 0 12px 40px rgba(255, 200, 0, 0.25);
+}
+
+/* 3-xizmatlar – yashil */
+.home-market-card:nth-child(3) {
+  background: linear-gradient(145deg, rgba(0, 255, 200, 0.15), rgba(0, 200, 150, 0.08));
+  border: 1px solid rgba(0, 255, 200, 0.25);
+}
+.home-market-card:nth-child(3) svg { color: #00d4aa; }
+.home-market-card:nth-child(3):hover {
+  background: linear-gradient(145deg, rgba(0, 255, 200, 0.25), rgba(0, 200, 150, 0.15));
+  border-color: rgba(0, 255, 200, 0.5);
+  box-shadow: 0 12px 40px rgba(0, 255, 200, 0.25);
+}
+
+/* 4-bank – QIZIL (siyoxrang emas) */
+.home-market-card:nth-child(4) {
+  background: linear-gradient(145deg, rgba(255, 0, 0, 0.12), rgba(200, 0, 0, 0.06));
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+.home-market-card:nth-child(4) svg { color: #ff1744; }
+.home-market-card:nth-child(4):hover {
+  background: linear-gradient(145deg, rgba(255, 0, 0, 0.25), rgba(200, 0, 0, 0.15));
+  border-color: rgba(255, 0, 0, 0.5);
+  box-shadow: 0 12px 40px rgba(255, 0, 0, 0.25);
+}
+
+/* Hoverda barcha ikonkalar animatsiyasi */
+.home-market-card:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+.home-market-card:hover svg {
+  transform: scale(1.15) rotate(-4deg);
+}
+
+/* ===== BANK LOGOSI (icon o'rniga) ===== */
+.home-market-bank-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.home-market-card:hover .home-market-bank-logo {
+  transform: scale(1.15) rotate(-3deg);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .home-market-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    max-width: 400px;
+  }
+  .home-market-card {
+    padding: 1.2rem 0.6rem;
+    border-radius: 1.2rem;
+  }
+  .home-market-card svg,
+  .home-market-bank-logo {
+    width: 24px;
+    height: 24px;
+  }
+  .home-market-card span {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-market-grid {
+    gap: 0.6rem;
+    max-width: 320px;
+  }
+  .home-market-card {
+    padding: 1rem 0.4rem;
+    border-radius: 1rem;
+  }
+  .home-market-card svg,
+  .home-market-bank-logo {
+    width: 20px;
+    height: 20px;
+  }
+  .home-market-card span {
+    font-size: 0.7rem;
+  }
+}

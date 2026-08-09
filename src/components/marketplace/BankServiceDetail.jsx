@@ -1,3 +1,4 @@
+// src/components/pages/BankServiceDetail.jsx
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -82,7 +83,7 @@ export default function BankServiceDetail() {
           <ArrowLeft size={16} /> {t('marketplacePage.back')}
         </Link>
 
-        {/* HERO - boyitilgan, lekin saytga mos */}
+        {/* HERO */}
         <div className="bsd-hero-card">
           <div className="bsd-hero-top">
             <div className="bsd-hero-logo">
@@ -224,11 +225,11 @@ export default function BankServiceDetail() {
           </div>
         </div>
 
-        {/* BOSHQA XIZMATLAR - kartalar shaklida */}
+        {/* BOSHQA XIZMATLAR */}
         {relatedServices.length > 0 && (
           <div className="bsd-related-carousel">
             <h3 className="ModuleHeading">
-              {t('bankService.otherServices', '{{bank}}ning boshqa xizmatlari', { bank: service.provider })}
+              {t('bankService.otherServices', { bank: service.provider })}
             </h3>
             <div className="bsd-related-grid">
               {relatedServices.map((s) => (

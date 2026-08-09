@@ -1,20 +1,45 @@
+// src/components/common/OrderWaitingModal.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, X } from 'lucide-react';
 import { getOrderStatus } from '../services/orders';
 import '../../styles/orderWaitingModal.css';
 
-const WAITING_MESSAGES = [
-  "Tovar mavjudligi tekshirilmoqda...",
-  "Yetkazib beruvchiga xabar yuborildi...",
-  "Tasdiqlash kutilmoqda...",
-  "Deyarli tayyor...",
-];
+// ===== MATNLAR =====
+const MESSAGES = {
+  equipment: {
+    waiting: [
+      "Tovar mavjudligi tekshirilmoqda...",
+      "Yetkazib beruvchiga xabar yuborildi...",
+      "Tasdiqlash kutilmoqda...",
+      "Deyarli tayyor...",
+    ],
+    waitingTitle: "Biroz kuting...",
+    successTitle: "Tayyor!",
+    successDesc: "Buyurtmangiz tasdiqlandi",
+    buttonText: "Buyurtmalarimni ko'rish",
+  },
+  bank: {
+    waiting: [
+      "Ariza ko‘rib chiqilmoqda...",
+      "Bank xodimi tomonidan tekshirilmoqda...",
+      "Tasdiqlash kutilmoqda...",
+      "Deyarli tayyor...",
+    ],
+    waitingTitle: "Ariza ko‘rib chiqilmoqda...",
+    successTitle: "Tasdiqlandi!",
+    successDesc: "Arizangiz bank xodimi tomonidan tasdiqlandi",
+    buttonText: "Arizalarimni ko'rish",
+  },
+};
 
-export default function OrderWaitingModal({ orderId, onClose }) {
+export default function OrderWaitingModal({ orderId, onClose, orderType = 'equipment' }) {
   const navigate = useNavigate();
   const [status, setStatus] = useState('yangi');
   const [msgIndex, setMsgIndex] = useState(0);
+
+  const config = MESSAGES[orderType] || MESSAGES.equipment;
+  const waitingMessages = config.waiting;
 
   useEffect(() => {
     if (!orderId) return;
@@ -35,7 +60,7 @@ export default function OrderWaitingModal({ orderId, onClose }) {
   useEffect(() => {
     if (status !== 'yangi') return;
     const textInterval = setInterval(() => {
-      setMsgIndex((prev) => (prev + 1) % WAITING_MESSAGES.length);
+      setMsgIndex((prev) => (prev + 1) % waitingMessages.length);
     }, 2200);
     return () => clearInterval(textInterval);
   }, [status]);
@@ -51,19 +76,17 @@ export default function OrderWaitingModal({ orderId, onClose }) {
       <div className="owm-content">
         {!isReady ? (
           <>
-            {/* ===== GLOWING ROTATING SPHERES (AI assistant style) ===== */}
             <div className="owm-sphere-container">
               <div className="owm-scale owm-scale-1">
                 <div className="owm-circle owm-circle-1"></div>
                 <div className="owm-circle owm-circle-2"></div>
                 <div className="owm-circle owm-circle-3"></div>
               </div>
-            
             </div>
 
-            <h2 className="owm-title">Biroz kuting...</h2>
+            <h2 className="owm-title">{config.waitingTitle}</h2>
             <p key={msgIndex} className="owm-desc owm-desc-fade">
-              {WAITING_MESSAGES[msgIndex]}
+              {waitingMessages[msgIndex]}
             </p>
           </>
         ) : (
@@ -71,10 +94,10 @@ export default function OrderWaitingModal({ orderId, onClose }) {
             <div className="owm-success-wrap">
               <CheckCircle2 size={72} className="owm-success-icon" />
             </div>
-            <h2 className="owm-title owm-title-success">Tayyor!</h2>
-            <p className="owm-desc">Buyurtmangiz tasdiqlandi</p>
+            <h2 className="owm-title owm-title-success">{config.successTitle}</h2>
+            <p className="owm-desc">{config.successDesc}</p>
             <button className="owm-btn" onClick={() => navigate('/my-orders')}>
-              Buyurtmalarimni ko'rish
+              {config.buttonText}
             </button>
             <button className="owm-btn-ghost" onClick={onClose}>Yopish</button>
           </>

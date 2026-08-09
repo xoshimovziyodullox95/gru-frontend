@@ -62,7 +62,6 @@ export default function Navbar() {
     setLangMenuOpen(false);
   };
 
-  // Tashqariga bosilganda til menyusini yopish
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
@@ -73,7 +72,6 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Profil rasmi
   useEffect(() => {
     if (!user) return;
     getUserProfile()
@@ -81,7 +79,6 @@ export default function Navbar() {
       .catch(() => {});
   }, [user]);
 
-  // Chat va bildirishnomalar soni
   useEffect(() => {
     if (!user) return;
     const fetchChat = () => {
@@ -106,7 +103,6 @@ export default function Navbar() {
     return () => clearInterval(interval);
   }, [user]);
 
-  // Savat
   const updateCartCount = () => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     setCartCount(cart.reduce((sum, item) => sum + item.quantity, 0));
@@ -117,7 +113,6 @@ export default function Navbar() {
     return () => window.removeEventListener('cartUpdated', updateCartCount);
   }, []);
 
-  // Scroll
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handler);
@@ -148,13 +143,12 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ===== YUQORI NAVBAR ===== */}
       <nav className={`gru-navbar ${scrolled ? 'gru-navbar-scrolled' : ''}`}>
         <div className="gru-navbar-container">
           <button
             className="gru-mobile-menu-btn"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Menyu"
+            aria-label={t('nav.menu')}
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -210,7 +204,7 @@ export default function Navbar() {
             <button
               type="button"
               className="gru-nav-link"
-              onClick={() => alert('Hamyon — tez kunda!')}
+              onClick={() => alert(t('wallet.soon'))}
               style={{ position: 'relative' }}
             >
               <Wallet size={20} />
@@ -279,43 +273,42 @@ export default function Navbar() {
               </Link>
             )}
 
-           {user && (
-  <Link
-    to="/add-video"
-    className="gru-nav-link gru-add-video-btn gru-desktop-only"
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '6px',
-      background: 'linear-gradient(135deg, #8B5CF6, #EC4899)',
-      color: '#fff',
-      padding: '6px 14px',
-      borderRadius: '20px',
-      fontWeight: '600',
-      transition: 'all 0.3s ease',
-      textDecoration: 'none',
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'scale(1.05)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'scale(1)';
-    }}
-  >
-    <Clapperboard size={18} />
-    <span>{t('nav.addVideo', "Video qo'shish")}</span>
-  </Link>
-)}
+            {user && (
+              <Link
+                to="/add-video"
+                className="gru-nav-link gru-add-video-btn gru-desktop-only"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'linear-gradient(135deg, #8B5CF6, #EC4899)',
+                  color: '#fff',
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                  textDecoration: 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                <Clapperboard size={18} />
+                <span>{t('nav.addVideo')}</span>
+              </Link>
+            )}
 
             {user ? (
               <Link to={getProfileLink()} className="gru-avatar-btn gru-desktop-only">
-                <img src={avatarUrl} alt="Avatar" className="gru-avatar-img" />
+                <img src={avatarUrl} alt={t('nav.profileAlt')} className="gru-avatar-img" />
               </Link>
             ) : (
               <Link to="/login" className="gru-nav-link">{t('nav.login')}</Link>
             )}
 
-            {/* 🔥 TIL DROPDOWN — ENG O'NG CHEKKA */}
             <div className="gru-lang-wrapper" ref={langMenuRef}>
               <button className="gru-lang-btn" onClick={() => setLangMenuOpen(!langMenuOpen)}>
                 {currentLang.flag}
@@ -339,35 +332,34 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ===== MOBIL PASTKI PANEL ===== */}
+      {/* MOBIL BOTTOM NAV */}
       {user && (
         <div className="gru-bottom-nav">
           <Link to="/home" className={`gru-bottom-nav-item ${isActive('/home') ? 'active' : ''}`}>
             <Home size={24} />
-            <span>Bosh</span>
+            <span>{t('nav.home')}</span>
           </Link>
           <Link to="/cart" className={`gru-bottom-nav-item ${isActive('/cart') ? 'active' : ''}`} style={{ position: 'relative' }}>
             <ShoppingCart size={24} />
             {cartCount > 0 && <span className="bottom-badge">{cartCount}</span>}
-            <span>Savat</span>
+            <span>{t('nav.cart')}</span>
           </Link>
           <button type="button" className="gru-bottom-nav-item gru-bottom-add" onClick={() => setAddMenuOpen(true)}>
             <PlusCircle size={32} />
-            <span>Qo'shish</span>
+            <span>{t('nav.add')}</span>
           </button>
           <Link to="/chat" className={`gru-bottom-nav-item ${isActive('/chat') ? 'active' : ''}`} style={{ position: 'relative' }}>
             <MessageCircle size={24} />
             {chatUnreadCount > 0 && <span className="bottom-badge" style={{ background: '#ff4444' }}>{chatUnreadCount}</span>}
-            <span>Chat</span>
+            <span>{t('nav.chat')}</span>
           </Link>
           <Link to={getProfileLink()} className={`gru-bottom-nav-item ${isActive('/profile') ? 'active' : ''}`}>
-            <img src={avatarUrl} alt="Avatar" className="gru-bottom-avatar-img" />
-            <span>Profil</span>
+            <img src={avatarUrl} alt={t('nav.profileAlt')} className="gru-bottom-avatar-img" />
+            <span>{t('nav.profile')}</span>
           </Link>
         </div>
       )}
 
-      {/* ===== QO'SHISH MODALI ===== */}
       {addMenuOpen && (
         <>
           <div className="gru-add-menu-overlay" onClick={() => setAddMenuOpen(false)} />
@@ -376,7 +368,7 @@ export default function Navbar() {
               <PlusCircle size={20} /> {t('nav.addListing')}
             </Link>
             <Link to="/add-video" className="gru-add-menu-item" onClick={() => setAddMenuOpen(false)}>
-              <Clapperboard size={20} /> {t('nav.addVideo', "Video qo'shish")}
+              <Clapperboard size={20} /> {t('nav.addVideo')}
             </Link>
           </div>
         </>

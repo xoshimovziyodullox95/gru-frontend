@@ -1,3 +1,4 @@
+// App.jsx — to'liq qayta yozilgan, xato statik route olib tashlandi
 import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -37,7 +38,7 @@ import EditLocationForm from './components/forms/EditLocationForm.jsx';
 import EditEquipmentForm from './components/forms/EditEquipmentForm.jsx';
 import EditServiceForm from './components/forms/EditServiceForm.jsx';
 import MarketplacePage from './components/marketplace/MarketplacePage';
-import BankServiceDetail from './components/marketplace/BankServiceDetail.jsx';  // 🔥 yangi import
+import BankServiceDetail from './components/marketplace/BankServiceDetail.jsx';
 import { ThemeProvider } from './components/context/ThemeContext.jsx';
 import PremiumPage from './components/pages/PremiumPage';
 import GamePage from './components/game/GamePage.jsx';
@@ -47,7 +48,7 @@ import NotificationsPage from './components/pages/NotificationsPage.jsx';
 import BusinessSystemPage from './components/business/BusinessSystemPage.jsx';
 import BusinessDashboard from './components/pages/BusinessDashboard';
 import BankServicesListPage from './components/pages/BankServicesListPage';
-import AddVideoPostForm from './components/pages/AddVideoPostForm'
+import AddVideoPostForm from './components/pages/AddVideoPostForm';
 import BranchesPage from './components/pages/BranchesPage';
 import SupplierStatsPage from './components/pages/SupplierStatsPage';
 import MyOrdersPage from './components/pages/MyOrdersPage';
@@ -55,10 +56,19 @@ import ReceivedOrdersPage from './components/pages/ReceivedOrdersPage';
 import PhysicPage from './components/pages/PhysicPage';
 import PhysicCategoryPage from './components/pages/PhysicCategoryPage';
 import ScrollToTop from './components/common/ScrollToTop';
+import MarketplaceHub from './components/pages/MarketplaceHub';
+import MarketplaceLocations from './components/pages/MarketplaceLocations';
+import MarketplaceProductTypes from './components/pages/MarketplaceProductTypes';
+import MarketplaceProductList from './components/pages/MarketplaceProductList';
+import MarketplaceCatalogItems from './components/pages/MarketplaceCatalogItems';
+import MarketplaceServiceCats from './components/pages/MarketplaceServiceCats';
+import MarketplaceServiceList from './components/pages/MarketplaceServiceList';
+import MarketplaceBank from './components/pages/MarketplaceBank';
 
 let appHasMounted = false;
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
 
+// ============ ENTRY GATE ============
 function EntryGate({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -69,13 +79,12 @@ function EntryGate({ children }) {
     didCheck.current = true;
     if (!appHasMounted) {
       appHasMounted = true;
-      const isAuthPage = AUTH_PATHS.includes(location.pathname);
-      if (location.pathname !== '/' && !isAuthPage) {
+      const isAuthPath = AUTH_PATHS.includes(location.pathname);
+      if (location.pathname !== '/' && !isAuthPath) {
         setReturnPath(location.pathname + location.search);
         navigate('/', { replace: true });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return children;
@@ -118,34 +127,17 @@ function MainRoutes() {
       <Route path="/services/:slug" element={canBrowse ? <Layout><ServicePage /></Layout> : <Navigate to="/" replace />} />
       <Route path="/cart" element={canBrowse ? <Layout><CartPage /></Layout> : <Navigate to="/" replace />} />
       <Route path="/marketplace" element={canBrowse ? <Layout><MarketplacePage /></Layout> : <Navigate to="/" replace />} />
-      {/* 🔥 Yangi marshrut: bank xizmati tafsilotlari */}
       <Route path="/bank-service/:id" element={canBrowse ? <Layout><BankServiceDetail /></Layout> : <Navigate to="/" replace />} />
       <Route path="/ai-assistant" element={<AIAssistantPage />} />
       <Route path="/premium" element={<ProtectedRoute><Layout><PremiumPage /></Layout></ProtectedRoute>} />
       <Route path="/dashboard" element={<ProtectedRoute><Layout><BusinessDashboard /></Layout></ProtectedRoute>} />
-      <Route
-        path="/bank-dashboard"
-        element={
-          <RequireRole allowedRoles={['bank_employee', 'admin']}>
-            <Layout>
-              <BankDashboard />
-            </Layout>
-          </RequireRole>
-        }
-      />
+      <Route path="/bank-dashboard" element={<RequireRole allowedRoles={['bank_employee', 'admin']}><Layout><BankDashboard /></Layout></RequireRole>} />
       <Route path="/bank-services" element={canBrowse ? <Layout><BankServicesListPage /></Layout> : <Navigate to="/" replace />} />
       <Route path="/profile/:userId" element={canBrowse ? <Layout><ProfilePage /></Layout> : <Navigate to="/" replace />} />
       <Route path="/profile" element={<ProtectedRoute><Layout><ProfilePage /></Layout></ProtectedRoute>} />
       <Route path="/chat" element={<ProtectedRoute><Layout><ChatPage /></Layout></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
-      <Route
-        path="/admin-dashboard"
-        element={
-          <RequireRole allowedRoles={['admin']}>
-            <Layout><AdminDashboard /></Layout>
-          </RequireRole>
-        }
-      />
+      <Route path="/admin-dashboard" element={<RequireRole allowedRoles={['admin']}><Layout><AdminDashboard /></Layout></RequireRole>} />
       <Route path="/add-listing" element={<ProtectedRoute><Layout><AddListingChoice /></Layout></ProtectedRoute>} />
       <Route path="/add-location" element={<ProtectedRoute><Layout><AddLocationForm /></Layout></ProtectedRoute>} />
       <Route path="/add-equipment" element={<ProtectedRoute><Layout><AddEquipmentForm /></Layout></ProtectedRoute>} />
@@ -168,6 +160,17 @@ function MainRoutes() {
       <Route path="/received-orders" element={<ProtectedRoute><Layout><ReceivedOrdersPage /></Layout></ProtectedRoute>} />
       <Route path="/physic" element={<Layout><PhysicPage /></Layout>} />
       <Route path="/physic/:categoryKey" element={<PhysicCategoryPage />} />
+
+      {/* ===== MARKETPLACE ROUTES (xato statik qator olib tashlandi) ===== */}
+      <Route path="/marketplace" element={<Layout><MarketplaceHub /></Layout>} />
+      <Route path="/marketplace/locations" element={<Layout><MarketplaceLocations /></Layout>} />
+      <Route path="/marketplace/products" element={<Layout><MarketplaceProductTypes /></Layout>} />
+      {/* 🔥 XATO QATOR O‘CHIRILDI: /marketplace/products/oziqovqat endi YO'Q */}
+      <Route path="/marketplace/products/oziqovqat/:catalog" element={<Layout><MarketplaceCatalogItems /></Layout>} />
+      <Route path="/marketplace/products/:type" element={<Layout><MarketplaceProductList /></Layout>} />
+      <Route path="/marketplace/services" element={<Layout><MarketplaceServiceCats /></Layout>} />
+      <Route path="/marketplace/services/:slug" element={<Layout><MarketplaceServiceList /></Layout>} />
+      <Route path="/marketplace/bank" element={<Layout><MarketplaceBank /></Layout>} />
     </Routes>
   );
 }
@@ -181,7 +184,6 @@ function App() {
           <ChatProvider>
             <BrowserRouter>
               <ScrollToTop />
-
               <EntryGate>
                 <NotificationListener />
                 <MainRoutes />

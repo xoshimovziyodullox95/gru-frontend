@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Bell, Heart, MessageCircle as CommentIcon, ShoppingBag, CheckCheck } from 'lucide-react';
 import { getNotifications, markOneRead, markAllRead } from '../services/notifications';
-import "../../styles/notificationsPage.css";
+import '../../styles/notificationsPage.css';
+
 // ============================================================
 // Bitta notification qatori
 // ============================================================

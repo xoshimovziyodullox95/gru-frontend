@@ -1,0 +1,826 @@
+.mph-page { max-width: 1300px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.mph-title { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem; }
+.mph-subtitle { font-size: 1.4rem; font-weight: 700; color: var(--text); margin: 1rem 0 1.5rem; }
+.mph-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 2rem;
+  padding: 0.5rem 1.2rem; color: var(--textMuted); cursor: pointer; font-size: 0.9rem;
+}
+.mph-back:hover { color: var(--cyan); border-color: var(--cyan); }
+
+.mph-main-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem;
+}
+
+/* Marketplace Hub — Product List katalog kartalari */
+
+
+.mph-main-card {
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  padding: 2rem 1rem; border-radius: 1.5rem; border: 1px solid var(--border);
+  background: var(--card); color: var(--text); cursor: pointer; transition: all 0.25s;
+}
+.mph-main-card:hover { border-color: var(--cyan); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,200,255,0.15); }
+.mph-main-card svg { color: var(--cyan); }
+.mph-main-card span { font-weight: 700; font-size: 1rem; }
+.mph-main-card small { color: var(--textMuted); font-size: 0.8rem; }
+
+.mph-catalog-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;
+}
+.mph-catalog-card {
+  display: flex; flex-direction: column; gap: 0.4rem;
+  padding: 1.4rem; border-radius: 1.2rem; border: 1px solid var(--border);
+  background: var(--card); color: var(--text); cursor: pointer; text-align: left; transition: all 0.2s;
+}
+.mph-catalog-card:hover { border-color: var(--cyan); }
+.mph-catalog-name { font-weight: 700; font-size: 0.95rem; }
+.mph-catalog-card small { color: var(--textMuted); font-size: 0.8rem; }
+
+.mph-loading { text-align: center; padding: 4rem; color: var(--textMuted); }
+
+@media (max-width: 768px) {
+  .mph-main-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ===== KATALOGLAR – VERTIKAL RO‘YXAT (rasm chap, matn o'ng) ===== */
+.mph-catalog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.mph-catalog-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: left;
+}
+
+.mph-catalog-list-item:hover {
+  border-color: var(--cyan);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 200, 255, 0.08);
+}
+
+.mph-catalog-list-img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 0.6rem;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+
+.mph-catalog-list-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.mph-catalog-list-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.mph-catalog-list-item small {
+  color: var(--textMuted);
+  font-size: 0.8rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .mph-catalog-list-item {
+    padding: 0.5rem 0.8rem;
+  }
+  .mph-catalog-list-img {
+    width: 44px;
+    height: 44px;
+  }
+  .mph-catalog-list-name {
+    font-size: 0.85rem;
+  }
+}
+
+.mph-customer-tabs {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+.mph-customer-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.55rem 1.3rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--textMuted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mph-customer-tabs button:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.mph-customer-tabs button.active {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #071022;
+}
+
+/* ===== KATEGORIYA KARTALARI (grid) ===== */
+.mph-bank-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.mph-bank-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1.2rem 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+  min-height: 80px;
+}
+
+.mph-bank-category-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 200, 255, 0.12);
+  background: rgba(0, 200, 255, 0.04);
+}
+
+.mph-bank-category-card svg {
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.mph-bank-category-card span {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ===== BANK GURUHLARI ===== */
+.mph-bank-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.mph-bank-group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.mph-bank-group-header svg {
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.mph-bank-group-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+/* ===== CUSTOMER TABS ===== */
+.mph-customer-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mph-customer-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--textMuted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mph-customer-tabs button:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.mph-customer-tabs button.active {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #071022;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .mph-bank-category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.6rem;
+  }
+  .mph-bank-category-card {
+    min-height: 64px;
+    padding: 0.8rem 0.3rem;
+  }
+  .mph-bank-category-card svg {
+    width: 22px;
+    height: 22px;
+  }
+  .mph-bank-category-card span {
+    font-size: 0.75rem;
+  }
+  .mph-bank-group-header h3 {
+    font-size: 1rem;
+  }
+}
+
+/* ===== SCROLL TO TOP TUGMA ===== */
+.mph-scroll-top-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 100;
+  animation: fadeSlideUp 0.4s ease;
+}
+
+.mph-scroll-top-btn:hover {
+  transform: translateY(-4px);
+  border-color: var(--cyan);
+  box-shadow: 0 8px 30px rgba(0, 200, 255, 0.2);
+  background: rgba(0, 200, 255, 0.06);
+}
+
+.mph-scroll-top-btn svg {
+  color: var(--cyan);
+  transition: transform 0.3s;
+}
+
+.mph-scroll-top-btn:hover svg {
+  transform: translateY(-2px);
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== KATEGORIYA KARTALARI ===== */
+.mph-bank-category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.mph-bank-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1.2rem 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+  min-height: 80px;
+}
+
+.mph-bank-category-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 200, 255, 0.12);
+  background: rgba(0, 200, 255, 0.04);
+}
+
+.mph-bank-category-card svg {
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.mph-bank-category-card span {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .mph-bank-category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.7rem;
+  }
+  .mph-bank-category-card {
+    min-height: 70px;
+    padding: 1rem 0.4rem;
+  }
+  .mph-bank-category-card svg {
+    width: 24px;
+    height: 24px;
+  }
+  .mph-bank-category-card span {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mph-bank-category-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.5rem;
+  }
+  .mph-bank-category-card {
+    min-height: 60px;
+    padding: 0.8rem 0.3rem;
+    border-radius: 0.8rem;
+  }
+  .mph-bank-category-card svg {
+    width: 20px;
+    height: 20px;
+  }
+  .mph-bank-category-card span {
+    font-size: 0.7rem;
+  }
+
+  .mph-scroll-top-btn {
+    bottom: 1.2rem;
+    right: 1.2rem;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.75rem;
+  }
+  .mph-scroll-top-btn span {
+    display: none;
+  }
+}
+
+/* ===== REELS BO'LIMI (MarketplaceHub pastki qismi) ===== */
+.mph-reels-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.mph-reels-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1.2rem;
+}
+
+/* ===== REELS BO'LIMI (MarketplaceHub) ===== */
+.mph-reels-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   MARKETPLACE HUB — professional dizayn
+   ============================================================ */
+
+.mph-page {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.mph-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 1.8rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mph-subtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 1.2rem 0 1.6rem;
+}
+
+.mph-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.55rem 1.3rem;
+  color: var(--textMuted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+.mph-back:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: rgba(0, 200, 255, 0.08);
+  transform: translateX(-3px);
+}
+
+.mph-loading {
+  text-align: center;
+  padding: 5rem 2rem;
+  color: var(--textMuted);
+  font-size: 1rem;
+}
+
+/* ============================================================
+   ASOSIY 4 TA KARTA (Joylar / Tovarlar / Xizmatlar / Bank)
+   ============================================================ */
+.mph-main-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+}
+
+.mph-main-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 2.4rem 1rem;
+  border-radius: 1.8rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(160deg, var(--card) 0%, rgba(0, 150, 255, 0.03) 100%);
+  color: var(--text);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mph-main-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% -20%, rgba(0, 229, 255, 0.15), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mph-main-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px rgba(0, 200, 255, 0.2);
+}
+.mph-main-card:hover::before {
+  opacity: 1;
+}
+
+.mph-main-card svg {
+  color: var(--cyan);
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.35));
+  transition: transform 0.3s ease;
+}
+.mph-main-card:hover svg {
+  transform: scale(1.15) rotate(-4deg);
+}
+
+.mph-main-card span {
+  position: relative;
+  z-index: 1;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.mph-main-card small {
+  position: relative;
+  z-index: 1;
+  color: var(--textMuted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* ============================================================
+   KATALOG KARTALARI (Mahsulot kataloglar / Xizmat turlari)
+   ============================================================ */
+.mph-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.1rem;
+}
+
+.mph-catalog-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0;
+  border-radius: 1.4rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mph-catalog-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 38px rgba(0, 200, 255, 0.18);
+}
+
+.mph-catalog-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.mph-catalog-card:hover .mph-catalog-img {
+  transform: scale(1.06);
+}
+
+.mph-catalog-card .mph-catalog-name,
+.mph-catalog-card small {
+  padding: 0 1rem;
+}
+.mph-catalog-card .mph-catalog-name {
+  margin-top: 0.7rem;
+}
+.mph-catalog-card small {
+  padding-bottom: 1rem;
+}
+
+.mph-catalog-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.mph-catalog-card small {
+  color: var(--textMuted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* ============================================================
+   JISMONIY / YURIDIK TAB (Bank sahifasi)
+   ============================================================ */
+.mph-customer-tabs {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.8rem;
+}
+.mph-customer-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.6rem 1.4rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--textMuted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.mph-customer-tabs button:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.mph-customer-tabs button.active {
+  background: linear-gradient(135deg, #0088cc, var(--cyan));
+  border-color: transparent;
+  color: #071022;
+  box-shadow: 0 6px 20px rgba(0, 200, 255, 0.3);
+}
+
+/* ============================================================
+   SUBKATALOG FILTR (gorizontal skroll)
+   ============================================================ */
+.sub-food-cat-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 2px 2px 16px;
+  margin-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+.sub-food-cat-filter::-webkit-scrollbar { display: none; }
+.sub-food-cat-filter button {
+  flex: 0 0 auto;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--textMuted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.sub-food-cat-filter button:hover {
+  border-color: var(--cyan);
+  color: var(--text);
+}
+.sub-food-cat-filter button.active {
+  background: rgba(0, 200, 255, 0.14);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+/* ============================================================
+   BOSH SAHIFA — TEASER (home-market-*)
+   ============================================================ */
+.home-market-teaser { margin-top: 3.5rem; }
+
+.home-market-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+}
+
+.home-market-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 2rem 1rem;
+  border-radius: 1.6rem;
+  border: 1px solid var(--border);
+  background: linear-gradient(160deg, var(--card) 0%, rgba(0, 150, 255, 0.03) 100%);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.home-market-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 38px rgba(0, 200, 255, 0.18);
+}
+.home-market-card svg {
+  color: var(--cyan);
+  filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.3));
+}
+.home-market-card span {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.home-market-bank-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .mph-main-grid,
+  .home-market-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .mph-page { padding: 1.5rem 1rem 3rem; }
+  .mph-title { font-size: 1.5rem; }
+  .mph-subtitle { font-size: 1.2rem; }
+  .mph-main-card { padding: 1.8rem 0.8rem; }
+  .mph-catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+  .mph-catalog-img { height: 80px; }
+  .mph-customer-tabs button { font-size: 0.82rem; padding: 0.5rem 1.1rem; }
+}
+
+/* ===== SERVICE CATS (xizmat turlari) ===== */
+.mph-service-cats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.mph-service-cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1.2rem 0.8rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.25s;
+  text-align: center;
+  min-height: 110px;
+}
+
+.mph-service-cat-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 200, 255, 0.12);
+  background: rgba(0, 200, 255, 0.04);
+}
+
+.mph-service-cat-icon {
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.mph-service-cat-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.mph-service-cat-card small {
+  color: var(--textMuted);
+  font-size: 0.75rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .mph-service-cats-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.6rem;
+  }
+  .mph-service-cat-card {
+    min-height: 90px;
+    padding: 0.8rem 0.4rem;
+  }
+  .mph-service-cat-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .mph-service-cat-name {
+    font-size: 0.8rem;
+  }
+}

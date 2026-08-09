@@ -5,6 +5,7 @@ import { X, ChevronLeft, ChevronRight, Play, Heart, MessageCircle, Send, Share2,
 import '../../styles/reels.css';
 import { getImageUrl } from '../utils/imageUrl';
 
+// ReelsStrip.jsx dagi ReelThumb komponenti (yangilangan)
 function ReelThumb({ reel, onOpen }) {
   const videoRef = useRef(null);
 
@@ -36,15 +37,28 @@ function ReelThumb({ reel, onOpen }) {
       <div className="reel-play-icon"><Play size={20} fill="#fff" color="#fff" /></div>
       <span className="reel-type-badge">{reel.typeLabel}</span>
       <div className="reel-title">{reel.title}</div>
+      
+      {/* 🔥 YANGI: Video egasi ma'lumotlari */}
+      <div className="reel-owner">
+        <img
+          src={reel.avatarUrl || '/images/placeholder.jpg'}
+          alt={reel.userName}
+          className="reel-owner-avatar"
+          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+        />
+        <span className="reel-owner-name">{reel.userName}</span>
+      </div>
     </div>
   );
 }
 
-function ReelViewer({ reels, index, onClose, onNavigateIndex, showProfileLink, onToggleLike, onToggleDislike, onAddComment, onShare }) {
+function ReelViewer({ reels, index, onClose, onNavigateIndex, showProfileLink, onToggleLike, onToggleDislike, onAddComment, onAddReply, onShare }) {
   const navigate = useNavigate();
   const reel = reels[index];
   const [commentText, setCommentText] = useState('');
   const [showComments, setShowComments] = useState(false);
+  const [activeReplyId, setActiveReplyId] = useState(null);
+const [replyText, setReplyText] = useState('');
   const commentsListRef = useRef(null);
 
   useEffect(() => {
@@ -114,6 +128,19 @@ function ReelViewer({ reels, index, onClose, onNavigateIndex, showProfileLink, o
     setShowComments(true);
   };
 
+  const handleReplyClick = (commentId) => {
+  setActiveReplyId(activeReplyId === commentId ? null : commentId);
+  setReplyText('');
+};
+
+const submitReply = (commentId) => {
+  const text = replyText.trim();
+  if (!text) return;
+  onAddReply(reel.id, commentId, text);
+  setReplyText('');
+  setActiveReplyId(null);
+};
+
   return (
     <div className="reel-modal-overlay" onClick={onClose}>
       <button className="reel-modal-close" onClick={onClose} type="button"><X size={22} /></button>
@@ -165,10 +192,47 @@ function ReelViewer({ reels, index, onClose, onNavigateIndex, showProfileLink, o
         {showComments && comments.length > 0 && (
           <div className="reel-comments-list" ref={commentsListRef} onClick={(e) => e.stopPropagation()}>
             {comments.map((c) => (
-              <div className="reel-comment-item" key={c.id}>
-                <strong>{c.userName}</strong>{c.text}
-              </div>
-            ))}
+  <div className="reel-comment-item" key={c.id}>
+    <img
+      src={c.avatarUrl || '/images/placeholder.jpg'}
+      alt={c.userName}
+      className="reel-comment-avatar"
+      onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+    />
+    <div className="reel-comment-body">
+      <strong>{c.userName}</strong>
+      <span>{c.text}</span>
+      <button type="button" className="reel-comment-reply-link" onClick={() => handleReplyClick(c.id)}>
+        Javob berish
+      </button>
+
+      {(c.replies || []).map((r) => (
+        <div key={r.id} className="reel-reply-item">
+          <img src={r.avatarUrl || '/images/placeholder.jpg'} alt={r.userName} className="reel-reply-avatar" />
+          <div>
+            <strong>{r.userName}</strong>
+            <span>{r.text}</span>
+          </div>
+        </div>
+      ))}
+
+      {activeReplyId === c.id && (
+        <form className="reel-reply-form" onSubmit={(e) => { e.preventDefault(); submitReply(c.id); }}>
+          <input
+            type="text"
+            placeholder="Javob yozish..."
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            autoFocus
+          />
+          <button type="submit" disabled={!replyText.trim()}>
+            <Send size={14} color="#fff" />
+          </button>
+        </form>
+      )}
+    </div>
+  </div>
+))}
           </div>
         )}
 
@@ -230,7 +294,7 @@ function ReelViewer({ reels, index, onClose, onNavigateIndex, showProfileLink, o
  * showProfileLink: modal ichida avatar bosilganda profilga o'tish yoqilsinmi (o'z profilida shart emas)
  * emptyText: reels bo'sh bo'lganda chiqadigan matn (agar berilmasa, hech narsa chiqmaydi)
  */
-export default function ReelsStrip({ reels: initialReels, showHeader = true, showProfileLink = true, emptyText }) {
+export default function ReelsStrip({ reels: initialReels, showHeader = true, showProfileLink = true, emptyText, currentUser }) {
   const [reels, setReels] = useState(initialReels || []);
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -287,13 +351,35 @@ const handleShare = (reel) => {
       .catch(() => alert("Havolani nusxalab bo'lmadi"));
   }
 };
-  const addComment = (reelId, text) => {
-    setReels(prev => prev.map(r => {
-      if (r.id !== reelId) return r;
-      const newComment = { id: `c-${Date.now()}`, userName: 'Siz', text };
-      return { ...r, comments: [...(r.comments || []), newComment] };
-    }));
-  };
+ const addComment = (reelId, text) => {
+  setReels(prev => prev.map(r => {
+    if (r.id !== reelId) return r;
+    const newComment = {
+      id: `c-${Date.now()}`,
+      userName: currentUser?.fullName || currentUser?.full_name || 'Siz',
+      avatarUrl: currentUser?.avatar_url || '/images/placeholder.jpg',
+      text,
+      replies: [],
+    };
+    return { ...r, comments: [...(r.comments || []), newComment] };
+  }));
+};
+
+const addReply = (reelId, commentId, text) => {
+  setReels(prev => prev.map(r => {
+    if (r.id !== reelId) return r;
+    const newReply = {
+      id: `r-${Date.now()}`,
+      userName: currentUser?.fullName || currentUser?.full_name || 'Siz',
+      avatarUrl: currentUser?.avatar_url || '/images/placeholder.jpg',
+      text,
+    };
+    const updatedComments = (r.comments || []).map(c =>
+      c.id === commentId ? { ...c, replies: [...(c.replies || []), newReply] } : c
+    );
+    return { ...r, comments: updatedComments };
+  }));
+};
 
   return (
     <section className="reels-section">
@@ -310,17 +396,18 @@ const handleShare = (reel) => {
       </div>
 
       {activeIndex !== null && (
-        <ReelViewer
-          reels={reels}
-          index={activeIndex}
-          onClose={close}
-          onNavigateIndex={navigateIndex}
-          showProfileLink={showProfileLink}
-          onToggleLike={toggleLike}
-          onToggleDislike={toggleDislike}
-          onAddComment={addComment}
-          onShare={handleShare}
-        />
+       <ReelViewer
+  reels={reels}
+  index={activeIndex}
+  onClose={close}
+  onNavigateIndex={navigateIndex}
+  showProfileLink={showProfileLink}
+  onToggleLike={toggleLike}
+  onToggleDislike={toggleDislike}
+  onAddComment={addComment}
+  onAddReply={addReply}
+  onShare={handleShare}
+/>
       )}
     </section>
   );
