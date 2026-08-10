@@ -40,7 +40,7 @@ export default function AIAssistantPage() {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const API_BASE = '/api/gru-ai';
+const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
   const authHeaders = { Authorization: `Bearer ${authToken}` };
   const isEmpty = messages.length === 0;
 
