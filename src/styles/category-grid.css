@@ -275,3 +275,77 @@ to { transform: rotate(360deg); }
 .cat-badge { font-size: 0.6rem; }
 .cat-invest { font-size: 0.65rem; }
 }
+
+
+/* ============================================================
+   QULFLANGAN KARTALAR ("Tez kunda")
+   ============================================================ */
+
+.cat-card-locked {
+  cursor: not-allowed;
+}
+
+.cat-img-blurred {
+  filter: blur(6px) brightness(0.55) saturate(0.7);
+  transform: scale(1.1); /* blur chetlari ko'rinmasligi uchun */
+}
+.cat-card-locked:hover .cat-img-blurred {
+  transform: scale(1.1); /* hover'da kattalashish effektini o'chiramiz */
+}
+
+.cat-lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: rgba(2, 8, 25, 0.35);
+  backdrop-filter: blur(1px);
+}
+
+.cat-lock-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: transform 0.25s ease;
+}
+.cat-card-locked:hover .cat-lock-icon-wrap {
+  transform: scale(1.1);
+}
+
+.cat-lock-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.3rem 0.9rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+/* Bosilganda titrash animatsiyasi */
+@keyframes catLockShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px) rotate(-2deg); }
+  40% { transform: translateX(6px) rotate(2deg); }
+  60% { transform: translateX(-4px) rotate(-1deg); }
+  80% { transform: translateX(4px) rotate(1deg); }
+}
+.cat-lock-shake .cat-lock-icon-wrap {
+  animation: catLockShake 0.5s ease;
+}
+.cat-lock-shake {
+  background: rgba(255, 80, 80, 0.15);
+}

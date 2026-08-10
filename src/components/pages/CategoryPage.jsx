@@ -1,18 +1,19 @@
 // src/pages/CategoryPage.jsx
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getLevel2 } from '../services/categories';
-import { ArrowLeft, Search, Wallet } from 'lucide-react';
+import { ArrowLeft, Search, Wallet, Lock } from 'lucide-react';
+import { LOCKED_CATEGORIES } from '../utils/lockedCategories';
 import '../../styles/category-grid.css';
 
 const imageMap = {
   // ==================== AGRO (20 ta) ====================
   "Issiqxona": "/images/categories/level2/issiqxona.jpg",
   "Intensiv bog'": "/images/categories/level2/intensiv_bog_.jpg",
-  "Chorvachilik": "/images/categories/level2/molxona.jpg",          // ← kalit o‘zgardi
-  "Parrandachilik": "/images/categories/level2/tovuqxona.jpg",      // ← kalit o‘zgardi
-  "Baliqchilik": "/images/categories/level2/baliqxona.jpg",         // ← kalit o‘zgardi
+  "Chorvachilik": "/images/categories/level2/molxona.jpg",
+  "Parrandachilik": "/images/categories/level2/tovuqxona.jpg",
+  "Baliqchilik": "/images/categories/level2/baliqxona.jpg",
   "Asalari xo'jaligi": "/images/categories/level2/asalari.jpg",
   "Gidroponika fermasi": "/images/categories/level2/gidroponika.jpg",
   "Sovutgichli omborxona": "/images/categories/level2/sovutgichli-ombor.jpg",
@@ -26,7 +27,6 @@ const imageMap = {
   "Qo'ziqorinxona": "/images/categories/level2/goziqorin.jpg",
   "Don ombori (Elevator)": "/images/categories/level2/elevato.png",
   "Agro-eko zona": "/images/categories/level2/agro-eko.jpg",
-  // "Yong'oqzor va bodomzor" – O'CHIRILDI (bu kategoriya yo'q)
   "Agro-texnika ijarasi punkti": "/images/categories/level2/agro-texnika.jpg",
 
   // ==================== DO'KONLAR (20 ta) ====================
@@ -186,6 +186,7 @@ const imageMap = {
 
 export default function CategoryPage() {
   const { level1 } = useParams();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const [items, setItems] = useState([]);
@@ -193,11 +194,25 @@ export default function CategoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
+  const [shakingKey, setShakingKey] = useState(null);
+
+  // Saralash funksiyasi: avval ochiq, keyin yopiq
+  const sortItems = (arr) => {
+    return [...arr].sort((a, b) => {
+      const aLocked = LOCKED_CATEGORIES.has(a.key);
+      const bLocked = LOCKED_CATEGORIES.has(b.key);
+      if (aLocked && !bLocked) return 1;
+      if (!aLocked && bLocked) return -1;
+      // ikkalasi bir xil holatda bo‘lsa, nom bo‘yicha alifbo tartibi
+      const nameA = t(`categoriesLevel2.${a.key}`, { defaultValue: a.key });
+      const nameB = t(`categoriesLevel2.${b.key}`, { defaultValue: b.key });
+      return nameA.localeCompare(nameB);
+    });
+  };
 
   useEffect(() => {
     const decodedLevel1 = decodeURIComponent(level1);
 
-    // 🔥 "Yangi biznes" uchun ham faqat o'z yo'nalishining kategoriyalari
     getLevel2(decodedLevel1)
       .then(res => {
         const data = (res.data || []).map(item => {
@@ -210,31 +225,37 @@ export default function CategoryPage() {
           };
         });
         setItems(data);
-        setFiltered(data);
+        const sorted = sortItems(data);
+        setFiltered(sorted);
         setLoading(false);
       })
       .catch(err => {
         console.error('❌ getLevel2 xatosi:', err);
         setLoading(false);
       });
-  }, [level1]);
+  }, [level1, t]); // t ni dependency ga qo‘shdik, chunki sortItems uni ishlatadi
 
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
+    let result = items;
     if (term) {
-      const filteredItems = items.filter(item => {
+      result = items.filter(item => {
         const name = t(`categoriesLevel2.${item.key}`, { defaultValue: item.key });
         return name.toLowerCase().includes(term);
       });
-      setFiltered(filteredItems);
-    } else {
-      setFiltered(items);
     }
+    setFiltered(sortItems(result));
   };
 
   const handleImageError = (key) => {
     setImageErrors(prev => ({ ...prev, [key]: true }));
+  };
+
+  const handleLockedClick = (e, key) => {
+    e.preventDefault();
+    setShakingKey(key);
+    setTimeout(() => setShakingKey(null), 600);
   };
 
   if (loading) return <div className="cat-loading-spinner">{t('categoryPage.loading')}</div>;
@@ -270,18 +291,17 @@ export default function CategoryPage() {
           {filtered.map(sub => {
             const name = t(`categoriesLevel2.${sub.key}`, { defaultValue: sub.key });
             const hasError = imageErrors[sub.key];
-            return (
-              <Link
-                key={sub.key}
-                to={`/subcategory/${encodeURIComponent(level1Key)}/${encodeURIComponent(sub.key)}`}
-                className="cat-card"
-              >
+            const isLocked = LOCKED_CATEGORIES.has(sub.key);
+            const isShaking = shakingKey === sub.key;
+
+            const cardContent = (
+              <>
                 <div className="cat-img-wrapper">
                   {sub.imageUrl && !hasError ? (
                     <img
                       src={sub.imageUrl}
                       alt={name}
-                      className="cat-img"
+                      className={`cat-img ${isLocked ? 'cat-img-blurred' : ''}`}
                       onError={() => handleImageError(sub.key)}
                     />
                   ) : (
@@ -291,12 +311,42 @@ export default function CategoryPage() {
                 <div className="cat-info">
                   <div className="cat-badge">{t('categoryPage.categoryBadge')}</div>
                   <h3 className="cat-name">{name}</h3>
-                  {sub.capex_min && sub.capex_max && (
+                  {!isLocked && sub.capex_min && sub.capex_max && (
                     <span className="cat-invest">
                       <Wallet size={14} /> {t('categoryPage.invest', { min: sub.capex_min, max: sub.capex_max })}
                     </span>
                   )}
                 </div>
+                {isLocked && (
+                  <div className={`cat-lock-overlay ${isShaking ? 'cat-lock-shake' : ''}`}>
+                    <div className="cat-lock-icon-wrap">
+                      <Lock size={28} />
+                    </div>
+                    <span className="cat-lock-text">Tez kunda</span>
+                  </div>
+                )}
+              </>
+            );
+
+            if (isLocked) {
+              return (
+                <div
+                  key={sub.key}
+                  className="cat-card cat-card-locked"
+                  onClick={(e) => handleLockedClick(e, sub.key)}
+                >
+                  {cardContent}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={sub.key}
+                to={`/subcategory/${encodeURIComponent(level1Key)}/${encodeURIComponent(sub.key)}`}
+                className="cat-card"
+              >
+                {cardContent}
               </Link>
             );
           })}

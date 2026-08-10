@@ -7,7 +7,7 @@ import { getLevel1, getLevel2 } from '../services/categories';
 import { createEquipment, uploadEquipmentMedia } from '../services/equipment';
 import { Upload, X, Cpu, UtensilsCrossed, Sofa, Package, Check, ArrowLeft } from 'lucide-react';
 import SuccessModal from '../common/SuccessModal';
-import { FOOD_CATALOG } from '../utils/foodCatalog'; // <--- YANGI IMPORT
+import { PRODUCT_TYPES as UNIVERSAL_TYPES, getDirectionsForType } from '../utils/productTypes';
 import '../../styles/forms.css';
 import '../../styles/addEquipmentForm.css';
 
@@ -27,7 +27,7 @@ export default function AddEquipmentForm() {
     title: '',
     description: '',
     price: '',
-    currency: 'UZS', // default so'm
+    currency: 'UZS',
     level1: preSelectedLevel1,
     category: preSelectedLevel2,
     condition: 'new',
@@ -42,11 +42,10 @@ export default function AddEquipmentForm() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [successInfo, setSuccessInfo] = useState(null);
 
-  // ===== JORIY YO'NALISHGA MOS KATALOG =====
-  const activeCatalog = FOOD_CATALOG[formData.level1] || null;
-  const showCatalog = activeCatalog && productType === activeCatalog.productType;
+  // --------------------- YANGI FLAG ---------------------
+  const showUniversalCatalog = productType === 'oziqovqat';
 
-  // Mahsulot turlari
+  // Mahsulot turlari (kartochkalar uchun)
   const PRODUCT_TYPES = [
     { id: 'texnika', label: t('addEquipment.productTypes.texnika.label'), desc: t('addEquipment.productTypes.texnika.desc'), icon: Cpu },
     { id: 'oziqovqat', label: t('addEquipment.productTypes.oziqovqat.label'), desc: t('addEquipment.productTypes.oziqovqat.desc'), icon: UtensilsCrossed },
@@ -162,13 +161,17 @@ export default function AddEquipmentForm() {
     setLoading(true);
     setUploadProgress(0);
     try {
+      // --------------------- PAYLOADGA autoDirections QO'SHILDI ---------------------
       const payload = {
         ...formData,
         price: parseFloat(formData.price) || 0,
         stockQuantity: Math.max(1, parseInt(formData.stockQuantity, 10) || 1),
         userId: user.id,
         productType,
-        attributes: attrs,
+        attributes: {
+          ...attrs,
+          autoDirections: attrs.universalType ? getDirectionsForType(attrs.universalType) : [],
+        },
       };
       const res = await createEquipment(payload);
       const equipmentId = res.data._id;
@@ -288,36 +291,26 @@ export default function AddEquipmentForm() {
         {/* DINAMIK MAYDONLAR */}
         {productType && (
           <div className="aef-dynamic-fields">
-            {/* ===== KATALOG VA SUBKATALOG (faqat showCatalog = true bo'lsa) ===== */}
-            {showCatalog && (
-              <div className="form-row">
-                <div className="form-group">
-                  <label>{t('addEquipment.fields.foodCategory')}</label>
-                  <select
-                    name="foodCategory"
-                    value={attrs.foodCategory || ''}
-                    onChange={(e) => setAttrs({ ...attrs, foodCategory: e.target.value, foodSubcategory: '' })}
-                  >
-                    <option value="">{t('addEquipment.fields.foodCategoryPlaceholder')}</option>
-                    {Object.entries(activeCatalog.items).map(([key, label]) => (
-                      <option key={key} value={key}>{label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>{t('addEquipment.fields.foodSubcategory')}</label>
-                  <select
-                    name="foodSubcategory"
-                    value={attrs.foodSubcategory || ''}
-                    onChange={handleAttrChange}
-                    disabled={!attrs.foodCategory}
-                  >
-                    <option value="">{t('addEquipment.fields.foodSubcategoryPlaceholder')}</option>
-                    {activeCatalog.items[attrs.foodCategory]?.subs?.map(sub => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </select>
-                </div>
+            {/* ===== YANGI UNIVERSAL KATALOG (faqat oziqovqat uchun) ===== */}
+            {showUniversalCatalog && (
+              <div className="form-group">
+                <label>Mahsulot turi</label>
+                <select
+                  name="universalType"
+                  value={attrs.universalType || ''}
+                  onChange={(e) => setAttrs({ ...attrs, universalType: e.target.value })}
+                  required
+                >
+                  <option value="">Mahsulot turini tanlang</option>
+                  {Object.entries(UNIVERSAL_TYPES).map(([key, val]) => (
+                    <option key={key} value={key}>{val.label}</option>
+                  ))}
+                </select>
+                {attrs.universalType && (
+                  <span className="aef-hint">
+                    Bu mahsulot avtomatik ravishda: {getDirectionsForType(attrs.universalType).join(', ')} yo'nalishlarida ko'rinadi
+                  </span>
+                )}
               </div>
             )}
 
@@ -385,31 +378,29 @@ export default function AddEquipmentForm() {
             {/* OZIQ-OVQAT */}
             {productType === 'oziqovqat' && (
               <>
-                {/* Agar katalog ko'rsatilmasa, amount/unit shu yerda */}
-                {!showCatalog && (
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>{t('addEquipment.fields.amount')}</label>
-                      <input
-                        type="number"
-                        name="amount"
-                        value={attrs.amount || ''}
-                        onChange={handleAttrChange}
-                        placeholder={t('addEquipment.fields.amountPlaceholder')}
-                        step="0.01"
-                        required
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>{t('addEquipment.fields.unit')}</label>
-                      <select name="unit" value={attrs.unit || 'kg'} onChange={handleAttrChange}>
-                        {UNIT_OPTIONS.map(u => (
-                          <option key={u.value} value={u.value}>{u.label}</option>
-                        ))}
-                      </select>
-                    </div>
+                {/* Miqdor va birlik (har doim ko'rsatiladi) */}
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>{t('addEquipment.fields.amount')}</label>
+                    <input
+                      type="number"
+                      name="amount"
+                      value={attrs.amount || ''}
+                      onChange={handleAttrChange}
+                      placeholder={t('addEquipment.fields.amountPlaceholder')}
+                      step="0.01"
+                      required
+                    />
                   </div>
-                )}
+                  <div className="form-group">
+                    <label>{t('addEquipment.fields.unit')}</label>
+                    <select name="unit" value={attrs.unit || 'kg'} onChange={handleAttrChange}>
+                      {UNIT_OPTIONS.map(u => (
+                        <option key={u.value} value={u.value}>{u.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label>{t('addEquipment.fields.expiryDate')}</label>
