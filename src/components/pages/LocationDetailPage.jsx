@@ -6,6 +6,7 @@ import { getEquipment } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
 import { getImageUrl } from '../utils/imageUrl';
+
 import MortgageCalculator from '../common/MortgageCalculator';
 import {
   MapPin, Phone, TrendingUp, ArrowLeft, ShieldCheck,
@@ -15,7 +16,7 @@ import {
   Banknote, CreditCard, CalendarDays, Calculator, Monitor,
   ChevronDown, ChevronUp, ChevronLeft, ChevronRight, MessageCircle, Crown,
   Wifi, FileText, FileCheck2, ShoppingCart, Star, Navigation,
-  Layers, DoorOpen, Zap, Wind, Lightbulb, Footprints, Maximize2, Landmark
+  Layers, DoorOpen, Zap, Wind, Lightbulb, Footprints, Maximize2, Landmark,Utensils
 } from 'lucide-react';
 import '../../styles/locationPage.css';
 import { getPosts } from '../services/videos';
@@ -181,12 +182,18 @@ const UserInfoCard = ({ user }) => {
   );
 };
 
-const ServiceButtons = () => {
+// ========== YANGILANGAN ServiceButtons ==========
+const ServiceButtons = ({ level1 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
 
+  const showProducts = level1 === 'Restoran/Kafe' || level1 === "Do'konlar";
+
   const services = [
+    ...(showProducts
+      ? [{ name: t('services.products', 'Mahsulotlar'), slug: 'products', icon: Utensils, isProducts: true }]
+      : []),
     { name: t('services.repair', "Qurilish va santexnika"), slug: 'repair', icon: Hammer },
     { name: t('services.smm', "Marketing"), slug: 'marketing', icon: Megaphone },
     { name: t('services.event'), slug: 'event', icon: Calendar },
@@ -201,7 +208,9 @@ const ServiceButtons = () => {
   const handleServiceClick = (service) => {
     if (service.isBank) {
       navigate('/bank-services');
-    } else {
+   } else if (service.isProducts) {
+  navigate('/marketplace/products/oziqovqat');
+}else {
       navigate(`/services/${service.slug}`);
     }
   };
@@ -233,6 +242,7 @@ const ServiceButtons = () => {
     </div>
   );
 };
+// =============================================
 
 const EquipmentCarousel = ({ items, location, onAddToCalculator }) => {
   const { t } = useTranslation();
@@ -679,7 +689,9 @@ export default function LocationDetailPage() {
 
             {location.userId && <UserInfoCard user={location.userId} />}
 
-            <ServiceButtons />
+            {/* ========== YANGI chaqiruv ========== */}
+            <ServiceButtons level1={location.level1} />
+            {/* ==================================== */}
           </div>
 
           <div className="ActionSidebar">
