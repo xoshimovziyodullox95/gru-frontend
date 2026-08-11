@@ -73,8 +73,7 @@ export default function SubcategoryPage() {
           eqs = allEqs;
         } else {
           const [filteredLocs, filteredEqs] = await Promise.all([
-            getRandomLocationsWithFallback(decodedLevel1, null, LIMIT),
-            getEquipment({ level1: decodedLevel1 }),
+getRandomLocationsWithFallback(decodedLevel1, decodedLevel2, LIMIT),         getEquipment({ level1: decodedLevel1 }),
           ]);
           locs = filteredLocs;
           eqs = filteredEqs;

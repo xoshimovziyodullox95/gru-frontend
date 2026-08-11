@@ -12,11 +12,7 @@ export const uploadLocationMedia = (locationId, formData, onProgress) =>
   });
 
 export const getRandomLocationsWithFallback = (level1, category, limit = 10) => {
-  return api.get('/locations/random-or-fallback', { params: { level1, category, limit } });
-};
-
-export const getRandomLocations = (category, limit = 10) => {
-  return api.get('/locations/random-by-category', { params: { category, limit } });
+  return api.get('/locations/random-or-fallback', { params: { level1, category, limit, _t: Date.now() } });
 };
 
 export const getAllLocations = async (limit = 10, level1 = null, category = null) => {

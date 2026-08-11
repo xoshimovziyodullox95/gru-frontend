@@ -1,7 +1,7 @@
 // src/components/pages/MarketplaceBank.jsx
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowUp, User, Building2, CreditCard, Landmark, Wallet, Send, QrCode, PiggyBank } from 'lucide-react';
+import { ArrowLeft, ArrowUp, User, Building2, CreditCard, Landmark, Wallet, Send, QrCode, Vault } from 'lucide-react'; // PiggyBank o'chirildi, Safe qo'shildi
 import { getBankServices } from '../services/bankServices';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/marketplaceHub.css';
@@ -9,8 +9,7 @@ import '../../styles/marketplaceHub.css';
 const subCategoryMap = {
   credit: { key: 'credit', icon: CreditCard, label: 'Kreditlar' },
   cards: { key: 'cards', icon: CreditCard, label: 'Kartalar' },
-  deposits: { key: 'deposits', icon: PiggyBank, label: 'Depozitlar' },
-  pko: { key: 'pko', icon: Wallet, label: 'Naqd pul / PKO' },
+  deposits: { key: 'deposits', icon: Vault, label: 'Depozitlar' }, // Safe o'rniga Vault  pko: { key: 'pko', icon: Wallet, label: 'Naqd pul / PKO' },
   money_transfers: { key: 'moneyTransfers', icon: Send, label: "Pul o'tkazmalari" },
   qr_payment: { key: 'qrPayment', icon: QrCode, label: 'QR to‘lovlar' },
 };
