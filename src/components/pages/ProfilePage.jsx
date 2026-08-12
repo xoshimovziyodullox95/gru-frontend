@@ -787,9 +787,9 @@ export default function ProfilePage() {
             <Truck size={15} /> Kelgan buyurtmalar
           </Link>
           {/* ===== YANGI QO'SHILGAN HAVOLA ===== */}
-          <Link to="/my-warehouse" className="bsw-branches-link">
-            <Package size={15} /> Mening Skladim
-          </Link>
+         <Link to="/business" className="bsw-branches-link">
+  <Package size={15} /> Mening Skladim
+</Link>
           {/* ================================== */}
         </>
       )}

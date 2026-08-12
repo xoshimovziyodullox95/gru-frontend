@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Plus, X, Check, CreditCard, ScanLine, Search } from 'lucide-react';
+import { Plus, X, Check, CreditCard, ScanLine, Search, Camera } from 'lucide-react';
 import { useBusiness } from '../../context/BusinessContext';
 import RoleGate from '../../shared/RoleGate';
 import {
   getPurchaseOrders, createPurchaseOrder, receivePurchaseOrder, payPurchaseOrder,
   getSuppliers, createSupplier, getProducts, createProduct, getProductByBarcode,
 } from '../../../services/business';
+import BarcodeScannerModal from '../../../common/BarcodeScannerModal';
 
 // ============================================================
 // YANGI CreatePOModal – FIZIK SKANER (USB/Bluetooth) + qidiruv bilan
@@ -30,6 +31,9 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
   const [barcodeInput, setBarcodeInput] = useState('');
   const [scanStatus, setScanStatus] = useState(''); // "Qidirilmoqda...", "Topildi: X", "Topilmadi"
   const barcodeInputRef = useRef(null);
+
+  // 🔥 KAMERA SKANER UCHUN
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     getSuppliers(businessId).then((res) => setSuppliers(res.data)).catch(() => {});
@@ -188,21 +192,26 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
           )}
         </label>
 
-        {/* 🔥 FIZIK SKANER INPUTI — asosiy usul */}
+        {/* 🔥 FIZIK SKANER INPUTI + KAMERA TUGMASI */}
         <div className="pt-field pt-field-full" style={{ marginBottom: 10 }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <ScanLine size={15} /> Shtrix-kod skaneri (USB/Bluetooth)
           </span>
-          <input
-            ref={barcodeInputRef}
-            type="text"
-            value={barcodeInput}
-            onChange={(e) => setBarcodeInput(e.target.value)}
-            onKeyDown={handleBarcodeKeyDown}
-            placeholder="Bu yerga kursor turgan holda, skanerni tovar ustiga tuting..."
-            style={{ width: '100%', fontFamily: 'monospace', fontSize: '1rem' }}
-            autoComplete="off"
-          />
+          <div style={{ display: 'flex', gap: 6 }}>
+            <input
+              ref={barcodeInputRef}
+              type="text"
+              value={barcodeInput}
+              onChange={(e) => setBarcodeInput(e.target.value)}
+              onKeyDown={handleBarcodeKeyDown}
+              placeholder="Kursor shu yerda turganda, fizik skanerni tovar ustiga tuting..."
+              style={{ flex: 1, fontFamily: 'monospace', fontSize: '1rem' }}
+              autoComplete="off"
+            />
+            <button type="button" className="pt-btn-secondary" onClick={() => setShowScanner(true)}>
+              <Camera size={16} /> Kamera bilan
+            </button>
+          </div>
           {scanStatus && (
             <span style={{ fontSize: '0.8rem', color: scanStatus.startsWith('❌') ? '#ff5c5c' : '#4ade80', marginTop: 4, display: 'block' }}>
               {scanStatus}
@@ -273,6 +282,14 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
           </button>
         </div>
       </form>
+
+      {/* 🔥 KAMERA SKANER MODALI — natija xuddi fizik skaner kabi processBarcode'ga boradi */}
+      {showScanner && (
+        <BarcodeScannerModal
+          onScan={(code) => { setShowScanner(false); processBarcode(code); }}
+          onClose={() => setShowScanner(false)}
+        />
+      )}
     </div>
   );
 }

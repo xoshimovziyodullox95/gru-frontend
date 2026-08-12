@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
-import { AlertTriangle, Settings2, X } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { AlertTriangle, Settings2, X, ScanLine, Camera } from 'lucide-react';
 import { useBusiness } from '../../context/BusinessContext';
 import RoleGate from '../../shared/RoleGate';
-import { getStock, adjustStock } from '../../../services/business';
+import { getStock, adjustStock, getProductByBarcode } from '../../../services/business';
+import BarcodeScannerModal from '../../../common/BarcodeScannerModal';
 
 function AdjustModal({ product, onClose, onSaved, businessId, warehouseId }) {
   const [quantity, setQuantity] = useState('');
@@ -52,7 +53,7 @@ function AdjustModal({ product, onClose, onSaved, businessId, warehouseId }) {
           </label>
           <label className="pt-field pt-field-full">
             <span>Miqdor</span>
-            <input type="number" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="0" />
+            <input type="number" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="0" autoFocus />
           </label>
           <label className="pt-field pt-field-full">
             <span>Izoh (ixtiyoriy)</span>
@@ -77,6 +78,12 @@ export default function StockView() {
   const [loading, setLoading] = useState(true);
   const [adjustTarget, setAdjustTarget] = useState(null);
 
+  // 🔥 SKANER UCHUN
+  const [barcodeInput, setBarcodeInput] = useState('');
+  const [scanStatus, setScanStatus] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
+  const barcodeInputRef = useRef(null);
+
   const load = useCallback(async () => {
     if (!activeBusiness || !activeWarehouse) return;
     try {
@@ -92,44 +99,119 @@ export default function StockView() {
 
   useEffect(() => { load(); }, [load]);
 
+  useEffect(() => {
+    setTimeout(() => barcodeInputRef.current?.focus(), 200);
+  }, [activeWarehouse]);
+
+  // 🔥 Shtrix-kod bo'yicha mahsulotni topib, tuzatish oynasini ochish
+  const processBarcode = async (code) => {
+    if (!code || !code.trim()) return;
+    setScanStatus('Qidirilmoqda...');
+    try {
+      const res = await getProductByBarcode(activeBusiness._id, code.trim());
+      const product = res.data;
+
+      // Shu omborda ushbu mahsulotning qoldig'ini topamiz
+      const stockItem = stock.find(s => s.productId?._id === product._id);
+      if (stockItem) {
+        setAdjustTarget(stockItem);
+        setScanStatus(`✅ Topildi: ${product.name}`);
+      } else {
+        // Bu omborda hali qoldiq yo'q — 0 qoldiqli "virtual" obyekt bilan ochamiz
+        setAdjustTarget({
+          _id: `virtual-${product._id}`,
+          productId: product,
+          quantity: 0,
+        });
+        setScanStatus(`⚠ "${product.name}" — bu omborda hali qoldiq yo'q (0)`);
+      }
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setScanStatus('❌ Bu shtrix-kod bo\'yicha mahsulot topilmadi. Avval "Mahsulotlar" bo\'limida qo\'shing.');
+      } else {
+        setScanStatus('❌ Xatolik: ' + (err.response?.data?.error || err.message));
+      }
+    }
+    setBarcodeInput('');
+    setTimeout(() => setScanStatus(''), 4000);
+  };
+
+  const handleBarcodeKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      processBarcode(barcodeInput);
+    }
+  };
+
   if (!activeWarehouse) return <div className="pt-empty">Ombor tanlanmagan</div>;
-  if (loading) return <div className="pt-empty">Yuklanmoqda...</div>;
-  if (stock.length === 0) return <div className="pt-empty">Bu omborda hali mahsulot yo'q. Avval "Kirim" orqali tovar qabul qiling.</div>;
 
   return (
     <>
-      <div className="pt-table-wrap">
-        <table className="pt-table">
-          <thead>
-            <tr>
-              <th>Mahsulot</th>
-              <th>Qoldiq</th>
-              <th>Birlik</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {stock.filter((s) => s.productId).map((s) => {
-              const isLow = s.productId.minStockThreshold > 0 && s.quantity <= s.productId.minStockThreshold;
-              return (
-                <tr key={s._id}>
-                  <td>{s.productId.name}</td>
-                  <td>
-                    {isLow && <AlertTriangle size={12} style={{ color: '#ffaa00', marginRight: 4 }} />}
-                    {s.quantity}
-                  </td>
-                  <td className="pt-muted">{s.productId.unit}</td>
-                  <td>
-                    <RoleGate roles={['admin', 'warehouse_worker']}>
-                      <button className="pt-icon-btn" onClick={() => setAdjustTarget(s)}><Settings2 size={14} /></button>
-                    </RoleGate>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      {/* 🔥 SKANER PANELI */}
+      <div className="pt-field pt-field-full" style={{ marginBottom: 14 }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <ScanLine size={15} /> Mahsulotni skanerlab tezkor tuzatish
+        </span>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <input
+            ref={barcodeInputRef}
+            type="text"
+            value={barcodeInput}
+            onChange={(e) => setBarcodeInput(e.target.value)}
+            onKeyDown={handleBarcodeKeyDown}
+            placeholder="Kursor shu yerda turganda, skanerni tovar ustiga tuting..."
+            style={{ flex: 1, fontFamily: 'monospace', fontSize: '1rem' }}
+            autoComplete="off"
+          />
+          <button type="button" className="pt-btn-secondary" onClick={() => setShowScanner(true)}>
+            <Camera size={16} /> Kamera bilan
+          </button>
+        </div>
+        {scanStatus && (
+          <span style={{ fontSize: '0.8rem', color: scanStatus.startsWith('❌') ? '#ff5c5c' : scanStatus.startsWith('⚠') ? '#ffaa00' : '#4ade80', marginTop: 4, display: 'block' }}>
+            {scanStatus}
+          </span>
+        )}
       </div>
+
+      {loading ? (
+        <div className="pt-empty">Yuklanmoqda...</div>
+      ) : stock.length === 0 ? (
+        <div className="pt-empty">Bu omborda hali mahsulot yo'q. Avval "Kirim" orqali tovar qabul qiling.</div>
+      ) : (
+        <div className="pt-table-wrap">
+          <table className="pt-table">
+            <thead>
+              <tr>
+                <th>Mahsulot</th>
+                <th>Qoldiq</th>
+                <th>Birlik</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {stock.filter((s) => s.productId).map((s) => {
+                const isLow = s.productId.minStockThreshold > 0 && s.quantity <= s.productId.minStockThreshold;
+                return (
+                  <tr key={s._id}>
+                    <td>{s.productId.name}</td>
+                    <td>
+                      {isLow && <AlertTriangle size={12} style={{ color: '#ffaa00', marginRight: 4 }} />}
+                      {s.quantity}
+                    </td>
+                    <td className="pt-muted">{s.productId.unit}</td>
+                    <td>
+                      <RoleGate roles={['admin', 'warehouse_worker']}>
+                        <button className="pt-icon-btn" onClick={() => setAdjustTarget(s)}><Settings2 size={14} /></button>
+                      </RoleGate>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {adjustTarget && (
         <AdjustModal
@@ -138,6 +220,13 @@ export default function StockView() {
           warehouseId={activeWarehouse._id}
           onClose={() => setAdjustTarget(null)}
           onSaved={() => { setAdjustTarget(null); load(); }}
+        />
+      )}
+
+      {showScanner && (
+        <BarcodeScannerModal
+          onScan={(code) => { setShowScanner(false); processBarcode(code); }}
+          onClose={() => setShowScanner(false)}
         />
       )}
     </>
