@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, Trash2, Package, Edit2, X, Check, Building2, ScanLine } from 'lucide-react';
 import api from '../services/api';
-import '../../styles/warehouse.css';
+import '../../styles/Warehouse.css';
 import BarcodeScannerModal from '../common/Barcodescannermodal.jsx';
 
 const UNIT_OPTIONS = [
