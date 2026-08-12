@@ -6,7 +6,7 @@ import {
   getPurchaseOrders, createPurchaseOrder, receivePurchaseOrder, payPurchaseOrder,
   getSuppliers, createSupplier, getProducts, createProduct, getProductByBarcode,
 } from '../../../services/business';
-import BarcodeScannerModal from '../../../common/BarcodeScannerModal';
+import BarcodeScannerModal from '../../../common/Barcodescannermodal.jsx';
 
 // ============================================================
 // YANGI CreatePOModal – FIZIK SKANER (USB/Bluetooth) + qidiruv bilan

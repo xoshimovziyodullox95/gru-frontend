@@ -3,7 +3,7 @@ import { AlertTriangle, Settings2, X, ScanLine, Camera } from 'lucide-react';
 import { useBusiness } from '../../context/BusinessContext';
 import RoleGate from '../../shared/RoleGate';
 import { getStock, adjustStock, getProductByBarcode } from '../../../services/business';
-import BarcodeScannerModal from '../../../common/BarcodeScannerModal';
+import BarcodeScannerModal from '../../../common/Barcodescannermodal.jsx';
 
 function AdjustModal({ product, onClose, onSaved, businessId, warehouseId }) {
   const [quantity, setQuantity] = useState('');
