@@ -387,3 +387,128 @@
     padding: 0.3rem 0.8rem;
   }
 }
+
+.mo-district-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 200, 255, 0.1);
+  color: var(--cyan);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 1rem;
+  width: fit-content;
+  margin: 3px 0;
+}
+
+.mo-stock-warning {
+  color: #ff5c5c;
+  font-size: 0.76rem;
+  font-weight: 600;
+  margin: 3px 0;
+}
+
+.mo-delivery-estimate {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #4ade80;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin: 3px 0;
+}
+
+.mo-item-actions-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+.mo-chat-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--textMuted);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+/* ===== MUDDAT TANLASH MODALI ===== */
+.mo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.mo-modal {
+  background: var(--bg);
+  border-radius: 1.3rem;
+  padding: 1.4rem;
+  max-width: 420px;
+  width: 100%;
+}
+.mo-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+.mo-modal-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: 1rem;
+  margin: 0;
+}
+.mo-modal-header button {
+  background: none;
+  border: none;
+  color: var(--textMuted);
+  cursor: pointer;
+}
+.mo-modal-desc {
+  color: var(--textMuted);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+.mo-modal-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.2rem;
+}
+.mo-modal-form input {
+  flex: 1;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+}
+.mo-modal-form select {
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+}
+.mo-modal-confirm {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.9rem;
+  background: var(--cyan);
+  color: #071022;
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -36,7 +36,7 @@ import {
   Eye, BarChart3, UserCheck, UserMinus, Coins, Settings,
   UserPlus, UserX, LogOut, QrCode, Heart, MessageCircle,
   User as UserIcon, ChevronRight, Copy, Check,
-  Truck  // <--- YANGI QO'SHILDI
+  Truck
 } from 'lucide-react';
 import ReelsStrip from '../common/Reelsstrip';
 import { getPosts, likePost, commentPost } from '../services/videos';
@@ -508,11 +508,11 @@ export default function ProfilePage() {
             <h4 className="olx-item-title" onClick={() => navigate(`/${detailPath}/${item._id}`)}>
               {item.title}
             </h4>
-{(item.price || item.price_range) && (
-  <span className="olx-item-price">
-    {formatPrice(item.price || item.price_range, item.currency)}
-  </span>
-)}
+            {(item.price || item.price_range) && (
+              <span className="olx-item-price">
+                {formatPrice(item.price || item.price_range, item.currency)}
+              </span>
+            )}
 
             <div className="olx-item-stats">
               <span><MessageCircle size={14} /> {commentsCount}</span>
@@ -612,55 +612,53 @@ export default function ProfilePage() {
                 <span className="role-text">
                   {role === 'business' || role === 'company' ? t('profile.roleBusiness') : t('profile.roleUser')}
                 </span>
-               
               </div>
             </>
           )}
-        <div className="profile-actions">
-  {isOwnProfile ? (
-    editMode ? (
-      <button onClick={handleSave} className="save-btn">
-        <Save size={18} /> {t('profile.save')}
-      </button>
-    ) : (
-      <>
-        <button onClick={handleEditToggle} className="edit-profile-btn">
-          <Edit size={18} /> {t('profile.edit')}
-        </button>
+          <div className="profile-actions">
+            {isOwnProfile ? (
+              editMode ? (
+                <button onClick={handleSave} className="save-btn">
+                  <Save size={18} /> {t('profile.save')}
+                </button>
+              ) : (
+                <>
+                  <button onClick={handleEditToggle} className="edit-profile-btn">
+                    <Edit size={18} /> {t('profile.edit')}
+                  </button>
 
-        {isPremium ? (
-          <button onClick={handleCancelPremium} className="cancel-premium-btn" disabled={cancelling}>
-            <X size={16} /> {cancelling ? t('profile.cancelling') : t('profile.cancelPremium')}
-          </button>
-        ) : (
-          <button className="premium-btn" onClick={() => navigate('/premium')}>
-            <Crown size={16} /> {t('profile.becomePremium')}
-          </button>
-        )}
+                  {isPremium ? (
+                    <button onClick={handleCancelPremium} className="cancel-premium-btn" disabled={cancelling}>
+                      <X size={16} /> {cancelling ? t('profile.cancelling') : t('profile.cancelPremium')}
+                    </button>
+                  ) : (
+                    <button className="premium-btn" onClick={() => navigate('/premium')}>
+                      <Crown size={16} /> {t('profile.becomePremium')}
+                    </button>
+                  )}
 
-        {/* 🔥 YANGI TUGMA — Gru gaem */}
-        <button
-          className="gru-gaem-btn"
-          onClick={() => toast.info('🚀 Tez kunda!', { duration: 3000 })}
-        >
-          Gru game
-        </button>
-      </>
-    )
-  ) : (
-    <button
-      className={`subscribe-btn ${isSubscribedState ? 'subscribed' : ''}`}
-      onClick={handleToggleSubscribe}
-      disabled={subscribing}
-    >
-      {isSubscribedState ? (
-        <><UserX size={16} /> {t('profile.unsubscribe')}</>
-      ) : (
-        <><UserPlus size={16} /> {t('profile.subscribe')}</>
-      )}
-    </button>
-  )}
-</div>
+                  <button
+                    className="gru-gaem-btn"
+                    onClick={() => toast.info('🚀 Tez kunda!', { duration: 3000 })}
+                  >
+                    Gru game
+                  </button>
+                </>
+              )
+            ) : (
+              <button
+                className={`subscribe-btn ${isSubscribedState ? 'subscribed' : ''}`}
+                onClick={handleToggleSubscribe}
+                disabled={subscribing}
+              >
+                {isSubscribedState ? (
+                  <><UserX size={16} /> {t('profile.unsubscribe')}</>
+                ) : (
+                  <><UserPlus size={16} /> {t('profile.subscribe')}</>
+                )}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -788,6 +786,11 @@ export default function ProfilePage() {
           <Link to="/received-orders" className="bsw-branches-link">
             <Truck size={15} /> Kelgan buyurtmalar
           </Link>
+          {/* ===== YANGI QO'SHILGAN HAVOLA ===== */}
+          <Link to="/my-warehouse" className="bsw-branches-link">
+            <Package size={15} /> Mening Skladim
+          </Link>
+          {/* ================================== */}
         </>
       )}
 
@@ -796,9 +799,9 @@ export default function ProfilePage() {
         <button className={activeTab === 'locations' ? 'active' : ''} onClick={() => setActiveTab('locations')}>
           <MapPin size={16} /> {t('profile.tabs.locations')}
         </button>
-       <button className={activeTab === 'equipment' ? 'active' : ''} onClick={() => setActiveTab('equipment')}>
-  <Package size={16} /> {t('profile.tabs.equipment')}
-</button>
+        <button className={activeTab === 'equipment' ? 'active' : ''} onClick={() => setActiveTab('equipment')}>
+          <Package size={16} /> {t('profile.tabs.equipment')}
+        </button>
         <button className={activeTab === 'services' ? 'active' : ''} onClick={() => setActiveTab('services')}>
           <Briefcase size={16} /> {t('profile.tabs.services')}
         </button>

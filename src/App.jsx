@@ -64,6 +64,8 @@ import MarketplaceCatalogItems from './components/pages/MarketplaceCatalogItems'
 import MarketplaceServiceCats from './components/pages/MarketplaceServiceCats';
 import MarketplaceServiceList from './components/pages/MarketplaceServiceList';
 import MarketplaceBank from './components/pages/MarketplaceBank';
+import SupplierWarehousePage from './components/pages/Supplierwarehousepage.jsx';
+
 
 let appHasMounted = false;
 const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
@@ -148,6 +150,7 @@ function MainRoutes() {
       <Route path="/game" element={<ProtectedRoute><Layout><GamePage /></Layout></ProtectedRoute>} />
       <Route path="/lessons" element={<ProtectedRoute><Layout><LessonsPage /></Layout></ProtectedRoute>} />
       <Route path="/business" element={<ProtectedRoute><Layout><BusinessSystemPage /></Layout></ProtectedRoute>} />
+      <Route path="/my-warehouse" element={<ProtectedRoute><Layout><SupplierWarehousePage /></Layout></ProtectedRoute>} />
       <Route path="/service-provider/:id" element={<ServiceProviderDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
