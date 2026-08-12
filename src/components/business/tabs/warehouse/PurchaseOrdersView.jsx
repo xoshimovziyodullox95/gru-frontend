@@ -1,15 +1,18 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Plus, X, Check, CreditCard, ScanLine, Search } from 'lucide-react';
 import { useBusiness } from '../../context/BusinessContext';
 import RoleGate from '../../shared/RoleGate';
 import {
   getPurchaseOrders, createPurchaseOrder, receivePurchaseOrder, payPurchaseOrder,
-  getSuppliers, createSupplier, getProducts,
+  getSuppliers, createSupplier, getProducts, createProduct, getProductByBarcode,
 } from '../../../services/business';
-import BarcodeScannerModal from '../../../common/Barcodescannermodal'; // skaner uchun
 
 // ============================================================
-// YANGI CreatePOModal – shtrix-kod va qidiruv bilan
+// YANGI CreatePOModal – FIZIK SKANER (USB/Bluetooth) + qidiruv bilan
+// Fizik skaner klaviatura kabi ishlaydi: kodni tez "yozadi" va
+// oxirida Enter bosadi. Shuning uchun bu input maxsus shu holatni
+// aniqlaydi — foydalanuvchi hech qanday tugma bosishi shart emas,
+// faqat inputga fokus qo'yib, skanerni tovar ustiga tutish kifoya.
 // ============================================================
 function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
   const [suppliers, setSuppliers] = useState([]);
@@ -20,20 +23,24 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
   const [newSupplierName, setNewSupplierName] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [showScanner, setShowScanner] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
 
-  // Yuklash
+  // 🔥 FIZIK SKANER UCHUN
+  const [barcodeInput, setBarcodeInput] = useState('');
+  const [scanStatus, setScanStatus] = useState(''); // "Qidirilmoqda...", "Topildi: X", "Topilmadi"
+  const barcodeInputRef = useRef(null);
+
   useEffect(() => {
     getSuppliers(businessId).then((res) => setSuppliers(res.data)).catch(() => {});
     getProducts(businessId).then((res) => {
       setProducts(res.data);
       setFilteredProducts(res.data);
     }).catch(() => {});
+    // Modal ochilganda, skaner inputiga avtomatik fokus
+    setTimeout(() => barcodeInputRef.current?.focus(), 200);
   }, [businessId]);
 
-  // Qidiruv filtri
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredProducts(products);
@@ -55,28 +62,67 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
     setItems(copy);
   };
 
-  // Shtrix-kod skaner natijasi
-  const handleBarcodeScan = async (code) => {
-    setShowScanner(false);
+  // 🔥 Shtrix-kodni qayta ishlash — TO'G'RILANGAN (api import xatosi va endpoint tuzatildi)
+  const processBarcode = async (code) => {
+    if (!code || !code.trim()) return;
+    setScanStatus('Qidirilmoqda...');
     try {
-      // Mahsulotni barcode orqali topish (backendda /warehouse/barcode/:code yoki /products/barcode/:code)
-      const res = await api.get(`/products/barcode/${code}`); // yoki o‘zingizdagi endpoint
+      const res = await getProductByBarcode(businessId, code.trim());
       const product = res.data;
-      if (!product) {
-        alert('Bu shtrix-kodli mahsulot topilmadi');
-        return;
-      }
-      // Qatorga qo‘shamiz
+
       setItems(prev => {
-        // Agar shu mahsulot allaqachon qatorda bo‘lsa, miqdorini oshiramiz
         const existing = prev.find(i => i.productId === product._id);
         if (existing) {
-          return prev.map(i => i.productId === product._id ? { ...i, quantity: i.quantity + 1 } : i);
+          return prev.map(i => i.productId === product._id ? { ...i, quantity: Number(i.quantity) + 1 } : i);
         }
-        return [...prev, { productId: product._id, productName: product.name, quantity: 1, unitCost: '' }];
+        // Bo'sh birinchi qatorni to'ldiramiz, aks holda yangi qator qo'shamiz
+        const emptyIdx = prev.findIndex(i => !i.productId);
+        if (emptyIdx !== -1) {
+          const copy = [...prev];
+          copy[emptyIdx] = { productId: product._id, productName: product.name, quantity: 1, unitCost: product.costPrice || '' };
+          return copy;
+        }
+        return [...prev, { productId: product._id, productName: product.name, quantity: 1, unitCost: product.costPrice || '' }];
       });
+      setScanStatus(`✅ Qo'shildi: ${product.name}`);
     } catch (err) {
-      alert('Xatolik: ' + (err.response?.data?.error || err.message));
+      if (err.response?.status === 404) {
+        // Yangi mahsulot — nom va narx so'raymiz
+        const name = prompt("Bu shtrix-kod bo'yicha mahsulot topilmadi. Yangi mahsulot nomini kiriting:");
+        if (!name) { setScanStatus(''); return; }
+        const sellPrice = prompt("Sotuv narxini kiriting:");
+        if (!sellPrice) { setScanStatus(''); return; }
+        try {
+          const newProdRes = await createProduct(businessId, {
+            name, barcode: code.trim(), sellPrice: Number(sellPrice), unit: 'dona',
+          });
+          setProducts(prev => [...prev, newProdRes.data]);
+          setItems(prev => {
+            const emptyIdx = prev.findIndex(i => !i.productId);
+            if (emptyIdx !== -1) {
+              const copy = [...prev];
+              copy[emptyIdx] = { productId: newProdRes.data._id, productName: newProdRes.data.name, quantity: 1, unitCost: '' };
+              return copy;
+            }
+            return [...prev, { productId: newProdRes.data._id, productName: newProdRes.data.name, quantity: 1, unitCost: '' }];
+          });
+          setScanStatus(`✅ Yangi mahsulot yaratildi: ${name}`);
+        } catch (createErr) {
+          setScanStatus('❌ Xatolik: ' + (createErr.response?.data?.error || createErr.message));
+        }
+      } else {
+        setScanStatus('❌ Xatolik: ' + (err.response?.data?.error || err.message));
+      }
+    }
+    setBarcodeInput('');
+    setTimeout(() => setScanStatus(''), 3000);
+  };
+
+  // 🔥 FIZIK SKANER: Enter bosilganda (skaner avtomatik yuboradi)
+  const handleBarcodeKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      processBarcode(barcodeInput);
     }
   };
 
@@ -93,7 +139,7 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
     e.preventDefault();
     const validItems = items.filter((i) => i.productId && i.quantity && i.unitCost);
     if (!supplierId || validItems.length === 0) {
-      setError('Yetkazib beruvchi va kamida bitta to\'liq qator kerak');
+      setError('Yetkazib beruvchi va kamida bitta to\'liq qator kerak (narxini ham kiriting)');
       return;
     }
     setSaving(true);
@@ -142,21 +188,38 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
           )}
         </label>
 
-        {/* Mahsulot qidirish + skaner */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-          <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={16} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
-            <input
-              type="text"
-              placeholder="Mahsulot qidirish..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ paddingLeft: 30, width: '100%' }}
-            />
-          </div>
-          <button type="button" className="pt-btn-secondary" onClick={() => setShowScanner(true)}>
-            <ScanLine size={16} /> Skaner
-          </button>
+        {/* 🔥 FIZIK SKANER INPUTI — asosiy usul */}
+        <div className="pt-field pt-field-full" style={{ marginBottom: 10 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ScanLine size={15} /> Shtrix-kod skaneri (USB/Bluetooth)
+          </span>
+          <input
+            ref={barcodeInputRef}
+            type="text"
+            value={barcodeInput}
+            onChange={(e) => setBarcodeInput(e.target.value)}
+            onKeyDown={handleBarcodeKeyDown}
+            placeholder="Bu yerga kursor turgan holda, skanerni tovar ustiga tuting..."
+            style={{ width: '100%', fontFamily: 'monospace', fontSize: '1rem' }}
+            autoComplete="off"
+          />
+          {scanStatus && (
+            <span style={{ fontSize: '0.8rem', color: scanStatus.startsWith('❌') ? '#ff5c5c' : '#4ade80', marginTop: 4, display: 'block' }}>
+              {scanStatus}
+            </span>
+          )}
+        </div>
+
+        {/* Mahsulot qidirish (qo'lda tanlash uchun, agar skaner bo'lmasa) */}
+        <div style={{ position: 'relative', marginBottom: 12 }}>
+          <Search size={16} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
+          <input
+            type="text"
+            placeholder="Yoki mahsulotni qo'lda qidiring..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ paddingLeft: 30, width: '100%' }}
+          />
         </div>
 
         {/* Qatorlar */}
@@ -209,11 +272,6 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
             {saving ? 'Yaratilmoqda...' : 'Hujjat yaratish'}
           </button>
         </div>
-
-        {/* Skaner modal */}
-        {showScanner && (
-          <BarcodeScannerModal onScan={handleBarcodeScan} onClose={() => setShowScanner(false)} />
-        )}
       </form>
     </div>
   );
