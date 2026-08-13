@@ -36,7 +36,7 @@ import {
   Eye, BarChart3, UserCheck, UserMinus, Coins, Settings,
   UserPlus, UserX, LogOut, QrCode, Heart, MessageCircle,
   User as UserIcon, ChevronRight, Copy, Check,
-  Truck
+  Truck, Send // <--- Send qo'shildi
 } from 'lucide-react';
 import ReelsStrip from '../common/Reelsstrip';
 import { getPosts, likePost, commentPost } from '../services/videos';
@@ -207,8 +207,6 @@ export default function ProfilePage() {
   const isOwnProfile = !userId || (user && userId === user.id);
   const role = profile?.role || 'user';
   const isPremium = profile?.isPremium || false;
-  const maxListings = isPremium ? Infinity : (role === 'business' ? Infinity : 5);
-  const currentListingsCount = myLocations.length + myEquipment.length + myServices.length;
 
   // ========== FUNKSIYALAR ==========
   const loadData = async () => {
@@ -365,7 +363,6 @@ export default function ProfilePage() {
   };
 
   // ========== EFFECTS ==========
-  // Stats yuklash
   useEffect(() => {
     if (isOwnProfile && (role === 'business' || role === 'company')) {
       getDashboardStats()
@@ -374,7 +371,6 @@ export default function ProfilePage() {
     }
   }, [isOwnProfile, role]);
 
-  // Obunachilar
   useEffect(() => {
     if (isOwnProfile && (role === 'business' || role === 'company')) {
       const fetchSubscribers = async () => {
@@ -392,7 +388,6 @@ export default function ProfilePage() {
     }
   }, [isOwnProfile, role]);
 
-  // Obunalar
   useEffect(() => {
     if (isOwnProfile) {
       const fetchFollowing = async () => {
@@ -410,7 +405,6 @@ export default function ProfilePage() {
     }
   }, [isOwnProfile]);
 
-  // Boshqa foydalanuvchi obuna holati
   useEffect(() => {
     if (!isOwnProfile && userId) {
       const checkSubscription = async () => {
@@ -425,7 +419,6 @@ export default function ProfilePage() {
     }
   }, [isOwnProfile, userId]);
 
-  // Asosiy ma'lumotlarni yuklash
   useEffect(() => {
     if (!user && !userId) {
       navigate('/login');
@@ -481,7 +474,6 @@ export default function ProfilePage() {
       return <div className="empty-state">{t('profile.emptyListings')}</div>;
     }
 
-    // Tog'ri route uchun: location, equipment, serviceprovider
     const detailPath = activeTab === 'locations' ? 'location' 
                     : activeTab === 'equipment' ? 'equipment' 
                     : 'serviceprovider';
@@ -768,7 +760,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* BusinessSummaryWidget faqat business uchun, SupplierStatsWidget faqat company uchun */}
+      {/* ===== BUSINESS ROLI ===== */}
       {role === 'business' && isOwnProfile && (
         <>
           <BusinessSummaryWidget />
@@ -778,19 +770,25 @@ export default function ProfilePage() {
           <Link to="/my-orders" className="bsw-branches-link">
             <Package size={15} /> Buyurtmalarim
           </Link>
+          <Link to="/business" className="bsw-branches-link">
+            <Package size={15} /> GRU Business (Ombor, Kirim, Kassa)
+          </Link>
         </>
       )}
+
+      {/* ===== COMPANY ROLI (YANGILANGAN) ===== */}
       {role === 'company' && isOwnProfile && (
         <>
           <SupplierStatsWidget />
           <Link to="/received-orders" className="bsw-branches-link">
             <Truck size={15} /> Kelgan buyurtmalar
           </Link>
-          {/* ===== YANGI QO'SHILGAN HAVOLA ===== */}
-         <Link to="/business" className="bsw-branches-link">
-  <Package size={15} /> Mening Skladim
-</Link>
-          {/* ================================== */}
+          <Link to="/broadcast-ad" className="bsw-branches-link">
+            <Send size={15} /> Reklama tarqatish
+          </Link>
+          <Link to="/business" className="bsw-branches-link">
+            <Package size={15} /> GRU Business (Ombor, Kirim, Kassa)
+          </Link>
         </>
       )}
 

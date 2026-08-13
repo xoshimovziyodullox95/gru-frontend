@@ -7,7 +7,9 @@ import { createServiceProvider, uploadServiceMedia } from '../services/servicePr
 import { useCategories } from '../hooks/useCategories';
 import MediaUploader from '../MediaUploader';
 import SuccessModal from '../common/SuccessModal';
+import AITextEnhanceButton from '../common/AITextEnhanceButton'; // <-- AI tugma
 import '../../styles/AddServiceForm.css';
+import '../../styles/aiEnhance.css'; // <-- AI uslubi
 
 // SERVICE_TAGS endi t() dan foydalanadi
 const getServiceTags = (t) => [
@@ -138,8 +140,13 @@ export default function AddServiceForm() {
           />
         </div>
 
+        {/* ===== TAVSIFI (AI TUGMA BILAN) ===== */}
         <div className="form-group">
           <label>{t('addService.fields.description')}</label>
+          <AITextEnhanceButton
+            value={formData.description}
+            onChange={(newText) => setFormData(prev => ({ ...prev, description: newText }))}
+          />
           <textarea
             name="description"
             rows="4"

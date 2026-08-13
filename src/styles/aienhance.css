@@ -1,0 +1,97 @@
+.ai-enhance-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.ai-enhance-trigger {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.35rem 0.7rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  background: rgba(0, 229, 255, 0.08);
+  color: var(--cyan);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+.ai-enhance-trigger:hover {
+  background: rgba(0, 229, 255, 0.15);
+}
+.ai-enhance-trigger.open {
+  background: var(--cyan);
+  color: #071022;
+}
+
+/* ===== CHAPGA SURILADIGAN MENYU (Telegram uslubida) ===== */
+.ai-enhance-menu {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(0);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+  z-index: 1;
+}
+.ai-enhance-menu-open {
+  max-width: 500px;
+  opacity: 1;
+  pointer-events: auto;
+  margin-right: 80px; /* trigger tugma joyini bo'shatib qo'yish */
+}
+
+.ai-enhance-menu button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.ai-enhance-menu button:hover:not(:disabled) {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.ai-enhance-menu button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-spin {
+  animation: ai-spin-rotate 0.8s linear infinite;
+}
+@keyframes ai-spin-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 480px) {
+  .ai-enhance-wrap {
+    flex-wrap: wrap;
+  }
+  .ai-enhance-menu-open {
+    margin-right: 0;
+    margin-top: 6px;
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+}

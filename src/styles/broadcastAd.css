@@ -1,0 +1,132 @@
+.ba-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.ba-header {
+  margin: 1.2rem 0 1.5rem;
+}
+.ba-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+.ba-subtitle {
+  color: var(--textMuted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.ba-upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 1.3rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  color: var(--textMuted);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.ba-upload-zone:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+.ba-upload-hint {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.ba-preview-zone {
+  position: relative;
+  border-radius: 1.3rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.ba-preview-media {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  background: #000;
+  border-radius: 1.3rem;
+}
+.ba-remove-preview {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.ba-caption-input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  margin: 1rem 0;
+  resize: vertical;
+}
+
+.ba-send-btn {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #0088cc, var(--cyan));
+  color: #071022;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ba-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ba-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 3rem 1rem;
+  color: #4ade80;
+  text-align: center;
+}
+.ba-success h2 {
+  color: var(--text);
+  margin: 0;
+}
+.ba-success p {
+  color: var(--textMuted);
+}
+.ba-btn-primary {
+  margin-top: 1rem;
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 1rem;
+  background: var(--cyan);
+  color: #071022;
+  font-weight: 700;
+  cursor: pointer;
+}

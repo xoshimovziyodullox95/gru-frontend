@@ -1,0 +1,197 @@
+.aet-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.aet-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+  min-height: 28px;
+}
+
+.aet-trigger {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.35rem 0.7rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  background: rgba(0, 229, 255, 0.08);
+  color: var(--cyan);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+.aet-trigger:hover:not(:disabled) {
+  background: rgba(0, 229, 255, 0.15);
+}
+.aet-trigger.open {
+  background: var(--cyan);
+  color: #071022;
+}
+.aet-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.aet-menu {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+.aet-menu-open {
+  max-width: 500px;
+  opacity: 1;
+  pointer-events: auto;
+  margin-right: 76px;
+}
+.aet-menu button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.aet-menu button:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* ===== TEXTAREA KONTEYNER ===== */
+.aet-textarea-container {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.aet-textarea-container textarea {
+  width: 100%;
+  transition: filter 0.3s ease;
+}
+
+/* Natija kelganda, qisqa "yashil yaltirash" effekti */
+@keyframes aetFlashGlow {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); }
+  100% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+}
+.aet-flash {
+  animation: aetFlashGlow 0.8s ease-out;
+  border-color: #4ade80 !important;
+}
+
+/* ===== YUKLANISH OVERLAY — INPUTNI TO'LIQ YOPADI ===== */
+.aet-loading-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: linear-gradient(160deg, rgba(6, 12, 28, 0.97), rgba(10, 20, 40, 0.97));
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  animation: aetOverlayFadeIn 0.25s ease;
+  overflow: hidden;
+}
+@keyframes aetOverlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Chapdan o'ngga o'tuvchi "shimmer" chizig'i */
+.aet-shimmer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.15), transparent);
+  animation: aetShimmerMove 1.8s ease-in-out infinite;
+}
+@keyframes aetShimmerMove {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}
+
+.aet-loading-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Aylanuvchi, porlaydigan uchta doira (GRU AI uslubida) */
+.aet-orb-wrap {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  animation: aetOrbRotate 3s linear infinite;
+}
+@keyframes aetOrbRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.aet-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.5px);
+}
+.aet-orb-1 {
+  width: 26px; height: 26px;
+  top: 0; left: 17px;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 229, 255, 0.9), transparent 70%);
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+  animation: aetOrbPulse 1.4s ease-in-out infinite;
+}
+.aet-orb-2 {
+  width: 20px; height: 20px;
+  bottom: 4px; left: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(124, 92, 255, 0.9), transparent 70%);
+  box-shadow: 0 0 14px rgba(124, 92, 255, 0.6);
+  animation: aetOrbPulse 1.4s ease-in-out infinite 0.3s;
+}
+.aet-orb-3 {
+  width: 16px; height: 16px;
+  bottom: 4px; right: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 150, 255, 0.9), transparent 70%);
+  box-shadow: 0 0 12px rgba(0, 150, 255, 0.6);
+  animation: aetOrbPulse 1.4s ease-in-out infinite 0.6s;
+}
+@keyframes aetOrbPulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.25); opacity: 1; }
+}
+
+.aet-loading-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #baf3ff;
+  letter-spacing: 0.01em;
+  animation: aetTextPulse 1.6s ease-in-out infinite;
+}
+@keyframes aetTextPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}

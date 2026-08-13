@@ -17,3 +17,7 @@ export const getAllEquipment = async (limit = 10) => {
 };
 
 export const getNearbyEquipment = (params) => api.get('/equipment/nearby', { params });
+// services/equipment.js
+export const rateEquipment = (id, value) => api.post(`/equipment/${id}/rate`, { value });
+export const commentEquipment = (id, text) => api.post(`/equipment/${id}/comment`, { text });
+export const replyEquipmentComment = (id, commentId, text) => api.post(`/equipment/${id}/comment/${commentId}/reply`, { text });

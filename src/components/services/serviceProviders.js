@@ -12,3 +12,8 @@ export const uploadServiceMedia = (id, formData, onProgress) => api.post(`/servi
 
 export const getBankServices = (params) => api.get('/services', { params });
 export const getBankServiceById = (id) => api.get(`/services/${id}`);
+
+export const rateServiceProvider = (id, value) => api.post(`/service-providers/${id}/rate`, { value });
+export const commentServiceProvider = (id, text) => api.post(`/service-providers/${id}/comment`, { text });
+export const replyServiceProviderComment = (id, commentId, text) => api.post(`/service-providers/${id}/comment/${commentId}/reply`, { text });
+export const applyToService = (id, message) => api.post(`/service-providers/${id}/apply`, { message });

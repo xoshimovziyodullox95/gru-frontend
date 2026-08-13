@@ -1,39 +1,29 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Plus, X, Check, CreditCard, ScanLine, Search, Camera } from 'lucide-react';
+// src/components/business/PurchaseOrdersView.jsx
+import { useState, useEffect, useCallback } from 'react';
+import { Plus, X, Check, CreditCard, Search, Camera } from 'lucide-react';
 import { useBusiness } from '../../context/BusinessContext';
 import RoleGate from '../../shared/RoleGate';
 import {
   getPurchaseOrders, createPurchaseOrder, receivePurchaseOrder, payPurchaseOrder,
-  getSuppliers, createSupplier, getProducts, createProduct, getProductByBarcode,
+  getSuppliers, createSupplier, getProducts,
 } from '../../../services/business';
-import BarcodeScannerModal from '../../../common/Barcodescannermodal.jsx';
+import ImageRecognizeModal from '../warehouse/Imagerecognizemodal'; // rasm orqali aniqlash
 
 // ============================================================
-// YANGI CreatePOModal – FIZIK SKANER (USB/Bluetooth) + qidiruv bilan
-// Fizik skaner klaviatura kabi ishlaydi: kodni tez "yozadi" va
-// oxirida Enter bosadi. Shuning uchun bu input maxsus shu holatni
-// aniqlaydi — foydalanuvchi hech qanday tugma bosishi shart emas,
-// faqat inputga fokus qo'yib, skanerni tovar ustiga tutish kifoya.
+// CreatePOModal – shtrix-kod o‘chirildi, rasm qo‘shildi
 // ============================================================
 function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
   const [suppliers, setSuppliers] = useState([]);
   const [products, setProducts] = useState([]);
   const [supplierId, setSupplierId] = useState('');
-  const [items, setItems] = useState([{ productId: '', productName: '', quantity: 1, unitCost: '' }]);
+  const [items, setItems] = useState([{ productId: '', quantity: 1, unitCost: '' }]);
   const [showNewSupplier, setShowNewSupplier] = useState(false);
   const [newSupplierName, setNewSupplierName] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
-
-  // 🔥 FIZIK SKANER UCHUN
-  const [barcodeInput, setBarcodeInput] = useState('');
-  const [scanStatus, setScanStatus] = useState(''); // "Qidirilmoqda...", "Topildi: X", "Topilmadi"
-  const barcodeInputRef = useRef(null);
-
-  // 🔥 KAMERA SKANER UCHUN
-  const [showScanner, setShowScanner] = useState(false);
+  const [showImageRecognize, setShowImageRecognize] = useState(false); // rasm modal
 
   useEffect(() => {
     getSuppliers(businessId).then((res) => setSuppliers(res.data)).catch(() => {});
@@ -41,8 +31,6 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
       setProducts(res.data);
       setFilteredProducts(res.data);
     }).catch(() => {});
-    // Modal ochilganda, skaner inputiga avtomatik fokus
-    setTimeout(() => barcodeInputRef.current?.focus(), 200);
   }, [businessId]);
 
   useEffect(() => {
@@ -54,79 +42,29 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
     setFilteredProducts(products.filter(p => p.name.toLowerCase().includes(lower)));
   }, [searchTerm, products]);
 
-  const addRow = () => setItems([...items, { productId: '', productName: '', quantity: 1, unitCost: '' }]);
+  const addRow = () => setItems([...items, { productId: '', quantity: 1, unitCost: '' }]);
   const removeRow = (idx) => setItems(items.filter((_, i) => i !== idx));
   const updateRow = (idx, field, value) => {
     const copy = [...items];
     copy[idx][field] = value;
-    if (field === 'productId') {
-      const prod = products.find(p => p._id === value);
-      copy[idx].productName = prod ? prod.name : '';
-    }
     setItems(copy);
   };
 
-  // 🔥 Shtrix-kodni qayta ishlash — TO'G'RILANGAN (api import xatosi va endpoint tuzatildi)
-  const processBarcode = async (code) => {
-    if (!code || !code.trim()) return;
-    setScanStatus('Qidirilmoqda...');
-    try {
-      const res = await getProductByBarcode(businessId, code.trim());
-      const product = res.data;
-
-      setItems(prev => {
-        const existing = prev.find(i => i.productId === product._id);
-        if (existing) {
-          return prev.map(i => i.productId === product._id ? { ...i, quantity: Number(i.quantity) + 1 } : i);
-        }
-        // Bo'sh birinchi qatorni to'ldiramiz, aks holda yangi qator qo'shamiz
-        const emptyIdx = prev.findIndex(i => !i.productId);
-        if (emptyIdx !== -1) {
-          const copy = [...prev];
-          copy[emptyIdx] = { productId: product._id, productName: product.name, quantity: 1, unitCost: product.costPrice || '' };
-          return copy;
-        }
-        return [...prev, { productId: product._id, productName: product.name, quantity: 1, unitCost: product.costPrice || '' }];
-      });
-      setScanStatus(`✅ Qo'shildi: ${product.name}`);
-    } catch (err) {
-      if (err.response?.status === 404) {
-        // Yangi mahsulot — nom va narx so'raymiz
-        const name = prompt("Bu shtrix-kod bo'yicha mahsulot topilmadi. Yangi mahsulot nomini kiriting:");
-        if (!name) { setScanStatus(''); return; }
-        const sellPrice = prompt("Sotuv narxini kiriting:");
-        if (!sellPrice) { setScanStatus(''); return; }
-        try {
-          const newProdRes = await createProduct(businessId, {
-            name, barcode: code.trim(), sellPrice: Number(sellPrice), unit: 'dona',
-          });
-          setProducts(prev => [...prev, newProdRes.data]);
-          setItems(prev => {
-            const emptyIdx = prev.findIndex(i => !i.productId);
-            if (emptyIdx !== -1) {
-              const copy = [...prev];
-              copy[emptyIdx] = { productId: newProdRes.data._id, productName: newProdRes.data.name, quantity: 1, unitCost: '' };
-              return copy;
-            }
-            return [...prev, { productId: newProdRes.data._id, productName: newProdRes.data.name, quantity: 1, unitCost: '' }];
-          });
-          setScanStatus(`✅ Yangi mahsulot yaratildi: ${name}`);
-        } catch (createErr) {
-          setScanStatus('❌ Xatolik: ' + (createErr.response?.data?.error || createErr.message));
-        }
-      } else {
-        setScanStatus('❌ Xatolik: ' + (err.response?.data?.error || err.message));
-      }
-    }
-    setBarcodeInput('');
-    setTimeout(() => setScanStatus(''), 3000);
-  };
-
-  // 🔥 FIZIK SKANER: Enter bosilganda (skaner avtomatik yuboradi)
-  const handleBarcodeKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      processBarcode(barcodeInput);
+  // ===== RASM ORQALI ANIQLANGAN MAHSULOTLARNI QATORGA QO‘SHISH =====
+  const handleImageRecognizeCreated = (newProducts) => {
+    setShowImageRecognize(false);
+    if (!newProducts || newProducts.length === 0) return;
+    // Har bir tanilgan mahsulotni qatorga qo‘shamiz (agar mavjud bo‘lsa, qo‘shmaymiz)
+    const existingIds = items.map(i => i.productId).filter(id => id);
+    const newItems = newProducts
+      .filter(p => !existingIds.includes(p._id)) // takrorlanmasin
+      .map(p => ({
+        productId: p._id,
+        quantity: 1,
+        unitCost: p.costPrice || p.sellPrice || '',
+      }));
+    if (newItems.length > 0) {
+      setItems(prev => [...prev, ...newItems]);
     }
   };
 
@@ -192,39 +130,22 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
           )}
         </label>
 
-        {/* 🔥 FIZIK SKANER INPUTI + KAMERA TUGMASI */}
-        <div className="pt-field pt-field-full" style={{ marginBottom: 10 }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <ScanLine size={15} /> Shtrix-kod skaneri (USB/Bluetooth)
-          </span>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <input
-              ref={barcodeInputRef}
-              type="text"
-              value={barcodeInput}
-              onChange={(e) => setBarcodeInput(e.target.value)}
-              onKeyDown={handleBarcodeKeyDown}
-              placeholder="Kursor shu yerda turganda, fizik skanerni tovar ustiga tuting..."
-              style={{ flex: 1, fontFamily: 'monospace', fontSize: '1rem' }}
-              autoComplete="off"
-            />
-            <button type="button" className="pt-btn-secondary" onClick={() => setShowScanner(true)}>
-              <Camera size={16} /> Kamera bilan
-            </button>
-          </div>
-          {scanStatus && (
-            <span style={{ fontSize: '0.8rem', color: scanStatus.startsWith('❌') ? '#ff5c5c' : '#4ade80', marginTop: 4, display: 'block' }}>
-              {scanStatus}
-            </span>
-          )}
+        {/* Mahsulot qo'shish tugmalari */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <button type="button" className="pt-btn-secondary" onClick={addRow}>
+            <Plus size={14} /> Qator qo'shish
+          </button>
+          <button type="button" className="pt-btn-secondary" onClick={() => setShowImageRecognize(true)}>
+            <Camera size={14} /> Rasm orqali qo'shish
+          </button>
         </div>
 
-        {/* Mahsulot qidirish (qo'lda tanlash uchun, agar skaner bo'lmasa) */}
+        {/* Mahsulot qidirish (qo'lda tanlash) */}
         <div style={{ position: 'relative', marginBottom: 12 }}>
           <Search size={16} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
           <input
             type="text"
-            placeholder="Yoki mahsulotni qo'lda qidiring..."
+            placeholder="Mahsulotni qo'lda qidiring..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ paddingLeft: 30, width: '100%' }}
@@ -268,9 +189,6 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
               )}
             </div>
           ))}
-          <button type="button" className="pt-btn-secondary" onClick={addRow} style={{ alignSelf: 'flex-start' }}>
-            <Plus size={14} /> Qator qo'shish
-          </button>
         </div>
 
         {error && <div className="pt-error">{error}</div>}
@@ -281,21 +199,22 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
             {saving ? 'Yaratilmoqda...' : 'Hujjat yaratish'}
           </button>
         </div>
-      </form>
 
-      {/* 🔥 KAMERA SKANER MODALI — natija xuddi fizik skaner kabi processBarcode'ga boradi */}
-      {showScanner && (
-        <BarcodeScannerModal
-          onScan={(code) => { setShowScanner(false); processBarcode(code); }}
-          onClose={() => setShowScanner(false)}
-        />
-      )}
+        {/* RASM ORQALI ANIQLASH MODALI */}
+        {showImageRecognize && (
+          <ImageRecognizeModal
+            businessId={businessId}
+            onClose={() => setShowImageRecognize(false)}
+            onCreated={handleImageRecognizeCreated}
+          />
+        )}
+      </form>
     </div>
   );
 }
 
 // ============================================================
-// ASOSIY VIEW – o'zgarmadi
+// ASOSIY VIEW – PurchaseOrdersView (o‘zgarmadi)
 // ============================================================
 export default function PurchaseOrdersView() {
   const { activeBusiness, activeWarehouse } = useBusiness();

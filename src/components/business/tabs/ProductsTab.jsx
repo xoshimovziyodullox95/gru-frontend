@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Plus, Search, Edit2, Trash2, X, Barcode, AlertTriangle } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, X, Barcode, AlertTriangle, Camera } from 'lucide-react';
 import { useBusiness } from '../context/BusinessContext';
 import RoleGate from '../shared/RoleGate';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../services/business';
+import ImageRecognizeModal from './warehouse/ImageRecognizeModal'; // yo‘lni tekshiring
 import '../../../styles/productsTab.css';
 
 const UNITS = ['dona', 'kg', 'litr', 'metr', 'quti', 'paket'];
@@ -21,14 +22,14 @@ function ProductFormModal({ initial, onClose, onSaved, businessId }) {
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleCostOrMarkupChange = (e) => {
-  const newForm = { ...form, [e.target.name]: e.target.value };
-  const cost = Number(newForm.costPrice) || 0;
-  const markup = Number(newForm.markupPercent) || 0;
-  if (cost > 0 && markup > 0) {
-    newForm.sellPrice = Math.round(cost + (cost * markup) / 100);
-  }
-  setForm(newForm);
-};
+    const newForm = { ...form, [e.target.name]: e.target.value };
+    const cost = Number(newForm.costPrice) || 0;
+    const markup = Number(newForm.markupPercent) || 0;
+    if (cost > 0 && markup > 0) {
+      newForm.sellPrice = Math.round(cost + (cost * markup) / 100);
+    }
+    setForm(newForm);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91,15 +92,16 @@ function ProductFormModal({ initial, onClose, onSaved, businessId }) {
             <span>Kategoriya</span>
             <input name="category" value={form.category} onChange={handleChange} placeholder="Ixtiyoriy" />
           </label>
-<label className="pt-field">
-  <span>Tannarx</span>
-  <input name="costPrice" type="number" min="0" value={form.costPrice} onChange={handleCostOrMarkupChange} placeholder="0" />
-</label>
 
-<label className="pt-field">
-  <span>Foiz qo'yish (%)</span>
-  <input name="markupPercent" type="number" min="0" value={form.markupPercent} onChange={handleCostOrMarkupChange} placeholder="Masalan: 20" />
-</label>
+          <label className="pt-field">
+            <span>Tannarx</span>
+            <input name="costPrice" type="number" min="0" value={form.costPrice} onChange={handleCostOrMarkupChange} placeholder="0" />
+          </label>
+
+          <label className="pt-field">
+            <span>Foiz qo'yish (%)</span>
+            <input name="markupPercent" type="number" min="0" value={form.markupPercent} onChange={handleCostOrMarkupChange} placeholder="Masalan: 20" />
+          </label>
 
           <label className="pt-field">
             <span>Sotuv narxi *</span>
@@ -131,7 +133,8 @@ export default function ProductsTab() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [modalState, setModalState] = useState(null); // null | 'new' | product object
+  const [modalState, setModalState] = useState(null);
+  const [showImageRecognize, setShowImageRecognize] = useState(false); // yangi state
 
   const loadProducts = useCallback(async () => {
     if (!activeBusiness) return;
@@ -147,7 +150,7 @@ export default function ProductsTab() {
   }, [activeBusiness, search]);
 
   useEffect(() => {
-    const timeout = setTimeout(loadProducts, 300); // qidiruvni debounce qilish
+    const timeout = setTimeout(loadProducts, 300);
     return () => clearTimeout(timeout);
   }, [loadProducts]);
 
@@ -173,11 +176,20 @@ export default function ProductsTab() {
           />
         </div>
 
-        <RoleGate roles={['admin', 'warehouse_worker']}>
-          <button className="pt-btn-primary" onClick={() => setModalState('new')}>
-            <Plus size={16} /> Yangi mahsulot
-          </button>
-        </RoleGate>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <RoleGate roles={['admin', 'warehouse_worker']}>
+            <button className="pt-btn-primary" onClick={() => setModalState('new')}>
+              <Plus size={16} /> Yangi mahsulot
+            </button>
+          </RoleGate>
+
+          {/* ===== RASM ORQALI QO'SHISH TUGMASI ===== */}
+          <RoleGate roles={['admin', 'warehouse_worker']}>
+            <button className="pt-btn-secondary" onClick={() => setShowImageRecognize(true)}>
+              <Camera size={16} /> Rasm orqali qo'shish
+            </button>
+          </RoleGate>
+        </div>
       </div>
 
       {loading ? (
@@ -211,8 +223,8 @@ export default function ProductsTab() {
                   <td className="pt-muted">{p.costPrice?.toLocaleString() || 0}</td>
                   <td>{p.sellPrice?.toLocaleString()}</td>
                   <td className="pt-profit">
-  {((p.sellPrice || 0) - (p.costPrice || 0)).toLocaleString()}
-</td>
+                    {((p.sellPrice || 0) - (p.costPrice || 0)).toLocaleString()}
+                  </td>
                   <td>
                     {p.minStockThreshold > 0 ? (
                       <span className="pt-threshold"><AlertTriangle size={12} /> {p.minStockThreshold}</span>
@@ -233,12 +245,25 @@ export default function ProductsTab() {
         </div>
       )}
 
+      {/* Mahsulot yaratish/tahrirlash modal */}
       {modalState && (
         <ProductFormModal
           initial={modalState === 'new' ? null : modalState}
           businessId={activeBusiness._id}
           onClose={() => setModalState(null)}
           onSaved={() => { setModalState(null); loadProducts(); }}
+        />
+      )}
+
+      {/* Rasm orqali tanib olish modal */}
+      {showImageRecognize && (
+        <ImageRecognizeModal
+          businessId={activeBusiness._id}
+          onClose={() => setShowImageRecognize(false)}
+          onCreated={(newProducts) => {
+            // Yangi mahsulotlar yaratilgandan so‘ng ro‘yxatni yangilaymiz
+            loadProducts();
+          }}
         />
       )}
     </div>

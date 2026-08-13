@@ -1,10 +1,11 @@
 // src/components/pages/SupplierWarehousePage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Package, Edit2, X, Check, Building2, ScanLine } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Package, Edit2, X, Check, Building2, Camera } from 'lucide-react';
 import api from '../services/api';
-import '../../styles/Warehouse.css';
-import BarcodeScannerModal from '../common/Barcodescannermodal.jsx';
+import '../../styles/warehouse.css';
+import ImageRecognizeModal from './warehouse/ImageRecognizeModal'; // rasm orqali aniqlash
+import { useBusiness } from '../context/BusinessContext'; // activeBusiness olish uchun
 
 const UNIT_OPTIONS = [
   { value: 'blok', label: 'Blok' },
@@ -17,13 +18,13 @@ const UNIT_OPTIONS = [
 
 export default function SupplierWarehousePage() {
   const navigate = useNavigate();
+  const { activeBusiness } = useBusiness(); // business ID olamiz
   const [warehouse, setWarehouse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [companyName, setCompanyName] = useState('');
   const [editingName, setEditingName] = useState(false);
 
-  // ---------- SKANER STATE ----------
-  const [showScanner, setShowScanner] = useState(false);
+  const [showImageRecognize, setShowImageRecognize] = useState(false); // yangi state
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItemId, setEditingItemId] = useState(null);
@@ -106,30 +107,10 @@ export default function SupplierWarehousePage() {
     }
   };
 
-  // ---------- BARCODE SKANER NATIJASINI QAYTA ISHLASH ----------
-  const handleBarcodeScan = async (code) => {
-    setShowScanner(false);
-    try {
-      const checkRes = await api.get(`/warehouse/barcode/${code}`);
-      if (checkRes.data.found) {
-        // Mahsulot allaqachon bor — miqdor qo'shish
-        const addQty = prompt(`"${checkRes.data.item.productName}" topildi. Qancha qo'shamiz?`);
-        if (addQty && Number(addQty) > 0) {
-          await api.post('/warehouse/barcode', { barcode: code, quantity: addQty });
-          loadWarehouse();
-        }
-      } else {
-        // Yangi mahsulot — nom va miqdor so'raymiz
-        const name = prompt("Yangi mahsulot. Nomini kiriting:");
-        if (!name) return;
-        const qty = prompt("Miqdorini kiriting:");
-        if (!qty) return;
-        await api.post('/warehouse/barcode', { barcode: code, productName: name, quantity: qty, unit: 'dona' });
-        loadWarehouse();
-      }
-    } catch (err) {
-      alert('Xatolik: ' + (err.response?.data?.error || err.message));
-    }
+  // ========== RASM ORQALI QO'SHISH ==========
+  const handleImageRecognizeCreated = () => {
+    setShowImageRecognize(false);
+    loadWarehouse(); // skladni yangilaymiz
   };
 
   if (loading) return <div className="StatusScreen">Yuklanmoqda...</div>;
@@ -167,13 +148,13 @@ export default function SupplierWarehousePage() {
         </div>
       </div>
 
-      {/* TUGMALAR BLOKI — “Yangi mahsulot” va “Skaner” yonma-yon */}
+      {/* ===== TUGMALAR BLOKI ===== */}
       <div className="wh-actions-row">
         <button className="wh-add-btn" onClick={() => { resetForm(); setShowAddForm(true); }}>
           <Plus size={18} /> Yangi mahsulot qo'shish
         </button>
-        <button className="wh-add-btn wh-scan-btn" onClick={() => setShowScanner(true)}>
-          <ScanLine size={18} /> Shtrix-kodni skanerlash
+        <button className="wh-add-btn wh-scan-btn" onClick={() => setShowImageRecognize(true)}>
+          <Camera size={18} /> Rasm orqali qo'shish
         </button>
       </div>
 
@@ -248,9 +229,13 @@ export default function SupplierWarehousePage() {
         )}
       </div>
 
-      {/* SKANER MODALI */}
-      {showScanner && (
-        <BarcodeScannerModal onScan={handleBarcodeScan} onClose={() => setShowScanner(false)} />
+      {/* ===== RASM ORQALI ANIQLASH MODALI ===== */}
+      {showImageRecognize && (
+        <ImageRecognizeModal
+          businessId={activeBusiness?._id} // business ID
+          onClose={() => setShowImageRecognize(false)}
+          onCreated={handleImageRecognizeCreated}
+        />
       )}
     </div>
   );

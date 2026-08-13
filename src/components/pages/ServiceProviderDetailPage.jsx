@@ -6,13 +6,19 @@ import {
   MapPin, Phone, ArrowLeft, ShieldCheck, Flame,
   Tag, Building2, Mail, Globe, MessageCircle,
   Star, User, ChevronLeft, ChevronRight, X, Maximize2, FileText,
+  Send, ShoppingCart, Check
 } from 'lucide-react';
-import { getServiceProviderById, getServiceProviders } from '../services/serviceProviders';
+import { getServiceProviderById, getServiceProviders, rateServiceProvider, commentServiceProvider, replyServiceProviderComment, applyToService } from '../services/serviceProviders';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../hooks/useCart';
 import '../../styles/locationPage.css';
 import '../../styles/serviceProviderDetail.css';
 import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
 import ServiceProviderCard from '../marketplace/ServiceProviderCard';
 import { getImageUrl } from '../utils/imageUrl';
+import RatingAndComments from '../common/RatingAndComments';
+import '../../styles/ratingAndComments.css';
+import Navbar from '../layout/Navbar'; // <-- NAVBAR
 
 // ============================================================
 // IMAGE VIEWER MODAL
@@ -45,6 +51,9 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
   if (!isOpen) return null;
 
+  const currentImage = images?.[activeIndex] || '/images/placeholder.jpg';
+  const safeImageUrl = getImageUrl(currentImage) || '/images/placeholder.jpg';
+
   return (
     <div className="ImageViewerOverlay">
       <button className="ImageViewerBackBtn" onClick={onClose}>
@@ -60,8 +69,8 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
         </>
       )}
       <div className="ImageViewerScroll" onClick={onClose}>
-       <img
-  src={getImageUrl(image)}
+        <img
+          src={safeImageUrl}
           alt={title}
           className="ImageViewerImg"
           onClick={(e) => e.stopPropagation()}
@@ -72,7 +81,11 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
         <div className="ImageViewerThumbs" onClick={(e) => e.stopPropagation()}>
           {images.map((img, idx) => (
             <button key={idx} className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`} onClick={() => setActiveIndex(idx)}>
-              <img src={img} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }} />
+              <img
+                src={getImageUrl(img) || '/images/placeholder.jpg'}
+                alt={`thumb-${idx}`}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+              />
             </button>
           ))}
         </div>
@@ -81,10 +94,15 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
   );
 };
 
+// ============================================================
+// ASOSIY KOMPONENT
+// ============================================================
 export default function ServiceProviderDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { getQuantity, increment, removeItem } = useCart();
   const [provider, setProvider] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,6 +112,7 @@ export default function ServiceProviderDetailPage() {
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [logoErrored, setLogoErrored] = useState(false);
 
+  // ===== MA'LUMOTLARNI YUKLASH =====
   useEffect(() => {
     const load = async () => {
       try {
@@ -116,6 +135,7 @@ export default function ServiceProviderDetailPage() {
     load();
   }, [id, t]);
 
+  // ===== BOSHQA XIZMATLAR =====
   useEffect(() => {
     if (!provider?.service_category) return;
     getServiceProviders({ category: provider.service_category })
@@ -126,6 +146,7 @@ export default function ServiceProviderDetailPage() {
       .catch(() => setRelated([]));
   }, [provider]);
 
+  // ===== CHAT =====
   const handleChat = () => {
     const targetId = provider?.userId?._id || provider?.userId;
     if (!targetId) {
@@ -135,16 +156,52 @@ export default function ServiceProviderDetailPage() {
     navigate(`/chat?userId=${targetId}`);
   };
 
+  // ===== SAVAT LOGIKASI =====
+  const inCart = provider ? getQuantity(provider._id) > 0 : false;
+
+  const handleCartClick = () => {
+    if (!provider) return;
+    if (inCart) {
+      removeItem(provider._id);
+    } else {
+      increment({
+        id: provider._id,
+        title: provider.name,
+        price: 0,
+        itemType: 'service_provider',
+        type: 'service_provider',
+        image: provider.image,
+        provider: provider.company || provider.name,
+      });
+    }
+  };
+
+  // ===== ARIZA BERISH =====
+  const handleApply = async () => {
+    try {
+      await applyToService(provider._id);
+      alert(t('serviceProvider.applySuccess', 'Ariza yuborildi!'));
+    } catch (err) {
+      alert(err.response?.data?.error || t('serviceProvider.applyError', 'Xatolik yuz berdi'));
+    }
+  };
+
+  const isOwner = provider?.userId?._id === user?.id || user?.email === 'feruzaxashimova250@gmail.com';
+
+  // ===== YUKLASH / XATOLIK =====
   if (loading) return <div className="StatusScreen">{t('serviceProvider.loading')}</div>;
   if (error || !provider) {
     return (
-      <div className="StatusScreen Error">
-        <h2>⚠️ {t('serviceProvider.error')}</h2>
-        <p>{error || t('serviceProvider.notFound')}</p>
-        <button onClick={() => navigate(-1)} className="BackActionBtn">
-          <ArrowLeft size={16} /> {t('serviceProvider.back')}
-        </button>
-      </div>
+      <>
+        <Navbar />
+        <div className="StatusScreen Error">
+          <h2>⚠️ {t('serviceProvider.error')}</h2>
+          <p>{error || t('serviceProvider.notFound')}</p>
+          <button onClick={() => navigate(-1)} className="BackActionBtn">
+            <ArrowLeft size={16} /> {t('serviceProvider.back')}
+          </button>
+        </div>
+      </>
     );
   }
 
@@ -158,171 +215,208 @@ export default function ServiceProviderDetailPage() {
     return type || '';
   };
 
+  // ===== RENDER =====
   return (
-    <div className="LocationPageWrapper">
-      <div className="MainViewport">
-        <button className="BackActionBtn" onClick={() => navigate(-1)}>
-          <ArrowLeft size={16} /> {t('serviceProvider.back')}
-        </button>
+    <>
+      <Navbar />
+      <div className="LocationPageWrapper">
+        <div className="MainViewport">
+          <button className="BackActionBtn" onClick={() => navigate(-1)}>
+            <ArrowLeft size={16} /> {t('serviceProvider.back')}
+          </button>
 
-        {/* ===== HERO KARTA ===== */}
-        <div className="spd-hero-card">
-          <div className="spd-hero-top">
-            <div className="spd-hero-logo" onClick={() => setImageModalOpen(true)}>
-              {!logoErrored ? (
-                <img
-                  src={images[0]}
-                  alt={provider.name}
-                  onError={() => setLogoErrored(true)}
-                />
-              ) : (
-                <Building2 size={28} />
-              )}
-              {images.length > 1 && (
-                <span className="spd-hero-logo-hint"><Maximize2 size={12} /></span>
-              )}
+          {/* HERO KARTA */}
+          <div className="spd-hero-card">
+            <div className="spd-hero-top">
+             <div className="spd-hero-logo" onClick={() => setImageModalOpen(true)}>
+  <img
+    src={images[0] || '/images/placeholder.jpg'}
+    alt={provider.name}
+    onError={(e) => {
+      e.target.onerror = null;
+      e.target.src = '/images/placeholder.jpg';
+    }}
+    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+  />
+  {images.length > 1 && (
+    <span className="spd-hero-logo-hint"><Maximize2 size={12} /></span>
+  )}
+</div>
+              <div className="spd-hero-titles">
+                {provider.company && <span className="spd-hero-company">{provider.company}</span>}
+                <h1 className="spd-hero-name">{provider.name}</h1>
+                <div className="location-meta">
+                  {provider.is_top && <span className="meta-badge"><Flame size={13} /> {t('serviceProvider.badgeTop')}</span>}
+                  {provider.is_verified && <span className="meta-badge"><ShieldCheck size={13} /> {t('serviceProvider.badgeVerified')}</span>}
+                  {provider.provider_type && (
+                    <span className="meta-badge"><User size={13} /> {getProviderTypeLabel(provider.provider_type)}</span>
+                  )}
+                  {typeof provider.rating === 'number' && (
+                    <span className="meta-badge spd-rating-badge"><Star size={13} /> {provider.rating}</span>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="spd-hero-titles">
-              {provider.company && <span className="spd-hero-company">{provider.company}</span>}
-              <h1 className="spd-hero-name">{provider.name}</h1>
-              <div className="location-meta">
-                {provider.is_top && <span className="meta-badge"><Flame size={13} /> {t('serviceProvider.badgeTop')}</span>}
-                {provider.is_verified && <span className="meta-badge"><ShieldCheck size={13} /> {t('serviceProvider.badgeVerified')}</span>}
-                {provider.provider_type && (
-                  <span className="meta-badge"><User size={13} /> {getProviderTypeLabel(provider.provider_type)}</span>
+
+            {images.length > 1 && (
+              <div className="image-gallery-thumbs spd-thumbs">
+                {images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`}
+                    onClick={() => { setActiveImageIndex(idx); setImageModalOpen(true); }}
+                  >
+                    <img src={getImageUrl(img) || '/images/placeholder.jpg'} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }} />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* ASOSIY GRID */}
+          <div className="LayoutGrid">
+            {/* CHAP USTUN */}
+            <div className="InformationContent">
+              <div className="DetailsModule">
+                <h3 className="ModuleHeading"><FileText size={18} /> {t('serviceProvider.about', 'Xizmat haqida')}</h3>
+                <p className="ModuleText">{provider.description || t('serviceProvider.defaultDescription')}</p>
+
+                <div className="detail-grid">
+                  {provider.speciality && (
+                    <div className="detail-item">
+                      <span className="detail-icon"><Tag size={16} /></span>
+                      <div className="detail-text">
+                        <span className="detail-label">{t('serviceProvider.speciality')}</span>
+                        <strong>{provider.speciality}</strong>
+                      </div>
+                    </div>
+                  )}
+                  {provider.price_range && (
+                    <div className="detail-item">
+                      <span className="detail-icon"><Star size={16} /></span>
+                      <div className="detail-text">
+                        <span className="detail-label">{t('serviceProvider.priceRange')}</span>
+                        <strong>{provider.price_range}</strong>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <CelebrityMotivationCard category={provider.level1} />
+
+              {provider.userId && (
+                <div className="user-info-card">
+                  <h3 className="ModuleHeading"><User size={18} /> {t('serviceProvider.owner')}</h3>
+                  <div className="user-info">
+                    <img
+                      src={
+                        provider.userId.avatar_url ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(provider.userId.full_name || 'U')}&background=00E5FF&color=fff&rounded=true&size=60`
+                      }
+                      alt={provider.userId.full_name}
+                      className="user-avatar"
+                      onError={(e) => e.target.src = '/images/placeholder.jpg'}
+                    />
+                    <div className="user-details">
+                      <p><strong>{provider.userId.full_name || t('serviceProvider.fullName')}</strong></p>
+                      {provider.userId.email && <p className="user-email">{provider.userId.email}</p>}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* RATING AND COMMENTS */}
+              <RatingAndComments
+                itemId={provider._id}
+                initialRatings={provider.ratings || []}
+                initialComments={provider.comments || []}
+                currentUser={user}
+                api={{ rate: rateServiceProvider, comment: commentServiceProvider, reply: replyServiceProviderComment }}
+              />
+            </div>
+
+            {/* O'NG USTUN */}
+            <div className="ActionSidebar">
+              {provider.price_range && (
+                <div className="PriceIndicatorCard">
+                  <span className="PriceTagLabel">{t('serviceProvider.priceRange')}</span>
+                  <span className="PriceTagValue">{provider.price_range}</span>
+                </div>
+              )}
+
+              <div className="ContactSurface">
+                <h3 className="CardSmallTitle">{t('serviceProvider.contactTitle')}</h3>
+                {provider.email && <div className="AddressLine"><Mail size={15} /> {provider.email}</div>}
+                {provider.website && (
+                  <div className="AddressLine">
+                    <Globe size={15} />
+                    <a href={provider.website} target="_blank" rel="noopener noreferrer">{provider.website}</a>
+                  </div>
                 )}
-                {typeof provider.rating === 'number' && (
-                  <span className="meta-badge spd-rating-badge"><Star size={13} /> {provider.rating}</span>
+                {!showPhone ? (
+                  <button className="RevealPhoneBtn" onClick={() => setShowPhone(true)}>
+                    <Phone size={16} /> {t('serviceProvider.showPhone')}
+                  </button>
+                ) : (
+                  <a href={`tel:${provider.phone}`} className="DirectPhoneLink">{provider.phone}</a>
+                )}
+              </div>
+
+              <div className="chat-with-owner">
+                <button onClick={handleChat} className="chat-owner-btn">
+                  <MessageCircle size={18} /> {t('serviceProvider.chatWithOwner')}
+                </button>
+              </div>
+
+              {/* SAVAT + ARIZA TUGMALARI */}
+              <div className="chat-with-owner" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <button
+                  onClick={handleCartClick}
+                  className={`add-to-cart-btn ${inCart ? 'in-cart' : ''}`}
+                  style={{ width: '100%' }}
+                >
+                  {inCart ? (
+                    <><Check size={16} /> {t('serviceProvider.inCart') || 'Savatda'}</>
+                  ) : (
+                    <><ShoppingCart size={16} /> {t('serviceProvider.addToCart') || 'Savatga qo\'shish'}</>
+                  )}
+                </button>
+                {!isOwner && (
+                  <button
+                    onClick={handleApply}
+                    className="chat-owner-btn"
+                    style={{ background: 'linear-gradient(135deg, #0055b3, var(--cyan))' }}
+                  >
+                    <Send size={18} /> {t('serviceProvider.apply', 'To\'g\'ridan-to\'g\'ri ariza berish')}
+                  </button>
                 )}
               </div>
             </div>
           </div>
 
-          {images.length > 1 && (
-            <div className="image-gallery-thumbs spd-thumbs">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`}
-                  onClick={() => { setActiveImageIndex(idx); setImageModalOpen(true); }}
-                >
-                  <img src={img} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }} />
-                </button>
-              ))}
+          {/* BOSHQA XIZMATLAR */}
+          {related.length > 0 && (
+            <div className="spd-related-section">
+              <h3 className="ModuleHeading">
+                {t('serviceProvider.otherServices', "{{company}}ning boshqa xizmatlari", { company: provider.company || provider.name })}
+              </h3>
+              <div className="spd-related-grid">
+                {related.map((p) => (
+                  <ServiceProviderCard
+                    key={p._id}
+                    id={p._id}
+                    name={p.name}
+                    company={p.company}
+                    image={p.image}
+                    price_range={p.price_range}
+                    description={p.description}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
-
-        {/* ===== ASOSIY GRID ===== */}
-        <div className="LayoutGrid">
-          {/* CHAP USTUN */}
-          <div className="InformationContent">
-            <div className="DetailsModule">
-              <h3 className="ModuleHeading"><FileText size={18} /> {t('serviceProvider.about', 'Xizmat haqida')}</h3>
-              <p className="ModuleText">{provider.description || t('serviceProvider.defaultDescription')}</p>
-
-              <div className="detail-grid">
-                {provider.speciality && (
-                  <div className="detail-item">
-                    <span className="detail-icon"><Tag size={16} /></span>
-                    <div className="detail-text">
-                      <span className="detail-label">{t('serviceProvider.speciality')}</span>
-                      <strong>{provider.speciality}</strong>
-                    </div>
-                  </div>
-                )}
-                {provider.price_range && (
-                  <div className="detail-item">
-                    <span className="detail-icon"><Star size={16} /></span>
-                    <div className="detail-text">
-                      <span className="detail-label">{t('serviceProvider.priceRange')}</span>
-                      <strong>{provider.price_range}</strong>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <CelebrityMotivationCard category={provider.level1} />
-
-            {provider.userId && (
-              <div className="user-info-card">
-                <h3 className="ModuleHeading"><User size={18} /> {t('serviceProvider.owner')}</h3>
-                <div className="user-info">
-                  <img
-                    src={
-                      provider.userId.avatar_url ||
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(provider.userId.full_name || 'U')}&background=00E5FF&color=fff&rounded=true&size=60`
-                    }
-                    alt={provider.userId.full_name}
-                    className="user-avatar"
-                    onError={(e) => e.target.src = '/images/placeholder.jpg'}
-                  />
-                  <div className="user-details">
-                    <p><strong>{provider.userId.full_name || t('serviceProvider.fullName')}</strong></p>
-                    {provider.userId.email && <p className="user-email">{provider.userId.email}</p>}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* O'NG USTUN */}
-          <div className="ActionSidebar">
-            {provider.price_range && (
-              <div className="PriceIndicatorCard">
-                <span className="PriceTagLabel">{t('serviceProvider.priceRange')}</span>
-                <span className="PriceTagValue">{provider.price_range}</span>
-              </div>
-            )}
-
-            <div className="ContactSurface">
-              <h3 className="CardSmallTitle">{t('serviceProvider.contactTitle')}</h3>
-              {provider.email && <div className="AddressLine"><Mail size={15} /> {provider.email}</div>}
-              {provider.website && (
-                <div className="AddressLine">
-                  <Globe size={15} />
-                  <a href={provider.website} target="_blank" rel="noopener noreferrer">{provider.website}</a>
-                </div>
-              )}
-              {!showPhone ? (
-                <button className="RevealPhoneBtn" onClick={() => setShowPhone(true)}>
-                  <Phone size={16} /> {t('serviceProvider.showPhone')}
-                </button>
-              ) : (
-                <a href={`tel:${provider.phone}`} className="DirectPhoneLink">{provider.phone}</a>
-              )}
-            </div>
-
-            <div className="chat-with-owner">
-              <button onClick={handleChat} className="chat-owner-btn">
-                <MessageCircle size={18} /> {t('serviceProvider.chatWithOwner')}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ===== BOSHQA XIZMATLAR ===== */}
-        {related.length > 0 && (
-          <div className="spd-related-section">
-            <h3 className="ModuleHeading">
-              {t('serviceProvider.otherServices', "{{company}}ning boshqa xizmatlari", { company: provider.company || provider.name })}
-            </h3>
-            <div className="spd-related-grid">
-              {related.map((p) => (
-                <ServiceProviderCard
-                  key={p._id}
-                  id={p._id}
-                  name={p.name}
-                  company={p.company}
-                  image={p.image}
-                  price_range={p.price_range}
-                  description={p.description}
-                />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       <ImageViewerModal
@@ -334,6 +428,6 @@ export default function ServiceProviderDetailPage() {
         title={provider.name}
         t={t}
       />
-    </div>
+    </>
   );
 }

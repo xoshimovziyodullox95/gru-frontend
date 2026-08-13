@@ -64,6 +64,8 @@ import MarketplaceCatalogItems from './components/pages/MarketplaceCatalogItems'
 import MarketplaceServiceCats from './components/pages/MarketplaceServiceCats';
 import MarketplaceServiceList from './components/pages/MarketplaceServiceList';
 import MarketplaceBank from './components/pages/MarketplaceBank';
+import BroadcastAdPage from './components/pages/BroadcastAdPage';
+
 
 
 let appHasMounted = false;
@@ -159,6 +161,7 @@ function MainRoutes() {
       <Route path="/supplier-stats" element={<ProtectedRoute><Layout><SupplierStatsPage /></Layout></ProtectedRoute>} />
       <Route path="/my-orders" element={<ProtectedRoute><Layout><MyOrdersPage /></Layout></ProtectedRoute>} />
       <Route path="/received-orders" element={<ProtectedRoute><Layout><ReceivedOrdersPage /></Layout></ProtectedRoute>} />
+      <Route path="/broadcast-ad" element={<ProtectedRoute><Layout><BroadcastAdPage /></Layout></ProtectedRoute>} />
       <Route path="/physic" element={<Layout><PhysicPage /></Layout>} />
       <Route path="/physic/:categoryKey" element={<PhysicCategoryPage />} />
 

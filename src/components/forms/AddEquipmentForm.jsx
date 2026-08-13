@@ -8,8 +8,10 @@ import { createEquipment, uploadEquipmentMedia } from '../services/equipment';
 import { Upload, X, Cpu, UtensilsCrossed, Sofa, Package, Check, ArrowLeft } from 'lucide-react';
 import SuccessModal from '../common/SuccessModal';
 import { PRODUCT_TYPES as UNIVERSAL_TYPES, getDirectionsForType } from '../utils/productTypes';
+import AITextEnhanceButton from '../common/AITextEnhanceButton'; // <-- AI tugma
 import '../../styles/forms.css';
 import '../../styles/addEquipmentForm.css';
+import '../../styles/aiEnhance.css'; // <-- AI uslubi
 
 export default function AddEquipmentForm() {
   const { user } = useAuth();
@@ -161,7 +163,6 @@ export default function AddEquipmentForm() {
     setLoading(true);
     setUploadProgress(0);
     try {
-      // --------------------- PAYLOADGA autoDirections QO'SHILDI ---------------------
       const payload = {
         ...formData,
         price: parseFloat(formData.price) || 0,
@@ -217,9 +218,13 @@ export default function AddEquipmentForm() {
           />
         </div>
 
-        {/* TAVSIFI */}
+        {/* ===== TAVSIFI (AI TUGMA BILAN) ===== */}
         <div className="form-group">
           <label>{t('addEquipment.fields.description')}</label>
+          <AITextEnhanceButton
+            value={formData.description}
+            onChange={(newText) => setFormData(prev => ({ ...prev, description: newText }))}
+          />
           <textarea
             name="description"
             rows="3"
@@ -291,7 +296,7 @@ export default function AddEquipmentForm() {
         {/* DINAMIK MAYDONLAR */}
         {productType && (
           <div className="aef-dynamic-fields">
-            {/* ===== YANGI UNIVERSAL KATALOG (faqat oziqovqat uchun) ===== */}
+            {/* ===== UNIVERSAL KATALOG (faqat oziqovqat uchun) ===== */}
             {showUniversalCatalog && (
               <div className="form-group">
                 <label>Mahsulot turi</label>
@@ -378,7 +383,6 @@ export default function AddEquipmentForm() {
             {/* OZIQ-OVQAT */}
             {productType === 'oziqovqat' && (
               <>
-                {/* Miqdor va birlik (har doim ko'rsatiladi) */}
                 <div className="form-row">
                   <div className="form-group">
                     <label>{t('addEquipment.fields.amount')}</label>

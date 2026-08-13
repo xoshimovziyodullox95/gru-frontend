@@ -7,6 +7,7 @@ import { useCategories } from '../hooks/useCategories';
 import MediaUploader from '../MediaUploader';
 import LocationMapPicker from './LocationMapPicker';
 import SuccessModal from '../common/SuccessModal';
+import AITextEnhanceButton from '../common/AITextEnhanceButton'; // <-- AI tugma
 import {
   Plus,
   Trash2,
@@ -23,6 +24,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import '../../styles/addLocationForm.css';
+import '../../styles/aiEnhance.css'; // <-- AI uslubi
 
 // NEARBY_TYPES
 const getNearbyTypes = (t) => [
@@ -78,7 +80,7 @@ export default function AddLocationForm() {
     competitors_info: '',
     uvp: '',
     description: '',
-    region: '', // select uchun
+    region: '',
   });
 
   const [coords, setCoords] = useState({ lat: null, lng: null });
@@ -192,7 +194,7 @@ export default function AddLocationForm() {
         .map((row) => ({ hour: row.hour, count: Number(row.count) }));
 
       const payload = {
-        ...formData, // region ham bor
+        ...formData,
         level1,
         category: level2,
         level2,
@@ -261,7 +263,6 @@ export default function AddLocationForm() {
           />
         </div>
 
-        {/* REGION SELECT */}
         <div className="form-group">
           <label>{t('addLocation.fields.region')}</label>
           <select
@@ -346,8 +347,13 @@ export default function AddLocationForm() {
           />
         </div>
 
+        {/* ===== AI TUGMA BILAN TAVSIF ===== */}
         <div className="form-group">
           <label>{t('addLocation.fields.description')}</label>
+          <AITextEnhanceButton
+            value={formData.description}
+            onChange={(newText) => setFormData(prev => ({ ...prev, description: newText }))}
+          />
           <textarea
             name="description"
             rows="4"
