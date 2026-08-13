@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { createServiceProvider, uploadServiceMedia } from '../services/serviceProviders';
 import { useCategories } from '../hooks/useCategories';
 import MediaUploader from '../MediaUploader';
-import SuccessModal from '../common/SuccessModal';
+import SuccessModal from '../common/SuccessModal.jsx';
 import AITextEnhanceButton from '../common/AITextEnhanceButton.jsx'; // <-- AI tugma
 import '../../styles/AddServiceForm.css';
 import '../../styles/aienhance.css'; // <-- AI uslubi

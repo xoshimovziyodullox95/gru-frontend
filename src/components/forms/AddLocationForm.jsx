@@ -6,7 +6,7 @@ import { createLocation, uploadLocationMedia } from '../services/locations';
 import { useCategories } from '../hooks/useCategories';
 import MediaUploader from '../MediaUploader';
 import LocationMapPicker from './LocationMapPicker';
-import SuccessModal from '../common/SuccessModal';
+import SuccessModal from '../common/SuccessModal.jsx';
 import AITextEnhanceButton from '../common/AITextEnhanceButton.jsx'; // <-- AI tugma
 import {
   Plus,
