@@ -6,7 +6,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Sparkles, SpellCheck, Wand2, Combine, Loader2 } from 'lucide-react';
 import api from '../services/api';
-import '../../styles/aienhance.css'
 
 export default function AITextEnhanceButton({ value, onChange, disabled }) {
   const [open, setOpen] = useState(false);
