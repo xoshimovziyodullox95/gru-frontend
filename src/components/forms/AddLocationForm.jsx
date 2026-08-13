@@ -24,7 +24,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import '../../styles/addLocationForm.css';
-import '../../styles/aiEnhance.css'; // <-- AI uslubi
+import '../../styles/aienhance.css'; // <-- AI uslubi
 
 // NEARBY_TYPES
 const getNearbyTypes = (t) => [

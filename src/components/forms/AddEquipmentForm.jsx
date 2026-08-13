@@ -8,10 +8,10 @@ import { createEquipment, uploadEquipmentMedia } from '../services/equipment';
 import { Upload, X, Cpu, UtensilsCrossed, Sofa, Package, Check, ArrowLeft } from 'lucide-react';
 import SuccessModal from '../common/SuccessModal';
 import { PRODUCT_TYPES as UNIVERSAL_TYPES, getDirectionsForType } from '../utils/productTypes';
-import AITextEnhanceButton from '../common/AITextEnhanceButton'; // <-- AI tugma
+import AITextEnhanceButton from '../common/AIEnhancedTextarea'; // <-- AI tugma
 import '../../styles/forms.css';
 import '../../styles/addEquipmentForm.css';
-import '../../styles/aiEnhance.css'; // <-- AI uslubi
+import '../../styles/aienhance.css'; // <-- AI uslubi
 
 export default function AddEquipmentForm() {
   const { user } = useAuth();

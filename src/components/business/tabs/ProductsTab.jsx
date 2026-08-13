@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, Edit2, Trash2, X, Barcode, AlertTriangle, Camera } from 'lucide-react';
 import { useBusiness } from '../context/BusinessContext';
-import RoleGate from '../shared/RoleGate';
+import RoleGate from '../shared/RoleGate.jsx';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../services/business';
-import ImageRecognizeModal from './warehouse/ImageRecognizeModal'; // yo‘lni tekshiring
+import ImageRecognizeModal from './warehouse/Imagerecognizemodal.jsx'; // yo‘lni tekshiring
 import '../../../styles/productsTab.css';
 
 const UNITS = ['dona', 'kg', 'litr', 'metr', 'quti', 'paket'];
