@@ -7,7 +7,7 @@ import { useCategories } from '../hooks/useCategories';
 import MediaUploader from '../MediaUploader';
 import LocationMapPicker from './LocationMapPicker';
 import SuccessModal from '../common/SuccessModal.jsx';
-import AITextEnhanceButton from "../common/AiTextEnhanceButton.jsx";
+import AITextEnhanceButton from "../common/AITextEnhanceButton.jsx";
 import {
   Plus,
   Trash2,
