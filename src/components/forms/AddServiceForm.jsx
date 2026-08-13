@@ -9,7 +9,7 @@ import MediaUploader from '../MediaUploader';
 import SuccessModal from '../common/SuccessModal';
 import AITextEnhanceButton from '../common/AITextEnhanceButton'; // <-- AI tugma
 import '../../styles/AddServiceForm.css';
-import '../../styles/aiEnhance.css'; // <-- AI uslubi
+import '../../styles/aienhance.css'; // <-- AI uslubi
 
 // SERVICE_TAGS endi t() dan foydalanadi
 const getServiceTags = (t) => [
