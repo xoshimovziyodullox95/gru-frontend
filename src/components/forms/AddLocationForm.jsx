@@ -7,7 +7,7 @@ import { useCategories } from '../hooks/useCategories';
 import MediaUploader from '../MediaUploader';
 import LocationMapPicker from './LocationMapPicker';
 import SuccessModal from '../common/SuccessModal';
-import AITextEnhanceButton from '../common/AITextEnhanceButton'; // <-- AI tugma
+import AITextEnhanceButton from '../common/AITextEnhanceButton.jsx'; // <-- AI tugma
 import {
   Plus,
   Trash2,

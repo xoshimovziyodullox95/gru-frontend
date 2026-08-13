@@ -7,7 +7,7 @@ import { createServiceProvider, uploadServiceMedia } from '../services/servicePr
 import { useCategories } from '../hooks/useCategories';
 import MediaUploader from '../MediaUploader';
 import SuccessModal from '../common/SuccessModal';
-import AITextEnhanceButton from '../common/AITextEnhanceButton'; // <-- AI tugma
+import AITextEnhanceButton from '../common/AITextEnhanceButton.jsx'; // <-- AI tugma
 import '../../styles/AddServiceForm.css';
 import '../../styles/aienhance.css'; // <-- AI uslubi
 
