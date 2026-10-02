@@ -30,10 +30,18 @@ function PickerField({ placeholder, options, value, onChange, disabled, t }) {
   const dropdownRef = useRef(null);
 
   function openDropdown() {
-    const rect = rootRef.current.getBoundingClientRect();
-    setCoords({ top: rect.bottom + 8, left: rect.left, width: rect.width });
-    setOpen(true);
-  }
+  if (!rootRef.current) return;
+
+  const rect = rootRef.current.getBoundingClientRect();
+
+  setCoords({
+    top: Math.min(rect.bottom + 8, window.innerHeight - 320),
+    left: Math.max(8, rect.left),
+    width: Math.min(rect.width, window.innerWidth - 16),
+  });
+
+  setOpen(true);
+}
 
   useEffect(() => {
     if (!open) return;

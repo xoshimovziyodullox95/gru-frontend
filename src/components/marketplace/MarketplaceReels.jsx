@@ -1,385 +1,1500 @@
-import { useState, useRef, useEffect } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getImageUrl } from '../utils/imageUrl';
+
 import {
-  X, ChevronUp, ChevronDown, Play,
-  ThumbsUp, ThumbsDown, MessageCircle,
-  Send, Share2, Reply, Smile,
-  Eye, Clapperboard
+  ChevronDown,
+  ChevronUp,
+  Clapperboard,
+  Eye,
+  MessageCircle,
+  Pause,
+  Play,
+  Reply,
+  Send,
+  Share2,
+  ThumbsDown,
+  ThumbsUp,
+  Volume2,
+  VolumeX,
+  X,
 } from 'lucide-react';
-import { likeItem, dislikeItem, commentItem, viewItem, replyComment } from '../services/likeComment';
+
+import { getImageUrl } from '../utils/imageUrl';
+
+import {
+  commentItem,
+  dislikeItem,
+  likeItem,
+  replyComment,
+  viewItem,
+} from '../services/likeComment';
+
 import '../../styles/reels.css';
 
-// ============================================================
-// 1. REEL THUMB
-// ============================================================
-function ReelThumb({ reel, onOpen, isPriority, t }) {
-  const videoRef = useRef(null);
-  const containerRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
 
-  // Faqat ekranda ko'ringanda video yuklanadi
+const AVATAR_PLACEHOLDER =
+  '/images/placeholder.jpg';
+
+const REEL_TYPE_NAMES = {
+  post: 'Post',
+  location: 'Joy',
+  equipment: 'Jihoz',
+  service: 'Xizmat',
+  product: 'Tovar',
+  'youtube-external': 'YouTube',
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function isTranslationKey(value) {
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  return /^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(
+    value.trim()
+  );
+}
+
+function getReelTypeLabel(reel, t) {
+  const itemType = reel?.itemType || 'video';
+
+  const fallback =
+    REEL_TYPE_NAMES[itemType] || 'Video';
+
+  const currentLabel = reel?.typeLabel;
+
+  if (
+    typeof currentLabel === 'string' &&
+    currentLabel.trim() &&
+    !isTranslationKey(currentLabel)
+  ) {
+    return currentLabel.trim();
+  }
+
+  const translated = t(
+    `marketplaceReels.types.${itemType}`,
+    {
+      defaultValue: fallback,
+    }
+  );
+
+  if (
+    typeof translated !== 'string' ||
+    !translated.trim() ||
+    isTranslationKey(translated)
+  ) {
+    return fallback;
+  }
+
+  return translated.trim();
+}
+
+function getResponseData(response) {
+  return response?.data || response || {};
+}
+
+function getCurrentUserName(user) {
+  return (
+    user?.fullName ||
+    user?.full_name ||
+    user?.user_metadata?.full_name ||
+    user?.email ||
+    'Foydalanuvchi'
+  );
+}
+
+function getCurrentUserAvatar(user) {
+  return (
+    user?.avatar_url ||
+    user?.avatarUrl ||
+    user?.user_metadata?.avatar_url ||
+    AVATAR_PLACEHOLDER
+  );
+}
+
+function handleAvatarError(event) {
+  event.currentTarget.onerror = null;
+  event.currentTarget.src = AVATAR_PLACEHOLDER;
+}
+
+function getCommentId(comment, index) {
+  return (
+    comment?.id ||
+    comment?._id ||
+    `comment-${index}`
+  );
+}
+
+/* ============================================================
+   REEL THUMBNAIL
+   ============================================================ */
+
+function ReelThumb({
+  reel,
+  onOpen,
+  isPriority,
+  t,
+}) {
+  const cardRef = useRef(null);
+  const videoRef = useRef(null);
+
+  const [isVisible, setIsVisible] =
+    useState(false);
+
+  const [isPreviewing, setIsPreviewing] =
+    useState(false);
+
+  const [mediaError, setMediaError] =
+    useState(false);
+
+  const displayType = getReelTypeLabel(
+    reel,
+    t
+  );
+
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { root: null, rootMargin: '100px', threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    const card = cardRef.current;
+
+    if (!card) {
+      return undefined;
+    }
+
+    if (
+      typeof IntersectionObserver ===
+      'undefined'
+    ) {
+      setIsVisible(true);
+      return undefined;
+    }
+
+    const observer =
+      new IntersectionObserver(
+        ([entry]) => {
+          setIsVisible(entry.isIntersecting);
+        },
+        {
+          rootMargin: '180px',
+          threshold: 0.05,
+        }
+      );
+
+    observer.observe(card);
+
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
-  const handleEnter = () => {
-    setIsHovering(true);
-    if (!reel.isYoutube) videoRef.current?.play().catch(() => {});
+  useEffect(() => {
+    setMediaError(false);
+  }, [reel?.id, reel?.videoUrl]);
+
+  const startPreview = () => {
+    setIsPreviewing(true);
+
+    if (
+      !reel?.isYoutube &&
+      videoRef.current
+    ) {
+      videoRef.current
+        .play()
+        .catch(() => {});
+    }
   };
-  const handleLeave = () => {
-    setIsHovering(false);
-    if (!reel.isYoutube && videoRef.current) {
+
+  const stopPreview = () => {
+    setIsPreviewing(false);
+
+    if (
+      !reel?.isYoutube &&
+      videoRef.current
+    ) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
   };
 
-  const showVideo = isVisible && !reel.isYoutube;
+  const handleKeyDown = (event) => {
+    if (
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+      event.preventDefault();
+      onOpen();
+    }
+  };
+
+  const showYoutubeThumbnail =
+    reel?.isYoutube &&
+    reel?.youtubeId &&
+    !mediaError;
+
+  const showLocalVideo =
+    !reel?.isYoutube &&
+    isVisible &&
+    reel?.videoUrl &&
+    !mediaError;
 
   return (
-    <div
-      ref={containerRef}
-      className={`reel-card ${isPriority ? 'reel-card-priority' : ''}`}
+    <article
+      ref={cardRef}
+      className={[
+        'reel-card',
+        isPriority
+          ? 'reel-card--priority'
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      role="button"
+      tabIndex={0}
+      aria-label={`${displayType}: ${
+        reel?.title || 'Video'
+      }`}
       onClick={onOpen}
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={startPreview}
+      onMouseLeave={stopPreview}
+      onFocus={startPreview}
+      onBlur={stopPreview}
     >
-      {reel.isYoutube ? (
+      {showYoutubeThumbnail ? (
         <img
           src={`https://i.ytimg.com/vi/${reel.youtubeId}/hqdefault.jpg`}
-          className="reel-video"
-          alt={reel.title}
+          className="reel-card__media"
+          alt={reel?.title || 'YouTube'}
           loading="lazy"
+          onError={() => {
+            setMediaError(true);
+          }}
         />
-      ) : showVideo ? (
-       <video
-  ref={videoRef}
-  src={getImageUrl(reel.videoUrl)}
-  className="reel-video"
+      ) : showLocalVideo ? (
+        <video
+          ref={videoRef}
+          src={getImageUrl(reel.videoUrl)}
+          poster={
+            reel?.thumbnailUrl
+              ? getImageUrl(reel.thumbnailUrl)
+              : undefined
+          }
+          className="reel-card__media"
           muted
           loop
           playsInline
-          preload={isHovering ? 'auto' : 'none'}
+          preload={
+            isPreviewing ? 'auto' : 'metadata'
+          }
+          onError={() => {
+            setMediaError(true);
+          }}
         />
       ) : (
-        // Ekranda ko'rinmayotganda faqat statik rasm/placeholder
-        <div className="reel-video reel-video-placeholder" />
+        <div className="reel-card__media reel-card__placeholder">
+          <Clapperboard
+            size={30}
+            strokeWidth={1.7}
+            aria-hidden="true"
+          />
+        </div>
       )}
-      <div className="reel-fade-bottom" />
-      <div className="reel-play-icon"><Play size={20} fill="#fff" color="#fff" /></div>
-      <span className="reel-type-badge">{reel.typeLabel}</span>
-      {isPriority && <span className="reel-priority-badge">{t('marketplaceReels.priorityBadge')}</span>}
-      <div className="reel-title">{reel.title}</div>
-    </div>
+
+      <div
+        className="reel-card__overlay"
+        aria-hidden="true"
+      />
+
+      <div className="reel-card__badges">
+        {isPriority && (
+          <span className="reel-priority-badge">
+            {t(
+              'marketplaceReels.priorityBadge',
+              'Tavsiya'
+            )}
+          </span>
+        )}
+
+        <span className="reel-type-badge">
+          {displayType}
+        </span>
+      </div>
+
+      <span
+        className="reel-card__play"
+        aria-hidden="true"
+      >
+        <Play
+          size={17}
+          fill="currentColor"
+        />
+      </span>
+
+      <div className="reel-card__info">
+        {reel?.userName && (
+          <div className="reel-card__owner">
+            <img
+              src={
+                reel.avatarUrl ||
+                AVATAR_PLACEHOLDER
+              }
+              alt=""
+              loading="lazy"
+              onError={handleAvatarError}
+            />
+
+            <span>{reel.userName}</span>
+          </div>
+        )}
+
+        <h3>
+          {reel?.title || displayType}
+        </h3>
+      </div>
+    </article>
   );
 }
 
-// ============================================================
-// 2. REEL VIEWER
-// ============================================================
-function ReelViewer({
-  reels, index, onClose, onNavigateIndex,
-  onToggleLike, onToggleDislike, onAddComment, onShare, onAddReply, currentUser,
-  t
+/* ============================================================
+   LOCAL VIDEO PLAYER
+   Minimal Instagram-style controls
+   ============================================================ */
+
+function LocalReelPlayer({
+  reel,
+  slideDirection,
+  isMuted,
+  onToggleMute,
 }) {
-  const navigate = useNavigate();
-  const reel = reels[index];
-  const [commentText, setCommentText] = useState('');
-  const [replyText, setReplyText] = useState('');
-  const [showComments, setShowComments] = useState(false);
-  const [activeReplyId, setActiveReplyId] = useState(null);
-  const commentsListRef = useRef(null);
-  const prevIndexRef = useRef(index);
-  const [slideDir, setSlideDir] = useState('down');
-  
+  const videoRef = useRef(null);
+  const feedbackTimerRef = useRef(null);
+
+  const [isPlaying, setIsPlaying] =
+    useState(true);
+
+  const [duration, setDuration] =
+    useState(0);
+
+  const [currentTime, setCurrentTime] =
+    useState(0);
+
+  const [feedback, setFeedback] =
+    useState(null);
 
   useEffect(() => {
-    if (reel) {
-      viewItem(reel.id, reel.itemType).catch(() => {});
-    }
+    setIsPlaying(true);
+    setDuration(0);
+    setCurrentTime(0);
+    setFeedback(null);
+
+    return () => {
+      if (feedbackTimerRef.current) {
+        window.clearTimeout(
+          feedbackTimerRef.current
+        );
+      }
+    };
   }, [reel?.id]);
 
   useEffect(() => {
-    if (index !== prevIndexRef.current) {
-      setSlideDir(index > prevIndexRef.current ? 'down' : 'up');
-      prevIndexRef.current = index;
+    const video = videoRef.current;
+
+    if (video) {
+      video.muted = isMuted;
     }
-  }, [index]);
+  }, [isMuted]);
+
+  const showFeedback = (type) => {
+    setFeedback(type);
+
+    if (feedbackTimerRef.current) {
+      window.clearTimeout(
+        feedbackTimerRef.current
+      );
+    }
+
+    feedbackTimerRef.current =
+      window.setTimeout(() => {
+        setFeedback(null);
+      }, 480);
+  };
+
+  const togglePlayback = () => {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    if (video.paused) {
+      video
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          showFeedback('play');
+        })
+        .catch(() => {});
+    } else {
+      video.pause();
+      setIsPlaying(false);
+      showFeedback('pause');
+    }
+  };
+
+  const handleMetadata = (event) => {
+    const video = event.currentTarget;
+
+    setDuration(
+      Number.isFinite(video.duration)
+        ? video.duration
+        : 0
+    );
+  };
+
+  const handleTimeUpdate = (event) => {
+    setCurrentTime(
+      event.currentTarget.currentTime || 0
+    );
+  };
+
+  const handleSeek = (event) => {
+    event.stopPropagation();
+
+    const video = videoRef.current;
+    const value = Number(event.target.value);
+
+    if (
+      !video ||
+      !Number.isFinite(value)
+    ) {
+      return;
+    }
+
+    video.currentTime = value;
+    setCurrentTime(value);
+  };
+
+  const handleMuteClick = (event) => {
+    event.stopPropagation();
+
+    onToggleMute();
+
+    showFeedback(
+      isMuted ? 'volume' : 'muted'
+    );
+  };
+
+  const progress =
+    duration > 0
+      ? Math.min(
+          100,
+          (currentTime / duration) * 100
+        )
+      : 0;
+
+  return (
+    <>
+      <video
+        ref={videoRef}
+        key={reel.id}
+        src={getImageUrl(reel.videoUrl)}
+        poster={
+          reel.thumbnailUrl
+            ? getImageUrl(reel.thumbnailUrl)
+            : undefined
+        }
+        className={`reel-modal-video reel-slide-${slideDirection}`}
+        autoPlay
+        muted={isMuted}
+        loop
+        playsInline
+        preload="auto"
+        controls={false}
+        controlsList="nofullscreen nodownload"
+        disablePictureInPicture
+        onLoadedMetadata={handleMetadata}
+        onDurationChange={handleMetadata}
+        onTimeUpdate={handleTimeUpdate}
+        onPlay={() => {
+          setIsPlaying(true);
+        }}
+        onPause={() => {
+          setIsPlaying(false);
+        }}
+        onClick={togglePlayback}
+      />
+
+      {/* Ovoz tugmasi */}
+      <button
+        type="button"
+        className="reel-player-sound"
+        onClick={handleMuteClick}
+        aria-label={
+          isMuted
+            ? 'Ovozni yoqish'
+            : 'Ovozni o‘chirish'
+        }
+      >
+        {isMuted ? (
+          <VolumeX size={19} />
+        ) : (
+          <Volume2 size={19} />
+        )}
+      </button>
+
+      {/* Markazdagi qisqa feedback */}
+      <div
+        className={[
+          'reel-player-feedback',
+          feedback ? 'is-visible' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        aria-hidden="true"
+      >
+        {feedback === 'play' && (
+          <Play
+            size={30}
+            fill="currentColor"
+          />
+        )}
+
+        {feedback === 'pause' && (
+          <Pause
+            size={30}
+            fill="currentColor"
+          />
+        )}
+
+        {feedback === 'volume' && (
+          <Volume2 size={29} />
+        )}
+
+        {feedback === 'muted' && (
+          <VolumeX size={29} />
+        )}
+      </div>
+
+      {/* Pauzada doimiy play belgisi */}
+      {!isPlaying && !feedback && (
+        <button
+          type="button"
+          className="reel-player-paused"
+          onClick={togglePlayback}
+          aria-label="Videoni davom ettirish"
+        >
+          <Play
+            size={33}
+            fill="currentColor"
+          />
+        </button>
+      )}
+
+      {/* Faqat ingichka progress */}
+      <div
+        className="reel-player-progress"
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+        onTouchStart={(event) => {
+          event.stopPropagation();
+        }}
+        onTouchMove={(event) => {
+          event.stopPropagation();
+        }}
+        onTouchEnd={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        <input
+          type="range"
+          min="0"
+          max={duration || 0}
+          step="0.01"
+          value={Math.min(
+            currentTime,
+            duration || 0
+          )}
+          onChange={handleSeek}
+          aria-label="Video davomiyligi"
+          style={{
+            '--reel-progress': `${progress}%`,
+          }}
+        />
+      </div>
+    </>
+  );
+}
+
+/* ============================================================
+   YOUTUBE PLAYER
+   ============================================================ */
+
+function YoutubeReelPlayer({
+  reel,
+  slideDirection,
+}) {
+  const source =
+    `https://www.youtube.com/embed/${reel.youtubeId}` +
+    '?autoplay=1' +
+    '&playsinline=1' +
+    '&loop=1' +
+    `&playlist=${reel.youtubeId}` +
+    '&controls=1' +
+    '&modestbranding=1' +
+    '&rel=0';
+
+  return (
+    <iframe
+      key={reel.id}
+      className={`reel-modal-video reel-slide-${slideDirection}`}
+      src={source}
+      title={reel.title || 'YouTube'}
+      allow="autoplay; encrypted-media; picture-in-picture"
+      allowFullScreen
+    />
+  );
+}
+
+/* ============================================================
+   REEL VIEWER
+   ============================================================ */
+
+function ReelViewer({
+  reels,
+  index,
+  onClose,
+  onNavigateIndex,
+  onToggleLike,
+  onToggleDislike,
+  onAddComment,
+  onAddReply,
+  onShare,
+  t,
+}) {
+  const navigate = useNavigate();
+
+  const reel = reels[index];
+
+  const commentsListRef = useRef(null);
+  const previousIndexRef = useRef(index);
+  const wheelLockedRef = useRef(false);
+  const wheelTimerRef = useRef(null);
+  const touchStartYRef = useRef(null);
+
+  const [commentText, setCommentText] =
+    useState('');
+
+  const [replyText, setReplyText] =
+    useState('');
+
+  const [showComments, setShowComments] =
+    useState(false);
+
+  const [activeReplyId, setActiveReplyId] =
+    useState(null);
+
+  const [slideDirection, setSlideDirection] =
+    useState('down');
+
+  const [commentSending, setCommentSending] =
+    useState(false);
+
+  const [isMuted, setIsMuted] =
+    useState(() => {
+      return (
+        localStorage.getItem(
+          'gru-reels-muted'
+        ) !== 'false'
+      );
+    });
+
+  const comments = Array.isArray(
+    reel?.comments
+  )
+    ? reel.comments
+    : [];
+
+  const displayType = getReelTypeLabel(
+    reel,
+    t
+  );
 
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowDown') onNavigateIndex(1);
-      if (e.key === 'ArrowUp') onNavigateIndex(-1);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose, onNavigateIndex]);
+    if (!reel) return;
+
+    const itemId =
+      reel.originalId || reel.id;
+
+    if (!itemId || !reel.itemType) {
+      return;
+    }
+
+    viewItem(
+      itemId,
+      reel.itemType
+    ).catch(() => {});
+  }, [
+    reel?.id,
+    reel?.originalId,
+    reel?.itemType,
+  ]);
+
+  useEffect(() => {
+    if (
+      index !== previousIndexRef.current
+    ) {
+      setSlideDirection(
+        index >
+          previousIndexRef.current
+          ? 'down'
+          : 'up'
+      );
+
+      previousIndexRef.current = index;
+    }
+  }, [index]);
 
   useEffect(() => {
     setCommentText('');
     setReplyText('');
     setShowComments(false);
     setActiveReplyId(null);
+    setCommentSending(false);
   }, [index]);
 
   useEffect(() => {
-    if (commentsListRef.current) {
-      commentsListRef.current.scrollTop = commentsListRef.current.scrollHeight;
+    if (
+      showComments &&
+      commentsListRef.current
+    ) {
+      commentsListRef.current.scrollTop =
+        commentsListRef.current.scrollHeight;
     }
-  }, [reel?.comments?.length, showComments]);
+  }, [comments.length, showComments]);
 
-  if (!reel) return null;
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        if (showComments) {
+          setShowComments(false);
+        } else {
+          onClose();
+        }
+      }
 
-  const comments = reel.comments || [];
+      if (
+        !showComments &&
+        event.key === 'ArrowDown'
+      ) {
+        onNavigateIndex(1);
+      }
 
-  const goProfile = (e) => {
-    e.stopPropagation();
-    onClose();
-    if (reel.userId) navigate(`/profile/${reel.userId}`);
+      if (
+        !showComments &&
+        event.key === 'ArrowUp'
+      ) {
+        onNavigateIndex(-1);
+      }
+    };
+
+    window.addEventListener(
+      'keydown',
+      handleKeyDown
+    );
+
+    return () => {
+      window.removeEventListener(
+        'keydown',
+        handleKeyDown
+      );
+    };
+  }, [
+    onClose,
+    onNavigateIndex,
+    showComments,
+  ]);
+
+  useEffect(() => {
+    return () => {
+      if (wheelTimerRef.current) {
+        window.clearTimeout(
+          wheelTimerRef.current
+        );
+      }
+    };
+  }, []);
+
+  if (!reel) {
+    return null;
+  }
+
+  const toggleMute = () => {
+    setIsMuted((currentValue) => {
+      const nextValue = !currentValue;
+
+      localStorage.setItem(
+        'gru-reels-muted',
+        String(nextValue)
+      );
+
+      return nextValue;
+    });
   };
 
-  const goItem = (e) => {
-    e.stopPropagation();
-    onClose();
-    if (reel.itemType === 'youtube-external') {
-      window.open(reel.link, '_blank', 'noopener,noreferrer');
-    } else {
-      navigate(reel.link);
+  const shouldIgnoreNavigation = (
+    target
+  ) => {
+    return Boolean(
+      target?.closest?.(
+        [
+          '.reel-player-progress',
+          '.reel-player-sound',
+          '.reel-player-paused',
+          '.reel-actions',
+          '.reel-comments-sheet',
+          '.reel-modal-close',
+          '.reel-modal-nav',
+        ].join(',')
+      )
+    );
+  };
+
+  const handleWheel = (event) => {
+    if (
+      showComments ||
+      wheelLockedRef.current ||
+      shouldIgnoreNavigation(
+        event.target
+      ) ||
+      Math.abs(event.deltaY) < 28
+    ) {
+      return;
     }
+
+    wheelLockedRef.current = true;
+
+    onNavigateIndex(
+      event.deltaY > 0 ? 1 : -1
+    );
+
+    wheelTimerRef.current =
+      window.setTimeout(() => {
+        wheelLockedRef.current = false;
+      }, 500);
   };
 
-  const handleLikeClick = (e) => {
-    e.stopPropagation();
-    onToggleLike(reel.id);
+  const handleTouchStart = (event) => {
+    if (
+      showComments ||
+      shouldIgnoreNavigation(event.target)
+    ) {
+      touchStartYRef.current = null;
+      return;
+    }
+
+    touchStartYRef.current =
+      event.touches?.[0]?.clientY ?? null;
   };
 
-  const handleDislikeClick = (e) => {
-    e.stopPropagation();
-    onToggleDislike(reel.id);
-  };
+  const handleTouchEnd = (event) => {
+    if (
+      showComments ||
+      touchStartYRef.current === null ||
+      shouldIgnoreNavigation(event.target)
+    ) {
+      touchStartYRef.current = null;
+      return;
+    }
 
-  const handleCommentIconClick = (e) => {
-    e.stopPropagation();
-    setShowComments(!showComments);
-  };
+    const endY =
+      event.changedTouches?.[0]?.clientY;
 
-  const handleShareClick = (e) => {
-    e.stopPropagation();
-    onShare?.(reel);
-  };
+    if (typeof endY !== 'number') {
+      touchStartYRef.current = null;
+      return;
+    }
 
-  const handleReplyClick = (commentId) => {
-    setActiveReplyId(activeReplyId === commentId ? null : commentId);
-    setReplyText('');
-  };
+    const delta =
+      touchStartYRef.current - endY;
 
-  const wheelLockRef = useRef(false);
-  const handleWheel = (e) => {
-    if (showComments) return;
-    if (wheelLockRef.current) return;
-    if (Math.abs(e.deltaY) < 24) return;
-    wheelLockRef.current = true;
-    onNavigateIndex(e.deltaY > 0 ? 1 : -1);
-    setTimeout(() => { wheelLockRef.current = false; }, 450);
-  };
-
-  const touchStartYRef = useRef(null);
-  const handleTouchStart = (e) => {
-    if (showComments) return;
-    touchStartYRef.current = e.touches[0].clientY;
-  };
-  const handleTouchEnd = (e) => {
-    if (showComments) return;
-    if (touchStartYRef.current === null) return;
-    const deltaY = touchStartYRef.current - e.changedTouches[0].clientY;
     touchStartYRef.current = null;
-    if (Math.abs(deltaY) < 50) return;
-    onNavigateIndex(deltaY > 0 ? 1 : -1);
+
+    if (Math.abs(delta) < 55) {
+      return;
+    }
+
+    onNavigateIndex(delta > 0 ? 1 : -1);
   };
 
-  const submitComment = (e) => {
-    e.preventDefault();
-    const text = commentText.trim();
-    if (!text) return;
-    onAddComment(reel.id, text);
-    setCommentText('');
-    setShowComments(true);
+  const goToProfile = (event) => {
+    event.stopPropagation();
+
+    if (!reel.userId) return;
+
+    onClose();
+    navigate(`/profile/${reel.userId}`);
   };
 
-  const submitReply = (commentId) => {
-    const text = replyText.trim();
-    if (!text) return;
-    onAddReply(reel.id, commentId, text);
-    setReplyText('');
-    setActiveReplyId(null);
+  const goToItem = (event) => {
+    event.stopPropagation();
+
+    if (!reel.link) return;
+
+    onClose();
+
+    if (
+      reel.itemType ===
+      'youtube-external'
+    ) {
+      window.open(
+        reel.link,
+        '_blank',
+        'noopener,noreferrer'
+      );
+
+      return;
+    }
+
+    navigate(reel.link);
+  };
+
+  const toggleComments = (event) => {
+    event?.stopPropagation();
+
+    setShowComments(
+      (currentValue) => !currentValue
+    );
+  };
+
+  const submitComment = async (event) => {
+    event.preventDefault();
+
+    const value = commentText.trim();
+
+    if (!value || commentSending) {
+      return;
+    }
+
+    setCommentSending(true);
+
+    try {
+      await onAddComment(
+        reel.id,
+        value
+      );
+
+      setCommentText('');
+      setShowComments(true);
+    } finally {
+      setCommentSending(false);
+    }
+  };
+
+  const submitReply = async (
+    event,
+    commentId
+  ) => {
+    event.preventDefault();
+
+    const value = replyText.trim();
+
+    if (!value || commentSending) {
+      return;
+    }
+
+    setCommentSending(true);
+
+    try {
+      await onAddReply(
+        reel.id,
+        commentId,
+        value
+      );
+
+      setReplyText('');
+      setActiveReplyId(null);
+    } finally {
+      setCommentSending(false);
+    }
   };
 
   return (
     <div
       className="reel-modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={
+        reel.title || displayType
+      }
       onClick={onClose}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <button className="reel-modal-close" onClick={onClose} type="button">
-        <X size={24} />
+      <button
+        type="button"
+        className="reel-modal-close"
+        onClick={onClose}
+        aria-label={t(
+          'common.close',
+          'Yopish'
+        )}
+      >
+        <X size={22} />
       </button>
 
       {index > 0 && (
-        <button className="reel-modal-nav up" onClick={(e) => { e.stopPropagation(); onNavigateIndex(-1); }} type="button">
-          <ChevronUp size={28} />
-        </button>
-      )}
-      {index < reels.length - 1 && (
-        <button className="reel-modal-nav down" onClick={(e) => { e.stopPropagation(); onNavigateIndex(1); }} type="button">
-          <ChevronDown size={28} />
+        <button
+          type="button"
+          className="reel-modal-nav reel-modal-nav--up"
+          onClick={(event) => {
+            event.stopPropagation();
+            onNavigateIndex(-1);
+          }}
+          aria-label="Oldingi video"
+        >
+          <ChevronUp size={24} />
         </button>
       )}
 
-      <div className="reel-modal-player" onClick={(e) => e.stopPropagation()}>
-        {reel.isYoutube ? (
-          <iframe
-            key={reel.id}
-            className={`reel-modal-video reel-slide-${slideDir}`}
-src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&playsinline=1&loop=1&playlist=${reel.youtubeId}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&autohide=1`}            title={reel.title}
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowFullScreen
-            style={{ border: 0, width: '100%', height: '100%' }}
+      {index < reels.length - 1 && (
+        <button
+          type="button"
+          className="reel-modal-nav reel-modal-nav--down"
+          onClick={(event) => {
+            event.stopPropagation();
+            onNavigateIndex(1);
+          }}
+          aria-label="Keyingi video"
+        >
+          <ChevronDown size={24} />
+        </button>
+      )}
+
+      <div
+        className="reel-modal-player"
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      >
+        {reel.isYoutube &&
+        reel.youtubeId ? (
+          <YoutubeReelPlayer
+            reel={reel}
+            slideDirection={slideDirection}
           />
         ) : (
-<video
-  key={reel.id}
-  src={getImageUrl(reel.videoUrl)}
-  className={`reel-modal-video reel-slide-${slideDir}`}
-            autoPlay
-            controls
-            controlsList="nofullscreen nodownload"
-            disablePictureInPicture
-            playsInline
+          <LocalReelPlayer
+            reel={reel}
+            slideDirection={slideDirection}
+            isMuted={isMuted}
+            onToggleMute={toggleMute}
           />
         )}
 
-        <div className="reel-modal-fade-top" />
-        <div className="reel-modal-fade-bottom" />
+        <div
+          className="reel-modal-fade-top"
+          aria-hidden="true"
+        />
 
-        <div className="reel-bottom-info">
-          <div className="reel-user-info" onClick={goProfile}>
-            <img src={reel.avatarUrl} alt={reel.userName} className="reel-avatar" />
-            <span className="reel-username">{reel.userName}</span>
-          </div>
-          <div className="reel-title" onClick={goItem}>
-            <span className="reel-type-label">{reel.typeLabel}</span>
-            <span className="reel-title-text">{reel.title}</span>
-          </div>
-          <div className="reel-views">
-            <Eye size={16} color="#fff" style={{ marginRight: '6px' }} />
-            <span>{t('marketplaceReels.views', { count: reel.views || 0 })}</span>
+        <div
+          className="reel-modal-fade-bottom"
+          aria-hidden="true"
+        />
+
+        {/* Reel ma’lumotlari */}
+
+        <div className="reel-modal-info">
+          <button
+            type="button"
+            className="reel-modal-user"
+            onClick={goToProfile}
+            disabled={!reel.userId}
+          >
+            <img
+              src={
+                reel.avatarUrl ||
+                AVATAR_PLACEHOLDER
+              }
+              alt=""
+              onError={handleAvatarError}
+            />
+
+            <span>
+              {reel.userName ||
+                'Foydalanuvchi'}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            className="reel-modal-title"
+            onClick={goToItem}
+            disabled={!reel.link}
+          >
+            <span className="reel-modal-type">
+              {displayType}
+            </span>
+
+            <span className="reel-modal-title-text">
+              {reel.title || displayType}
+            </span>
+          </button>
+
+          <div className="reel-modal-views">
+            <Eye size={14} />
+
+            <span>
+              {t(
+                'marketplaceReels.views',
+                {
+                  count: reel.views || 0,
+                  defaultValue:
+                    '{{count}} ko‘rish',
+                }
+              )}
+            </span>
           </div>
         </div>
 
-        <div className="reel-actions-right">
-          <button className="reel-action-btn" onClick={handleLikeClick}>
-            <ThumbsUp size={28} fill={reel.liked ? '#0095f6' : 'none'} color={reel.liked ? '#0095f6' : '#fff'} />
-            <span>{reel.likesCount ?? 0}</span>
+        {/* Actions */}
+
+        <div className="reel-actions">
+          <button
+            type="button"
+            className={[
+              'reel-action',
+              reel.liked
+                ? 'is-liked'
+                : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggleLike(reel.id);
+            }}
+          >
+            <span className="reel-action__icon">
+              <ThumbsUp
+                size={23}
+                fill={
+                  reel.liked
+                    ? 'currentColor'
+                    : 'none'
+                }
+              />
+            </span>
+
+            <small>
+              {reel.likesCount ?? 0}
+            </small>
           </button>
 
-          <button className="reel-action-btn" onClick={handleDislikeClick}>
-            <ThumbsDown size={28} fill={reel.disliked ? '#ff3040' : 'none'} color={reel.disliked ? '#ff3040' : '#fff'} />
-            <span>{t('marketplaceReels.dislike')}</span>
+          <button
+            type="button"
+            className={[
+              'reel-action',
+              reel.disliked
+                ? 'is-disliked'
+                : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggleDislike(reel.id);
+            }}
+          >
+            <span className="reel-action__icon">
+              <ThumbsDown
+                size={23}
+                fill={
+                  reel.disliked
+                    ? 'currentColor'
+                    : 'none'
+                }
+              />
+            </span>
+
+            <small>
+              {t(
+                'marketplaceReels.dislike',
+                'Yoqmadi'
+              )}
+            </small>
           </button>
 
-          <button className="reel-action-btn" onClick={handleCommentIconClick}>
-            <MessageCircle size={28} color="#fff" />
-            <span>{comments.length}</span>
+          <button
+            type="button"
+            className="reel-action"
+            onClick={toggleComments}
+          >
+            <span className="reel-action__icon">
+              <MessageCircle size={23} />
+            </span>
+
+            <small>{comments.length}</small>
           </button>
 
-          <button className="reel-action-btn" onClick={handleShareClick}>
-            <Share2 size={24} color="#fff" />
-            <span>{t('marketplaceReels.share')}</span>
+          <button
+            type="button"
+            className="reel-action"
+            onClick={(event) => {
+              event.stopPropagation();
+              onShare(reel);
+            }}
+          >
+            <span className="reel-action__icon">
+              <Share2 size={22} />
+            </span>
+
+            <small>
+              {t(
+                'marketplaceReels.share',
+                'Ulashish'
+              )}
+            </small>
           </button>
         </div>
 
-        <div className={`reel-comments-sheet ${showComments ? 'open' : ''}`}>
-          <div className="reel-comments-sheet-handle" onClick={handleCommentIconClick} />
+        {/* Comments sheet */}
 
-          <div className="reel-comments-sheet-header">
-            <span>{t('marketplaceReels.comments', { count: comments.length })}</span>
-            <button type="button" className="reel-comments-sheet-close" onClick={handleCommentIconClick}>
-              <X size={20} />
+        <div
+          className={[
+            'reel-comments-sheet',
+            showComments
+              ? 'is-open'
+              : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
+        >
+          <button
+            type="button"
+            className="reel-comments-handle"
+            onClick={toggleComments}
+            aria-label="Izohlarni yopish"
+          />
+
+          <header className="reel-comments-header">
+            <strong>
+              {t(
+                'marketplaceReels.comments',
+                {
+                  count: comments.length,
+                  defaultValue:
+                    'Izohlar ({{count}})',
+                }
+              )}
+            </strong>
+
+            <button
+              type="button"
+              onClick={toggleComments}
+              aria-label="Izohlarni yopish"
+            >
+              <X size={19} />
             </button>
-          </div>
+          </header>
 
-          <div className="reel-comments-sheet-list" ref={commentsListRef}>
+          <div
+            ref={commentsListRef}
+            className="reel-comments-list"
+          >
             {comments.length === 0 ? (
-              <div className="reel-comments-empty">{t('marketplaceReels.emptyComments')}</div>
-            ) : (
-              comments.map((c) => (
-                <div key={c.id} className="reel-comment-wrapper">
-                  <div className="reel-comment-row">
-                    <img src={c.avatarUrl || '/images/placeholder.jpg'} alt="" className="reel-comment-avatar" />
-                    <div className="reel-comment-body">
-                      <span className="reel-comment-author">{c.userName}</span>
-                      <span className="reel-comment-text">{c.text}</span>
-                    </div>
-                    <button className="reel-comment-reply-btn" onClick={() => handleReplyClick(c.id)}>
-                      <Reply size={14} />
-                    </button>
-                  </div>
+              <div className="reel-comments-empty">
+                <MessageCircle size={28} />
 
-                  {(c.replies || []).map((r) => (
-                    <div key={r.id} className="reel-comment-row reply">
-                      <img src={r.avatarUrl || '/images/placeholder.jpg'} alt="" className="reel-comment-avatar small" />
-                      <div className="reel-comment-body">
-                        <span className="reel-comment-author">{r.userName}</span>
-                        <span className="reel-comment-text">{r.text}</span>
-                      </div>
-                    </div>
-                  ))}
-
-                  {activeReplyId === c.id && (
-                    <form className="reel-reply-form" onSubmit={(e) => { e.preventDefault(); submitReply(c.id); }}>
-                      <input
-                        type="text"
-                        placeholder={t('marketplaceReels.replyPlaceholder')}
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        autoFocus
-                      />
-                      <button type="submit" disabled={!replyText.trim()}>
-                        <Send size={14} color="#fff" />
-                      </button>
-                    </form>
+                <span>
+                  {t(
+                    'marketplaceReels.emptyComments',
+                    'Hozircha izohlar yo‘q'
                   )}
-                </div>
-              ))
+                </span>
+              </div>
+            ) : (
+              comments.map(
+                (
+                  comment,
+                  commentIndex
+                ) => {
+                  const commentId =
+                    getCommentId(
+                      comment,
+                      commentIndex
+                    );
+
+                  return (
+                    <div
+                      key={commentId}
+                      className="reel-comment"
+                    >
+                      <div className="reel-comment__row">
+                        <img
+                          src={
+                            comment.avatarUrl ||
+                            AVATAR_PLACEHOLDER
+                          }
+                          alt=""
+                          onError={
+                            handleAvatarError
+                          }
+                        />
+
+                        <div className="reel-comment__body">
+                          <strong>
+                            {comment.userName ||
+                              'Foydalanuvchi'}
+                          </strong>
+
+                          <p>{comment.text}</p>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="reel-comment__reply"
+                          onClick={() => {
+                            setActiveReplyId(
+                              (currentId) =>
+                                currentId ===
+                                commentId
+                                  ? null
+                                  : commentId
+                            );
+
+                            setReplyText('');
+                          }}
+                          aria-label="Javob berish"
+                        >
+                          <Reply size={14} />
+                        </button>
+                      </div>
+
+                      {(comment.replies || []).map(
+                        (
+                          reply,
+                          replyIndex
+                        ) => (
+                          <div
+                            key={
+                              reply.id ||
+                              reply._id ||
+                              `reply-${commentId}-${replyIndex}`
+                            }
+                            className="reel-comment__row reel-comment__row--reply"
+                          >
+                            <img
+                              src={
+                                reply.avatarUrl ||
+                                AVATAR_PLACEHOLDER
+                              }
+                              alt=""
+                              onError={
+                                handleAvatarError
+                              }
+                            />
+
+                            <div className="reel-comment__body">
+                              <strong>
+                                {reply.userName ||
+                                  'Foydalanuvchi'}
+                              </strong>
+
+                              <p>{reply.text}</p>
+                            </div>
+                          </div>
+                        )
+                      )}
+
+                      {activeReplyId ===
+                        commentId && (
+                        <form
+                          className="reel-reply-form"
+                          onSubmit={(event) =>
+                            submitReply(
+                              event,
+                              commentId
+                            )
+                          }
+                        >
+                          <input
+                            type="text"
+                            value={replyText}
+                            maxLength={1000}
+                            placeholder={t(
+                              'marketplaceReels.replyPlaceholder',
+                              'Javob yozing...'
+                            )}
+                            onChange={(event) => {
+                              setReplyText(
+                                event.target.value
+                              );
+                            }}
+                            autoFocus
+                          />
+
+                          <button
+                            type="submit"
+                            disabled={
+                              !replyText.trim() ||
+                              commentSending
+                            }
+                            aria-label="Javob yuborish"
+                          >
+                            <Send size={14} />
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  );
+                }
+              )
             )}
           </div>
 
-          <form className="reel-comments-sheet-form" onSubmit={submitComment}>
-            <button type="button" className="reel-emoji-btn">
-              <Smile size={20} color="#fff" />
-            </button>
+          <form
+            className="reel-comment-form"
+            onSubmit={submitComment}
+          >
             <input
               type="text"
-              placeholder={t('marketplaceReels.commentPlaceholder')}
               value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              autoFocus={showComments}
+              maxLength={1000}
+              placeholder={t(
+                'marketplaceReels.commentPlaceholder',
+                'Izoh yozing...'
+              )}
+              onChange={(event) => {
+                setCommentText(
+                  event.target.value
+                );
+              }}
             />
-            <button type="submit" disabled={!commentText.trim()}>
-              <Send size={17} color="#fff" />
+
+            <button
+              type="submit"
+              disabled={
+                !commentText.trim() ||
+                commentSending
+              }
+              aria-label="Izoh yuborish"
+            >
+              <Send size={17} />
             </button>
           </form>
         </div>
@@ -388,208 +1503,501 @@ src={`https://www.youtube.com/embed/${reel.youtubeId}?autoplay=1&playsinline=1&l
   );
 }
 
-// ============================================================
-// 3. ASOSIY KOMPONENT
-// ============================================================
+/* ============================================================
+   MAIN COMPONENT
+   ============================================================ */
+
 export default function MarketplaceReels({
-  reels: initialReels,
+  reels: initialReels = [],
   onReelUpdate,
   currentUser,
   variant = 'row',
   priorityId = null,
 }) {
   const { t } = useTranslation();
-  const [reels, setReels] = useState(initialReels || []);
-  const [activeIndex, setActiveIndex] = useState(null);
+
+  const [reels, setReels] = useState(
+    Array.isArray(initialReels)
+      ? initialReels
+      : []
+  );
+
+  const [activeIndex, setActiveIndex] =
+    useState(null);
 
   useEffect(() => {
-    setReels(initialReels || []);
+    setReels(
+      Array.isArray(initialReels)
+        ? initialReels
+        : []
+    );
   }, [initialReels]);
 
-  const orderedReels = priorityId
-    ? [
-        ...reels.filter(r => r.originalId === priorityId || r.id === priorityId),
-        ...reels.filter(r => r.originalId !== priorityId && r.id !== priorityId),
-      ]
-    : reels;
+  const orderedReels = useMemo(() => {
+    if (!priorityId) {
+      return reels;
+    }
 
-  if (!orderedReels || orderedReels.length === 0) return null;
+    const priorityReels = reels.filter(
+      (reel) =>
+        reel.originalId === priorityId ||
+        reel.id === priorityId
+    );
 
-  const close = () => setActiveIndex(null);
-  const navigateIndex = (delta) => {
-    setActiveIndex((prev) => {
-      if (prev === null) return prev;
-      const next = prev + delta;
-      if (next < 0 || next >= orderedReels.length) return prev;
-      return next;
-    });
+    const regularReels = reels.filter(
+      (reel) =>
+        reel.originalId !== priorityId &&
+        reel.id !== priorityId
+    );
+
+    return [
+      ...priorityReels,
+      ...regularReels,
+    ];
+  }, [reels, priorityId]);
+
+  useEffect(() => {
+    if (activeIndex === null) {
+      return undefined;
+    }
+
+    const previousOverflow =
+      document.body.style.overflow;
+
+    document.body.style.overflow =
+      'hidden';
+
+    return () => {
+      document.body.style.overflow =
+        previousOverflow;
+    };
+  }, [activeIndex]);
+
+  useEffect(() => {
+    if (
+      activeIndex !== null &&
+      activeIndex >= orderedReels.length
+    ) {
+      setActiveIndex(null);
+    }
+  }, [
+    activeIndex,
+    orderedReels.length,
+  ]);
+
+  const closeViewer = useCallback(() => {
+    setActiveIndex(null);
+  }, []);
+
+  const navigateViewer = useCallback(
+    (direction) => {
+      setActiveIndex((currentIndex) => {
+        if (currentIndex === null) {
+          return null;
+        }
+
+        const nextIndex =
+          currentIndex + direction;
+
+        if (
+          nextIndex < 0 ||
+          nextIndex >= orderedReels.length
+        ) {
+          return currentIndex;
+        }
+
+        return nextIndex;
+      });
+    },
+    [orderedReels.length]
+  );
+
+  const updateReel = (
+    reelId,
+    updates
+  ) => {
+    setReels((currentReels) =>
+      currentReels.map((reel) =>
+        reel.id === reelId
+          ? {
+              ...reel,
+              ...updates,
+            }
+          : reel
+      )
+    );
+
+    onReelUpdate?.(reelId, updates);
   };
 
   const toggleLike = async (reelId) => {
-    const reel = reels.find((r) => r.id === reelId);
+    const reel = reels.find(
+      (item) => item.id === reelId
+    );
+
     if (!reel) return;
-    const itemId = reel.originalId || reel.id;
+
+    const itemId =
+      reel.originalId || reel.id;
+
     try {
-      const res = await likeItem(itemId, reel.itemType);
-      const { liked, likesCount } = res.data;
-      setReels((prev) =>
-        prev.map((r) => {
-          if (r.id !== reelId) return r;
-          return { ...r, liked, likesCount };
-        })
+      const response = await likeItem(
+        itemId,
+        reel.itemType
       );
-      if (onReelUpdate) {
-        onReelUpdate(reelId, { liked, likesCount });
-      }
-    } catch (err) {
-      console.error('Like xatosi:', err);
+
+      const data =
+        getResponseData(response);
+
+      const liked =
+        typeof data.liked === 'boolean'
+          ? data.liked
+          : !reel.liked;
+
+      const likesCount =
+        typeof data.likesCount === 'number'
+          ? data.likesCount
+          : Math.max(
+              0,
+              (reel.likesCount || 0) +
+                (liked ? 1 : -1)
+            );
+
+      updateReel(reelId, {
+        liked,
+        likesCount,
+
+        disliked:
+          typeof data.disliked ===
+          'boolean'
+            ? data.disliked
+            : liked
+              ? false
+              : reel.disliked,
+      });
+    } catch (error) {
+      console.error(
+        'Like xatosi:',
+        error
+      );
     }
   };
 
-  const toggleDislike = async (reelId) => {
-    const reel = reels.find((r) => r.id === reelId);
+  const toggleDislike = async (
+    reelId
+  ) => {
+    const reel = reels.find(
+      (item) => item.id === reelId
+    );
+
     if (!reel) return;
-    const itemId = reel.originalId || reel.id;
+
+    const itemId =
+      reel.originalId || reel.id;
+
     try {
-      const res = await dislikeItem(itemId, reel.itemType);
-      const { disliked } = res.data;
-      setReels((prev) =>
-        prev.map((r) => {
-          if (r.id !== reelId) return r;
-          const wasLiked = r.liked;
-          return {
-            ...r,
-            disliked,
-            liked: disliked ? false : r.liked,
-            likesCount: disliked && wasLiked ? Math.max(0, (r.likesCount || 0) - 1) : r.likesCount,
-          };
-        })
+      const response =
+        await dislikeItem(
+          itemId,
+          reel.itemType
+        );
+
+      const data =
+        getResponseData(response);
+
+      const disliked =
+        typeof data.disliked ===
+        'boolean'
+          ? data.disliked
+          : !reel.disliked;
+
+      const likesCount =
+        typeof data.likesCount ===
+        'number'
+          ? data.likesCount
+          : disliked && reel.liked
+            ? Math.max(
+                0,
+                (reel.likesCount || 0) -
+                  1
+              )
+            : reel.likesCount || 0;
+
+      updateReel(reelId, {
+        disliked,
+        likesCount,
+
+        liked:
+          typeof data.liked === 'boolean'
+            ? data.liked
+            : disliked
+              ? false
+              : reel.liked,
+      });
+    } catch (error) {
+      console.error(
+        'Dislike xatosi:',
+        error
       );
-      if (onReelUpdate) {
-        onReelUpdate(reelId, {
-          disliked,
-          liked: disliked ? false : reel.liked,
-          likesCount: disliked && reel.liked ? Math.max(0, (reel.likesCount || 0) - 1) : reel.likesCount,
-        });
-      }
-    } catch (err) {
-      console.error('Dislike xatosi:', err);
     }
   };
 
-  const addComment = async (reelId, text) => {
-    const reel = reels.find((r) => r.id === reelId);
+  const addComment = async (
+    reelId,
+    text
+  ) => {
+    const reel = reels.find(
+      (item) => item.id === reelId
+    );
+
     if (!reel) return;
-    const itemId = reel.originalId || reel.id;
+
+    const itemId =
+      reel.originalId || reel.id;
+
     try {
-      const res = await commentItem(itemId, reel.itemType, text);
+      const response =
+        await commentItem(
+          itemId,
+          reel.itemType,
+          text
+        );
+
+      const data =
+        getResponseData(response);
+
       const newComment = {
-        id: res.data._id || `c-${Date.now()}`,
-        userId: res.data.userId,
-        userName: currentUser?.fullName || currentUser?.full_name || 'Foydalanuvchi',
-        text: res.data.text,
-        createdAt: res.data.createdAt || new Date(),
+        id:
+          data._id ||
+          data.id ||
+          `comment-${Date.now()}`,
+
+        userId: data.userId,
+
+        userName:
+          getCurrentUserName(currentUser),
+
+        avatarUrl:
+          getCurrentUserAvatar(currentUser),
+
+        text: data.text || text,
+
+        createdAt:
+          data.createdAt ||
+          new Date().toISOString(),
+
         replies: [],
-        avatarUrl: currentUser?.avatar_url || '/images/placeholder.jpg'
       };
-      let updatedComments;
-      setReels((prev) =>
-        prev.map((r) => {
-          if (r.id !== reelId) return r;
-          updatedComments = [...(r.comments || []), newComment];
-          return { ...r, comments: updatedComments };
-        })
+
+      updateReel(reelId, {
+        comments: [
+          ...(reel.comments || []),
+          newComment,
+        ],
+      });
+    } catch (error) {
+      console.error(
+        'Comment xatosi:',
+        error
       );
-      if (onReelUpdate) {
-        onReelUpdate(reelId, { comments: updatedComments });
-      }
-    } catch (err) {
-      console.error('Comment xatosi:', err);
+
+      throw error;
     }
   };
 
-  const addReply = async (reelId, commentId, text) => {
-    const reel = reels.find((r) => r.id === reelId);
+  const addReply = async (
+    reelId,
+    commentId,
+    text
+  ) => {
+    const reel = reels.find(
+      (item) => item.id === reelId
+    );
+
     if (!reel) return;
-    const itemId = reel.originalId || reel.id;
+
+    const itemId =
+      reel.originalId || reel.id;
+
     try {
-      const res = await replyComment(itemId, reel.itemType, commentId, text);
+      const response =
+        await replyComment(
+          itemId,
+          reel.itemType,
+          commentId,
+          text
+        );
+
+      const data =
+        getResponseData(response);
+
       const newReply = {
-        id: res.data._id || `r-${Date.now()}`,
-        userId: res.data.userId,
-        userName: currentUser?.fullName || currentUser?.full_name || 'Foydalanuvchi',
-        text: res.data.text,
-        createdAt: res.data.createdAt || new Date(),
-        avatarUrl: currentUser?.avatar_url || '/images/placeholder.jpg'
+        id:
+          data._id ||
+          data.id ||
+          `reply-${Date.now()}`,
+
+        userId: data.userId,
+
+        userName:
+          getCurrentUserName(currentUser),
+
+        avatarUrl:
+          getCurrentUserAvatar(currentUser),
+
+        text: data.text || text,
+
+        createdAt:
+          data.createdAt ||
+          new Date().toISOString(),
       };
-      let updatedComments;
-      setReels((prev) =>
-        prev.map((r) => {
-          if (r.id !== reelId) return r;
-          updatedComments = (r.comments || []).map((c) => {
-            if (c.id === commentId) {
-              return { ...c, replies: [...(c.replies || []), newReply] };
-            }
-            return c;
-          });
-          return { ...r, comments: updatedComments };
-        })
+
+      const updatedComments = (
+        reel.comments || []
+      ).map((comment) => {
+        const currentCommentId =
+          comment.id || comment._id;
+
+        if (
+          String(currentCommentId) !==
+          String(commentId)
+        ) {
+          return comment;
+        }
+
+        return {
+          ...comment,
+
+          replies: [
+            ...(comment.replies || []),
+            newReply,
+          ],
+        };
+      });
+
+      updateReel(reelId, {
+        comments: updatedComments,
+      });
+    } catch (error) {
+      console.error(
+        'Reply xatosi:',
+        error
       );
-      if (onReelUpdate) {
-        onReelUpdate(reelId, { comments: updatedComments });
+
+      throw error;
+    }
+  };
+
+  const shareReel = async (reel) => {
+    const url =
+      reel.itemType ===
+      'youtube-external'
+        ? reel.link
+        : `${window.location.origin}${
+            reel.link || ''
+          }`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title:
+            reel.title || 'G.R.U video',
+          url,
+        });
+
+        return;
       }
-    } catch (err) {
-      console.error('Reply xatosi:', err);
+
+      await navigator.clipboard?.writeText(
+        url
+      );
+    } catch (error) {
+      if (
+        error?.name !== 'AbortError'
+      ) {
+        console.error(
+          'Share xatosi:',
+          error
+        );
+      }
     }
   };
 
-  const handleShare = (reel) => {
-    const url = reel.itemType === 'youtube-external'
-      ? reel.link
-      : window.location.origin + (reel.link || '');
-    if (navigator.share) {
-      navigator.share({ title: reel.title, url }).catch(() => {});
-    } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(url).catch(() => {});
-    }
-  };
+  if (!orderedReels.length) {
+    return null;
+  }
 
-  const trackClassName = `reels-track ${variant === 'grid2' ? 'reels-track-grid2' : ''}`;
+  const isHomeVariant =
+    variant === 'grid2';
 
   return (
-    <section className={`reels-section ${variant === 'grid2' ? 'reels-section-grid2' : ''}`}>
-      <div className="reels-header">
-        <h2 className="reels-title-heading">
-          <Clapperboard size={22} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-          {t('marketplaceReels.title')}
-        </h2>
-      
-      </div>
-      <div className={trackClassName}>
-        {orderedReels.map((reel, idx) => (
-          <ReelThumb
-            key={reel.id}
-            reel={reel}
-            isPriority={priorityId != null && (reel.originalId === priorityId || reel.id === priorityId)}
-            onOpen={() => setActiveIndex(idx)}
-            t={t}
+    <section
+      className={[
+        'reels-section',
+
+        isHomeVariant
+          ? 'reels-section--home'
+          : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <header className="reels-header">
+        <h2>
+          <Clapperboard
+            size={22}
+            aria-hidden="true"
           />
-        ))}
+
+          <span>
+            {t(
+              'marketplaceReels.title',
+              'Videolar'
+            )}
+          </span>
+        </h2>
+      </header>
+
+      <div className="reels-track">
+        {orderedReels.map(
+          (reel, index) => (
+            <ReelThumb
+              key={
+                reel.id ||
+                `${reel.itemType}-${index}`
+              }
+              reel={reel}
+              t={t}
+              isPriority={
+                priorityId !== null &&
+                (reel.originalId ===
+                  priorityId ||
+                  reel.id === priorityId)
+              }
+              onOpen={() => {
+                setActiveIndex(index);
+              }}
+            />
+          )
+        )}
       </div>
 
       {activeIndex !== null && (
         <ReelViewer
           reels={orderedReels}
           index={activeIndex}
-          onClose={close}
-          onNavigateIndex={navigateIndex}
-          onToggleLike={toggleLike}
-          onToggleDislike={toggleDislike}
-          onAddComment={addComment}
-          onShare={handleShare}
-          onAddReply={addReply}
-          currentUser={currentUser}
           t={t}
+          onClose={closeViewer}
+          onNavigateIndex={
+            navigateViewer
+          }
+          onToggleLike={toggleLike}
+          onToggleDislike={
+            toggleDislike
+          }
+          onAddComment={addComment}
+          onAddReply={addReply}
+          onShare={shareReel}
         />
       )}
     </section>

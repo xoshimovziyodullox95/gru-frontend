@@ -1,100 +1,606 @@
-/* src/styles/card.css */
-:root {
-  /* Default color scheme – "Cyber Sunset" (qora + amber + neon green) */
-  --card-bg: #0E1015;
-  --card-border: rgba(255, 160, 0, 0.5);
-  --card-border-hover: #00FFAA;
-  --card-glow: rgba(0, 255, 170, 0.4);
-  --card-accent: #FFA000;
-}
+/* ============================================================
+   G.R.U CARD SYSTEM — THEME AWARE
+   ============================================================ */
 
-/* Asosiy karta */
-.cyber-card {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(2px);
-}
+/*
+ * Bu komponent global theme ranglarini ishlatadi:
+ *
+ * --bg
+ * --card
+ * --border
+ * --text
+ * --textMuted
+ * --cyan
+ * --primary
+ * --primary-color
+ * --shadow
+ *
+ * Agar global qiymatlar mavjud bo‘lmasa, fallback ishlaydi.
+ */
 
-.cyber-card:hover {
-  border-color: var(--card-border-hover);
-  box-shadow: 0 0 18px var(--card-glow);
-}
+.gru-card {
+  --gru-card-bg: var(--card, #071c32);
+  --gru-card-text: var(--text, #f5fbff);
 
-/* 3D efektli karta */
-.cyber-card-3d {
+  --gru-card-muted:
+    var(
+      --text-muted,
+      var(--textMuted, #87abc1)
+    );
+
+  --gru-card-accent:
+    var(
+      --primary-color,
+      var(
+        --primary,
+        var(--cyan, #00cfff)
+      )
+    );
+
+  --gru-card-border:
+    var(
+      --border,
+      rgba(0, 207, 255, 0.18)
+    );
+
+  --gru-card-shadow:
+    var(
+      --shadow,
+      rgba(0, 0, 0, 0.25)
+    );
+
+  position: relative;
+  isolation: isolate;
+
+  min-width: 0;
+  overflow: hidden;
+
+  color: var(--gru-card-text);
+  background: var(--gru-card-bg);
+  border: 1px solid var(--gru-card-border);
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 24px var(--gru-card-shadow),
+    inset 0 1px
+      color-mix(
+        in srgb,
+        var(--gru-card-text) 4%,
+        transparent
+      );
+
+  font: inherit;
+
+  transform: translateZ(0);
   transform-style: preserve-3d;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.cyber-card-3d:hover {
-  transform: rotateX(3deg) rotateY(1deg) translateY(-6px);
-  box-shadow: 0 20px 30px -15px rgba(0, 0, 0, 0.5);
+
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-/* Glassmorphism kartasi (shaffof) */
-.cyber-card-glass {
-  background: rgba(14, 16, 21, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 160, 0, 0.3);
+/* Yuqori yumshoq yorug‘lik */
+
+.gru-card::before {
+  content: '';
+  position: absolute;
+  top: -90px;
+  right: -90px;
+  z-index: -1;
+
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+
+  background: var(--gru-card-accent);
+  opacity: 0;
+  filter: blur(55px);
+
+  pointer-events: none;
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
-.cyber-card-glass:hover {
-  background: rgba(14, 16, 21, 0.85);
-  border-color: var(--card-border-hover);
+/* Yuqoridagi yengil shine */
+
+.gru-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      color-mix(
+        in srgb,
+        var(--gru-card-text) 20%,
+        transparent
+      ),
+      transparent
+    );
+
+  opacity: 0.55;
+  pointer-events: none;
 }
 
-/* Neon borderli karta */
-.cyber-card-neon {
-  border: 1px solid var(--card-accent);
-  animation: neonPulse 2s infinite alternate;
-}
-@keyframes neonPulse {
-  0% { border-color: rgba(255, 160, 0, 0.4); box-shadow: 0 0 2px rgba(255, 160, 0, 0.3); }
-  100% { border-color: #00FFAA; box-shadow: 0 0 15px #00FFAA; }
+/* ============================================================
+   PADDING
+   Tailwind bo‘lmasa ham ishlaydi.
+   ============================================================ */
+
+.gru-card--padding-none {
+  padding: 0;
 }
 
-/* Qo‘shimcha hover effekti (transform) */
-.hover-scale {
-  transition: transform 0.2s ease;
-}
-.hover-scale:hover {
-  transform: scale(1.02);
+.gru-card--padding-sm {
+  padding: 0.75rem;
 }
 
-/* Rang o‘zgaruvchilarini o‘zgartirish uchun qulaylik */
-[data-theme="amethyst"] {
-  --card-border: rgba(156, 39, 176, 0.6);
-  --card-border-hover: #FF4081;
-  --card-glow: rgba(255, 64, 129, 0.5);
-  --card-accent: #9C27B0;
+.gru-card--padding-md {
+  padding: 1.25rem;
 }
+
+.gru-card--padding-lg {
+  padding: 1.75rem;
+}
+
+/* ============================================================
+   INTERACTIVE
+   ============================================================ */
+
+.gru-card--interactive {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gru-card--interactive[role='button'],
+.gru-card--interactive[tabindex] {
+  cursor: pointer;
+}
+
+.gru-card--interactive:focus-visible {
+  outline: 2px solid var(--gru-card-accent);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   DEFAULT VARIANT
+   ============================================================ */
+
+.gru-card--default {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--gru-card-bg) 94%,
+        var(--gru-card-accent) 6%
+      ),
+      var(--gru-card-bg)
+    );
+}
+
+.gru-card--default:hover {
+  border-color:
+    color-mix(
+      in srgb,
+      var(--gru-card-accent) 48%,
+      var(--gru-card-border)
+    );
+
+  box-shadow:
+    0 15px 34px var(--gru-card-shadow),
+    0 0 24px
+      color-mix(
+        in srgb,
+        var(--gru-card-accent) 10%,
+        transparent
+      ),
+    inset 0 1px
+      color-mix(
+        in srgb,
+        var(--gru-card-text) 7%,
+        transparent
+      );
+}
+
+.gru-card--default:hover::before {
+  opacity: 0.09;
+  transform: scale(1.08);
+}
+
+/* ============================================================
+   3D VARIANT
+   ============================================================ */
+
+.gru-card--3d {
+  overflow: visible;
+
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--gru-card-bg) 90%,
+        var(--gru-card-accent) 10%
+      ),
+      var(--gru-card-bg)
+    );
+
+  perspective: 900px;
+}
+
+.gru-card--3d:hover {
+  border-color:
+    color-mix(
+      in srgb,
+      var(--gru-card-accent) 55%,
+      var(--gru-card-border)
+    );
+
+  box-shadow:
+    0 22px 42px
+      color-mix(
+        in srgb,
+        var(--gru-card-shadow) 85%,
+        transparent
+      ),
+    0 0 28px
+      color-mix(
+        in srgb,
+        var(--gru-card-accent) 12%,
+        transparent
+      );
+}
+
+.gru-card--3d:hover::before {
+  opacity: 0.12;
+  transform: scale(1.12);
+}
+
+/*
+ * Eslatma:
+ * transform Framer Motion orqali boshqariladi.
+ * CSS ichida hover transform berilmaydi.
+ */
+
+/* ============================================================
+   GLASS VARIANT
+   ============================================================ */
+
+.gru-card--glass {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--gru-card-bg) 68%,
+        transparent
+      ),
+      color-mix(
+        in srgb,
+        var(--gru-card-bg) 82%,
+        transparent
+      )
+    );
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--gru-card-accent) 22%,
+      var(--gru-card-border)
+    );
+
+  box-shadow:
+    0 12px 34px var(--gru-card-shadow),
+    inset 0 1px
+      color-mix(
+        in srgb,
+        var(--gru-card-text) 8%,
+        transparent
+      );
+
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+}
+
+.gru-card--glass:hover {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--gru-card-bg) 78%,
+        var(--gru-card-accent) 5%
+      ),
+      color-mix(
+        in srgb,
+        var(--gru-card-bg) 88%,
+        transparent
+      )
+    );
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--gru-card-accent) 48%,
+      var(--gru-card-border)
+    );
+
+  box-shadow:
+    0 18px 38px var(--gru-card-shadow),
+    0 0 28px
+      color-mix(
+        in srgb,
+        var(--gru-card-accent) 10%,
+        transparent
+      );
+}
+
+.gru-card--glass:hover::before {
+  opacity: 0.1;
+}
+
+/* ============================================================
+   NEON VARIANT
+   ============================================================ */
+
+.gru-card--neon {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--gru-card-bg) 94%,
+        var(--gru-card-accent) 6%
+      ),
+      var(--gru-card-bg)
+    );
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--gru-card-accent) 52%,
+      transparent
+    );
+
+  animation: gruCardNeonPulse 2.4s ease-in-out infinite alternate;
+}
+
+.gru-card--neon::before {
+  opacity: 0.08;
+}
+
+.gru-card--neon:hover {
+  border-color: var(--gru-card-accent);
+
+  box-shadow:
+    0 16px 36px var(--gru-card-shadow),
+    0 0 22px
+      color-mix(
+        in srgb,
+        var(--gru-card-accent) 30%,
+        transparent
+      ),
+    inset 0 0 18px
+      color-mix(
+        in srgb,
+        var(--gru-card-accent) 7%,
+        transparent
+      );
+}
+
+.gru-card--neon:hover::before {
+  opacity: 0.16;
+  transform: scale(1.14);
+}
+
+@keyframes gruCardNeonPulse {
+  from {
+    border-color:
+      color-mix(
+        in srgb,
+        var(--gru-card-accent) 35%,
+        transparent
+      );
+
+    box-shadow:
+      0 8px 24px var(--gru-card-shadow),
+      0 0 4px
+        color-mix(
+          in srgb,
+          var(--gru-card-accent) 15%,
+          transparent
+        );
+  }
+
+  to {
+    border-color:
+      color-mix(
+        in srgb,
+        var(--gru-card-accent) 72%,
+        transparent
+      );
+
+    box-shadow:
+      0 12px 30px var(--gru-card-shadow),
+      0 0 18px
+        color-mix(
+          in srgb,
+          var(--gru-card-accent) 28%,
+          transparent
+        );
+  }
+}
+
+/* ============================================================
+   CARD ICHIDAGI UMUMIY ELEMENTLAR
+   ============================================================ */
+
+.gru-card h1,
+.gru-card h2,
+.gru-card h3,
+.gru-card h4,
+.gru-card h5,
+.gru-card h6 {
+  color: var(--gru-card-text);
+}
+
+.gru-card p {
+  color: var(--gru-card-muted);
+}
+
+.gru-card a {
+  color: var(--gru-card-accent);
+}
+
+.gru-card svg {
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* ============================================================
+   CARD GRID
+   Tailwind @apply ishlatilmaydi.
+   ============================================================ */
+
+.card-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .card-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .card-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .gru-card {
+    border-radius: 16px;
+  }
+
+  .gru-card--padding-md {
+    padding: 1rem;
+  }
+
+  .gru-card--padding-lg {
+    padding: 1.25rem;
+  }
+}
+
+/* ============================================================
+   ESKI CLASSLAR UCHUN MOSLIK
+   Agar boshqa joylarda .card ishlatilgan bo‘lsa.
+   ============================================================ */
 
 .card {
-  @apply bg-card/80 backdrop-blur-sm rounded-xl border border-neonPink/30 transition-all duration-300;
+  color: var(--text, #f5fbff);
+  background: var(--card, #071c32);
+  border: 1px solid
+    var(--border, rgba(0, 207, 255, 0.18));
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 24px
+      var(--shadow, rgba(0, 0, 0, 0.25));
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
 .card:hover {
-  @apply border-neonCyan shadow-[0_0_15px_#00F0FF];
+  border-color:
+    var(
+      --primary-color,
+      var(--cyan, #00cfff)
+    );
+
+  box-shadow:
+    0 14px 32px
+      var(--shadow, rgba(0, 0, 0, 0.28)),
+    0 0 18px
+      color-mix(
+        in srgb,
+        var(
+          --primary-color,
+          var(--cyan, #00cfff)
+        ) 20%,
+        transparent
+      );
+
   transform: translateY(-4px);
 }
 
 .card-glass {
-  @apply bg-dark-card/70 backdrop-blur-md;
+  background:
+    color-mix(
+      in srgb,
+      var(--card, #071c32) 72%,
+      transparent
+    );
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .card-neon {
-  animation: cardPulse 2s infinite alternate;
+  animation: gruCardNeonPulse 2.4s ease-in-out infinite alternate;
 }
 
-@keyframes cardPulse {
-  0% { border-color: #FF2D75; box-shadow: 0 0 5px #FF2D75; }
-  100% { border-color: #00F0FF; box-shadow: 0 0 20px #00F0FF; }
+/* ============================================================
+   AMETHYST THEME
+   Theme sozlamasi data-theme orqali ishlasa.
+   ============================================================ */
+
+[data-theme='amethyst'] .gru-card {
+  --gru-card-accent: #b26cff;
+  --gru-card-border: rgba(178, 108, 255, 0.3);
 }
 
-/* Grid responsive */
-.card-grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+[data-theme='amethyst'] .gru-card--neon {
+  --gru-card-accent: #ff5ca8;
 }
-@media (max-width: 640px) {
-  .card-grid { @apply gap-3; }
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .gru-card,
+  .gru-card::before,
+  .gru-card::after,
+  .gru-card *,
+  .card {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

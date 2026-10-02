@@ -1,115 +1,154 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useAuth } from '../context/AuthContext';
-import { useGuestMode, hasAccountBefore, getReturnPath, clearReturnPath } from '../../hooks/useGuestMode';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/landing.css';
 
 export default function LandingPage() {
-  const { t } = useTranslation();
-  const { user, loading } = useAuth();
-  const { isGuest, enterAsGuest } = useGuestMode();
   const navigate = useNavigate();
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-  const [isFading, setIsFading] = useState(false);
-
-  const alreadyRegistered = hasAccountBefore();
+  const [animationPhase, setAnimationPhase] =
+    useState('entering');
 
   useEffect(() => {
     document.body.classList.add('landing-page-active');
-    return () => document.body.classList.remove('landing-page-active');
-  }, []);
 
-  // Hero iboralar tarjima massividan
-  const heroPhrases = t('landing.heroPhrases', { returnObjects: true }) || [
-    "G.R.U har qayerda",
-    "G.R.U siz uchun",
-    "G.R.U bilan oson",
-    "G.R.U kelajak sari",
-    "G.R.U yangi imkoniyat",
-    "G.R.U sizning hamkoringiz",
-  ];
+    const reducedMotionMedia = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsFading(true);
-      setTimeout(() => {
-        setCurrentPhraseIndex(prev => (prev + 1) % heroPhrases.length);
-        setIsFading(false);
-      }, 400);
-    }, 2800);
-    return () => clearInterval(interval);
-  }, [heroPhrases]);
+    const timers = [];
 
-  const handleGuestEnter = () => {
-    if (loading) return;
-    enterAsGuest();
-    navigate('/home', { replace: true });
-  };
+    const openHomePage = () => {
+      document.body.classList.remove(
+        'landing-page-active'
+      );
 
-  const handleContinueLoggedIn = () => {
-    const dest = getReturnPath() || '/home';
-    clearReturnPath();
-    navigate(dest, { replace: true });
-  };
+      navigate('/home', {
+        replace: true,
+      });
+    };
 
-  if (loading) return <div className="loading-spinner">{t('common.loading')}</div>;
+    if (reducedMotionMedia.matches) {
+      const navigationTimer = window.setTimeout(
+        openHomePage,
+        500
+      );
 
-  const showThreeButtons = isGuest || !alreadyRegistered;
+      timers.push(navigationTimer);
+    } else {
+      const activeTimer = window.setTimeout(() => {
+        setAnimationPhase('active');
+      }, 100);
+
+      const fadeTimer = window.setTimeout(() => {
+        setAnimationPhase('fading');
+      }, 2200);
+
+      const navigationTimer = window.setTimeout(() => {
+        openHomePage();
+      }, 2600);
+
+      timers.push(
+        activeTimer,
+        fadeTimer,
+        navigationTimer
+      );
+    }
+
+    return () => {
+      timers.forEach((timer) => {
+        window.clearTimeout(timer);
+      });
+
+      document.body.classList.remove(
+        'landing-page-active'
+      );
+    };
+  }, [navigate]);
 
   return (
-    <div className="landing-container">
-      <div className="stars"></div>
-      <div className="stars2"></div>
-      <div className="stars3"></div>
+    <main
+      className={`gru-splash ${animationPhase}`}
+      role="status"
+      aria-live="polite"
+      aria-label="G.R.U yuklanmoqda"
+    >
+      {/* Orqa fon effektlari */}
+      <div
+        className="gru-splash__background"
+        aria-hidden="true"
+      >
+        <div className="gru-splash__orb gru-splash__orb--left" />
+        <div className="gru-splash__orb gru-splash__orb--right" />
+      </div>
 
-      <div className="landing-hero">
-        <video className="landing-bg-video" autoPlay muted loop playsInline>
-          <source src="/videos/hero-background.mp4" type="video/mp4" />
-        </video>
-        <div className="landing-overlay"></div>
+      {/* Asosiy kontent */}
+      <div className="gru-splash__content">
+        <div className="gru-splash__logo-container">
+          <div
+            className="gru-splash__glow"
+            aria-hidden="true"
+          />
 
-        <div className="landing-content">
-          <div className="landing-title-wrapper">
-            <h1 className={`landing-title ${isFading ? 'fade-out' : 'fade-in'}`}>
-              {heroPhrases[currentPhraseIndex]}
-            </h1>
-            <div className="title-glow"></div>
-          </div>
+          <h1
+            className="gru-splash__logo"
+            aria-label="G.R.U"
+          >
+            <span
+              className="gru-splash__letter"
+              style={{
+                '--letter-delay': '0.25s',
+              }}
+            >
+              G
+            </span>
 
-          <div className="landing-divider">
-            <span></span>
-          </div>
+            <span
+              className="gru-splash__dot"
+              style={{
+                '--dot-delay': '0.4s',
+              }}
+              aria-hidden="true"
+            />
 
-          <div className="landing-buttons">
-            {showThreeButtons ? (
-              <>
-                <Link to="/register" className="landing-btn primary">
-                  <span>{t('landing.register')}</span>
-                  <span className="btn-glow"></span>
-                </Link>
-                <div className="btn-divider">{t('landing.or')}</div>
-                <Link to="/login" className="landing-btn secondary">
-                  <span>{t('landing.login')}</span>
-                </Link>
-                <button type="button" onClick={handleGuestEnter} className="landing-btn glass">
-                  <span>{t('landing.continue')}</span>
-                </button>
-              </>
-            ) : user ? (
-              <button type="button" onClick={handleContinueLoggedIn} className="landing-btn primary">
-                <span>{t('landing.continue')}</span>
-                <span className="btn-glow"></span>
-              </button>
-            ) : (
-              <Link to="/login" className="landing-btn primary">
-                <span>{t('landing.continue')}</span>
-                <span className="btn-glow"></span>
-              </Link>
-            )}
-          </div>
+            <span
+              className="gru-splash__letter"
+              style={{
+                '--letter-delay': '0.45s',
+              }}
+            >
+              R
+            </span>
+
+            <span
+              className="gru-splash__dot"
+              style={{
+                '--dot-delay': '0.6s',
+              }}
+              aria-hidden="true"
+            />
+
+            <span
+              className="gru-splash__letter"
+              style={{
+                '--letter-delay': '0.65s',
+              }}
+            >
+              U
+            </span>
+          </h1>
+
+          <p className="gru-splash__tagline">
+            Yangi imkoniyat
+          </p>
+        </div>
+
+        {/* Yuklanish chizig‘i */}
+        <div
+          className="gru-splash__loader"
+          aria-hidden="true"
+        >
+          <div className="gru-splash__loader-bar" />
         </div>
       </div>
-    </div>
+    </main>
   );
 }

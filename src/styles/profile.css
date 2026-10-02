@@ -1203,3 +1203,56 @@
 .gru-gaem-btn:active {
   transform: scale(0.95);
 }
+
+/* ===== XIZMAT KO‘RSATUVCHI BO‘LISH TUGMASI ===== */
+
+.become-provider-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 40px;
+  padding: 8px 16px;
+
+  color: #ffffff;
+  background: linear-gradient(
+    110deg,
+    #075cca,
+    var(--primary-color, var(--cyan, #00cfff)),
+    #1685ff
+  );
+  background-size: 180% 100%;
+
+  border: 0;
+  border-radius: 999px;
+
+  box-shadow: 0 8px 20px rgba(0, 170, 240, 0.22);
+
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-position 0.3s ease;
+}
+
+.become-provider-btn:hover {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0, 170, 240, 0.32);
+}
+
+.become-provider-btn:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 480px) {
+  .become-provider-btn {
+    width: 100%;
+  }
+}

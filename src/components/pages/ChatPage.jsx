@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // <-- qo'shildi
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import {
@@ -64,7 +64,7 @@ function isLocationMessage(text) {
 export default function ChatPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation(); // <-- qo'shildi
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const targetUserId = searchParams.get('userId');
 
@@ -108,7 +108,6 @@ export default function ChatPage() {
     });
   };
 
-  // 🆕 getPreviewText – tarjima qilingan
   const getPreviewText = (msg) => {
     if (msg.mediaType === 'image') return t('chat.sentImage');
     if (msg.mediaType === 'video') return t('chat.sentVideo');
@@ -116,14 +115,12 @@ export default function ChatPage() {
     return msg.message?.substring(0, 30) || t('chat.newMessage');
   };
 
-  // 🆕 getMediaLabel – tarjima qilingan
   const getMediaLabel = (type) => {
     if (type === 'image') return t('chat.mediaImage');
     if (type === 'video') return t('chat.mediaVideo');
     return t('chat.mediaFile');
   };
 
-  // 🆕 getStatusText – tarjima qilingan
   const getStatusText = (userId) => {
     const status = onlineStatus[userId];
     if (!status) return '';
@@ -140,16 +137,40 @@ export default function ChatPage() {
     return t('chat.offline');
   };
 
-  // 🆕 getStatusIcon – xabar holati uchun
   const getStatusIcon = (msg) => {
     if (msg.isRead) return <CheckCheck size={14} />;
     return <Check size={14} />;
   };
 
-  // 🆕 formatTime – o'zgarishsiz
   const formatTime = (date) => new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  // ... (qolgan barcha useEffect va funksiyalar o'zgarmaydi, faqat t() qo'shiladi)
+  // ===== 🆕 filteredUsers — qidiruv + joriy user'ni chiqarib tashlash =====
+  const filteredUsers = allUsers.filter((item) => {
+    const currentUserId = user?.id || user?._id;
+
+    if (item._id === currentUserId) {
+      return false;
+    }
+
+    const query = searchTerm.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    const fullName = (
+      item.fullName ||
+      item.full_name ||
+      ''
+    ).toLowerCase();
+
+    const email = (item.email || '').toLowerCase();
+
+    return (
+      fullName.includes(query) ||
+      email.includes(query)
+    );
+  });
 
   // Birinchi bosishda AudioContext'ni "unlock" qilamiz
   useEffect(() => {
@@ -250,26 +271,25 @@ export default function ChatPage() {
   }, [user, targetUserId]);
 
   // Xabarlarni yuklash
- // Xabarlarni yuklash
-useEffect(() => {
-  if (!activeChat) return;
-  getMessages(activeChat.userId)
-    .then(res => {
-      setMessages(res.data);
-      const unreadIds = res.data
-        .filter(m => m.to === user.id && !m.isRead)   // ← MANA SHU 2 QATORNI
-        .map(m => m._id);                              // ← ALMASHTIRING
-      if (unreadIds.length > 0) {
-        Promise.all(unreadIds.map(id => markAsRead(id))).then(() => {
-          setConversations(prev =>
-            prev.map(c => c.userId === activeChat.userId ? { ...c, unread: 0 } : c)
-          );
-          window.dispatchEvent(new Event('chatRead'));
-        });
-      }
-    })
-    .catch(console.error);
-}, [activeChat, user.id]);
+  useEffect(() => {
+    if (!activeChat) return;
+    getMessages(activeChat.userId)
+      .then(res => {
+        setMessages(res.data);
+        const unreadIds = res.data
+          .filter(m => m.to === user.id && !m.isRead)
+          .map(m => m._id);
+        if (unreadIds.length > 0) {
+          Promise.all(unreadIds.map(id => markAsRead(id))).then(() => {
+            setConversations(prev =>
+              prev.map(c => c.userId === activeChat.userId ? { ...c, unread: 0 } : c)
+            );
+            window.dispatchEvent(new Event('chatRead'));
+          });
+        }
+      })
+      .catch(console.error);
+  }, [activeChat, user.id]);
 
   // Xabar qabul qilish
   useEffect(() => {
@@ -506,7 +526,11 @@ useEffect(() => {
 
   return (
     <>
-      <div className="chat-container">
+      <div
+        className={`chat-container ${
+          activeChat ? 'chat-container--active' : ''
+        }`}
+      >
         {/* Sidebar */}
         <div className="chat-sidebar">
           <div className="chat-sidebar-title">
@@ -589,14 +613,19 @@ useEffect(() => {
           {activeChat ? (
             <>
               <div className="chat-header">
-                <button className="chat-back" onClick={() => navigate(-1)}>
+                <button
+                  type="button"
+                  className="chat-back"
+                  onClick={() => setActiveChat(null)}
+                  aria-label={t('common.back', 'Orqaga')}
+                >
                   <ArrowLeft size={20} />
                 </button>
                 <div className="avatar-wrap">
                   <img src={activeChat.avatar} alt="" />
                   {(onlineStatus[activeChat.userId]?.isOnline) && <span className="online-dot" />}
                 </div>
-                <div style={{ flex: 1 }}>
+                <div className="chat-header-info">
                   <div className="chat-header-name">{activeChat.fullName}</div>
                   <div className="chat-header-status">
                     {typingUsers[activeChat.userId] ? (
@@ -608,10 +637,29 @@ useEffect(() => {
                     )}
                   </div>
                 </div>
-                <button className="chat-header-btn" onClick={toggleMute} title={isMuted ? "Ovozni yoqish" : "Ovozni o'chirish"}>
-                  {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                <button
+                  type="button"
+                  className="chat-header-btn"
+                  onClick={toggleMute}
+                  aria-label={
+                    isMuted
+                      ? t('chat.unmute', 'Ovozni yoqish')
+                      : t('chat.mute', 'Ovozni o‘chirish')
+                  }
+                >
+                  {isMuted ? (
+                    <VolumeX size={20} />
+                  ) : (
+                    <Volume2 size={20} />
+                  )}
                 </button>
-                <button className="chat-more-btn"><MoreVertical size={20} /></button>
+                <button
+                  type="button"
+                  className="chat-more-btn"
+                  aria-label={t('common.more', 'Ko‘proq')}
+                >
+                  <MoreVertical size={20} />
+                </button>
               </div>
 
               <div className="chat-messages">
@@ -692,6 +740,7 @@ useEffect(() => {
 
                           <div className="msg-menu-wrap">
                             <button
+                              type="button"
                               className={`msg-menu-btn ${openMenuId === menuId ? 'open' : ''}`}
                               onClick={() => setOpenMenuId(openMenuId === menuId ? null : menuId)}
                             >

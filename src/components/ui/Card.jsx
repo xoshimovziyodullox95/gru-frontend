@@ -1,48 +1,81 @@
-// src/components/ui/Card.jsx
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import '../../styles/card.css';
 
-const Card = ({
+const VARIANT_CLASSES = {
+  default: 'gru-card gru-card--default',
+  hover3d: 'gru-card gru-card--3d',
+  glass: 'gru-card gru-card--glass',
+  neon: 'gru-card gru-card--neon',
+};
+
+const PADDING_CLASSES = {
+  none: 'gru-card--padding-none',
+  sm: 'gru-card--padding-sm',
+  md: 'gru-card--padding-md',
+  lg: 'gru-card--padding-lg',
+};
+
+export default function Card({
   children,
-  variant = 'default', // default, hover3d, glass, neon
+  variant = 'default',
   padding = 'md',
   className = '',
   hoverEffect = true,
+  onClick,
   ...props
-}) => {
-  const paddings = {
-    sm: 'p-3',
-    md: 'p-5',
-    lg: 'p-7',
-    none: 'p-0',
-  };
+}) {
+  const prefersReducedMotion = useReducedMotion();
 
-  const variantClasses = {
-    default: 'cyber-card',
-    hover3d: 'cyber-card cyber-card-3d',
-    glass: 'cyber-card-glass',
-    neon: 'cyber-card-neon',
-  };
+  const variantClass =
+    VARIANT_CLASSES[variant] ||
+    VARIANT_CLASSES.default;
 
-  const baseClass = `
-    rounded-xl transition-all duration-300
-    ${variantClasses[variant]}
-    ${paddings[padding]}
-    ${hoverEffect ? 'hover-scale' : ''}
-    ${className}
-  `;
+  const paddingClass =
+    PADDING_CLASSES[padding] ||
+    PADDING_CLASSES.md;
+
+  const isInteractive =
+    hoverEffect || typeof onClick === 'function';
+
+  const cardClassName = [
+    variantClass,
+    paddingClass,
+    hoverEffect ? 'gru-card--hoverable' : '',
+    isInteractive ? 'gru-card--interactive' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const hoverAnimation =
+    hoverEffect && !prefersReducedMotion
+      ? {
+          y: -5,
+          scale: 1.015,
+        }
+      : undefined;
+
+  const tapAnimation =
+    isInteractive && !prefersReducedMotion
+      ? {
+          scale: 0.985,
+        }
+      : undefined;
 
   return (
     <motion.div
-      className={baseClass}
-      whileHover={hoverEffect ? { y: -5, transition: { duration: 0.2 } } : {}}
-      transition={{ type: 'spring', stiffness: 300 }}
+      className={cardClassName}
+      onClick={onClick}
+      whileHover={hoverAnimation}
+      whileTap={tapAnimation}
+      transition={{
+        type: 'spring',
+        stiffness: 320,
+        damping: 24,
+      }}
       {...props}
     >
       {children}
     </motion.div>
   );
-};
-
-export default Card;
+}

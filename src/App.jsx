@@ -1,18 +1,32 @@
-// App.jsx — to'liq qayta yozilgan, xato statik route olib tashlandi
+// App.jsx
 import { useEffect, useRef } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import { AuthProvider, useAuth } from './components/context/AuthContext.jsx';
 import { ChatProvider } from './components/context/ChatContext';
 import { CartProvider } from './components/context/CartContext';
+import { ThemeProvider } from './components/context/ThemeContext.jsx';
+
 import { useGuestMode, setReturnPath } from './hooks/useGuestMode';
+
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+
 import AIChat from './components/common/AIChat';
 import NotificationListener from './components/common/NotificationListener';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
+import ScrollToTop from './components/common/ScrollToTop';
 import RequireRole from './components/RequireRole';
+
 import LandingPage from './components/pages/LandingPage.jsx';
 import AIAssistantPage from './components/pages/AIAssistantPage';
 import HomePage from './components/pages/HomePage.jsx';
@@ -30,22 +44,10 @@ import ProfilePage from './components/pages/ProfilePage';
 import LocationPage from './components/pages/LocationDetailPage';
 import EquipmentDetailPage from './components/pages/EquipmentDetailPage';
 import ServicePage from './components/pages/ServicePage';
-import AddListingChoice from './components/pages/AddListingChoice.jsx';
-import AddLocationForm from './components/forms/AddLocationForm.jsx';
-import AddEquipmentForm from './components/forms/AddEquipmentForm.jsx';
-import AddServiceForm from './components/forms/AddServiceForm.jsx';
-import EditLocationForm from './components/forms/EditLocationForm.jsx';
-import EditEquipmentForm from './components/forms/EditEquipmentForm.jsx';
-import EditServiceForm from './components/forms/EditServiceForm.jsx';
-import MarketplacePage from './components/marketplace/MarketplacePage';
-import BankServiceDetail from './components/marketplace/BankServiceDetail.jsx';
-import { ThemeProvider } from './components/context/ThemeContext.jsx';
-import PremiumPage from './components/pages/PremiumPage';
-import GamePage from './components/game/GamePage.jsx';
-import LessonsPage from './components/pages/LessonsPage';
 import ServiceProviderDetailPage from './components/pages/ServiceProviderDetailPage';
 import NotificationsPage from './components/pages/NotificationsPage.jsx';
-import BusinessSystemPage from './components/business/BusinessSystemPage.jsx';
+import PremiumPage from './components/pages/PremiumPage';
+import LessonsPage from './components/pages/LessonsPage';
 import BusinessDashboard from './components/pages/BusinessDashboard';
 import BankServicesListPage from './components/pages/BankServicesListPage';
 import AddVideoPostForm from './components/pages/AddVideoPostForm';
@@ -55,8 +57,23 @@ import MyOrdersPage from './components/pages/MyOrdersPage';
 import ReceivedOrdersPage from './components/pages/ReceivedOrdersPage';
 import PhysicPage from './components/pages/PhysicPage';
 import PhysicCategoryPage from './components/pages/PhysicCategoryPage';
-import ScrollToTop from './components/common/ScrollToTop';
-import MarketplaceHub from './components/pages/MarketplaceHub';
+import BroadcastAdPage from './components/pages/BroadcastAdPage';
+import BecomeProviderPage from './components/pages/BecomeProviderPage.jsx';
+
+import AddListingChoice from './components/pages/AddListingChoice.jsx';
+import AddLocationForm from './components/forms/AddLocationForm.jsx';
+import AddEquipmentForm from './components/forms/AddEquipmentForm.jsx';
+import AddServiceForm from './components/forms/AddServiceForm.jsx';
+import EditLocationForm from './components/forms/EditLocationForm.jsx';
+import EditEquipmentForm from './components/forms/EditEquipmentForm.jsx';
+import EditServiceForm from './components/forms/EditServiceForm.jsx';
+
+import MarketplacePage from './components/marketplace/MarketplacePage';
+import BankServiceDetail from './components/marketplace/BankServiceDetail.jsx';
+
+import GamePage from './components/game/GamePage.jsx';
+import BusinessSystemPage from './components/business/BusinessSystemPage.jsx';
+
 import MarketplaceLocations from './components/pages/MarketplaceLocations';
 import MarketplaceProductTypes from './components/pages/MarketplaceProductTypes';
 import MarketplaceProductList from './components/pages/MarketplaceProductList';
@@ -64,14 +81,26 @@ import MarketplaceCatalogItems from './components/pages/MarketplaceCatalogItems'
 import MarketplaceServiceCats from './components/pages/MarketplaceServiceCats';
 import MarketplaceServiceList from './components/pages/MarketplaceServiceList';
 import MarketplaceBank from './components/pages/MarketplaceBank';
-import BroadcastAdPage from './components/pages/BroadcastAdPage';
 
-
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
 
 let appHasMounted = false;
-const AUTH_PATHS = ['/login', '/register', '/forgot-password', '/reset-password'];
 
-// ============ ENTRY GATE ============
+const AUTH_PATHS = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+];
+
+/* ============================================================
+   ENTRY GATE
+   Birinchi yuklanishda splash ko‘rsatiladi,
+   keyin foydalanuvchi o‘zi ochgan sahifaga qaytadi.
+   ============================================================ */
+
 function EntryGate({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,24 +109,36 @@ function EntryGate({ children }) {
   useEffect(() => {
     if (didCheck.current) return;
     didCheck.current = true;
-    if (!appHasMounted) {
-      appHasMounted = true;
-      const isAuthPath = AUTH_PATHS.includes(location.pathname);
-      if (location.pathname !== '/' && !isAuthPath) {
-        setReturnPath(location.pathname + location.search);
-        navigate('/', { replace: true });
-      }
+
+    if (appHasMounted) return;
+    appHasMounted = true;
+
+    const isAuthPath = AUTH_PATHS.includes(location.pathname);
+
+    if (location.pathname !== '/' && !isAuthPath) {
+      const returnTo = location.pathname + location.search;
+
+      setReturnPath(returnTo);
+
+      /* Qaytish manzili LandingPage ga state orqali beriladi */
+      navigate('/', {
+        replace: true,
+        state: { returnTo },
+      });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return children;
 }
 
-// ============ LAYOUT ============
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
 function Layout({ children }) {
   const location = useLocation();
-  const noNavFooterPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
-  const hideNavFooter = noNavFooterPaths.includes(location.pathname);
+  const hideNavFooter = AUTH_PATHS.includes(location.pathname);
 
   return (
     <>
@@ -109,77 +150,165 @@ function Layout({ children }) {
   );
 }
 
-// ============ MAIN ROUTES ============
+/* ============================================================
+   ROUTE HELPERS
+   ============================================================ */
+
+/* Foydalanuvchi yoki mehmon ko‘ra oladigan sahifa */
+function BrowseRoute({ canBrowse, children }) {
+  if (!canBrowse) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Layout>{children}</Layout>;
+}
+
+/* Faqat tizimga kirgan foydalanuvchi uchun */
+function PrivateRoute({ children }) {
+  return (
+    <ProtectedRoute>
+      <Layout>{children}</Layout>
+    </ProtectedRoute>
+  );
+}
+
+/* Rol talab qiladigan sahifa */
+function RoleRoute({ roles, children }) {
+  return (
+    <RequireRole allowedRoles={roles}>
+      <Layout>{children}</Layout>
+    </RequireRole>
+  );
+}
+
+/* ============================================================
+   MAIN ROUTES
+   ============================================================ */
+
 function MainRoutes() {
   const { user, loading } = useAuth();
   const { isGuest } = useGuestMode();
+
   const canBrowse = Boolean(user) || isGuest;
 
   if (loading) {
     return <div className="loading-spinner">⏳ Yuklanmoqda...</div>;
   }
 
+  const browse = (page) => (
+    <BrowseRoute canBrowse={canBrowse}>{page}</BrowseRoute>
+  );
+
+  const priv = (page) => <PrivateRoute>{page}</PrivateRoute>;
+
+  const open = (page) => <Layout>{page}</Layout>;
+
   return (
     <Routes>
+      {/* ===== LANDING ===== */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/home" element={canBrowse ? <Layout><HomePage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/category/:level1" element={canBrowse ? <Layout><CategoryPage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/subcategory/:level1/:level2" element={canBrowse ? <Layout><SubcategoryPage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/location/:id" element={canBrowse ? <Layout><LocationPage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/equipment/:id" element={canBrowse ? <Layout><EquipmentDetailPage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/services/:slug" element={canBrowse ? <Layout><ServicePage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/cart" element={canBrowse ? <Layout><CartPage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/marketplace" element={canBrowse ? <Layout><MarketplacePage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/bank-service/:id" element={canBrowse ? <Layout><BankServiceDetail /></Layout> : <Navigate to="/" replace />} />
+
+      {/* ===== BROWSE ===== */}
+      <Route path="/home" element={browse(<HomePage />)} />
+      <Route path="/category/:level1" element={browse(<CategoryPage />)} />
+      <Route path="/subcategory/:level1/:level2" element={browse(<SubcategoryPage />)} />
+      <Route path="/location/:id" element={browse(<LocationPage />)} />
+      <Route path="/equipment/:id" element={browse(<EquipmentDetailPage />)} />
+      <Route path="/services/:slug" element={browse(<ServicePage />)} />
+      <Route path="/service-provider/:id" element={open(<ServiceProviderDetailPage />)} />
+      <Route path="/cart" element={browse(<CartPage />)} />
+      <Route path="/profile/:userId" element={browse(<ProfilePage />)} />
+      <Route path="/bank-services" element={browse(<BankServicesListPage />)} />
+      <Route path="/bank-service/:id" element={browse(<BankServiceDetail />)} />
+
+      {/* ===== AI ===== */}
       <Route path="/ai-assistant" element={<AIAssistantPage />} />
-      <Route path="/premium" element={<ProtectedRoute><Layout><PremiumPage /></Layout></ProtectedRoute>} />
-      <Route path="/dashboard" element={<ProtectedRoute><Layout><BusinessDashboard /></Layout></ProtectedRoute>} />
-      <Route path="/bank-dashboard" element={<RequireRole allowedRoles={['bank_employee', 'admin']}><Layout><BankDashboard /></Layout></RequireRole>} />
-      <Route path="/bank-services" element={canBrowse ? <Layout><BankServicesListPage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/profile/:userId" element={canBrowse ? <Layout><ProfilePage /></Layout> : <Navigate to="/" replace />} />
-      <Route path="/profile" element={<ProtectedRoute><Layout><ProfilePage /></Layout></ProtectedRoute>} />
-      <Route path="/chat" element={<ProtectedRoute><Layout><ChatPage /></Layout></ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute><Layout><NotificationsPage /></Layout></ProtectedRoute>} />
-      <Route path="/admin-dashboard" element={<RequireRole allowedRoles={['admin']}><Layout><AdminDashboard /></Layout></RequireRole>} />
-      <Route path="/add-listing" element={<ProtectedRoute><Layout><AddListingChoice /></Layout></ProtectedRoute>} />
-      <Route path="/add-location" element={<ProtectedRoute><Layout><AddLocationForm /></Layout></ProtectedRoute>} />
-      <Route path="/add-equipment" element={<ProtectedRoute><Layout><AddEquipmentForm /></Layout></ProtectedRoute>} />
-      <Route path="/add-service" element={<ProtectedRoute><Layout><AddServiceForm /></Layout></ProtectedRoute>} />
-      <Route path="/edit/location/:id" element={<ProtectedRoute><Layout><EditLocationForm /></Layout></ProtectedRoute>} />
-      <Route path="/edit/equipment/:id" element={<ProtectedRoute><Layout><EditEquipmentForm /></Layout></ProtectedRoute>} />
-      <Route path="/edit/service/:id" element={<ProtectedRoute><Layout><EditServiceForm /></Layout></ProtectedRoute>} />
-      <Route path="/game" element={<ProtectedRoute><Layout><GamePage /></Layout></ProtectedRoute>} />
-      <Route path="/lessons" element={<ProtectedRoute><Layout><LessonsPage /></Layout></ProtectedRoute>} />
-      <Route path="/business" element={<ProtectedRoute><Layout><BusinessSystemPage /></Layout></ProtectedRoute>} />
-      <Route path="/service-provider/:id" element={<ServiceProviderDetailPage />} />
+
+      {/* ===== PROTECTED ===== */}
+      <Route path="/premium" element={priv(<PremiumPage />)} />
+      <Route path="/dashboard" element={priv(<BusinessDashboard />)} />
+      <Route path="/profile" element={priv(<ProfilePage />)} />
+      <Route path="/chat" element={priv(<ChatPage />)} />
+      <Route path="/notifications" element={priv(<NotificationsPage />)} />
+
+      {/* ===== E’LON QO‘SHISH ===== */}
+      <Route path="/add-listing" element={priv(<AddListingChoice />)} />
+      <Route path="/add-location" element={priv(<AddLocationForm />)} />
+      <Route path="/add-equipment" element={priv(<AddEquipmentForm />)} />
+      <Route path="/add-service" element={priv(<AddServiceForm />)} />
+      <Route path="/add-video" element={priv(<AddVideoPostForm />)} />
+
+      {/* ===== XIZMAT KO‘RSATUVCHI BO‘LISH ===== */}
+      <Route path="/become-provider" element={priv(<BecomeProviderPage />)} />
+
+      {/* ===== EDIT ===== */}
+      <Route path="/edit/location/:id" element={priv(<EditLocationForm />)} />
+      <Route path="/edit/equipment/:id" element={priv(<EditEquipmentForm />)} />
+      <Route path="/edit/service/:id" element={priv(<EditServiceForm />)} />
+
+      {/* ===== GAME / LESSONS / BUSINESS ===== */}
+      <Route path="/game" element={priv(<GamePage />)} />
+      <Route path="/lessons" element={priv(<LessonsPage />)} />
+      <Route path="/business" element={priv(<BusinessSystemPage />)} />
+
+      {/* ===== BIZNES QO‘SHIMCHA ===== */}
+      <Route path="/my-branches" element={priv(<BranchesPage />)} />
+      <Route path="/supplier-stats" element={priv(<SupplierStatsPage />)} />
+      <Route path="/my-orders" element={priv(<MyOrdersPage />)} />
+      <Route path="/received-orders" element={priv(<ReceivedOrdersPage />)} />
+      <Route path="/broadcast-ad" element={priv(<BroadcastAdPage />)} />
+
+      {/* ===== BANK / ADMIN ===== */}
+      <Route
+        path="/bank-dashboard"
+        element={
+          <RoleRoute roles={['bank_employee', 'admin']}>
+            <BankDashboard />
+          </RoleRoute>
+        }
+      />
+      <Route
+        path="/admin-dashboard"
+        element={
+          <RoleRoute roles={['admin']}>
+            <AdminDashboard />
+          </RoleRoute>
+        }
+      />
+
+      {/* ===== AUTH ===== */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
-      <Route path="/add-video" element={<ProtectedRoute><Layout><AddVideoPostForm /></Layout></ProtectedRoute>} />
-      <Route path="/my-branches" element={<ProtectedRoute><Layout><BranchesPage /></Layout></ProtectedRoute>} />
-      <Route path="/supplier-stats" element={<ProtectedRoute><Layout><SupplierStatsPage /></Layout></ProtectedRoute>} />
-      <Route path="/my-orders" element={<ProtectedRoute><Layout><MyOrdersPage /></Layout></ProtectedRoute>} />
-      <Route path="/received-orders" element={<ProtectedRoute><Layout><ReceivedOrdersPage /></Layout></ProtectedRoute>} />
-      <Route path="/broadcast-ad" element={<ProtectedRoute><Layout><BroadcastAdPage /></Layout></ProtectedRoute>} />
-      <Route path="/physic" element={<Layout><PhysicPage /></Layout>} />
-      <Route path="/physic/:categoryKey" element={<PhysicCategoryPage />} />
 
-      {/* ===== MARKETPLACE ROUTES (xato statik qator olib tashlandi) ===== */}
-      <Route path="/marketplace" element={<Layout><MarketplaceHub /></Layout>} />
-      <Route path="/marketplace/locations" element={<Layout><MarketplaceLocations /></Layout>} />
-      <Route path="/marketplace/products" element={<Layout><MarketplaceProductTypes /></Layout>} />
-      {/* 🔥 XATO QATOR O‘CHIRILDI: /marketplace/products/oziqovqat endi YO'Q */}
-      <Route path="/marketplace/products/oziqovqat/:catalog" element={<Layout><MarketplaceCatalogItems /></Layout>} />
-      <Route path="/marketplace/products/:type" element={<Layout><MarketplaceProductList /></Layout>} />
-      <Route path="/marketplace/services" element={<Layout><MarketplaceServiceCats /></Layout>} />
-      <Route path="/marketplace/services/:slug" element={<Layout><MarketplaceServiceList /></Layout>} />
-      <Route path="/marketplace/bank" element={<Layout><MarketplaceBank /></Layout>} />
+      {/* ===== PHYSIC ===== */}
+      <Route path="/physic" element={open(<PhysicPage />)} />
+      <Route path="/physic/:categoryKey" element={open(<PhysicCategoryPage />)} />
+
+      {/* ===== MARKETPLACE ===== */}
+      <Route path="/marketplace" element={open(<MarketplacePage />)} />
+      <Route path="/marketplace/locations" element={open(<MarketplaceLocations />)} />
+      <Route path="/marketplace/products" element={open(<MarketplaceProductTypes />)} />
+      <Route
+        path="/marketplace/products/oziqovqat/:catalog"
+        element={open(<MarketplaceCatalogItems />)}
+      />
+      <Route path="/marketplace/products/:type" element={open(<MarketplaceProductList />)} />
+      <Route path="/marketplace/services" element={open(<MarketplaceServiceCats />)} />
+      <Route path="/marketplace/services/:slug" element={open(<MarketplaceServiceList />)} />
+      <Route path="/marketplace/bank" element={open(<MarketplaceBank />)} />
+
+      {/* ===== 404 ===== */}
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }
 
-// ============ APP ============
+/* ============================================================
+   APP
+   ============================================================ */
+
 function App() {
   return (
     <ThemeProvider>
@@ -193,7 +322,12 @@ function App() {
                 <MainRoutes />
               </EntryGate>
             </BrowserRouter>
-            <ToastContainer position="top-right" autoClose={5000} theme="dark" />
+
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              theme="dark"
+            />
           </ChatProvider>
         </CartProvider>
       </AuthProvider>

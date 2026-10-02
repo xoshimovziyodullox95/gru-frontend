@@ -36,7 +36,7 @@ import {
   Eye, BarChart3, UserCheck, UserMinus, Coins, Settings,
   UserPlus, UserX, LogOut, QrCode, Heart, MessageCircle,
   User as UserIcon, ChevronRight, Copy, Check,
-  Truck, Send // <--- Send qo'shildi
+  Truck, Send, Hammer
 } from 'lucide-react';
 import ReelsStrip from '../common/Reelsstrip';
 import { getPosts, likePost, commentPost } from '../services/videos';
@@ -474,8 +474,8 @@ export default function ProfilePage() {
       return <div className="empty-state">{t('profile.emptyListings')}</div>;
     }
 
-    const detailPath = activeTab === 'locations' ? 'location' 
-                    : activeTab === 'equipment' ? 'equipment' 
+    const detailPath = activeTab === 'locations' ? 'location'
+                    : activeTab === 'equipment' ? 'equipment'
                     : 'serviceprovider';
 
     return items.map(item => {
@@ -607,6 +607,7 @@ export default function ProfilePage() {
               </div>
             </>
           )}
+
           <div className="profile-actions">
             {isOwnProfile ? (
               editMode ? (
@@ -629,12 +630,17 @@ export default function ProfilePage() {
                     </button>
                   )}
 
-                  <button
-                    className="gru-gaem-btn"
-                    onClick={() => toast.info('🚀 Tez kunda!', { duration: 3000 })}
-                  >
-                    Gru game
-                  </button>
+                  {/* ===== XIZMAT KO‘RSATUVCHI BO‘LISH ===== */}
+                  {role === 'user' && (
+                    <button
+                      type="button"
+                      className="become-provider-btn"
+                      onClick={() => navigate('/become-provider')}
+                    >
+                      <Hammer size={16} />
+                      {t('profile.becomeProvider', 'Xizmat ko‘rsatuvchi bo‘lish')}
+                    </button>
+                  )}
                 </>
               )
             ) : (
@@ -776,7 +782,7 @@ export default function ProfilePage() {
         </>
       )}
 
-      {/* ===== COMPANY ROLI (YANGILANGAN) ===== */}
+      {/* ===== COMPANY ROLI ===== */}
       {role === 'company' && isOwnProfile && (
         <>
           <SupplierStatsWidget />
