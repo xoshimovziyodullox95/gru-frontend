@@ -1,0 +1,84 @@
+.rmap {
+  position: relative;
+  /* Leaflet qatlamlari (z-index 400+) ustidagi panelni yopmasin */
+  isolation: isolate;
+  z-index: 0;
+  width: 100%;
+  overflow: hidden;
+  background: #0A1628;
+}
+
+.rmap-canvas {
+  position: absolute;
+  inset: 0;
+  background: #0A1628;
+}
+
+/* Oddiy OSM xaritasini to'q ko'k uslubga o'tkazish */
+.rmap .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(195deg) brightness(0.78) contrast(0.92) saturate(0.6);
+}
+
+/* Leaflet attribution ilova uslubida, kichik */
+.rmap .leaflet-control-attribution {
+  background: rgba(10, 22, 40, 0.7);
+  color: #8AB4D0;
+  font-size: 9px;
+}
+.rmap .leaflet-control-attribution a { color: #8AB4D0; }
+
+/* ---------- Belgi ---------- */
+.rmap-marker { position: relative; }
+.rmap-dot {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: #00D4FF;
+  border: 3px solid #0A1628;
+  box-shadow: 0 0 0 2px #00D4FF;
+}
+.rmap-wave {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border-radius: 50%;
+  background: rgba(0, 212, 255, 0.25);
+  opacity: 0;
+}
+.rmap--searching .rmap-wave { animation: rmap-wave 2.4s ease-out infinite; }
+.rmap--searching .rmap-wave--2 { animation-delay: 1.2s; }
+
+@keyframes rmap-wave {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(9); opacity: 0; }
+}
+
+/* ---------- Koordinata yo'q bo'lsa ---------- */
+.rmap-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px) 0 0 / 28px 28px,
+    #0A1628;
+}
+.rmap-fallback__pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0, 212, 255, 0.14);
+  color: #00D4FF;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rmap--searching .rmap-wave { animation: none; }
+}

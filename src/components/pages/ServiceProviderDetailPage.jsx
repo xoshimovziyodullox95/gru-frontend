@@ -1,16 +1,16 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/ServiceProviderDetailPage.jsx
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  MapPin, Phone, ArrowLeft, ShieldCheck, Flame,
-  Tag, Building2, Mail, Globe, MessageCircle,
-  Star, User, ChevronLeft, ChevronRight, X, Maximize2, FileText,
-  Send, ShoppingCart, Check
+  Phone, ArrowLeft, ShieldCheck, Flame,
+  Tag, Mail, Globe, MessageCircle,
+  Star, User, ChevronLeft, ChevronRight, X, Maximize2, FileText, Share2,
+  Send
 } from 'lucide-react';
 import { getServiceProviderById, getServiceProviders, rateServiceProvider, commentServiceProvider, replyServiceProviderComment, applyToService } from '../services/serviceProviders';
 import { useAuth } from '../context/AuthContext';
-import { useCart } from '../hooks/useCart';
 import '../../styles/locationPage.css';
 import '../../styles/serviceProviderDetail.css';
 import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
@@ -18,12 +18,14 @@ import ServiceProviderCard from '../marketplace/ServiceProviderCard';
 import { getImageUrl } from '../utils/imageUrl';
 import RatingAndComments from '../common/RatingAndComments';
 import '../../styles/ratingAndComments.css';
-import Navbar from '../layout/Navbar'; // <-- NAVBAR
+import useBodyScrollLock from '../../hooks/useBodyScrollLock.js';
+import ShareSheet from '../common/ShareSheet.jsx';
 
 // ============================================================
 // IMAGE VIEWER MODAL
 // ============================================================
-const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title, t }) => {
+const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
+  const closeRef = useRef(onClose);
   const goPrev = useCallback(
     () => setActiveIndex((prev) => (prev - 1 + images.length) % images.length),
     [images.length, setActiveIndex]
@@ -34,32 +36,32 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
   );
 
   useEffect(() => {
-    if (!isOpen) return;
+    closeRef.current = onClose;
+  }, [onClose]);
+
+  useBodyScrollLock(isOpen);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') closeRef.current?.();
       if (e.key === 'ArrowRight') goNext();
       if (e.key === 'ArrowLeft') goPrev();
     };
     document.addEventListener('keydown', handleKeyDown);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = prevOverflow;
     };
-  }, [isOpen, onClose, goNext, goPrev]);
+  }, [isOpen, goNext, goPrev]);
 
   if (!isOpen) return null;
 
-  const currentImage = images?.[activeIndex] || '/images/placeholder.jpg';
-  const safeImageUrl = getImageUrl(currentImage) || '/images/placeholder.jpg';
+  const currentImage = images?.[activeIndex] || '/images/zumo-placeholder.svg';
+  const safeImageUrl = getImageUrl(currentImage) || '/images/zumo-placeholder.svg';
 
   return (
     <div className="ImageViewerOverlay">
-      <button className="ImageViewerBackBtn" onClick={onClose}>
-        <ArrowLeft size={18} /> {t('serviceProvider.back')}
-      </button>
-      <button className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
+      <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
         <X size={22} />
       </button>
       {images.length > 1 && (
@@ -74,7 +76,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
           alt={title}
           className="ImageViewerImg"
           onClick={(e) => e.stopPropagation()}
-          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+          onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
         />
       </div>
       {images.length > 1 && (
@@ -82,9 +84,9 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
           {images.map((img, idx) => (
             <button key={idx} className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`} onClick={() => setActiveIndex(idx)}>
               <img
-                src={getImageUrl(img) || '/images/placeholder.jpg'}
+                src={getImageUrl(img) || '/images/zumo-placeholder.svg'}
                 alt={`thumb-${idx}`}
-                onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
               />
             </button>
           ))}
@@ -102,7 +104,6 @@ export default function ServiceProviderDetailPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { getQuantity, increment, removeItem } = useCart();
   const [provider, setProvider] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,7 +111,7 @@ export default function ServiceProviderDetailPage() {
   const [showPhone, setShowPhone] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imageModalOpen, setImageModalOpen] = useState(false);
-  const [logoErrored, setLogoErrored] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   // ===== MA'LUMOTLARNI YUKLASH =====
   useEffect(() => {
@@ -156,26 +157,6 @@ export default function ServiceProviderDetailPage() {
     navigate(`/chat?userId=${targetId}`);
   };
 
-  // ===== SAVAT LOGIKASI =====
-  const inCart = provider ? getQuantity(provider._id) > 0 : false;
-
-  const handleCartClick = () => {
-    if (!provider) return;
-    if (inCart) {
-      removeItem(provider._id);
-    } else {
-      increment({
-        id: provider._id,
-        title: provider.name,
-        price: 0,
-        itemType: 'service_provider',
-        type: 'service_provider',
-        image: provider.image,
-        provider: provider.company || provider.name,
-      });
-    }
-  };
-
   // ===== ARIZA BERISH =====
   const handleApply = async () => {
     try {
@@ -193,11 +174,10 @@ export default function ServiceProviderDetailPage() {
   if (error || !provider) {
     return (
       <>
-        <Navbar />
         <div className="StatusScreen Error">
           <h2>⚠️ {t('serviceProvider.error')}</h2>
           <p>{error || t('serviceProvider.notFound')}</p>
-          <button onClick={() => navigate(-1)} className="BackActionBtn">
+          <button onClick={() => safeGoBack(navigate)} className="BackActionBtn">
             <ArrowLeft size={16} /> {t('serviceProvider.back')}
           </button>
         </div>
@@ -218,10 +198,9 @@ export default function ServiceProviderDetailPage() {
   // ===== RENDER =====
   return (
     <>
-      <Navbar />
       <div className="LocationPageWrapper">
         <div className="MainViewport">
-          <button className="BackActionBtn" onClick={() => navigate(-1)}>
+          <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
             <ArrowLeft size={16} /> {t('serviceProvider.back')}
           </button>
 
@@ -230,11 +209,11 @@ export default function ServiceProviderDetailPage() {
             <div className="spd-hero-top">
              <div className="spd-hero-logo" onClick={() => setImageModalOpen(true)}>
   <img
-    src={images[0] || '/images/placeholder.jpg'}
+    src={images[0] || '/images/zumo-placeholder.svg'}
     alt={provider.name}
     onError={(e) => {
       e.target.onerror = null;
-      e.target.src = '/images/placeholder.jpg';
+      e.target.src = '/images/zumo-placeholder.svg';
     }}
     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
   />
@@ -266,7 +245,7 @@ export default function ServiceProviderDetailPage() {
                     className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`}
                     onClick={() => { setActiveImageIndex(idx); setImageModalOpen(true); }}
                   >
-                    <img src={getImageUrl(img) || '/images/placeholder.jpg'} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }} />
+                    <img src={getImageUrl(img) || '/images/zumo-placeholder.svg'} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }} />
                   </button>
                 ))}
               </div>
@@ -316,7 +295,7 @@ export default function ServiceProviderDetailPage() {
                       }
                       alt={provider.userId.full_name}
                       className="user-avatar"
-                      onError={(e) => e.target.src = '/images/placeholder.jpg'}
+                      onError={(e) => e.target.src = '/images/zumo-placeholder.svg'}
                     />
                     <div className="user-details">
                       <p><strong>{provider.userId.full_name || t('serviceProvider.fullName')}</strong></p>
@@ -369,19 +348,8 @@ export default function ServiceProviderDetailPage() {
                 </button>
               </div>
 
-              {/* SAVAT + ARIZA TUGMALARI */}
+              {/* ARIZA TUGMASI — xizmat savat orqali emas, ariza orqali buyurtma qilinadi */}
               <div className="chat-with-owner" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <button
-                  onClick={handleCartClick}
-                  className={`add-to-cart-btn ${inCart ? 'in-cart' : ''}`}
-                  style={{ width: '100%' }}
-                >
-                  {inCart ? (
-                    <><Check size={16} /> {t('serviceProvider.inCart') || 'Savatda'}</>
-                  ) : (
-                    <><ShoppingCart size={16} /> {t('serviceProvider.addToCart') || 'Savatga qo\'shish'}</>
-                  )}
-                </button>
                 {!isOwner && (
                   <button
                     onClick={handleApply}
@@ -389,6 +357,11 @@ export default function ServiceProviderDetailPage() {
                     style={{ background: 'linear-gradient(135deg, #0055b3, var(--cyan))' }}
                   >
                     <Send size={18} /> {t('serviceProvider.apply', 'To\'g\'ridan-to\'g\'ri ariza berish')}
+                  </button>
+                )}
+                {user && (
+                  <button type="button" className="chat-owner-btn" onClick={() => setShareOpen(true)}>
+                    <Share2 size={18} /> {t('common.share', 'Do‘stga yuborish')}
                   </button>
                 )}
               </div>
@@ -426,7 +399,18 @@ export default function ServiceProviderDetailPage() {
         activeIndex={activeImageIndex}
         setActiveIndex={setActiveImageIndex}
         title={provider.name}
-        t={t}
+      />
+      <ShareSheet
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        listing={{
+          id: provider._id,
+          title: provider.name,
+          link: `/service-provider/${provider._id}`,
+          listingType: 'serviceprovider',
+          thumbnailUrl: getImageUrl(images[0]) || '',
+          price: provider.price_range || '',
+        }}
       />
     </>
   );

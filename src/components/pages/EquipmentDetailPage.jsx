@@ -1,23 +1,25 @@
+import { safeGoBack } from '../utils/navigation.js';
+import { recordRecentlyViewed } from '../utils/recentlyViewed.js';
+import useBodyScrollLock from '../../hooks/useBodyScrollLock.js';
+import ShareSheet from '../common/ShareSheet.jsx';
 // src/pages/EquipmentDetailPage.jsx
-import { useEffect, useState, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getEquipmentById, getEquipment, rateEquipment, commentEquipment, replyEquipmentComment } from '../services/equipment';
+import { getEquipmentById, rateEquipment, commentEquipment, replyEquipmentComment } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../hooks/useCart';
 import { getPosts } from '../services/videos';
 import { getImageUrl } from '../utils/imageUrl';
 import {
-  MapPin, Phone, TrendingUp, ArrowLeft, ShieldCheck,
-  Award, Briefcase, Calendar, Quote, X,
-  Droplet, Thermometer, Sun, Wind, Wifi, Sprout, Gauge,
-  Ruler, DollarSign, Eye, Building2, User, Zap, FileText, Settings,
-  Hammer, Wrench, Megaphone, Package, QrCode,
-  Banknote, CreditCard, CalendarDays, Calculator, Monitor,
-  ChevronDown, ChevronUp, ChevronLeft, ChevronRight, MessageCircle, Crown, Lock, Star,
-  Heart, Share2, Layers, DoorOpen, Lightbulb, Footprints, Play,
+  Phone, TrendingUp, ArrowLeft, ShieldCheck,
+  Award, Calendar, X,
+  Ruler, Building2, User, Zap, FileText, Settings,
+  Package, CalendarDays,
+  ChevronLeft, ChevronRight, MessageCircle,
+  Share2, Layers,
   Cpu, UtensilsCrossed, Sofa, Palette,
-  Landmark, Maximize2, ShoppingCart, Check
+  Maximize2, ShoppingCart, Check
 } from 'lucide-react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -33,7 +35,6 @@ import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
 import { formatPrice } from '../utils/formatPrice';
 import RatingAndComments from '../common/RatingAndComments';
 import '../../styles/ratingAndComments.css';
-import Navbar from '../layout/Navbar';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend);
 
@@ -79,36 +80,10 @@ function buildAttributeItems(productType, attrs = {}, t) {
 }
 
 // ============================================================
-// DOCUMENT MODAL
-// ============================================================
-const DocumentModal = ({ isOpen, onClose, title, docList, t }) => {
-  if (!isOpen) return null;
-  return (
-    <div className="doc-modal-overlay" onClick={onClose}>
-      <div className="doc-modal-content" onClick={e => e.stopPropagation()}>
-        <div className="doc-modal-header">
-          <h3><FileText size={18} /> {title}</h3>
-          <button onClick={onClose} className="doc-modal-close"><X size={20} /></button>
-        </div>
-        <div className="doc-modal-body">
-          {docList?.map((doc, idx) => (
-            <div key={idx} className="doc-item">
-              <ShieldCheck size={16} className={doc.required ? 'doc-required' : 'doc-optional'} />
-              <span>{doc.name}</span>
-              {doc.required && <span className="doc-badge">{t('equipment.badgeRequired')}</span>}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ============================================================
 // IMAGE VIEWER MODAL
 // ============================================================
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
-  const { t } = useTranslation();
+  const closeRef = useRef(onClose);
   const goPrev = useCallback(
     () => setActiveIndex((prev) => (prev - 1 + images.length) % images.length),
     [images.length, setActiveIndex]
@@ -119,32 +94,32 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
   );
 
   useEffect(() => {
-    if (!isOpen) return;
+    closeRef.current = onClose;
+  }, [onClose]);
+
+  useBodyScrollLock(isOpen);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') closeRef.current?.();
       if (e.key === 'ArrowRight') goNext();
       if (e.key === 'ArrowLeft') goPrev();
     };
     document.addEventListener('keydown', handleKeyDown);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = prevOverflow;
     };
-  }, [isOpen, onClose, goNext, goPrev]);
+  }, [isOpen, goNext, goPrev]);
 
   if (!isOpen) return null;
 
-  const currentImage = images?.[activeIndex] || '/images/placeholder-equipment.jpg';
-  const safeImageUrl = getImageUrl(currentImage) || '/images/placeholder-equipment.jpg';
+  const currentImage = images?.[activeIndex] || '/images/zumo-placeholder.svg';
+  const safeImageUrl = getImageUrl(currentImage) || '/images/zumo-placeholder.svg';
 
   return (
     <div className="ImageViewerOverlay">
-      <button className="ImageViewerBackBtn" onClick={onClose}>
-        <ArrowLeft size={18} /> {t('equipment.back')}
-      </button>
-      <button className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
+      <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
         <X size={22} />
       </button>
       {images.length > 1 && (
@@ -160,16 +135,16 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
           className="ImageViewerImg"
           decoding="async"
           onClick={(e) => e.stopPropagation()}
-          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
+          onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
         />
       </div>
       {images.length > 1 && (
         <div className="ImageViewerThumbs" onClick={(e) => e.stopPropagation()}>
           {images.map((img, idx) => {
-            const thumbSrc = getImageUrl(img) || '/images/placeholder-equipment.jpg';
+            const thumbSrc = getImageUrl(img) || '/images/zumo-placeholder.svg';
             return (
               <button key={idx} className={`ImageViewerThumb ${idx === activeIndex ? 'active' : ''}`} onClick={() => setActiveIndex(idx)}>
-                <img src={thumbSrc} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }} />
+                <img src={thumbSrc} alt={`thumb-${idx}`} onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }} />
               </button>
             );
           })}
@@ -198,7 +173,7 @@ const UserInfoCard = ({ user, t }) => {
     <div className="user-info-card">
       <h3 className="ModuleHeading"><User size={18} /> {t('equipment.owner')}</h3>
       <div className="user-info clickable" onClick={handleProfileClick}>
-        <img src={avatarUrl} alt={user.full_name || user.email} className="user-avatar" onError={(e) => e.target.src = '/images/placeholder.jpg'} />
+        <img src={avatarUrl} alt={user.full_name || user.email} className="user-avatar" onError={(e) => e.target.src = '/images/zumo-placeholder.svg'} />
         <div className="user-details">
           <p><strong>{user.full_name || t('equipment.fullName')}</strong></p>
           <p className="user-email">{user.email}</p>
@@ -232,13 +207,11 @@ export default function EquipmentDetailPage() {
   const [equipment, setEquipment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [modal, setModal] = useState({ open: false, title: '', docList: [] });
   const [reels, setReels] = useState([]);
   const [reelsLoading, setReelsLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imageModalOpen, setImageModalOpen] = useState(false);
-
-  const isOwner = equipment?.userId?._id === user?.id || user?.email === 'xoshimovabdullox95@gmail.com';
+  const [shareOpen, setShareOpen] = useState(false);
 
   // ===== SAVAT =====
   const inCart = equipment ? getQuantity(equipment._id) > 0 : false;
@@ -255,7 +228,7 @@ export default function EquipmentDetailPage() {
         currency: equipment.currency,
         itemType: 'equipment',
         type: 'equipment',
-        image: equipment.images?.[0] ? getImageUrl(equipment.images[0]) : '/images/placeholder-equipment.jpg',
+        image: equipment.images?.[0] ? getImageUrl(equipment.images[0]) : '/images/zumo-placeholder.svg',
       });
     }
   };
@@ -263,14 +236,10 @@ export default function EquipmentDetailPage() {
   const handleChat = () => {
     const targetId = equipment?.userId?._id || equipment?.userId;
     if (!targetId) {
-      alert('Bu eʼlon egasi haqida maʼlumot yo‘q');
+      alert('Bu e’lon egasi haqida ma’lumot yo‘q');
       return;
     }
     navigate(`/chat?userId=${targetId}`);
-  };
-
-  const openDocModal = (title, docList) => {
-    setModal({ open: true, title, docList });
   };
 
   // ===== MA'LUMOTLARNI YUKLASH =====
@@ -286,6 +255,16 @@ export default function EquipmentDetailPage() {
           return;
         }
         setEquipment(res.data);
+        recordRecentlyViewed(user?._id || user?.id, {
+          id: res.data._id || id,
+          type: 'equipment',
+          title: res.data.title || res.data.name || 'E’lon',
+          image: res.data.images?.[0] || res.data.image || res.data.imageUrl || '',
+          price: res.data.price,
+          currency: res.data.currency,
+          link: `/equipment/${res.data._id || id}`,
+          maxQuantity: res.data.stockQuantity,
+        });
       } catch (err) {
         console.error('Xatolik:', err);
         setError(t('equipment.error'));
@@ -295,7 +274,7 @@ export default function EquipmentDetailPage() {
       }
     };
     loadData();
-  }, [id, t]);
+  }, [id, t, user]);
 
   // ===== REELS =====
   useEffect(() => {
@@ -428,11 +407,10 @@ export default function EquipmentDetailPage() {
   if (error || !equipment) {
     return (
       <>
-        <Navbar />
         <div className="StatusScreen Error">
           <h2>⚠️ {t('equipment.error')}</h2>
           <p>{error || t('equipment.notFound')}</p>
-          <button onClick={() => navigate(-1)} className="BackActionBtn">
+          <button onClick={() => safeGoBack(navigate)} className="BackActionBtn">
             <ArrowLeft size={16} /> {t('equipment.back')}
           </button>
         </div>
@@ -442,7 +420,7 @@ export default function EquipmentDetailPage() {
 
   const images = equipment?.images?.length > 0
     ? equipment.images
-    : ['/images/placeholder-equipment.jpg'];
+    : ['/images/zumo-placeholder.svg'];
 
   const specs = equipment.technical_specs || {};
   const hasLegacySpecs = !!(specs.power || specs.frequency || specs.requirements);
@@ -451,10 +429,9 @@ export default function EquipmentDetailPage() {
 
   return (
     <>
-      <Navbar />
       <div className="EquipmentPageWrapper">
         <div className="MainViewport">
-          <button className="BackActionBtn" onClick={() => navigate(-1)}>
+          <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
             <ArrowLeft size={16} /> {t('equipment.back')}
           </button>
 
@@ -462,12 +439,12 @@ export default function EquipmentDetailPage() {
           <div className="equipment-gallery">
             <div className="equipment-gallery-main" onClick={() => setImageModalOpen(true)}>
               <img
-                src={getImageUrl(images[activeImageIndex]) || '/images/placeholder-equipment.jpg'}
+                src={getImageUrl(images[activeImageIndex]) || '/images/zumo-placeholder.svg'}
                 alt={equipment.title}
                 className="equipment-gallery-img"
                 loading="eager"
                 decoding="async"
-                onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
+                onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
               />
               <div className="image-gallery-zoom-hint">
                 <Maximize2 size={14} /> {t('equipment.viewFull') || "Kattalashtirib ko'rish"}
@@ -477,7 +454,7 @@ export default function EquipmentDetailPage() {
               <div className="equipment-gallery-thumbs">
                 {images.map((img, idx) => (
                   <button key={idx} className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`} onClick={() => setActiveImageIndex(idx)}>
-                    <img src={getImageUrl(img) || '/images/placeholder-equipment.jpg'} alt={`thumb-${idx}`} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }} />
+                    <img src={getImageUrl(img) || '/images/zumo-placeholder.svg'} alt={`thumb-${idx}`} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }} />
                   </button>
                 ))}
               </div>
@@ -586,6 +563,11 @@ export default function EquipmentDetailPage() {
                 <button onClick={handleChat} className="chat-owner-btn">
                   <MessageCircle size={18} /> {t('equipment.chatWithOwner')}
                 </button>
+                {user && (
+                  <button type="button" onClick={() => setShareOpen(true)} className="chat-owner-btn equipment-share-btn">
+                    <Share2 size={18} /> {t('common.share', 'Do‘stga yuborish')}
+                  </button>
+                )}
               </div>
 
               <div className="ContactSurface">
@@ -632,8 +614,19 @@ export default function EquipmentDetailPage() {
         </div>
       </div>
 
-      <DocumentModal isOpen={modal.open} onClose={() => setModal({ open: false, title: '', docList: [] })} title={modal.title} docList={modal.docList} t={t} />
       <ImageViewerModal isOpen={imageModalOpen} onClose={() => setImageModalOpen(false)} images={images} activeIndex={activeImageIndex} setActiveIndex={setActiveImageIndex} title={equipment.title} />
+      <ShareSheet
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        listing={{
+          id: equipment._id,
+          title: equipment.title,
+          link: `/equipment/${equipment._id}`,
+          listingType: 'equipment',
+          thumbnailUrl: equipment.images?.[0] ? getImageUrl(equipment.images[0]) : '',
+          price: formatPrice(equipment.price, equipment.currency),
+        }}
+      />
     </>
   );
 }

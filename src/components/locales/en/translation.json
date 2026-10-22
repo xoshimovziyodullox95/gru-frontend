@@ -1,15 +1,5 @@
 {
   "nav": {
-    "cart": "Cart",
-    "chat": "Chat",
-    "notifications": "Notifications",
-    "addListing": "Post a listing",
-    "login": "Log in",
-    "business": "gru for business",
-    "physic": "gru for you",
-    "addVideo": "Add Video"
-  },
-    "nav": {
     "business": "Business",
     "physic": "Physical",
     "login": "Login",
@@ -21,13 +11,19 @@
     "profile": "Profile",
     "add": "Add",
     "profileAlt": "Avatar",
-    "menu": "Menu"
+    "menu": "Menu",
+    "myOrders": "My orders"
   },
   "tooltips": {
-    "cart": "Go to cart",
+    "cart": "Cart",
     "wallet": "Wallet",
     "messages": "Messages",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "dashboard": "Dashboard",
+    "theme": "Theme",
+    "profile": "Profile",
+    "addListing": "Add Listing",
+    "addVideo": "Add Video"
   },
   "wallet": {
     "soon": "Wallet — coming soon!"
@@ -42,7 +38,7 @@
     "totalSum": "Total amount",
     "checkout": "Checkout"
   },
- "common": {
+  "common": {
     "loading": "Loading...",
     "error": "An error occurred",
     "save": "Save",
@@ -50,25 +46,69 @@
     "delete": "Delete",
     "edit": "Edit",
     "back": "Back",
-      "locationsTitle": "Locations"
-
-      
- 
+    "locationsTitle": "Locations",
+    "searchPlaceholder": "What are you looking for?",
+    "suggestions": "Suggestions",
+    "recentSearches": "Recent searches",
+    "clearAll": "Clear",
+    "noRecentSearches": "No recent searches",
+    "close": "Close",
+    "previous": "Previous",
+    "next": "Next",
+    "untitled": "Listing",
+    "scrollTop": "Back to top",
+    "share": "Share"
   },
-  
   "home": {
-
-    "categoriesTitle": "Directions",
-    "categoriesSub": "Discover 180+ business types",
-    "showAll": "Show all directions",
-    "showLess": "Show less",
-    "ctaAi": "G.R.U AI",
+    "heroPhrases": [
+      "ZUMO everywhere",
+      "ZUMO for you",
+      "ZUMO made easy",
+      "ZUMO towards future",
+      "ZUMO new opportunity",
+      "ZUMO your partner"
+    ],
+    "categoriesTitle": "Categories",
+    "categoriesSub": "Choose your direction",
+    "ctaAi": "AI Assistant",
     "ctaMarketplace": "Marketplace",
-    "ctaBusiness": "Your business with gru",
-    "premiumBadge": "Premium member"
-    
+    "ctaBusiness": "Business",
+    "premiumBadge": "Premium member",
+    "showLess": "Less",
+    "showAll": "All",
+    "marketplaceTitle": "Marketplace",
+    "marketplaceSub": "Select a section",
+    "marketplaceLocations": "Locations",
+    "marketplaceProducts": "Products",
+    "marketplaceServices": "Services",
+    "marketplaceBank": "Bank services",
+    "marketplaceBankAlt": "Bank services",
+    "hub": {
+      "label": "ZUMO services",
+      "market": "Market",
+      "marketSub": "Goods, places and services",
+      "request": "Call a pro",
+      "requestSub": "Send a request, get offers",
+      "locations": "Places",
+      "products": "Equipment",
+      "services": "Services",
+      "bank": "Bank",
+      "directions": "Directions",
+      "erp": "Management",
+      "ai": "AI assistant",
+      "lessons": "Lessons"
+    },
+    "providerBanner": {
+      "providerTitle": "Got a skill?",
+      "providerSubtitle": "Let clients find you!",
+      "sellerTitle": "Got products?",
+      "sellerSubtitle": "Sell with us",
+      "businessTitle": "Own a business?",
+      "businessSubtitle": "Grow it"
+    },
+    "seeMore": "See more"
   },
-   "categories": {
+  "categories": {
     "Agro": "Agriculture",
     "Restoran/Kafe": "Restaurant & Cafe",
     "Klinika": "Clinic",
@@ -79,17 +119,40 @@
     "Yangi biznes": "New Business"
   },
   "marketplace": {
-    "loading": "Loading...",
-    "empty": "No listings yet",
-    "title": "Marketplace",
-    "subShowAll": "All {{count}} listings",
-    "subLatest": "Latest {{count}} listings",
-    "showLess": "Show less",
-    "showAll": "Show all listings ({count})",
+    "bank": {
+      "title": "Bank xizmatlari",
+      "individual": "Jismoniy shaxs",
+      "legal": "Yuridik shaxs",
+      "empty": "Bu bo'limda hozircha xizmat yo'q",
+      "scrollTop": "Yuqoriga",
+      "categories": {
+        "credit": "Kreditlar",
+        "cards": "Kartalar",
+        "deposits": "Depozitlar",
+        "pko": "Naqd pul / PKO",
+        "moneyTransfers": "Pul o‘tkazmalari",
+        "qrPayment": "QR to‘lovlar"
+      }
+    },
+    "types": {
+      "equipment": "Product",
+      "location": "Place",
+      "service": "Service"
+    },
+    "catalog": {
+      "notFound": "Catalog not found",
+      "all": "All",
+      "empty": "No products in this section yet"
+    },
     "reels": {
-      "location": "📍 Location",
-      "equipment": "🔧 Equipment",
-      "service": "📦 Service"
+      "post": "Post"
+    },
+    "products": {
+      "catalogTitle": "Product types",
+      "empty": "No products yet"
+    },
+    "services": {
+      "catsTitle": "Service categories"
     }
   },
   "marketplaceReels": {
@@ -104,7 +167,7 @@
     "views": "{{count}} views",
     "priorityBadge": "Your listing"
   },
-   "footer": {
+  "footer": {
     "description": "The best equipment, services and experts for your business development.",
     "pagesTitle": "Pages",
     "servicesTitle": "Services",
@@ -118,7 +181,12 @@
       "addListing": "Add listing",
       "profile": "Profile",
       "terms": "Terms of use",
-      "privacy": "Privacy policy"
+      "privacy": "Privacy policy",
+      "directions": "Business directions",
+      "bank": "Bank services",
+      "ai": "AI assistant",
+      "request": "Call a pro",
+      "orders": "My orders"
     },
     "apps": {
       "download": "Download",
@@ -138,11 +206,11 @@
       "thankYou": "Thank you! ✓"
     },
     "copyright": {
-      "text": "© {year} G.R.U Corporation — All rights reserved",
+      "text": "© {year} ZUMO Corporation — All rights reserved",
       "madeWith": "Made with love in Uzbekistan"
     }
   },
-    "categoryPage": {
+  "categoryPage": {
     "back": "Back",
     "description": "Select one of the categories below",
     "searchPlaceholder": "Search...",
@@ -151,8 +219,7 @@
     "categoryBadge": "Category",
     "invest": "${min} – ${max}"
   },
-   "categoriesLevel2": {
-    
+  "categoriesLevel2": {
     "Issiqxona": "Greenhouse",
     "Intensiv bog'": "Intensive garden",
     "Molxona": "Cattle farm",
@@ -173,8 +240,6 @@
     "Agro-eko zona": "Agro-eco zone",
     "Yong'oqzor va bodomzor": "Walnut and almond orchard",
     "Agro-texnika ijarasi punkti": "Agro-machinery rental point",
-
-
     "Milliy taomlar restorani": "National cuisine restaurant",
     "Oilaviy kafe / Choyxona": "Family cafe / Teahouse",
     "Fast-Food nuqtasi": "Fast food point",
@@ -195,8 +260,6 @@
     "Keytering (Catering) punkti": "Catering",
     "Gastro-pub": "Gastropub",
     "Muzlatilgan yogurt nuqtasi": "Frozen yogurt shop",
-
-  
     "Stomatologiya": "Dentistry",
     "Diagnostika xonasi (MRT/MSKT/UZI)": "Diagnostic room (MRI/CT/Ultrasound)",
     "Ko'p tarmoqli xususiy poliklinika": "Multi-specialty private clinic",
@@ -218,25 +281,25 @@
     "Massajxonasi": "Massage room",
     "Xususiy tez yordam stansiyasi": "Private ambulance station",
     "Qurilish va ta'mirlash kompaniyasi": "Construction and renovation company",
-"Santexnika ustaxonasi": "Plumbing workshop",
-"Kreativ / SMM agentlik": "Creative / SMM agency",
-"Maishiy texnika ta'mirlash ustaxonasi": "Household appliances repair workshop",
-"Avtoservis / Detailing markazi": "Car service / Detailing center",
-"Kimyoviy tozalash (Ximchistka)": "Dry cleaning",
-"Klining (Cleaning) kompaniyasi": "Cleaning company",
-"Go'zallik saloni / Barbershop": "Beauty salon / Barbershop",
-"Yuk tashish va logistika kompaniyasi": "Freight and logistics company",
-"IT va dasturlash studiyasi": "IT and programming studio",
-"Buxgalteriya va audit ofisi": "Accounting and audit office",
-"Yuridik / Advokatlik firmasi": "Legal / Law firm",
-"Tarjima va viza markazi": "Translation and visa center",
-"Rieltorlik agentligi": "Real estate agency",
-"Dezinfeksiya xizmati markazi": "Disinfection service center",
-"Poligrafiya va bosmaxona": "Printing house",
-"Xavfsizlik tizimlari do'koni": "Security systems shop",
-"Vetklinika / Gruming salon": "Veterinary clinic / Grooming salon",
-"Event-agentlik": "Event agency",
-"Kadrlar agentligi (HR)": "HR agency",
+    "Santexnika ustaxonasi": "Plumbing workshop",
+    "Kreativ / SMM agentlik": "Creative / SMM agency",
+    "Maishiy texnika ta'mirlash ustaxonasi": "Household appliances repair workshop",
+    "Avtoservis / Detailing markazi": "Car service / Detailing center",
+    "Kimyoviy tozalash (Ximchistka)": "Dry cleaning",
+    "Klining (Cleaning) kompaniyasi": "Cleaning company",
+    "Go'zallik saloni / Barbershop": "Beauty salon / Barbershop",
+    "Yuk tashish va logistika kompaniyasi": "Freight and logistics company",
+    "IT va dasturlash studiyasi": "IT and programming studio",
+    "Buxgalteriya va audit ofisi": "Accounting and audit office",
+    "Yuridik / Advokatlik firmasi": "Legal / Law firm",
+    "Tarjima va viza markazi": "Translation and visa center",
+    "Rieltorlik agentligi": "Real estate agency",
+    "Dezinfeksiya xizmati markazi": "Disinfection service center",
+    "Poligrafiya va bosmaxona": "Printing house",
+    "Xavfsizlik tizimlari do'koni": "Security systems shop",
+    "Vetklinika / Gruming salon": "Veterinary clinic / Grooming salon",
+    "Event-agentlik": "Event agency",
+    "Kadrlar agentligi (HR)": "HR agency",
     "Xususiy bog'cha": "Private kindergarten",
     "Xususiy maktab": "Private school",
     "Tillar o'quv markazi": "Language learning center",
@@ -257,7 +320,7 @@
     "Onlayn ta'lim platformasi": "Online education platform",
     "Mental arifmetika markazi": "Mental arithmetic center",
     "Malaka oshirish o'quv markazi": "Professional development training center",
-        "Supermarket / Minimarket": "Supermarket / Minimarket",
+    "Supermarket / Minimarket": "Supermarket / Minimarket",
     "Kiyim-kechak va poyabzal do'koni": "Clothing and footwear store",
     "Maishiy texnika va elektronika do'koni": "Home appliance and electronics store",
     "Kosmetika va parfyumeriya do'koni": "Cosmetics and perfume store",
@@ -277,7 +340,7 @@
     "Suvenirlar va milliy hunarmandchilik do'koni": "Souvenir and national crafts shop",
     "Optika do'koni": "Optical store",
     "Mato va pardalar do'koni": "Fabric and curtain store",
-        "Bolalar o'yin maydonchasi (Playzone)": "Children's play area (Playzone)",
+    "Bolalar o'yin maydonchasi (Playzone)": "Children's play area (Playzone)",
     "Kinoteatr": "Cinema",
     "VR va PlayStation klubi": "VR and PlayStation club",
     "Akvapark / Suzish havzasi": "Water park / Swimming pool",
@@ -297,7 +360,7 @@
     "SPA va sauna majmuasi": "Spa and sauna complex",
     "Tir (Otishma galereyasi)": "Shooting gallery",
     "Ilmiy muzey va ko'rgazma zali": "Science museum and exhibition hall",
-        "Startap inkubatori": "Startup incubator",
+    "Startap inkubatori": "Startup incubator",
     "AI va Machine Learning studiyasi": "AI and Machine Learning studio",
     "Blokcheyn va kripto markazi": "Blockchain and crypto center",
     "E-commerce va dropshipping platformasi": "E-commerce and dropshipping platform",
@@ -320,12 +383,12 @@
   },
   "landing": {
     "heroPhrases": [
-      "G.R.U everywhere",
-      "G.R.U for you",
-      "G.R.U made easy",
-      "G.R.U towards future",
-      "G.R.U new opportunity",
-      "G.R.U your partner"
+      "ZUMO everywhere",
+      "ZUMO for you",
+      "ZUMO made easy",
+      "ZUMO towards future",
+      "ZUMO new opportunity",
+      "ZUMO your partner"
     ],
     "register": "Register",
     "login": "Log in",
@@ -365,7 +428,7 @@
       "save": "Save",
       "cancel": "Cancel"
     },
-        "businessDashboard": {
+    "businessDashboard": {
       "title": "Biznes statistikasi",
       "locations": "Joylar",
       "equipment": "Texnikalar",
@@ -373,7 +436,7 @@
       "views": "Ko'rishlar",
       "details": "Batafsil statistika"
     },
-    "bioPlaceholder": "Hi! I manage my listings on GRU.",
+    "bioPlaceholder": "Hi! I manage my listings on ZUMO.",
     "avatarUpload": "Upload avatar",
     "activity": {
       "loading": "Loading activities...",
@@ -401,9 +464,12 @@
     },
     "settings": {
       "title": "Settings"
-    }
+    },
+    "roleCompany": "Company",
+    "roleSeller": "Seller",
+    "becomeProvider": "Become a provider"
   },
-    "settings": {
+  "settings": {
     "title": "Settings",
     "editAccount": "Edit account",
     "professional": "Professional account",
@@ -435,6 +501,9 @@
     "interfaceLanguage": "Language",
     "interfaceTheme": "Theme mode",
     "interfaceThemeLabel": "Light / Dark",
+    "helpAndPolicies": "Help and policies",
+    "notifOrders": "Orders",
+    "notifAds": "Ads from followed accounts",
     "langUz": "O'zbek",
     "langRu": "Русский",
     "langEn": "English",
@@ -443,7 +512,6 @@
     "copy": "Copy",
     "copied": "Copied"
   },
-
   "location": {
     "loading": "Loading...",
     "error": "Error",
@@ -479,7 +547,7 @@
     "creativeReasonTitle": "Why open a business here?",
     "creativeReasonEmpty": "This information is not filled yet.",
     "creativeReasonPremium": "We will prepare analysis as a Premium service",
-    "creativeReasonAdmin": "Prepared by GRU experts",
+    "creativeReasonAdmin": "Prepared by ZUMO experts",
     "competition": "Competition:",
     "metaSqm": "m²",
     "metaFootTraffic": "views",
@@ -489,9 +557,10 @@
     "detailPower": "220V sockets",
     "detailVentilation": "Ventilation",
     "statusScreenError": "Error",
-    "views": "views"
+    "views": "views",
+    "viewFull": "View full size",
+    "uploadMedia": "Upload photo or video"
   },
- 
   "calculator": {
     "title": "Calculator",
     "empty": "Nothing selected",
@@ -500,7 +569,7 @@
     "addAll": "+ Select all equipment",
     "orderPlaced": "Order placed!"
   },
-   "equipment": {
+  "equipment": {
     "loading": "Loading...",
     "error": "Error",
     "notFound": "Data not found",
@@ -554,36 +623,39 @@
     "unitMonth": "months",
     "unitCm": "cm",
     "unitKg": "kg",
-    "unitL": "L"
+    "unitL": "L",
+    "viewFull": "View full size",
+    "inCart": "In cart",
+    "addToCart": "Add to cart"
   },
-    "serviceProvider": {
-      "back": "Back",
-      "loading": "Loading...",
-      "error": "An error occurred",
-      "notFound": "Service not found",
-      "loadError": "Failed to load data",
-      "about": "About the service",
-      "defaultDescription": "No description provided",
-      "speciality": "Speciality",
-      "priceRange": "Price range",
-      "contactTitle": "Contact",
-      "showPhone": "Show phone number",
-      "chatWithOwner": "Chat with owner",
-      "otherServices": "Other services by {{company}}",
-      "apply": "Apply directly",
-      "applySuccess": "Application sent!",
-      "applyError": "An error occurred",
-      "addToCart": "Add to cart",
-      "inCart": "In cart",
-      "noOwnerInfo": "No owner information available",
-      "badgeBusiness": "Business",
-      "badgeIndividual": "Individual",
-      "badgeTop": "Top",
-      "badgeVerified": "Verified",
-      "owner": "Service owner",
-      "fullName": "Full name"
-    },
-    "universalCard": {
+  "serviceProvider": {
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "notFound": "Service not found",
+    "loadError": "Failed to load data",
+    "about": "About the service",
+    "defaultDescription": "No description provided",
+    "speciality": "Speciality",
+    "priceRange": "Price range",
+    "contactTitle": "Contact",
+    "showPhone": "Show phone number",
+    "chatWithOwner": "Chat with owner",
+    "otherServices": "Other services by {{company}}",
+    "apply": "Apply directly",
+    "applySuccess": "Application sent!",
+    "applyError": "An error occurred",
+    "addToCart": "Add to cart",
+    "inCart": "In cart",
+    "noOwnerInfo": "No owner information available",
+    "badgeBusiness": "Business",
+    "badgeIndividual": "Individual",
+    "badgeTop": "Top",
+    "badgeVerified": "Verified",
+    "owner": "Service owner",
+    "fullName": "Full name"
+  },
+  "universalCard": {
     "favAdd": "Add to favorites",
     "favRemove": "Remove from favorites",
     "badgeTop": "Top",
@@ -592,8 +664,7 @@
     "details": "Details",
     "noImage": "placeholder"
   },
-  
-   "addListingChoice": {
+  "addListingChoice": {
     "title": "Add new listing",
     "subtitle": "Place your listing in the right section in three steps",
     "back": "Go back",
@@ -632,7 +703,6 @@
       "empty": "Nothing found"
     }
   },
-  
   "addListing": {
     "title": "Listing details",
     "subtitle": "Fill in the fields and publish your listing",
@@ -709,7 +779,8 @@
       "descriptionPlaceholder": "Detailed description of the location",
       "address": "Address",
       "addressPlaceholder": "Auto-fills when selected on map",
-      "addressLabel": "Address *"
+      "addressLabel": "Address *",
+      "media": "Photos and videos"
     },
     "sections": {
       "locationDetails": "About the location",
@@ -852,30 +923,34 @@
     }
   },
   "services": {
-    "construction": "Construction and renovation",
-    "plumbing": "Plumbing services",
+    "catsTitle": "Select service type",
+    "construction": "Construction and repair",
+    "plumbing": "Plumbing",
     "smm": "SMM and marketing",
-    "supply": "Equipment and supply",
-    "event": "Event organization",
+    "supply": "Equipment supply",
+    "event": "Event management",
     "qrPayment": "QR payment",
-    "pko": "PKO",
-    "credit": "Credit",
-    "installment": "Installment",
+    "pko": "POS terminal",
+    "credit": "Loans",
+    "installment": "Installments",
     "accounting": "Accounting",
-    "website": "Website creation",
+    "website": "Website development",
     "internet": "Internet",
     "deposits": "Deposits",
     "cards": "Cards",
-    "moneyTransfers": "Money transfers"
+    "moneyTransfers": "Money transfers",
+    "repair": "Construction and plumbing",
+    "products": "Products",
+    "bankServices": "Bank services"
   },
   "aiAssistant": {
-    "title": "G.R.U AI",
+    "title": "ZUMO AI",
     "backHome": "Home",
     "newChat": "New chat",
     "loadingChats": "Loading...",
     "noChats": "No chats yet",
     "newChatTitle": "New chat",
-    "placeholder": "Ask G.R.U AI...",
+    "placeholder": "Ask ZUMO AI...",
     "welcomeTitle": "Welcome{{name}}!",
     "welcomeSub": "How can I help you?",
     "errorMessage": "Sorry, an error occurred. Please try again.",
@@ -884,11 +959,11 @@
     "accountName": "User",
     "loading": "Loading...",
     "settings": "Settings",
-    "brand": "G.R.U",
+    "brand": "ZUMO",
     "brandSub": "AI",
     "sidebarHint": "No chats yet"
   },
-    "marketplacePage": {
+  "marketplacePage": {
     "back": "Home",
     "title": "All listings",
     "searchPlaceholder": "Search locations, equipment or services...",
@@ -907,7 +982,9 @@
       "typeService": "Services",
       "direction": "Direction",
       "serviceTags": "Service tags"
-    }
+    },
+    "noResults": "No matching categories or listings",
+    "search": "Search"
   },
   "marketplaceFilters": {
     "types": "Type",
@@ -916,7 +993,8 @@
     "typeService": "Services",
     "direction": "Direction",
     "serviceTags": "Service types",
-    "clear": "Clear filters"
+    "clear": "Clear filters",
+    "bankServices": "Bank services"
   },
   "servicesSlugs": {
     "credit": "credit",
@@ -936,7 +1014,7 @@
     "internet": "internet"
   },
   "cartPage": {
-"emptyTitle": "Cart is empty",
+    "emptyTitle": "Cart is empty",
     "emptyDesc": "Your cart is empty. Browse the marketplace!",
     "backToShop": "Back to shop",
     "backBtn": "Back",
@@ -1013,7 +1091,7 @@
       "sent": "Sent"
     }
   },
-   "notifications": {
+  "notifications": {
     "title": "Notifications",
     "back": "Back",
     "markAllRead": "Mark all as read",
@@ -1027,144 +1105,203 @@
     "orderDetails": " {{quantity}} pcs",
     "newNotification": "sent you a new notification"
   },
-    "addLocation.fields.region": "Region",
+  "addLocation.fields.region": "Region",
   "addLocation.fields.regionPlaceholder": "Select",
-  "tooltips": {
-    "cart": "Cart",
-    "wallet": "Wallet",
-    "messages": "Messages",
-    "notifications": "Notifications",
-    "dashboard": "Dashboard",
-    "theme": "Theme",
-    "profile": "Profile",
-    "addListing": "Add Listing",
-    "addVideo": "Add Video"
-  },
   "catalogs": {
     "dokonlar": {
       "label": "Stores",
       "sabzavotVaMevalar": "Vegetables and fruits",
-      "sabzavotVaMevalar.subs": ["Vegetables", "Fruits", "Greens", "Dried fruits and nuts"],
+      "sabzavotVaMevalar.subs": [
+        "Vegetables",
+        "Fruits",
+        "Greens",
+        "Dried fruits and nuts"
+      ],
       "qahvaVaTayyorOvqat": "Coffee and ready meals",
-      "qahvaVaTayyorOvqat.subs": ["Coffee and tea", "Ready meals", "Salads"],
+      "qahvaVaTayyorOvqat.subs": [
+        "Coffee and tea",
+        "Ready meals",
+        "Salads"
+      ],
       "sutMahsulotlari": "Dairy products",
-      "sutMahsulotlari.subs": ["Milk", "Yogurt / Kefir", "Cottage cheese", "Cheese", "Butter"],
+      "sutMahsulotlari.subs": [
+        "Milk",
+        "Yogurt / Kefir",
+        "Cottage cheese",
+        "Cheese",
+        "Butter"
+      ],
       "goshtParrandaVaBaliq": "Meat, poultry and fish",
-      "goshtParrandaVaBaliq.subs": ["Beef", "Chicken", "Lamb", "Fish", "Sausages"],
+      "goshtParrandaVaBaliq.subs": [
+        "Beef",
+        "Chicken",
+        "Lamb",
+        "Fish",
+        "Sausages"
+      ],
       "suvVaIchimliklar": "Water and beverages",
-      "suvVaIchimliklar.subs": ["Water", "Juices and compotes", "Iced tea and coffee", "Carbonated drinks", "Energy drinks and alternative bar"],
+      "suvVaIchimliklar.subs": [
+        "Water",
+        "Juices and compotes",
+        "Iced tea and coffee",
+        "Carbonated drinks",
+        "Energy drinks and alternative bar"
+      ],
       "shirinliklarVaDesertlar": "Sweets and desserts",
-      "shirinliklarVaDesertlar.subs": ["Chocolate", "Cookies and waffles", "Cake and pastry", "Ice cream"],
+      "shirinliklarVaDesertlar.subs": [
+        "Chocolate",
+        "Cookies and waffles",
+        "Cake and pastry",
+        "Ice cream"
+      ],
       "bakaleya": "Groceries",
-      "bakaleya.subs": ["Cereals (rice, buckwheat)", "Flour and pasta", "Vegetable oil", "Salt, sugar, spices", "Canned goods"],
+      "bakaleya.subs": [
+        "Cereals (rice, buckwheat)",
+        "Flour and pasta",
+        "Vegetable oil",
+        "Salt, sugar, spices",
+        "Canned goods"
+      ],
       "novvoyxona": "Bakery",
-      "novvoyxona.subs": ["Bread", "Bun", "Pie"],
+      "novvoyxona.subs": [
+        "Bread",
+        "Bun",
+        "Pie"
+      ],
       "muzlatilganMahsulotlar": "Frozen products",
-      "muzlatilganMahsulotlar.subs": ["Frozen vegetables/fruits", "Semi-finished products", "Ice cream"],
+      "muzlatilganMahsulotlar.subs": [
+        "Frozen vegetables/fruits",
+        "Semi-finished products",
+        "Ice cream"
+      ],
       "bolalarVaOnalarUchun": "For children and mothers",
-      "bolalarVaOnalarUchun.subs": ["Baby food", "Baby care"],
+      "bolalarVaOnalarUchun.subs": [
+        "Baby food",
+        "Baby care"
+      ],
       "uyHayvonlariUchun": "For pets",
-      "uyHayvonlariUchun.subs": ["Dog food", "Cat food"],
+      "uyHayvonlariUchun.subs": [
+        "Dog food",
+        "Cat food"
+      ],
       "gozallikVaGigiyena": "Beauty and hygiene",
-      "gozallikVaGigiyena.subs": ["Cosmetics", "Personal hygiene"],
+      "gozallikVaGigiyena.subs": [
+        "Cosmetics",
+        "Personal hygiene"
+      ],
       "uyUchunTovarlar": "Household goods",
-      "uyUchunTovarlar.subs": ["Household chemicals", "Dishes"]
+      "uyUchunTovarlar.subs": [
+        "Household chemicals",
+        "Dishes"
+      ]
     },
     "restoranKafe": {
       "label": "Restaurant/Café",
       "xomashyo": "Raw materials",
-      "xomashyo.subs": ["Meat", "Vegetables", "Spices", "Flour products"],
+      "xomashyo.subs": [
+        "Meat",
+        "Vegetables",
+        "Spices",
+        "Flour products"
+      ],
       "ichimliklar": "Beverages",
-      "ichimliklar.subs": ["Carbonated drinks", "Water", "Coffee beans", "Tea"],
+      "ichimliklar.subs": [
+        "Carbonated drinks",
+        "Water",
+        "Coffee beans",
+        "Tea"
+      ],
       "tayyorMahsulotlar": "Ready-made products",
-      "tayyorMahsulotlar.subs": ["Sauces and ketchup", "Canned products"],
+      "tayyorMahsulotlar.subs": [
+        "Sauces and ketchup",
+        "Canned products"
+      ],
       "birMartalikIdishlar": "Disposable tableware",
-      "birMartalikIdishlar.subs": ["Cup", "Napkin", "Bag"]
+      "birMartalikIdishlar.subs": [
+        "Cup",
+        "Napkin",
+        "Bag"
+      ]
     },
     "agro": {
       "label": "Agro",
       "uruglik": "Seeds",
-      "uruglik.subs": ["Grain seeds", "Vegetable seeds", "Seedlings"],
+      "uruglik.subs": [
+        "Grain seeds",
+        "Vegetable seeds",
+        "Seedlings"
+      ],
       "ogitlar": "Fertilizers",
-      "ogitlar.subs": ["Mineral fertilizers", "Organic fertilizers"],
+      "ogitlar.subs": [
+        "Mineral fertilizers",
+        "Organic fertilizers"
+      ],
       "chorvaOzuqasi": "Livestock feed",
-      "chorvaOzuqasi.subs": ["Hay and forage", "Vitamin supplements"],
+      "chorvaOzuqasi.subs": [
+        "Hay and forage",
+        "Vitamin supplements"
+      ],
       "veterinariya": "Veterinary",
-      "veterinariya.subs": ["Medicines", "Vaccines"]
+      "veterinariya.subs": [
+        "Medicines",
+        "Vaccines"
+      ]
     },
     "klinika": {
       "label": "Clinic",
       "tibbiyAsboblar": "Medical instruments",
-      "tibbiyAsboblar.subs": ["Diagnostic instruments", "Surgical instruments"],
+      "tibbiyAsboblar.subs": [
+        "Diagnostic instruments",
+        "Surgical instruments"
+      ],
       "doriVositalari": "Medicines",
-      "doriVositalari.subs": ["Antibiotics", "Painkillers", "Vitamins"],
+      "doriVositalari.subs": [
+        "Antibiotics",
+        "Painkillers",
+        "Vitamins"
+      ],
       "sarflanadiganMateriallar": "Consumables",
-      "sarflanadiganMateriallar.subs": ["Syringe", "Gloves", "Bandage"]
+      "sarflanadiganMateriallar.subs": [
+        "Syringe",
+        "Gloves",
+        "Bandage"
+      ]
     },
     "kongilochar": {
       "label": "Entertainment",
       "oyinJihozlari": "Game equipment",
-      "oyinJihozlari.subs": ["Children's attractions", "Computer gaming equipment"],
+      "oyinJihozlari.subs": [
+        "Children's attractions",
+        "Computer gaming equipment"
+      ],
       "ovqatVaIchimlikNuqtasi": "Food and drink point",
-      "ovqatVaIchimlikNuqtasi.subs": ["Popcorn", "Ice cream", "Beverages"]
+      "ovqatVaIchimlikNuqtasi.subs": [
+        "Popcorn",
+        "Ice cream",
+        "Beverages"
+      ]
     }
   },
-   "marketplaceHub": {
+  "marketplaceHub": {
     "title": "Marketplace",
     "locations": "Locations",
     "products": "Products",
     "services": "Services",
     "bank": "Bank services",
     "loading": "Loading...",
-    "reelsTitle": "Videos"
+    "reelsTitle": "Videos",
+    "demoTitle": "Demo video",
+    "demoType": "Video",
+    "demoUser": "Admin"
   },
-  "marketplace": {
-    "reels": {
-      "location": "Location",
-      "equipment": "Equipment",
-      "service": "Service",
-      "post": "Post"
-    }
-  },
-  "home": {
-        "heroPhrases": [
-      "G.R.U everywhere",
-      "G.R.U for you",
-      "G.R.U made easy",
-      "G.R.U towards future",
-      "G.R.U new opportunity",
-      "G.R.U your partner"
-    ],
-    "categoriesTitle": "Categories",
-    "categoriesSub": "Choose your direction",
-    "ctaAi": "AI Assistant",
-    "ctaMarketplace": "Marketplace",
-    "ctaBusiness": "Business",
-    "premiumBadge": "Premium member",
-    "showLess": "Less",
-    "showAll": "All",
-    "marketplaceTitle": "Marketplace",
-    "marketplaceSub": "Select a section",
-    "marketplaceLocations": "Locations",
-    "marketplaceProducts": "Products",
-    "marketplaceServices": "Services",
-    "marketplaceBank": "Bank services",
-    "marketplaceBankAlt": "Bank services"
-  },
-   "productTypes": {
+  "productTypes": {
     "title": "Select product type",
     "texnika": "Equipment",
     "oziqovqat": "Products",
     "mebel": "Furniture",
     "boshqa": "Other"
   },
-    "marketplace": {
-    "products": {
-      "catalogTitle": "Select catalog",
-      "empty": "No products in this category yet"
-    }
-  },
- "catalog": {
+  "catalog": {
     "sabzavotVaMevalar": {
       "label": "Vegetables and fruits",
       "subs": {
@@ -1276,14 +1413,7 @@
       }
     }
   },
-  "marketplace": {
-    "catalog": {
-      "notFound": "Catalog not found",
-      "empty": "No products in this section yet",
-      "all": "All"
-    }
-  },
-    "serviceCats": {
+  "serviceCats": {
     "repair": "Construction and plumbing",
     "marketing": "SMM and marketing",
     "event": "Event organizing",
@@ -1291,27 +1421,7 @@
     "website": "Website development",
     "internet": "Internet"
   },
-  "services": {
-      "catsTitle": "Select service type"
-    },
-    "marketplace": {
-    "bank": {
-      "title": "Bank xizmatlari",
-      "individual": "Jismoniy shaxs",
-      "legal": "Yuridik shaxs",
-      "empty": "Bu bo'limda hozircha xizmat yo'q",
-      "scrollTop": "Yuqoriga",
-      "categories": {
-        "credit": "Kreditlar",
-        "cards": "Kartalar",
-        "deposits": "Depozitlar",
-        "pko": "Naqd pul / PKO",
-        "moneyTransfers": "Pul o‘tkazmalari",
-        "qrPayment": "QR to‘lovlar"
-      }
-    }
-  },
-    "bankService": {
+  "bankService": {
     "notFound": "Service not found",
     "commission": "Commission",
     "setupFee": "Setup fee",
@@ -1326,9 +1436,10 @@
     "bank": "Bank",
     "requiresAccount": "Business account required",
     "otherServicesShort": "Other services",
-    "otherServices": "Other services of {{bank}}"
+    "otherServices": "Other services of {{bank}}",
+    "apply": "Apply"
   },
-   "level2": {
+  "level2": {
     "Issiqxona": "Greenhouse",
     "Intensiv bog'": "Intensive orchard",
     "Chorvachilik": "Livestock farming",
@@ -1639,9 +1750,204 @@
     "Onlayn psixologik yordam xizmati": "Online psychological support",
     "Birgalikda ishlash uchun ijaraga olinadigan xona": "Coworking space",
     "Online psixolog": "Online psychologist"
+  },
+  "addService": {
+    "errors": {
+      "loginRequired": "Please log in first",
+      "selectCategory": "Select a category",
+      "companyRequired": "Enter the company name",
+      "submitError": "Error: {error}"
+    },
+    "back": "Back",
+    "title": "Add a service",
+    "fields": {
+      "name": "Service name *",
+      "namePlaceholder": "Service name",
+      "description": "Description *",
+      "descriptionPlaceholder": "Describe the service",
+      "direction": "Direction *",
+      "directionPlaceholder": "Select",
+      "category": "Category *",
+      "categoryPlaceholder": "Select",
+      "providerType": "Provider type *",
+      "providerIndividual": "Individual",
+      "providerBusiness": "Business",
+      "company": "Company name *",
+      "companyPlaceholder": "e.g. Toza Suv LLC",
+      "website": "Website",
+      "websitePlaceholder": "https://example.com",
+      "priceRange": "Price range *",
+      "priceRangePlaceholder": "100,000 – 500,000 UZS",
+      "phone": "Phone *",
+      "phonePlaceholder": "+998 90 123 45 67",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "media": "Photos and videos"
+    },
+    "sectionTitle": "Additional information",
+    "tagsLabel": "Quick service tags (optional, multiple allowed)",
+    "submitting": "Uploading...",
+    "submit": "Add service",
+    "success": "Service added successfully!"
+  },
+  "mkt": {
+    "categories": "Category",
+    "searchPlaceholder": "Search...",
+    "all": "All",
+    "popular": "Popular products",
+    "noProducts": "No products yet",
+    "profile": {
+      "payment": "Payment methods",
+      "settings": "Settings",
+      "help": "Help",
+      "about": "About the app",
+      "logout": "Log out"
+    },
+    "tabs": {
+      "home": "Home",
+      "locations": "Places",
+      "products": "Products",
+      "services": "Services",
+      "profile": "Profile"
+    },
+    "brand": "Marketplace",
+    "add": "Add"
+  },
+  "addVideo": {
+    "errors": {
+      "videoOnly": "Only video files are allowed",
+      "fileTooLarge": "Video must be under 100 MB",
+      "videoRequired": "Please choose a video",
+      "uploadFailed": "Video upload failed"
+    },
+    "title": "New video",
+    "subtitle": "Share your video and reach a new audience",
+    "selectVideo": "Choose a video",
+    "dragDrop": "Drop a video here or tap to choose",
+    "removeVideo": "Remove video",
+    "previewTitle": "Video title",
+    "portrait": "9:16 ready",
+    "landscape": "Landscape",
+    "detailsTitle": "Video details",
+    "detailsSubtitle": "Add a short description for viewers",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "Briefly about your video",
+      "description": "Description",
+      "descriptionPlaceholder": "Write a detailed description..."
+    },
+    "portraitTip": "Vertical 9:16 videos look best in Reels.",
+    "uploading": "Uploading video",
+    "changeVideo": "Replace",
+    "publish": "Publish",
+    "success": "Video uploaded successfully"
+  },
+  "becomeProvider": {
+    "errors": {
+      "incomplete": "Please fill in all required fields",
+      "submit": "Registration failed"
+    },
+    "type": {
+      "title": "How do you provide services?",
+      "desc": "You can change this later",
+      "individual": "Individual",
+      "individualDesc": "As an independent pro or specialist",
+      "company": "Company",
+      "companyDesc": "As a company with a team"
+    },
+    "direction": {
+      "title": "Choose a direction",
+      "desc": "Which field is your service in?",
+      "count": "professions"
+    },
+    "category": {
+      "title": "Choose your profession"
+    },
+    "details": {
+      "title": "Service details",
+      "desc": "Clients will find you by these details"
+    },
+    "fields": {
+      "company": "Company name",
+      "companyPlaceholder": "e.g. ZUMO Service LLC",
+      "name": "Service name",
+      "namePlaceholder": "e.g. Fast, quality plumbing",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your experience, terms and strengths",
+      "phone": "Phone",
+      "priceRange": "Price range",
+      "pricePlaceholder": "e.g. 100,000 – 300,000 UZS",
+      "email": "Email",
+      "website": "Website",
+      "media": "Photos and videos"
+    },
+    "companyStaffNote": "You can add staff after the company is created.",
+    "review": {
+      "title": "Media and confirmation",
+      "desc": "Add photos or videos of your work (optional)"
+    },
+    "summary": {
+      "type": "Type",
+      "direction": "Direction",
+      "category": "Profession"
+    },
+    "eyebrow": "ZUMO Services",
+    "title": "Become a provider",
+    "subtitle": "Show your skills and let clients find you",
+    "buttons": {
+      "back": "Back",
+      "submitting": "Submitting...",
+      "submit": "Register",
+      "next": "Next"
+    },
+    "success": "Congratulations! You are now a provider"
+  },
+  "businessDirections": {
+    "categoriesSubtitle": "Direction",
+    "recentTitle": "Recently viewed",
+    "adsTitle": "Listings",
+    "loading": "Loading...",
+    "noAds": "No listings in this direction yet"
+  },
+  "filters": {
+    "all": "All",
+    "locations": "Places",
+    "equipment": "Equipment",
+    "food": "Food",
+    "catalog": "Catalog",
+    "furniture": "Furniture"
+  },
+  "subcategory": {
+    "investment": "Investment",
+    "premiumLock": "Prices and calculations are for premium members",
+    "premiumLink": "Go premium",
+    "noDataTitle": "No data",
+    "noDataDesc": "No data in this section yet",
+    "locations": "Places",
+    "noAddress": "No address",
+    "products": "Products"
+  },
+  "notFound": {
+    "text": "This page was not found or has moved.",
+    "home": "Home"
+  },
+  "physic": {
+    "heroTitle": "ZUMO — for everyone",
+    "title": "Directions for individuals",
+    "soon": "Launching soon",
+    "badge": "Soon"
+  },
+  "comingSoon": {
+    "badge": "Coming soon",
+    "text": "We are working on this section. We will let you know when it launches.",
+    "toMarket": "Browse the market for now",
+    "bank": {
+      "title": "Bank products",
+      "text": "Online applications for loans, QR payments, cards and other bank services are coming soon."
+    },
+    "directions": {
+      "title": "150+ business directions",
+      "text": "Pick your direction and find the places, equipment and services you need in one place. Coming soon."
+    }
   }
-  
 }
-
-
-

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Landmark, Inbox, Loader2 } from 'lucide-react';
 import { getBankServices } from '../services/bankServices';
+import { safeGoBack } from '../utils/navigation.js';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/marketplace.css';
 
@@ -17,6 +18,7 @@ const SUBCATEGORY_TABS = [
 ];
 
 export default function BankServicesListPage() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,14 +38,14 @@ export default function BankServicesListPage() {
   return (
     <div className="marketplace-page">
       <div className="marketplace-page-header">
-        <Link to="/" className="marketplace-back-btn">
+        <button type="button" onClick={() => safeGoBack(navigate)} className="marketplace-back-btn">
           <ArrowLeft size={20} />
-          <span>Bosh sahifa</span>
-        </Link>
+          <span>{t('common.back', 'Orqaga')}</span>
+        </button>
 
         <h1 className="marketplace-page-title">
           <Landmark size={24} />
-          Bank xizmatlari
+          {t('services.bankServices', 'Bank xizmatlari')}
         </h1>
       </div>
 
@@ -55,7 +57,7 @@ export default function BankServicesListPage() {
             className={`bsl-tab ${activeTab === tab.slug ? 'active' : ''}`}
             onClick={() => setActiveTab(tab.slug)}
           >
-            {tab.label}
+            {t(tab.key, tab.label)}
           </button>
         ))}
       </div>
@@ -64,12 +66,12 @@ export default function BankServicesListPage() {
         {loading ? (
           <div className="marketplace-loading">
             <Loader2 size={32} className="marketplace-spinner" />
-            <span>Yuklanmoqda...</span>
+            <span>{t('businessDirections.loading', 'Yuklanmoqda...')}</span>
           </div>
         ) : filtered.length === 0 ? (
           <div className="marketplace-empty">
             <Inbox size={48} />
-            <p>Bu bo'limda hozircha xizmatlar yo'q</p>
+            <p>{t('marketplace.catalog.empty', 'Bu bo‘limda hozircha xizmatlar yo‘q')}</p>
           </div>
         ) : (
           <div className="uc-grid">

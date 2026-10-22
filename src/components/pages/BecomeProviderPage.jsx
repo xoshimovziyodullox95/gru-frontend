@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -311,7 +312,7 @@ export default function BecomeProviderPage() {
     setError('');
 
     if (step === 0) {
-      navigate(-1);
+      safeGoBack(navigate);
       return;
     }
 
@@ -656,7 +657,7 @@ export default function BecomeProviderPage() {
               maxLength={200}
               placeholder={t(
                 'becomeProvider.fields.companyPlaceholder',
-                'Masalan: GRU Service MCHJ'
+                'Masalan: ZUMO Service MCHJ'
               )}
             />
           </div>
@@ -884,7 +885,7 @@ export default function BecomeProviderPage() {
       <button
         type="button"
         className="bp-back-btn"
-        onClick={() => navigate(-1)}
+        onClick={() => safeGoBack(navigate)}
         disabled={submitting}
       >
         <ArrowLeft size={16} />
@@ -894,7 +895,7 @@ export default function BecomeProviderPage() {
       <header className="bp-hero">
         <span className="bp-hero__eyebrow">
           <Sparkles size={14} />
-          {t('becomeProvider.eyebrow', 'G.R.U Xizmatlar')}
+          {t('becomeProvider.eyebrow', 'ZUMO Xizmatlar')}
         </span>
 
         <h1>

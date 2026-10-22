@@ -1,7 +1,8 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Bell, Heart, MessageCircle as CommentIcon, ShoppingBag, CheckCheck } from 'lucide-react';
+import { ArrowLeft, Bell, Heart, MessageCircle as CommentIcon, ShoppingBag, CheckCheck, Send } from 'lucide-react';
 import { getNotifications, markOneRead, markAllRead } from '../services/notifications';
 import '../../styles/notificationsPage.css';
 
@@ -41,6 +42,9 @@ function NotificationRow({ notif, onClick, t }) {
       orderText += t('notifications.orderDetails', { quantity: qty });
     }
     text = orderText;
+  } else if (notif.type === 'ad_broadcast') {
+    icon = <Send size={16} color="#00a884" />;
+    text = notif.broadcastInfo?.caption || notif.commentText || 'Yangi reklama yubordi';
   }
 
   return (
@@ -57,6 +61,9 @@ function NotificationRow({ notif, onClick, t }) {
         <span className="notif-row-time">
           {new Date(notif.createdAt).toLocaleString()}
         </span>
+        {notif.type === 'ad_broadcast' && notif.broadcastInfo?.mediaUrl && (notif.broadcastInfo.isVideo
+          ? <video src={notif.broadcastInfo.mediaUrl} controls preload="metadata" style={{ width: 'min(100%, 360px)', maxHeight: 220, borderRadius: 10, marginTop: 8 }} />
+          : <img src={notif.broadcastInfo.mediaUrl} alt="Reklama" loading="lazy" style={{ width: 'min(100%, 360px)', maxHeight: 220, objectFit: 'cover', borderRadius: 10, marginTop: 8 }} />)}
       </div>
       {!notif.read && <span className="notif-row-dot" />}
     </div>
@@ -83,18 +90,30 @@ export default function NotificationsPage() {
     try {
       await markOneRead(notif._id);
       setNotifs((prev) => prev.map((n) => (n._id === notif._id ? { ...n, read: true } : n)));
-    } catch (e) {
+    } catch {
       // o'qilgan deb belgilash muvaffaqiyatsiz bo'lsa ham navigatsiyani to'xtatmaymiz
     }
 
-    if (notif.itemType === 'location') {
+    if (notif.type === 'order' && notif.itemType === 'bank_service') {
+      navigate(notif.orderInfo?.status ? '/my-orders?tab=bank' : '/bank-dashboard');
+    } else if (notif.type === 'order') {
+      // Holat xabari xaridorga keladi, yangi buyurtma xabari sotuvchiga
+      navigate(notif.orderInfo?.status ? '/my-orders' : '/received-orders');
+    } else if (notif.itemType === 'servicerequest') {
+      // Faqat "new_offer" mijozga keladi, qolganlari ustaga
+      navigate(notif.type === 'new_offer'
+        ? `/requests/${notif.itemId}`
+        : `/provider-requests/${notif.itemId}`);
+    } else if (notif.itemType === 'location') {
       navigate(`/location/${notif.itemId}`);
     } else if (notif.itemType === 'equipment') {
       navigate(`/equipment/${notif.itemId}`);
     } else if (notif.itemType === 'serviceprovider') {
-      navigate(`/services/${notif.itemId}`);
+      navigate(`/service-provider/${notif.itemId}`);
     } else if (notif.itemType === 'post') {
-      navigate(`/video/${notif.itemId}`);
+      navigate(`/posts/${notif.itemId}`);
+    } else if (notif.itemType === 'broadcast_ad') {
+      navigate(notif.fromUserId?._id ? `/profile/${notif.fromUserId._id}` : '/business-directions');
     } else {
       navigate('/notifications');
     }
@@ -104,13 +123,15 @@ export default function NotificationsPage() {
     try {
       await markAllRead();
       setNotifs((prev) => prev.map((n) => ({ ...n, read: true })));
-    } catch (e) {}
+    } catch {
+      // Saqlash muvaffaqiyatsiz bo'lsa, ro'yxatdagi holatni o'zgartirmaymiz.
+    }
   };
 
   return (
     <div className="notifications-page">
       <div className="notifications-header">
-        <button className="notif-back-btn" onClick={() => navigate(-1)}>
+        <button className="notif-back-btn" onClick={() => safeGoBack(navigate)}>
           <ArrowLeft size={20} />
         </button>
         <h1>{t('notifications.title')}</h1>

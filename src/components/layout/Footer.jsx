@@ -38,7 +38,7 @@ export default function Footer() {
           {/* 1 – Kompaniya haqida */}
           <div className="footer-col">
             <div className="footer-brand">
-              <span>G.R.U</span>
+              <span>ZUMO</span>
               <span className="badge">Corp</span>
             </div>
             <p className="footer-description">
@@ -58,11 +58,11 @@ export default function Footer() {
           <div className="footer-col">
             <h4 className="footer-title">{t('footer.pagesTitle')}</h4>
             <ul className="footer-links">
-              <li><Link to="/"><FiHome size={14} /> {t('footer.links.home')}</Link></li>
+              <li><Link to="/home"><FiHome size={14} /> {t('footer.links.home')}</Link></li>
               <li><Link to="/marketplace"><FiGrid size={14} /> {t('footer.links.marketplace')}</Link></li>
-              <li><Link to="/about"><FiInfo size={14} /> {t('footer.links.about')}</Link></li>
-              <li><Link to="/contact"><FiPhoneCall size={14} /> {t('footer.links.contact')}</Link></li>
-              <li><Link to="/faq"><FiHelpCircle size={14} /> {t('footer.links.faq')}</Link></li>
+              <li><Link to="/business-directions"><FiInfo size={14} /> {t('footer.links.directions', 'Biznes yo‘nalishlari')}</Link></li>
+              <li><Link to="/bank-services"><FiPhoneCall size={14} /> {t('footer.links.bank', 'Bank xizmatlari')}</Link></li>
+              <li><Link to="/ai-assistant"><FiHelpCircle size={14} /> {t('footer.links.ai', 'AI yordamchi')}</Link></li>
             </ul>
           </div>
 
@@ -72,8 +72,8 @@ export default function Footer() {
             <ul className="footer-links">
               <li><Link to="/add-listing"><FiFileText size={14} /> {t('footer.links.addListing')}</Link></li>
               <li><Link to="/profile"><FiShield size={14} /> {t('footer.links.profile')}</Link></li>
-              <li><Link to="/terms"><FiFileText size={14} /> {t('footer.links.terms')}</Link></li>
-              <li><Link to="/privacy"><FiShield size={14} /> {t('footer.links.privacy')}</Link></li>
+              <li><Link to="/request"><FiFileText size={14} /> {t('footer.links.request', 'Usta chaqirish')}</Link></li>
+              <li><Link to="/my-orders"><FiShield size={14} /> {t('footer.links.orders', 'Buyurtmalarim')}</Link></li>
             </ul>
           </div>
 

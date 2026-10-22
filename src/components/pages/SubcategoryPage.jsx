@@ -3,36 +3,17 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'; // 🔥 QO'SHILDI
 import { useAuth } from '../context/AuthContext';
-import { getRandomLocationsWithFallback, getAllLocations } from '../services/locations';
-import { getEquipment, getAllEquipment } from '../services/equipment';
+import { getRandomLocationsWithFallback } from '../services/locations';
+import { getEquipment } from '../services/equipment';
 import { getLevel2 } from '../services/categories';
 import {
   MapPin, Ruler, ArrowLeft, Building2, Tag, Crown,
-  Store, UtensilsCrossed, Sprout, Heart, Gamepad2, Sparkles,
+  UtensilsCrossed,
   Cpu, Sofa, Package, ListFilter
 } from 'lucide-react';
 import UniversalCard from './UniversalCard';
 import { CATEGORY_CATALOGS } from '../utils/foodCategories'; // 🔥 TO'G'RI IMPORT
 import '../../styles/subcategory.css';
-
-// ===== YO'NALISH ICONLARI =====
-const level1Icons = {
-  "Do'konlar": Store,
-  "Restoran/Kafe": UtensilsCrossed,
-  "Agro": Sprout,
-  "Klinika": Heart,
-  "Ko'ngilochar": Gamepad2,
-  "Yangi biznes": Sparkles,
-};
-
-// ===== TUR ICONLARI =====
-const typeIcons = {
-  location: MapPin,
-  texnika: Cpu,
-  mebel: Sofa,
-  boshqa: Package,
-  oziqovqat: UtensilsCrossed,
-};
 
 export default function SubcategoryPage() {
   const { level1, level2 } = useParams();
@@ -61,23 +42,10 @@ export default function SubcategoryPage() {
         const found = resSub.data.find(item => (item.level2 || item.key) === decodedLevel2);
         setSubInfo(found || null);
 
-        let locs = { data: [] };
-        let eqs = { data: [] };
-
-        if (decodedLevel1 === "Yangi biznes") {
-          const [allLocs, allEqs] = await Promise.all([
-            getAllLocations(LIMIT),
-            getAllEquipment(LIMIT),
-          ]);
-          locs = allLocs;
-          eqs = allEqs;
-        } else {
-          const [filteredLocs, filteredEqs] = await Promise.all([
-getRandomLocationsWithFallback(decodedLevel1, decodedLevel2, LIMIT),         getEquipment({ level1: decodedLevel1 }),
-          ]);
-          locs = filteredLocs;
-          eqs = filteredEqs;
-        }
+        const [locs, eqs] = await Promise.all([
+          getRandomLocationsWithFallback(decodedLevel1, decodedLevel2, LIMIT),
+          getEquipment({ level1: decodedLevel1, category: decodedLevel2, limit: LIMIT }),
+        ]);
 
         setLocations(locs.data || []);
         setEquipment(eqs.data || []);
@@ -113,8 +81,6 @@ getRandomLocationsWithFallback(decodedLevel1, decodedLevel2, LIMIT),         get
   });
 
   // ===== FILTR TUGMALARINI YASASH =====
-  const Level1Icon = level1Icons[decodedLevel1] || Building2;
-
   // Asosiy tugmalar (tarjima bilan)
   const filterButtons = [
     { key: 'all', label: t('filters.all', 'Hammasi'), icon: ListFilter },
@@ -238,7 +204,7 @@ getRandomLocationsWithFallback(decodedLevel1, decodedLevel2, LIMIT),         get
                         id={locationId}
                         type="location"
                         title={loc.title}
-                        image={loc.images?.[0] || '/images/placeholder-location.jpg'}
+                        image={loc.images?.[0] || '/images/zumo-placeholder.svg'}
                         price={loc.price_range}
                         currency={loc.currency}
                         link={`/location/${locationId}`}
@@ -271,7 +237,7 @@ getRandomLocationsWithFallback(decodedLevel1, decodedLevel2, LIMIT),         get
                         id={eqId}
                         type="equipment"
                         title={eq.title}
-                        image={eq.images?.[0] || '/images/placeholder-equipment.jpg'}
+                        image={eq.images?.[0] || '/images/zumo-placeholder.svg'}
                         price={eq.price}
                         currency={eq.currency}
                         link={`/equipment/${eqId}`}
@@ -281,6 +247,7 @@ getRandomLocationsWithFallback(decodedLevel1, decodedLevel2, LIMIT),         get
                 </div>
               </div>
             )}
+
           </>
         )}
       </div>

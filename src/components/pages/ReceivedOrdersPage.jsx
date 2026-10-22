@@ -1,8 +1,9 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/ReceivedOrdersPage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Loader2, MapPin, Clock, X, MessageCircle } from 'lucide-react';
-import { getReceivedOrders, updateOrderStatus } from '../services/orders';
+import { getReceivedOrders, updateOrderStatus, rejectOrder } from '../services/orders';
 import '../../styles/myOrders.css';
 import { formatPrice } from '../utils/formatPrice';
 
@@ -11,13 +12,19 @@ const STATUS_FLOW = {
   qabul_qilindi: { next: 'yetkazilmoqda', label: 'Yetkazishni boshlash' },
   yetkazilmoqda: { next: 'yetkazildi', label: "Yetkazildi deb belgilash" },
   yetkazildi: { next: null, label: null },
+  rad_etildi: { next: null, label: null },
+  bekor_qilindi: { next: null, label: null },
 };
+
+const CLOSED_STATUSES = ['yetkazildi', 'rad_etildi', 'bekor_qilindi'];
 
 const STATUS_LABELS = {
   yangi: 'Yangi',
   qabul_qilindi: 'Qabul qilindi',
   yetkazilmoqda: 'Yetkazilmoqda',
   yetkazildi: 'Yetkazildi',
+  rad_etildi: 'Rad etildi',
+  bekor_qilindi: 'Xaridor bekor qildi',
 };
 
 export default function ReceivedOrdersPage() {
@@ -33,7 +40,7 @@ export default function ReceivedOrdersPage() {
 
   useEffect(() => {
     getReceivedOrders()
-      .then((res) => setOrders(res.data))
+      .then((res) => setOrders(Array.isArray(res.data) ? res.data : res.data?.orders || []))
       .catch(() => setOrders([]))
       .finally(() => setLoading(false));
   }, []);
@@ -42,7 +49,7 @@ export default function ReceivedOrdersPage() {
     const nextStatus = STATUS_FLOW[order.status]?.next;
     if (!nextStatus) return;
 
-    // 🔥 "Qabul qilish" bosilganda — avval muddat so'raymiz
+    // "Qabul qilish" bosilganda — avval muddat so'raymiz
     if (nextStatus === 'qabul_qilindi') {
       setDeliveryModal({ order });
       setDeliveryValue('');
@@ -57,9 +64,24 @@ export default function ReceivedOrdersPage() {
     setUpdatingId(order._id);
     try {
       const res = await updateOrderStatus(order._id, nextStatus, deliveryEstimate);
-      setOrders((prev) => prev.map((o) => (o._id === order._id ? res.data : o)));
+      const updatedOrder = res.data?.order || res.data;
+      setOrders((prev) => prev.map((o) => (o._id === order._id ? updatedOrder : o)));
     } catch (err) {
-      alert('Xatolik yuz berdi');
+      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleReject = async (order) => {
+    const reason = window.prompt('Rad etish sababi (xaridorga ko‘rinadi):', 'Tovar qolmagan');
+    if (reason === null) return;
+    setUpdatingId(order._id);
+    try {
+      const res = await rejectOrder(order._id, reason);
+      setOrders((prev) => prev.map((o) => (o._id === order._id ? res.data.order : o)));
+    } catch (err) {
+      alert(err.response?.data?.error || 'Xatolik yuz berdi');
     } finally {
       setUpdatingId(null);
     }
@@ -77,46 +99,46 @@ export default function ReceivedOrdersPage() {
 
   if (loading) return <div className="StatusScreen">Yuklanmoqda...</div>;
 
-  const active = orders.filter((o) => o.status !== 'yetkazildi');
-  const archived = orders.filter((o) => o.status === 'yetkazildi');
+  const active = orders.filter((o) => !CLOSED_STATUSES.includes(o.status));
+  const archived = orders.filter((o) => CLOSED_STATUSES.includes(o.status));
 
   const renderOrderCard = (o, archived = false) => {
     const flow = STATUS_FLOW[o.status];
     return (
       <div key={o._id} className={`mo-item ${archived ? 'mo-item-archived' : ''}`}>
         <img
-          src={o.image || '/images/placeholder-equipment.jpg'}
+          src={o.image || '/images/zumo-placeholder.svg'}
           alt={o.title}
           className="mo-item-img"
-          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-equipment.jpg'; }}
+          onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
         />
         <div className="mo-item-info">
           <span className="mo-item-title">{o.title}</span>
           <span className="mo-item-meta">{o.quantity} ta &middot; {formatPrice(o.price, o.currency)}</span>
 
           <div className="mo-buyer-row">
-            <img src={o.buyerId?.avatar_url || '/images/placeholder.jpg'} alt="" className="mo-buyer-avatar" />
+            <img src={o.buyerId?.avatar_url || '/images/zumo-placeholder.svg'} alt="" className="mo-buyer-avatar" />
             <span className="mo-item-seller">{o.buyerId?.fullName || o.buyerId?.full_name || 'Mijoz'}</span>
           </div>
 
-          {/* 🔥 TUMAN */}
+          {/* TUMAN */}
           {o.district && (
             <span className="mo-district-badge"><MapPin size={12} /> {o.district}</span>
           )}
 
-          {/* 🔥 SKLAD HOLATI */}
+          {/* SKLAD HOLATI */}
           {o.stockCheck?.inStock === false && (
-            <span className="mo-stock-warning">⚠ Skladda yetarli emas (bor: {o.stockCheck.available})</span>
+            <span className="mo-stock-warning">Ogohlantirish: skladda yetarli emas (bor: {o.stockCheck.available})</span>
           )}
 
-          {/* 🔥 YETKAZISH MUDDATI */}
+          {/* YETKAZISH MUDDATI */}
           {o.deliveryEstimate?.value && (
             <span className="mo-delivery-estimate">
               <Clock size={12} /> {o.deliveryEstimate.value} {o.deliveryEstimate.unit === 'soat' ? 'soatda' : 'kunda'} yetkaziladi
             </span>
           )}
 
-          {o.buyerLocation?.lat && (
+          {Number.isFinite(o.buyerLocation?.lat) && Number.isFinite(o.buyerLocation?.lng) && (
             <a
               href={`https://www.google.com/maps?q=${o.buyerLocation.lat},${o.buyerLocation.lng}`}
               target="_blank" rel="noopener noreferrer"
@@ -127,6 +149,7 @@ export default function ReceivedOrdersPage() {
           )}
 
           {!archived && <span className="mo-current-status">Holat: {STATUS_LABELS[o.status]}</span>}
+          {o.closeReason && <span className="mo-close-reason">Sabab: {o.closeReason}</span>}
         </div>
 
         {!archived ? (
@@ -142,10 +165,15 @@ export default function ReceivedOrdersPage() {
                 {updatingId === o._id ? <Loader2 size={14} className="mo-spin" /> : flow.label}
               </button>
             )}
+            {o.status === 'yangi' && (
+              <button className="mo-reject-btn" disabled={updatingId === o._id} onClick={() => handleReject(o)}>
+                Rad etish
+              </button>
+            )}
           </div>
         ) : (
-          <span className="mo-status-badge" style={{ color: '#4ade80', borderColor: '#4ade80' }}>
-            <CheckCircle2 size={13} /> Yetkazildi
+          <span className={`mo-status-badge ${o.status === 'yetkazildi' ? 'mo-tone-done' : 'mo-tone-closed'}`}>
+            {o.status === 'yetkazildi' ? <CheckCircle2 size={13} /> : <X size={13} />} {STATUS_LABELS[o.status]}
           </span>
         )}
       </div>
@@ -154,7 +182,7 @@ export default function ReceivedOrdersPage() {
 
   return (
     <div className="mo-page">
-      <button className="BackActionBtn" onClick={() => navigate(-1)}>
+      <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} /> Orqaga
       </button>
       <h1 className="mo-title">Kelgan buyurtmalar ({active.length})</h1>
@@ -172,7 +200,7 @@ export default function ReceivedOrdersPage() {
         </>
       )}
 
-      {/* 🔥 MUDDAT TANLASH MODALI */}
+      {/* MUDDAT TANLASH MODALI */}
       {deliveryModal && (
         <div className="mo-modal-overlay" onClick={() => setDeliveryModal(null)}>
           <div className="mo-modal" onClick={(e) => e.stopPropagation()}>

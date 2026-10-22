@@ -1,6 +1,5 @@
 // src/pages/PhysicCategoryPage.jsx
 import { useParams, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Clock } from 'lucide-react';
 import '../../styles/physicPage.css';
 
@@ -26,13 +25,22 @@ const COLOR_PALETTE = [
   ['#ec4899', '#be185d'],
 ];
 
+const BACKGROUND_CARDS = Array.from({ length: 25 }, (_, index) => ({
+  size: 60 + ((index * 37) % 101),
+  top: (index * 41) % 100,
+  left: (index * 67 + 13) % 100,
+  duration: 12 + ((index * 7) % 25),
+  delay: (index * 3) % 12,
+  radius: 20 + ((index * 13) % 51),
+  opacity: 0.12 + ((index % 7) * 0.03),
+}));
+
 export default function PhysicCategoryPage() {
   const { categoryKey } = useParams();
-  const { t } = useTranslation();
 
   const category = physicCategories.find(c => c.key === categoryKey);
   const idx = physicCategories.findIndex(c => c.key === categoryKey);
-  const [colorFrom, colorTo] = COLOR_PALETTE[idx % COLOR_PALETTE.length];
+  const [colorFrom, colorTo] = COLOR_PALETTE[Math.max(idx, 0) % COLOR_PALETTE.length];
 
   if (!category) {
     return <div className="physic-not-found">Kategoriya topilmadi</div>;
@@ -42,20 +50,20 @@ export default function PhysicCategoryPage() {
     <div className="physic-category-wrapper">
       {/* ===== FON – HARAKATLANUVCHI RANGLI KARTALAR ===== */}
       <div className="physic-bg-cards">
-        {Array.from({ length: 25 }).map((_, i) => (
+        {BACKGROUND_CARDS.map((card, i) => (
           <div
             key={i}
             className="physic-bg-card"
             style={{
               background: COLOR_PALETTE[i % COLOR_PALETTE.length][0],
-              width: `${60 + Math.random() * 100}px`,
-              height: `${60 + Math.random() * 100}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${12 + Math.random() * 25}s`,
-              animationDelay: `${Math.random() * 12}s`,
-              borderRadius: `${Math.random() * 50 + 20}%`,
-              opacity: 0.12 + Math.random() * 0.18,
+              width: `${card.size}px`,
+              height: `${card.size}px`,
+              top: `${card.top}%`,
+              left: `${card.left}%`,
+              animationDuration: `${card.duration}s`,
+              animationDelay: `${card.delay}s`,
+              borderRadius: `${card.radius}%`,
+              opacity: card.opacity,
             }}
           />
         ))}

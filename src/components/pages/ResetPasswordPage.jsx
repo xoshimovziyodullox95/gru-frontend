@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">G.R.U</h1>
+        <h1 className="auth-title">ZUMO</h1>
         <p className="auth-subtitle">Yangi parol o'rnatish</p>
         <form onSubmit={handleReset}>
           {error && <div className="error-message">{error}</div>}

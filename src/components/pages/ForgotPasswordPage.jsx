@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">G.R.U</h1>
+        <h1 className="auth-title">ZUMO</h1>
         <p className="auth-subtitle">Parolni tiklash</p>
 
         <form onSubmit={handleReset}>

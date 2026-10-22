@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, Package, DollarSign } from 'lucide-react';
@@ -20,7 +21,7 @@ export default function SupplierStatsPage() {
 
   return (
     <div className="ss-page">
-      <button className="BackActionBtn" onClick={() => navigate(-1)}>
+      <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} /> Orqaga
       </button>
       <h1 className="ss-title"><TrendingUp size={22} /> Postavshik statistikasi</h1>

@@ -1,5 +1,5 @@
 // src/pages/PhysicPage.jsx
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, ShoppingBag } from 'lucide-react';
 import '../../styles/home.css';
@@ -28,6 +28,7 @@ const COLOR_PALETTE = [
 ];
 
 export default function PhysicPage() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   return (
@@ -37,16 +38,16 @@ export default function PhysicPage() {
         <div className="hero-overlay"></div>
         <div className="hero-content">
           <div className="hero-title-wrapper">
-            <h1 className="hero-title">GRU — har bir inson uchun</h1>
+            <h1 className="hero-title">{t('physic.heroTitle', 'ZUMO — har bir inson uchun')}</h1>
           </div>
-          <div className="hero-cta-buttons">
+          <div className="hero-cta-grid">
             <button className="hero-cta-btn cta-ai" onClick={() => navigate('/ai-assistant')}>
-              <Sparkles size={18} />
-              <span>{t('home.ctaAi')}</span>
+              <span className="hero-cta-btn__icon"><Sparkles size={20} /></span>
+              <span className="hero-cta-btn__text"><strong>{t('home.ctaAi')}</strong></span>
             </button>
             <button className="hero-cta-btn cta-marketplace" onClick={() => navigate('/marketplace')}>
-              <ShoppingBag size={18} />
-              <span>{t('home.ctaMarketplace')}</span>
+              <span className="hero-cta-btn__icon"><ShoppingBag size={20} /></span>
+              <span className="hero-cta-btn__text"><strong>{t('home.ctaMarketplace')}</strong></span>
             </button>
           </div>
         </div>
@@ -55,8 +56,8 @@ export default function PhysicPage() {
       {/* KATEGORIYALAR */}
       <section className="cats-section">
         <div className="cats-header">
-          <h2 className="cats-title">Jismoniy shaxslar uchun yo'nalishlar</h2>
-          <p className="cats-sub">Tez orada ishga tushadi</p>
+          <h2 className="cats-title">{t('physic.title', 'Jismoniy shaxslar uchun yo‘nalishlar')}</h2>
+          <p className="cats-sub">{t('physic.soon', 'Tez orada ishga tushadi')}</p>
         </div>
         <div className="cats-grid">
           {physicCategories.map((cat, idx) => {
@@ -77,7 +78,7 @@ export default function PhysicPage() {
                 <div className="physic-card-border"></div>
                 <span className="physic-card-emoji">{cat.emoji}</span>
                 <span className="physic-card-title">{cat.name}</span>
-                <span className="physic-card-badge">Tez kunda</span>
+                <span className="physic-card-badge">{t('physic.badge', 'Tez kunda')}</span>
               </Link>
             );
           })}

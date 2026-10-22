@@ -2272,6 +2272,16 @@ body {
   background: rgba(255, 80, 80, 0.3);
 }
 
+.location-share-btn {
+  margin-top: 8px;
+  color: var(--cyan, #00cfff);
+  border: 1px solid color-mix(in srgb, var(--cyan, #00cfff) 50%, transparent);
+  background: transparent;
+}
+.location-share-btn:hover {
+  background: color-mix(in srgb, var(--cyan, #00cfff) 12%, transparent);
+}
+
 .ImageViewerNav {
   position: fixed;
   top: 50%;

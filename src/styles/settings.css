@@ -14,7 +14,95 @@
   animation: overlayFade 0.25s ease;
   padding: 20px;
 }
+.wallet-card-text strong {
+  color: var(--st-text);
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
 
+/* Taklif qilish */
+.invite-link-wrap {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+
+.invite-link-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 16px;
+  border-radius: 30px;
+  border: 1px solid var(--st-outline);
+  background: var(--st-field-bg);
+  color: var(--st-text);
+  font-size: 13px;
+  outline: none;
+}
+
+.invite-copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--st-chip);
+  color: var(--st-text);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+
+.invite-copy-btn:hover {
+  background: var(--st-chip-hover);
+}
+
+/* Yordam */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faq-item {
+  border: 1px solid var(--st-outline);
+  border-radius: 12px;
+  background: var(--st-field-bg);
+  overflow: hidden;
+}
+
+.faq-item summary {
+  cursor: pointer;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--st-text);
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item[open] summary {
+  color: var(--st-accent);
+}
+
+.faq-item p {
+  margin: 0;
+  padding: 0 14px 14px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--st-muted);
+}
+
+.settings-version {
+  text-align: center;
+  color: var(--st-faint);
+  font-size: 0.75rem;
+  margin: 18px 0 0;
+}
 
 /* ============================================================
    iOS USLUBIDAGI SHAFFOF SWITCH (ToggleSwitch komponenti)
@@ -824,6 +912,81 @@
     padding: 10px 20px;
     font-size: 13px;
   }
+}
+
+/* ThemeProvider'ning global palitrasi bilan settings modalini sinxron ushlash. */
+.settings-modal,
+.settings-submodal-content,
+.settings-menu {
+  color: var(--text);
+  background: var(--card);
+  border-color: var(--border);
+}
+.settings-help-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.settings-help-links .settings-link-btn {
+  justify-content: flex-start;
+  text-decoration: none;
+}
+.settings-modal-header,
+.settings-submodal-header {
+  color: var(--text);
+  background: var(--card);
+  border-color: var(--border);
+}
+.settings-modal-header h3,
+.settings-submodal-header h3,
+.settings-menu-item,
+.settings-submodal-body {
+  color: var(--text);
+}
+.settings-submodal-content p,
+.settings-submodal-content h4,
+.settings-submodal-content h5,
+.settings-submodal-content .prof-item,
+.settings-submodal-content .notif-item,
+.settings-submodal-content .interface-section-title {
+  color: var(--text);
+}
+.settings-submodal-content .notif-item {
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--card) 88%, var(--bg));
+}
+.settings-submodal-content .interface-lang-btn {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--border);
+}
+.settings-submodal-content .interface-lang-btn.active {
+  color: var(--card);
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+.settings-submodal-content .settings-link-btn {
+  color: var(--text);
+  background: color-mix(in srgb, var(--cyan) 10%, var(--card));
+}
+.settings-menu-item {
+  border-color: var(--border);
+}
+.settings-menu-item svg:first-child,
+.settings-menu-arrow,
+.settings-modal-close,
+.settings-submodal-header button {
+  color: var(--textMuted);
+}
+.settings-menu-item:hover,
+.settings-modal-close:hover,
+.settings-submodal-header button:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--cyan) 9%, var(--card));
+}
+.settings-modal,
+.settings-submodal-content {
+  border: 1px solid var(--border);
 }
 
 @media (min-width: 601px) and (max-width: 768px) {

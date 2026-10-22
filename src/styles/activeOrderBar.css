@@ -1,0 +1,264 @@
+/* ============================================================
+   ACTIVE ORDER BAR — Yandex Go uslubi
+   Sahifa contenti ichida, scroll bilan ketadi
+   ============================================================ */
+
+.aob {
+  --aob-color: #2196f3;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  max-width: 680px;
+  /* ✅ Kichraytirildi: 12px → 8px, pastdan 14px */
+  margin: 8px auto 0;
+  padding: 10px 12px;
+  padding-top: 14px;
+
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--aob-color) 15%, #0d1f38),
+    #0d1f38
+  );
+  border: 1.5px solid color-mix(in srgb, var(--aob-color) 45%, transparent);
+  border-radius: 14px;
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.3),
+    0 0 0 1px color-mix(in srgb, var(--aob-color) 20%, transparent);
+
+  cursor: pointer;
+  overflow: hidden;
+
+  animation: aobSlideDown 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  transition: transform 0.2s ease;
+}
+
+.aob:hover {
+  transform: translateY(2px);
+}
+
+.aob:active {
+  transform: scale(0.99);
+}
+
+@keyframes aobSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= PROGRESS ================= */
+
+.aob__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.aob__progress-bar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--aob-color),
+    color-mix(in srgb, var(--aob-color) 70%, white)
+  );
+  transition: width 0.5s ease;
+  box-shadow: 0 0 8px var(--aob-color);
+}
+
+/* ================= ICON ================= */
+
+.aob__icon {
+  display: grid;
+  place-items: center;
+
+  /* ✅ Kichraytirildi: 42px → 34px */
+  width: 34px;
+  height: 34px;
+
+  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    var(--aob-color),
+    color-mix(in srgb, var(--aob-color) 60%, white)
+  );
+  border-radius: 10px;
+
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--aob-color) 45%, transparent);
+}
+
+.aob__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.aob__icon--spin svg {
+  animation: aobSpin 1.2s linear infinite;
+}
+
+@keyframes aobSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ================= CONTENT ================= */
+
+.aob__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.aob__label {
+  color: #ffffff;
+  /* ✅ Kichraytirildi: 14px → 13px */
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aob__sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  color: #94a3b8;
+  /* ✅ Kichraytirildi: 12px → 11px */
+  font-size: 11px;
+  font-weight: 500;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aob__sub svg {
+  width: 10px;
+  height: 10px;
+  color: var(--aob-color);
+  flex-shrink: 0;
+}
+
+/* ================= CLOSE ================= */
+
+.aob__close {
+  display: grid;
+  place-items: center;
+
+  /* ✅ Kichraytirildi: 28px → 24px */
+  width: 24px;
+  height: 24px;
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.aob__close:hover {
+  color: #ffffff;
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.aob__close svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ================= ARROW ================= */
+
+.aob__arrow {
+  display: grid;
+  place-items: center;
+
+  /* ✅ Kichraytirildi: 24px → 22px */
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+
+  color: var(--aob-color);
+  background: color-mix(in srgb, var(--aob-color) 15%, transparent);
+
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.aob__arrow svg {
+  width: 14px;
+  height: 14px;
+}
+
+.aob:hover .aob__arrow {
+  background: var(--aob-color);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 480px) {
+  .aob {
+    /* ✅ Kichraytirildi: 8px → 6px, kenglik */
+    margin: 6px auto 0;
+    width: calc(100% - 20px);
+    padding: 9px 11px;
+    padding-top: 13px;
+    border-radius: 12px;
+    gap: 8px;
+  }
+
+  .aob__icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+
+  .aob__icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .aob__label {
+    font-size: 12px;
+  }
+
+  .aob__sub {
+    font-size: 10.5px;
+  }
+
+  .aob__close {
+    width: 22px;
+    height: 22px;
+  }
+
+  .aob__arrow {
+    width: 20px;
+    height: 20px;
+  }
+}

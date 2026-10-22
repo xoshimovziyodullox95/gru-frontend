@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/LessonsPage.jsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -26,7 +27,7 @@ export default function LessonsPage() {
 
   const handleVideoClick = (lesson) => {
     if (lesson.comingSoon) {
-      toast.info('📚 Bu darslik tez orada qo‘shiladi!', { duration: 3000 });
+      toast.info('рџ“љ Bu darslik tez orada qo‘shiladi!', { duration: 3000 });
       return;
     }
     if (isPremium) {
@@ -41,14 +42,14 @@ export default function LessonsPage() {
   return (
     <div className="lessons-page">
       <div className="lessons-header">
-        <button className="lessons-back-btn" onClick={() => navigate(-1)}>
+        <button className="lessons-back-btn" onClick={() => safeGoBack(navigate)}>
           <ArrowLeft size={20} /> Orqaga
         </button>
-        <h1>📚 Video darsliklar</h1>
+        <h1>рџ“љ Video darsliklar</h1>
         <p className="lessons-sub">Biznesingizni rivojlantirish uchun eng yaxshi treninglar</p>
       </div>
 
-      {/* 🔥 TEZ ORADA BANNER */}
+      {/* рџ”Ґ TEZ ORADA BANNER */}
       <div className="lessons-coming-banner">
         <Clock size={24} />
         <div>
@@ -80,15 +81,15 @@ export default function LessonsPage() {
         ))}
       </div>
 
-      {/* 🔥 PREMIUM MODAL */}
+      {/* рџ”Ґ PREMIUM MODAL */}
       {showPremiumModal && (
         <div className="premium-modal-overlay" onClick={() => setShowPremiumModal(false)}>
           <div className="premium-modal" onClick={e => e.stopPropagation()}>
-            <div className="premium-modal-icon">🔒</div>
-            <h3>Premium aʼzolik kerak</h3>
+            <div className="premium-modal-icon">рџ”’</div>
+            <h3>Premium aКјzolik kerak</h3>
             <p>
-              Video darsliklarni ko‘rish uchun <strong>Premium</strong> aʼzo bo‘lishingiz kerak.
-              Premium aʼzolik sizga barcha darsliklar, narxlar va qo‘shimcha imkoniyatlarni ochadi.
+              Video darsliklarni ko‘rish uchun <strong>Premium</strong> aКјzo bo‘lishingiz kerak.
+              Premium aКјzolik sizga barcha darsliklar, narxlar va qo‘shimcha imkoniyatlarni ochadi.
             </p>
             <div className="premium-modal-actions">
               <button className="premium-modal-btn" onClick={() => navigate('/premium')}>

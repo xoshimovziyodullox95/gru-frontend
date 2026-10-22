@@ -1,7 +1,8 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/MarketplaceBank.jsx
 import { useEffect, useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowUp, User, Building2, CreditCard, Landmark, Wallet, Send, QrCode, Vault } from 'lucide-react'; // PiggyBank o'chirildi, Safe qo'shildi
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowUp, User, Building2, CreditCard, Landmark, Send, QrCode, Vault } from 'lucide-react'; // PiggyBank o'chirildi, Safe qo'shildi
 import { getBankServices } from '../services/bankServices';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/marketplaceHub.css';
@@ -18,6 +19,12 @@ const order = ['credit', 'cards', 'deposits', 'pko', 'money_transfers', 'qr_paym
 
 export default function MarketplaceBank() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const handleBack = () => {
+    const from = location.state?.from;
+    if (typeof from === 'string' && from.startsWith('/')) navigate(from);
+    else safeGoBack(navigate);
+  };
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [customerType, setCustomerType] = useState('individual');
@@ -72,7 +79,7 @@ export default function MarketplaceBank() {
 
   return (
     <div className="mph-page" ref={pageRef}>
-      <button className="mph-back" onClick={() => navigate(-1)}>
+      <button className="mph-back" onClick={handleBack}>
         <ArrowLeft size={18} /> Orqaga
       </button>
       <h2 className="mph-subtitle">Bank xizmatlari</h2>

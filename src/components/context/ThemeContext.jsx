@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
+// Context hooks are intentionally exported beside their provider.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -14,7 +16,7 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('theme');
-    if (saved) return saved;
+    if (saved === 'dark' || saved === 'light') return saved;
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
     return 'light';
   });
@@ -29,14 +31,7 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-const toggleTheme = () => {
-  console.log('🔁 Tugma bosildi, hozirgi tema:', theme);
-  setTheme(prev => {
-    const newTheme = prev === 'light' ? 'dark' : 'light';
-    console.log('✅ Yangi tema:', newTheme);
-    return newTheme;
-  });
-};
+  const toggleTheme = () => setTheme((current) => (current === 'light' ? 'dark' : 'light'));
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}

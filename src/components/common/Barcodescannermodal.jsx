@@ -58,19 +58,15 @@ export default function BarcodeScannerModal({ onScan, onClose }) {
         runningRef.current = true;
       } catch (envErr) {
         console.warn("Orqa kamera topilmadi, boshqa kamera qidirilmoqda:", envErr.message);
-        try {
-          const cameras = await Html5Qrcode.getCameras();
-          if (!cameras || cameras.length === 0) throw new Error('Kamera topilmadi');
-          await scannerInstance.start(
-            cameras[0].id,
-            { fps: 10, qrbox: { width: 260, height: 160 } },
-            onDecoded,
-            onFrameError
-          );
-          runningRef.current = true;
-        } catch (fallbackErr) {
-          throw fallbackErr;
-        }
+        const cameras = await Html5Qrcode.getCameras();
+        if (!cameras || cameras.length === 0) throw envErr;
+        await scannerInstance.start(
+          cameras[0].id,
+          { fps: 10, qrbox: { width: 260, height: 160 } },
+          onDecoded,
+          onFrameError
+        );
+        runningRef.current = true;
       }
     };
 

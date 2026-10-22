@@ -97,9 +97,9 @@ export default function NearbySuppliers({ location, selectedItems, onAdd }) {
             {results.map((item) => (
               <div key={item._id} className="nearby-supplier-item">
                 <img
-                  src={item.images?.[0] || '/images/placeholder-equipment.jpg'}
+                  src={item.images?.[0] || '/images/zumo-placeholder.svg'}
                   alt={item.title}
-                  onError={(e) => { e.target.src = '/images/placeholder-equipment.jpg'; }}
+                  onError={(e) => { e.target.src = '/images/zumo-placeholder.svg'; }}
                 />
                 <div className="nearby-supplier-info">
                   <span className="nearby-supplier-title">{item.title}</span>

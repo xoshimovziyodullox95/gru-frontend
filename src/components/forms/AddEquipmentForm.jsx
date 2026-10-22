@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/forms/AddEquipmentForm.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -184,7 +185,7 @@ export default function AddEquipmentForm() {
           setUploadProgress(percent);
         });
       }
-      setSuccessInfo({ target: `/category/${formData.level1}` });
+      setSuccessInfo({ target: `/equipment/${equipmentId}` });
     } catch (err) {
       console.error(err);
       alert(t('addEquipment.errors.submitError', { error: err.response?.data?.error || err.message }));
@@ -197,7 +198,7 @@ export default function AddEquipmentForm() {
 
   return (
     <div className="add-equipment-form-container">
-      <button type="button" className="aef-back-btn" onClick={() => navigate(-1)}>
+      <button type="button" className="aef-back-btn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} />
         {t('addEquipment.back')}
       </button>
@@ -442,7 +443,7 @@ export default function AddEquipmentForm() {
                       onChange={handleAttrChange}
                       placeholder={t('addEquipment.fields.dimensionLength')}
                     />
-                    <span className="aef-dimensions-x">×</span>
+                    <span className="aef-dimensions-x">Г—</span>
                     <input
                       type="number"
                       name="width"
@@ -450,7 +451,7 @@ export default function AddEquipmentForm() {
                       onChange={handleAttrChange}
                       placeholder={t('addEquipment.fields.dimensionWidth')}
                     />
-                    <span className="aef-dimensions-x">×</span>
+                    <span className="aef-dimensions-x">Г—</span>
                     <input
                       type="number"
                       name="height"

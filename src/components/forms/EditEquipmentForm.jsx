@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/forms/EditEquipmentForm.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -54,8 +55,8 @@ export default function EditEquipmentForm() {
       setLoading(false);
     }).catch(err => {
       console.error(err);
-      alert('Maʼlumot yuklashda xatolik');
-      navigate(-1);
+      alert('MaКјlumot yuklashda xatolik');
+      safeGoBack(navigate);
     });
   }, [id]);
 

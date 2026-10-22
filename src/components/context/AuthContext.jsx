@@ -13,33 +13,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let isMounted = true;
-
-    const getInitialSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error('Session olishda xatolik:', error);
-        }
-        if (isMounted) {
-          const currentUser = session?.user ?? null;
-          setUser(currentUser);
-          setLoading(false);
-          // 🔥 Sahifa ochilganda hali amal qiladigan sessiya bo'lsa ham
-          // "bu qurilmada hisob mavjud" belgisini qo'yamiz — LandingPage
-          // shu orqali 3 ta tugma o'rniga 1 tasini ko'rsatadi.
-          if (currentUser) markAccountCreated();
-        }
-      } catch (err) {
-        console.error('Auth xatolik:', err);
-        if (isMounted) {
-          setUser(null);
-          setLoading(false);
-        }
-      }
-    };
-
-    getInitialSession();
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (isMounted) {
         const currentUser = session?.user ?? null;
@@ -63,6 +36,9 @@ export const AuthProvider = ({ children }) => {
     try {
       await supabase.auth.signOut();
       setUser(null);
+      // Savat qurilmada saqlanadi — keyingi foydalanuvchiga o'tib qolmasin
+      localStorage.removeItem('cart');
+      window.dispatchEvent(new Event('cartUpdated'));
       // 🔥 Logout qilganda faqat guest-mode flagini tozalaymiz.
       //    'gru_has_account' ni O'CHIRMAYMIZ — bu qurilmada foydalanuvchi
       //    ro'yxatdan o'tganini bildiradi va logoutdan keyin ham

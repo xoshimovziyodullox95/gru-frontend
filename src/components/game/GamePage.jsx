@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/GamePage.jsx
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -46,7 +47,7 @@ export default function GamePage() {
   const currentPieceRef = useRef(null);
   const nextPieceRef = useRef(null);
   const dropIntervalRef = useRef(800);
-  const lastDropRef = useRef(Date.now());
+  const lastDropRef = useRef(0);
   const gameLoopRef = useRef(null);
   const levelRef = useRef(1);
 
@@ -197,7 +198,7 @@ export default function GamePage() {
   const endGame = (finalCoins) => {
     if (finalCoins > 0) {
       updateUserCoins(finalCoins)
-        .then(() => toast.success(`🎉 ${finalCoins} coin qo'shildi!`))
+        .then(() => toast.success(`рџЋ‰ ${finalCoins} coin qo'shildi!`))
         .catch(() => {});
     }
   };
@@ -363,13 +364,13 @@ export default function GamePage() {
 
   return (
     <div className="game-page">
-      <button className="game-back-btn" onClick={() => navigate(-1)}>
+      <button className="game-back-btn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={20} /> Orqaga
       </button>
 
       <div className="game-container tetris-container">
         <div className="game-header">
-          <h1>🧩 TETRIS</h1>
+          <h1>рџ§© TETRIS</h1>
           <div className="game-stats">
             <div className="stat-item"><Trophy size={16} /><span>{score}</span></div>
             <div className="stat-item"><span>Lvl</span><strong>{level}</strong></div>
@@ -390,9 +391,9 @@ export default function GamePage() {
             </div>
 
             <div className="controls-info">
-              <p>← → : Harakat</p>
-              <p>↓ : Tez tushirish</p>
-              <p>Space / ↑ : Burish</p>
+              <p>в†ђ в†’ : Harakat</p>
+              <p>в†“ : Tez tushirish</p>
+              <p>Space / в†‘ : Burish</p>
             </div>
           </div>
         </div>
@@ -423,7 +424,7 @@ export default function GamePage() {
 
         {(gameOver || !started) && (
           <div className="game-overlay">
-            <h2>{gameOver ? "🏆 O'yin tugadi!" : "🧩 TETRIS"}</h2>
+            <h2>{gameOver ? "рџЏ† O'yin tugadi!" : "рџ§© TETRIS"}</h2>
             {gameOver && (
               <div className="game-result">
                 <div className="result-item"><span>Ball</span><strong>{score}</strong></div>
@@ -433,7 +434,7 @@ export default function GamePage() {
             )}
             {!gameOver && <p>Bloklarni tizib qatorlarni to'ldiring, coin yig'ing!</p>}
             <button className="game-btn" onClick={startGame}>
-              {gameOver ? "🔄 Qayta boshlash" : "🚀 Boshlash"}
+              {gameOver ? "рџ”„ Qayta boshlash" : "рџљЂ Boshlash"}
             </button>
           </div>
         )}

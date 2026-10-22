@@ -1,0 +1,409 @@
+ /* ============================================================
+   INCOMING REQUEST MODAL — Usta uchun
+   Uzum/Yandex uslubi
+   ============================================================ */
+
+/* ================= OVERLAY ================= */
+
+.ir-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  animation: irFadeIn 0.25s ease;
+}
+
+@keyframes irFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ================= MODAL ================= */
+
+.ir-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+
+  overflow: hidden;
+
+  background: #0d1f38;
+  border: 1px solid rgba(100, 181, 246, 0.2);
+  border-radius: 22px;
+
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(100, 181, 246, 0.1);
+
+  animation: irSlideUp 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes irSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ================= HEADER ================= */
+
+.ir-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 18px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 138, 42, 0.15),
+    rgba(232, 80, 10, 0.08)
+  );
+  border-bottom: 1px solid rgba(100, 181, 246, 0.15);
+}
+
+.ir-header__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ir-header__pulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff8a2a;
+  box-shadow: 0 0 0 0 rgba(255, 138, 42, 0.7);
+  animation: irPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes irPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 138, 42, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(255, 138, 42, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 138, 42, 0);
+  }
+}
+
+.ir-header__label {
+  color: #ffb072;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.ir-header__close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ir-header__close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* ================= BODY ================= */
+
+.ir-body {
+  padding: 20px 18px;
+}
+
+/* ---------- Kategoriya ---------- */
+
+.ir-category {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 14px 16px;
+  margin-bottom: 16px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(33, 150, 243, 0.12),
+    rgba(100, 181, 246, 0.06)
+  );
+  border: 1px solid rgba(33, 150, 243, 0.25);
+  border-radius: 16px;
+}
+
+.ir-category__icon {
+  width: 48px;
+  height: 48px;
+
+  display: grid;
+  place-items: center;
+
+  color: #2196f3;
+  background: rgba(33, 150, 243, 0.18);
+  border-radius: 14px;
+
+  flex-shrink: 0;
+}
+
+.ir-category__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ir-category__label {
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.ir-category__name {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+/* ---------- Tavsif ---------- */
+
+.ir-description {
+  margin: 0 0 16px;
+
+  padding: 14px 16px;
+
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid #ff8a2a;
+  border-radius: 10px;
+
+  font-size: 14px;
+  line-height: 1.55;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- Meta ---------- */
+
+.ir-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-bottom: 16px;
+}
+
+.ir-meta__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 13.5px;
+  color: #cbd5e1;
+}
+
+.ir-meta__icon {
+  display: grid;
+  place-items: center;
+
+  width: 30px;
+  height: 30px;
+
+  border-radius: 9px;
+
+  flex-shrink: 0;
+}
+
+.ir-meta__icon--location {
+  color: #ff6f00;
+  background: rgba(255, 111, 0, 0.15);
+}
+
+.ir-meta__icon--distance {
+  color: #00b4d8;
+  background: rgba(0, 180, 216, 0.15);
+}
+
+.ir-meta__icon--time {
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.15);
+}
+
+.ir-meta__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Ogohlantirish ---------- */
+
+.ir-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+
+  background: rgba(255, 176, 32, 0.1);
+  border: 1px solid rgba(255, 176, 32, 0.25);
+  border-radius: 10px;
+
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.ir-warning svg {
+  flex-shrink: 0;
+}
+
+/* ================= FOOTER ================= */
+
+.ir-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  padding: 14px 18px 18px;
+
+  border-top: 1px solid rgba(100, 181, 246, 0.1);
+}
+
+.ir-btn {
+  padding: 15px 20px;
+
+  border: none;
+  border-radius: 13px;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+
+  transition: all 0.18s ease;
+}
+
+.ir-btn:active {
+  transform: scale(0.97);
+}
+
+/* Rad etish */
+
+.ir-btn--reject {
+  color: #cbd5e1;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.ir-btn--reject:hover {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* Qabul / Batafsil */
+
+.ir-btn--accept {
+  color: #ffffff;
+  background: linear-gradient(135deg, #ff8a2a, #e8500a);
+  box-shadow:
+    0 8px 20px rgba(232, 80, 10, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.ir-btn--accept:hover {
+  box-shadow:
+    0 12px 26px rgba(232, 80, 10, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ================= PROGRESS BAR ================= */
+
+.ir-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+
+  background: rgba(255, 138, 42, 0.15);
+  overflow: hidden;
+}
+
+.ir-progress__bar {
+  height: 100%;
+  width: 100%;
+
+  background: linear-gradient(90deg, #ff8a2a, #e8500a);
+
+  transform-origin: left;
+  animation: irProgress 30s linear forwards;
+}
+
+@keyframes irProgress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 480px) {
+  .ir-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .ir-modal {
+    max-width: 100%;
+    border-radius: 22px 22px 0 0;
+    max-height: 85vh;
+  }
+
+  .ir-header {
+    padding: 14px 16px;
+  }
+
+  .ir-body {
+    padding: 18px 16px;
+  }
+
+  .ir-footer {
+    padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  }
+}

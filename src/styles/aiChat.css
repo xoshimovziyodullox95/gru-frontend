@@ -255,3 +255,24 @@
     bottom: calc(56px + 4rem);
   }
 }
+
+.ai-chat-toggle { z-index: 9999; }
+.ai-chat-modal { z-index: 10000; }
+
+/* Pastga o'qiyotganda yashiriladi (AIChat.jsx) */
+.ai-chat-toggle--hidden {
+  transform: translateY(140%) scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+.ai-chat-toggle { transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.2s; }
+
+@media (max-width: 768px) {
+  .ai-chat-toggle {
+    width: 46px;
+    height: 46px;
+    right: 14px;
+    bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+  .ai-chat-toggle svg { width: 20px; height: 20px; }
+}

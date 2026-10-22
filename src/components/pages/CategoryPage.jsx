@@ -1,10 +1,11 @@
 // src/pages/CategoryPage.jsx
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getLevel2 } from '../services/categories';
 import { ArrowLeft, Search, Wallet, Lock } from 'lucide-react';
 import { LOCKED_CATEGORIES } from '../utils/lockedCategories';
+import SearchOverlay from '../common/SearchOverlay';
 import '../../styles/category-grid.css';
 
 const imageMap = {
@@ -186,18 +187,18 @@ const imageMap = {
 
 export default function CategoryPage() {
   const { level1 } = useParams();
-  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const [items, setItems] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [imageErrors, setImageErrors] = useState({});
   const [shakingKey, setShakingKey] = useState(null);
 
   // Saralash funksiyasi: avval ochiq, keyin yopiq
-  const sortItems = (arr) => {
+  const sortItems = useCallback((arr) => {
     return [...arr].sort((a, b) => {
       const aLocked = LOCKED_CATEGORIES.has(a.key);
       const bLocked = LOCKED_CATEGORIES.has(b.key);
@@ -208,7 +209,7 @@ export default function CategoryPage() {
       const nameB = t(`categoriesLevel2.${b.key}`, { defaultValue: b.key });
       return nameA.localeCompare(nameB);
     });
-  };
+  }, [t]);
 
   useEffect(() => {
     const decodedLevel1 = decodeURIComponent(level1);
@@ -233,10 +234,10 @@ export default function CategoryPage() {
         console.error('❌ getLevel2 xatosi:', err);
         setLoading(false);
       });
-  }, [level1, t]); // t ni dependency ga qo‘shdik, chunki sortItems uni ishlatadi
+  }, [level1, sortItems]);
 
-  const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
+  const handleSearch = (value) => {
+    const term = (typeof value === 'string' ? value : value.target.value).toLowerCase();
     setSearchTerm(term);
     let result = items;
     if (term) {
@@ -266,7 +267,7 @@ export default function CategoryPage() {
   return (
     <div className="cat-page">
       <div className="cat-header">
-        <Link to="/" className="cat-back-btn">
+        <Link to="/business-directions" className="cat-back-btn">
           <ArrowLeft size={20} /> {t('categoryPage.back')}
         </Link>
         <h1 className="cat-title">{translatedLevel1}</h1>
@@ -279,10 +280,25 @@ export default function CategoryPage() {
           type="text"
           placeholder={t('categoryPage.searchPlaceholder')}
           value={searchTerm}
-          onChange={handleSearch}
+          onClick={() => setIsSearchOpen(true)}
+          readOnly
           className="cat-search-input"
         />
       </div>
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSearch={handleSearch}
+        storageKey="zumo_recent_search_categories"
+        placeholder={t('categoryPage.searchPlaceholder')}
+        initialValue={searchTerm}
+        suggestions={items.map((item) => ({
+          id: item.key,
+          label: t(`categoriesLevel2.${item.key}`, { defaultValue: item.name || item.key }),
+          kind: 'category',
+          hint: translatedLevel1,
+        }))}
+      />
 
       {filtered.length === 0 ? (
         <div className="cat-no-results">{t('categoryPage.noResults')}</div>

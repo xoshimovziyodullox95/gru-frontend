@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/BusinessDashboard.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +34,7 @@ export default function BusinessDashboard() {
 
     const load = async () => {
       try {
-        // 🔥 Rolni Supabase user_metadata'dan emas, MongoDB profilidan
+        // рџ”Ґ Rolni Supabase user_metadata'dan emas, MongoDB profilidan
         // olamiz — bu ProfilePage.jsx bilan bir xil manba, shuning uchun
         // ikkalasi mos keladi. Ikkala rol ("business" va "company") ham
         // biznes egasi hisoblanadi (ProfilePage'dagi shart bilan bir xil).
@@ -137,7 +138,7 @@ export default function BusinessDashboard() {
 
   return (
     <div className="dashboard-page">
-      <button className="dashboard-back" onClick={() => navigate(-1)}>
+      <button className="dashboard-back" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={20} /> Orqaga
       </button>
 

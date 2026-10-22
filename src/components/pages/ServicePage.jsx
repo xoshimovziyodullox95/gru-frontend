@@ -1,5 +1,6 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Search, SlidersHorizontal,
   ShieldCheck, Flame
@@ -31,25 +32,34 @@ function SkeletonCard() {
 }
 
 export default function ServicePage() {
+  const navigate = useNavigate();
   const { slug } = useParams();
-  const [providers, setProviders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadedServices, setLoadedServices] = useState({ slug: null, providers: [] });
+  const providers = loadedServices.slug === slug ? loadedServices.providers : [];
+  const loading = loadedServices.slug !== slug;
   const [query, setQuery] = useState('');
   const [filterTop, setFilterTop] = useState(false);
   const [filterVerified, setFilterVerified] = useState(false);
   const [sort, setSort] = useState('rating');
 
   useEffect(() => {
-    setLoading(true);
+    let isCurrent = true;
     getServiceProviders({ category: slug })
       .then(res => {
-        setProviders(res.data);
-        setLoading(false);
+        if (isCurrent) {
+          setLoadedServices({ slug, providers: res.data || [] });
+        }
       })
       .catch(err => {
         console.error(err);
-        setLoading(false);
+        if (isCurrent) {
+          setLoadedServices({ slug, providers: [] });
+        }
       });
+
+    return () => {
+      isCurrent = false;
+    };
   }, [slug]);
 
   const filtered = providers
@@ -73,7 +83,7 @@ export default function ServicePage() {
     <div className="sp-page">
       <div className="sp-container">
         <div className="sp-header">
-          <button className="sp-back-btn" onClick={() => window.history.back()}>
+          <button className="sp-back-btn" onClick={() => safeGoBack(navigate)}>
             <ArrowLeft size={16} />
             Orqaga
           </button>

@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { Upload, X } from 'lucide-react';
 
-export default function MediaUploader({ mediaFiles, setMediaFiles, uploading = false }) {
+export default function MediaUploader({ mediaFiles, setMediaFiles }) {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const newFiles = files.map(file => ({

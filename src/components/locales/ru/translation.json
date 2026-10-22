@@ -1,15 +1,5 @@
 {
   "nav": {
-    "cart": "Корзина",
-    "chat": "Чат",
-    "notifications": "Уведомления",
-    "addListing": "Разместить объявление",
-    "login": "Войти",
-    "business": "gru для бизнеса",
-    "physic": "gru для вас",
-    "addVideo": "Добавить видео"
-  },
-    "nav": {
     "business": "Бизнес",
     "physic": "Физическое лицо",
     "login": "Войти",
@@ -21,13 +11,19 @@
     "profile": "Профиль",
     "add": "Добавить",
     "profileAlt": "Аватар",
-    "menu": "Меню"
+    "menu": "Меню",
+    "myOrders": "Мои заказы"
   },
   "tooltips": {
-    "cart": "Перейти в корзину",
-    "wallet": "Кошелёк",
+    "cart": "Корзина",
+    "wallet": "Кошелек",
     "messages": "Сообщения",
-    "notifications": "Уведомления"
+    "notifications": "Уведомления",
+    "dashboard": "Панель управления",
+    "theme": "Тема",
+    "profile": "Профиль",
+    "addListing": "Добавить объявление",
+    "addVideo": "Добавить видео"
   },
   "wallet": {
     "soon": "Кошелёк — скоро!"
@@ -42,7 +38,7 @@
     "totalSum": "Общая сумма",
     "checkout": "Оформить заказ"
   },
- "common": {
+  "common": {
     "loading": "Загрузка...",
     "error": "Произошла ошибка",
     "save": "Сохранить",
@@ -50,19 +46,67 @@
     "delete": "Удалить",
     "edit": "Редактировать",
     "back": "Назад",
-    "locationsTitle": "Места"
+    "locationsTitle": "Места",
+    "searchPlaceholder": "Что вы ищете?",
+    "suggestions": "Подходящие результаты",
+    "recentSearches": "Недавние поиски",
+    "clearAll": "Очистить",
+    "noRecentSearches": "Пока нет поисков",
+    "close": "Закрыть",
+    "previous": "Предыдущие",
+    "next": "Следующие",
+    "untitled": "Объявление",
+    "scrollTop": "Наверх",
+    "share": "Поделиться"
   },
-
   "home": {
-  
-    "categoriesTitle": "Направления",
-    "categoriesSub": "Откройте 180+ видов бизнеса",
-    "showAll": "Показать все направления",
-    "showLess": "Показать меньше",
-    "ctaAi": "G.R.U AI",
-    "ctaMarketplace": "Маркетплейс",
-    "ctaBusiness": "Ваш бизнес с gru",
-    "premiumBadge": "Премиум-участник"
+    "heroPhrases": [
+      "ZUMO везде",
+      "ZUMO для вас",
+      "ZUMO просто",
+      "ZUMO к будущему",
+      "ZUMO новая возможность",
+      "ZUMO ваш партнёр"
+    ],
+    "categoriesTitle": "Категории",
+    "categoriesSub": "Выберите нужное направление",
+    "ctaAi": "AI помощник",
+    "ctaMarketplace": "Рынок",
+    "ctaBusiness": "Бизнес",
+    "premiumBadge": "Premium участник",
+    "showLess": "Меньше",
+    "showAll": "Все",
+    "marketplaceTitle": "Рынок",
+    "marketplaceSub": "Выберите нужный раздел",
+    "marketplaceLocations": "Места",
+    "marketplaceProducts": "Товары",
+    "marketplaceServices": "Услуги",
+    "marketplaceBank": "Банковские услуги",
+    "marketplaceBankAlt": "Банковские услуги",
+    "hub": {
+      "label": "Сервисы ZUMO",
+      "market": "Рынок",
+      "marketSub": "Товары, места и услуги",
+      "request": "Вызвать мастера",
+      "requestSub": "Отправьте запрос — получите предложения",
+      "locations": "Места",
+      "products": "Техника",
+      "services": "Услуги",
+      "bank": "Банк",
+      "directions": "Направления",
+      "erp": "Управление",
+      "ai": "AI помощник",
+      "lessons": "Уроки"
+    },
+    "providerBanner": {
+      "providerTitle": "Есть ремесло?",
+      "providerSubtitle": "Пусть клиенты найдут вас!",
+      "sellerTitle": "Есть товар?",
+      "sellerSubtitle": "Продавайте с нами",
+      "businessTitle": "Есть бизнес?",
+      "businessSubtitle": "Развивайте его"
+    },
+    "seeMore": "Показать ещё"
   },
   "categories": {
     "Agro": "Сельское хозяйство",
@@ -74,8 +118,7 @@
     "Ko'ngilochar": "Развлечения",
     "Yangi biznes": "Новый бизнес"
   },
-"categoriesLevel2": {
-
+  "categoriesLevel2": {
     "Issiqxona": "Теплица",
     "Intensiv bog'": "Интенсивный сад",
     "Molxona": "Скотный двор",
@@ -96,8 +139,6 @@
     "Agro-eko zona": "Агро-эко зона",
     "Yong'oqzor va bodomzor": "Ореховый сад",
     "Agro-texnika ijarasi punkti": "Пункт аренды агротехники",
-
-  
     "Milliy taomlar restorani": "Ресторан национальной кухни",
     "Oilaviy kafe / Choyxona": "Семейное кафе / Чайхана",
     "Fast-Food nuqtasi": "Точка фаст-фуда",
@@ -118,7 +159,6 @@
     "Keytering (Catering) punkti": "Кейтеринг",
     "Gastro-pub": "Гастропаб",
     "Muzlatilgan yogurt nuqtasi": "Точка замороженного йогурта",
-
     "Stomatologiya": "Стоматология",
     "Diagnostika xonasi (MRT/MSKT/UZI)": "Диагностический кабинет (МРТ/МСКТ/УЗИ)",
     "Ko'p tarmoqli xususiy poliklinika": "Многопрофильная частная поликлиника",
@@ -140,26 +180,26 @@
     "Massajxonasi": "Массажный кабинет",
     "Xususiy tez yordam stansiyasi": "Частная станция скорой помощи",
     "Qurilish va ta'mirlash kompaniyasi": "Строительная и ремонтная компания",
-"Santexnika ustaxonasi": "Сантехническая мастерская",
-"Kreativ / SMM agentlik": "Креативное / SMM агентство",
-"Maishiy texnika ta'mirlash ustaxonasi": "Мастерская по ремонту бытовой техники",
-"Avtoservis / Detailing markazi": "Автосервис / Детейлинг центр",
-"Kimyoviy tozalash (Ximchistka)": "Химчистка",
-"Klining (Cleaning) kompaniyasi": "Клининговая компания",
-"Go'zallik saloni / Barbershop": "Салон красоты / Барбершоп",
-"Yuk tashish va logistika kompaniyasi": "Транспортно-логистическая компания",
-"IT va dasturlash studiyasi": "IT и программирование студия",
-"Buxgalteriya va audit ofisi": "Бухгалтерский и аудиторский офис",
-"Yuridik / Advokatlik firmasi": "Юридическая / Адвокатская фирма",
-"Tarjima va viza markazi": "Центр перевода и виз",
-"Rieltorlik agentligi": "Риэлторское агентство",
-"Dezinfeksiya xizmati markazi": "Центр дезинфекции",
-"Poligrafiya va bosmaxona": "Полиграфия и типография",
-"Xavfsizlik tizimlari do'koni": "Магазин систем безопасности",
-"Vetklinika / Gruming salon": "Ветклиника / Груминг салон",
-"Event-agentlik": "Ивент-агентство",
-"Kadrlar agentligi (HR)": "HR агентство",
-"Xususiy bog'cha": "Частный детский сад",
+    "Santexnika ustaxonasi": "Сантехническая мастерская",
+    "Kreativ / SMM agentlik": "Креативное / SMM агентство",
+    "Maishiy texnika ta'mirlash ustaxonasi": "Мастерская по ремонту бытовой техники",
+    "Avtoservis / Detailing markazi": "Автосервис / Детейлинг центр",
+    "Kimyoviy tozalash (Ximchistka)": "Химчистка",
+    "Klining (Cleaning) kompaniyasi": "Клининговая компания",
+    "Go'zallik saloni / Barbershop": "Салон красоты / Барбершоп",
+    "Yuk tashish va logistika kompaniyasi": "Транспортно-логистическая компания",
+    "IT va dasturlash studiyasi": "IT и программирование студия",
+    "Buxgalteriya va audit ofisi": "Бухгалтерский и аудиторский офис",
+    "Yuridik / Advokatlik firmasi": "Юридическая / Адвокатская фирма",
+    "Tarjima va viza markazi": "Центр перевода и виз",
+    "Rieltorlik agentligi": "Риэлторское агентство",
+    "Dezinfeksiya xizmati markazi": "Центр дезинфекции",
+    "Poligrafiya va bosmaxona": "Полиграфия и типография",
+    "Xavfsizlik tizimlari do'koni": "Магазин систем безопасности",
+    "Vetklinika / Gruming salon": "Ветклиника / Груминг салон",
+    "Event-agentlik": "Ивент-агентство",
+    "Kadrlar agentligi (HR)": "HR агентство",
+    "Xususiy bog'cha": "Частный детский сад",
     "Xususiy maktab": "Частная школа",
     "Tillar o'quv markazi": "Центр изучения языков",
     "IT-akademiya": "IT-академия",
@@ -179,7 +219,7 @@
     "Onlayn ta'lim platformasi": "Платформа онлайн-образования",
     "Mental arifmetika markazi": "Центр ментальной арифметики",
     "Malaka oshirish o'quv markazi": "Учебный центр повышения квалификации",
-        "Supermarket / Minimarket": "Супермаркет / Минимаркет",
+    "Supermarket / Minimarket": "Супермаркет / Минимаркет",
     "Kiyim-kechak va poyabzal do'koni": "Магазин одежды и обуви",
     "Maishiy texnika va elektronika do'koni": "Магазин бытовой техники и электроники",
     "Kosmetika va parfyumeriya do'koni": "Магазин косметики и парфюмерии",
@@ -199,7 +239,7 @@
     "Suvenirlar va milliy hunarmandchilik do'koni": "Магазин сувениров и национальных ремесел",
     "Optika do'koni": "Оптика",
     "Mato va pardalar do'koni": "Магазин тканей и штор",
-        "Bolalar o'yin maydonchasi (Playzone)": "Детская игровая площадка (Playzone)",
+    "Bolalar o'yin maydonchasi (Playzone)": "Детская игровая площадка (Playzone)",
     "Kinoteatr": "Кинотеатр",
     "VR va PlayStation klubi": "Клуб VR и PlayStation",
     "Akvapark / Suzish havzasi": "Аквапарк / Бассейн",
@@ -219,7 +259,7 @@
     "SPA va sauna majmuasi": "SPA и сауна комплекс",
     "Tir (Otishma galereyasi)": "Тир (Стрелковая галерея)",
     "Ilmiy muzey va ko'rgazma zali": "Научный музей и выставочный зал",
-        "Startap inkubatori": "Стартап-инкубатор",
+    "Startap inkubatori": "Стартап-инкубатор",
     "AI va Machine Learning studiyasi": "Студия AI и Machine Learning",
     "Blokcheyn va kripto markazi": "Центр блокчейна и крипто",
     "E-commerce va dropshipping platformasi": "Платформа E-commerce и дропшиппинга",
@@ -241,17 +281,40 @@
     "Onlayn psixologik yordam markazi": "Центр онлайн психологической помощи"
   },
   "marketplace": {
-    "loading": "Загрузка...",
-    "empty": "Объявлений пока нет",
-    "title": "Маркетплейс",
-    "subShowAll": "Все объявлений",
-    "subLatest": "Последние {{count}} объявлений",
-    "showLess": "Показать меньше",
-    "showAll": "Показать все объявления ",
+    "bank": {
+      "title": "Банковские услуги",
+      "individual": "Физическое лицо",
+      "legal": "Юридическое лицо",
+      "empty": "В этом разделе пока нет услуг",
+      "scrollTop": "Наверх",
+      "categories": {
+        "credit": "Кредиты",
+        "cards": "Карты",
+        "deposits": "Депозиты",
+        "pko": "Наличные / РКО",
+        "moneyTransfers": "Денежные переводы",
+        "qrPayment": "QR платежи"
+      }
+    },
+    "types": {
+      "equipment": "Товар",
+      "location": "Место",
+      "service": "Услуга"
+    },
+    "catalog": {
+      "notFound": "Каталог не найден",
+      "all": "Все",
+      "empty": "В этом разделе пока нет товаров"
+    },
     "reels": {
-      "location": "📍 Место",
-      "equipment": "🔧 Оборудование",
-      "service": "📦 Услуга"
+      "post": "Пост"
+    },
+    "products": {
+      "catalogTitle": "Виды товаров",
+      "empty": "Пока нет товаров"
+    },
+    "services": {
+      "catsTitle": "Направления услуг"
     }
   },
   "marketplaceReels": {
@@ -280,7 +343,12 @@
       "addListing": "Добавить объявление",
       "profile": "Личный кабинет",
       "terms": "Условия использования",
-      "privacy": "Политика конфиденциальности"
+      "privacy": "Политика конфиденциальности",
+      "directions": "Бизнес-направления",
+      "bank": "Банковские услуги",
+      "ai": "AI помощник",
+      "request": "Вызвать мастера",
+      "orders": "Мои заказы"
     },
     "apps": {
       "download": "Скачать",
@@ -300,7 +368,7 @@
       "thankYou": "Спасибо! ✓"
     },
     "copyright": {
-      "text": "© {year} G.R.U Corporation — Все права защищены",
+      "text": "© {year} ZUMO Corporation — Все права защищены",
       "madeWith": "Сделано с любовью в Узбекистане"
     }
   },
@@ -315,19 +383,19 @@
   },
   "landing": {
     "heroPhrases": [
-      "G.R.U везде",
-      "G.R.U для вас",
-      "G.R.U просто",
-      "G.R.U к будущему",
-      "G.R.U новая возможность",
-      "G.R.U ваш партнёр"
+      "ZUMO везде",
+      "ZUMO для вас",
+      "ZUMO просто",
+      "ZUMO к будущему",
+      "ZUMO новая возможность",
+      "ZUMO ваш партнёр"
     ],
     "register": "Зарегистрироваться",
     "login": "Войти",
     "continue": "Войти в систему",
     "or": "или"
   },
-    "profile": {
+  "profile": {
     "loading": "Загрузка...",
     "error": "Профиль не найден",
     "back": "Назад",
@@ -368,7 +436,7 @@
       "views": "Просмотры",
       "details": "Подробная статистика"
     },
-    "bioPlaceholder": "Привет! Я управляю своими объявлениями на GRU.",
+    "bioPlaceholder": "Привет! Я управляю своими объявлениями на ZUMO.",
     "avatarUpload": "Загрузить аватар",
     "activity": {
       "loading": "Загрузка активностей...",
@@ -396,9 +464,12 @@
     },
     "settings": {
       "title": "Настройки"
-    }
+    },
+    "roleCompany": "Компания",
+    "roleSeller": "Продавец",
+    "becomeProvider": "Стать исполнителем"
   },
-    "settings": {
+  "settings": {
     "title": "Настройки",
     "editAccount": "Редактировать аккаунт",
     "professional": "Профессиональный аккаунт",
@@ -430,6 +501,9 @@
     "interfaceLanguage": "Язык",
     "interfaceTheme": "Режим отображения",
     "interfaceThemeLabel": "Светлая / Тёмная",
+    "helpAndPolicies": "Помощь и правила",
+    "notifOrders": "Заказы",
+    "notifAds": "Реклама от подписок",
     "langUz": "O'zbek",
     "langRu": "Русский",
     "langEn": "English",
@@ -473,7 +547,7 @@
     "creativeReasonTitle": "Почему стоит открыть бизнес именно здесь?",
     "creativeReasonEmpty": "Эта информация еще не заполнена.",
     "creativeReasonPremium": "Мы подготовим анализ в рамках Премиум услуги",
-    "creativeReasonAdmin": "Подготовлено экспертами GRU",
+    "creativeReasonAdmin": "Подготовлено экспертами ZUMO",
     "competition": "Конкуренция:",
     "metaSqm": "м²",
     "metaFootTraffic": "просмотров",
@@ -483,9 +557,10 @@
     "detailPower": "Розетки 220В",
     "detailVentilation": "Вентиляция",
     "statusScreenError": "Ошибка",
-    "views": "просмотров"
+    "views": "просмотров",
+    "viewFull": "Открыть крупно",
+    "uploadMedia": "Загрузить фото или видео"
   },
-
   "calculator": {
     "title": "Калькулятор",
     "empty": "Ничего не выбрано",
@@ -494,7 +569,7 @@
     "addAll": "+ Выбрать всё оборудование",
     "orderPlaced": "Заказ принят!"
   },
-    "equipment": {
+  "equipment": {
     "loading": "Загрузка...",
     "error": "Ошибка",
     "notFound": "Данные не найдены",
@@ -548,36 +623,39 @@
     "unitMonth": "мес.",
     "unitCm": "см",
     "unitKg": "кг",
-    "unitL": "л"
+    "unitL": "л",
+    "viewFull": "Открыть крупно",
+    "inCart": "В корзине",
+    "addToCart": "В корзину"
   },
   "serviceProvider": {
-      "back": "Назад",
-      "loading": "Загрузка...",
-      "error": "Произошла ошибка",
-      "notFound": "Услуга не найдена",
-      "loadError": "Ошибка загрузки данных",
-      "about": "Об услуге",
-      "defaultDescription": "Информация об услуге не указана",
-      "speciality": "Специальность",
-      "priceRange": "Ценовой диапазон",
-      "contactTitle": "Контакты",
-      "showPhone": "Показать номер телефона",
-      "chatWithOwner": "Написать владельцу",
-      "otherServices": "Другие услуги {{company}}",
-      "apply": "Подать заявку напрямую",
-      "applySuccess": "Заявка отправлена!",
-      "applyError": "Произошла ошибка",
-      "addToCart": "Добавить в корзину",
-      "inCart": "В корзине",
-      "noOwnerInfo": "Нет информации о владельце услуги",
-      "badgeBusiness": "Предприятие",
-      "badgeIndividual": "Частное лицо",
-      "badgeTop": "Топ",
-      "badgeVerified": "Подтверждено",
-      "owner": "Владелец услуги",
-      "fullName": "Имя фамилия"
-    },
-    "universalCard": {
+    "back": "Назад",
+    "loading": "Загрузка...",
+    "error": "Произошла ошибка",
+    "notFound": "Услуга не найдена",
+    "loadError": "Ошибка загрузки данных",
+    "about": "Об услуге",
+    "defaultDescription": "Информация об услуге не указана",
+    "speciality": "Специальность",
+    "priceRange": "Ценовой диапазон",
+    "contactTitle": "Контакты",
+    "showPhone": "Показать номер телефона",
+    "chatWithOwner": "Написать владельцу",
+    "otherServices": "Другие услуги {{company}}",
+    "apply": "Подать заявку напрямую",
+    "applySuccess": "Заявка отправлена!",
+    "applyError": "Произошла ошибка",
+    "addToCart": "Добавить в корзину",
+    "inCart": "В корзине",
+    "noOwnerInfo": "Нет информации о владельце услуги",
+    "badgeBusiness": "Предприятие",
+    "badgeIndividual": "Частное лицо",
+    "badgeTop": "Топ",
+    "badgeVerified": "Подтверждено",
+    "owner": "Владелец услуги",
+    "fullName": "Имя фамилия"
+  },
+  "universalCard": {
     "favAdd": "Добавить в избранное",
     "favRemove": "Удалить из избранного",
     "badgeTop": "Топ",
@@ -586,7 +664,7 @@
     "details": "Подробнее",
     "noImage": "заглушка"
   },
-   "addListing": {
+  "addListing": {
     "title": "Информация об объявлении",
     "subtitle": "Заполните поля ниже и опубликуйте объявление",
     "back": "Назад",
@@ -635,7 +713,7 @@
       "service": "Услуга"
     }
   },
-    "addListingChoice": {
+  "addListingChoice": {
     "title": "Добавить объявление",
     "subtitle": "Разместите объявление в правильном разделе в три шага",
     "back": "Назад",
@@ -702,7 +780,8 @@
       "descriptionPlaceholder": "Подробно о месте",
       "address": "Адрес",
       "addressPlaceholder": "Заполнится автоматически при выборе на карте",
-      "addressLabel": "Адрес *"
+      "addressLabel": "Адрес *",
+      "media": "Фото и видео"
     },
     "sections": {
       "locationDetails": "О месте",
@@ -844,11 +923,12 @@
       "ml": "мл"
     }
   },
-    "services": {
+  "services": {
+    "catsTitle": "Выберите тип услуги",
     "construction": "Строительство и ремонт",
-    "plumbing": "Сантехнические услуги",
+    "plumbing": "Сантехника",
     "smm": "SMM и маркетинг",
-    "supply": "Оборудование и снабжение",
+    "supply": "Поставка оборудования",
     "event": "Организация мероприятий",
     "qrPayment": "QR-оплата",
     "pko": "ПКО",
@@ -857,18 +937,21 @@
     "accounting": "Бухгалтерия",
     "website": "Создание сайтов",
     "internet": "Интернет",
-    "deposits": "Вклады (Депозит)",
+    "deposits": "Депозиты",
     "cards": "Карты",
-    "moneyTransfers": "Денежные переводы"
+    "moneyTransfers": "Денежные переводы",
+    "repair": "Строительство и сантехника",
+    "products": "Товары",
+    "bankServices": "Банковские услуги"
   },
-   "aiAssistant": {
-    "title": "G.R.U AI",
+  "aiAssistant": {
+    "title": "ZUMO AI",
     "backHome": "Главная",
     "newChat": "Новый чат",
     "loadingChats": "Загрузка...",
     "noChats": "Чатов пока нет",
     "newChatTitle": "Новый чат",
-    "placeholder": "Спросите G.R.U AI...",
+    "placeholder": "Спросите ZUMO AI...",
     "welcomeTitle": "Добро пожаловать{{name}}!",
     "welcomeSub": "Чем я могу вам помочь?",
     "errorMessage": "Извините, произошла ошибка. Пожалуйста, попробуйте снова.",
@@ -877,11 +960,11 @@
     "accountName": "Пользователь",
     "loading": "Загрузка...",
     "settings": "Настройки",
-    "brand": "G.R.U",
+    "brand": "ZUMO",
     "brandSub": "AI",
     "sidebarHint": "Чатов пока нет"
   },
-    "marketplacePage": {
+  "marketplacePage": {
     "back": "Главная",
     "title": "Все объявления",
     "searchPlaceholder": "Поиск места, техники или услуги...",
@@ -900,7 +983,9 @@
       "typeService": "Услуги",
       "direction": "Направление",
       "serviceTags": "Теги услуг"
-    }
+    },
+    "noResults": "Подходящих категорий или объявлений не найдено",
+    "search": "Поиск"
   },
   "marketplaceFilters": {
     "types": "Тип",
@@ -909,7 +994,8 @@
     "typeService": "Услуги",
     "direction": "Направление",
     "serviceTags": "Типы услуг",
-    "clear": "Сбросить фильтры"
+    "clear": "Сбросить фильтры",
+    "bankServices": "Банковские услуги"
   },
   "servicesSlugs": {
     "credit": "kredit",
@@ -928,8 +1014,8 @@
     "website": "sayt-yaratish",
     "internet": "internet"
   },
-   "cartPage": {
-"emptyTitle": "Корзина пуста",
+  "cartPage": {
+    "emptyTitle": "Корзина пуста",
     "emptyDesc": "В вашей корзине пока нет товаров. Посмотрите на рынке!",
     "backToShop": "Вернуться на рынок",
     "backBtn": "Назад",
@@ -1006,7 +1092,7 @@
       "sent": "Отправлено"
     }
   },
-   "notifications": {
+  "notifications": {
     "title": "Уведомления",
     "back": "Назад",
     "markAllRead": "Отметить все как прочитанные",
@@ -1022,140 +1108,199 @@
   },
   "addLocation.fields.region": "Регион",
   "addLocation.fields.regionPlaceholder": "Выберите",
-    "tooltips": {
-    "cart": "Корзина",
-    "wallet": "Кошелек",
-    "messages": "Сообщения",
-    "notifications": "Уведомления",
-    "dashboard": "Панель управления",
-    "theme": "Тема",
-    "profile": "Профиль",
-    "addListing": "Добавить объявление",
-    "addVideo": "Добавить видео"
-  },
-    "catalogs": {
+  "catalogs": {
     "dokonlar": {
       "label": "Магазины",
       "sabzavotVaMevalar": "Овощи и фрукты",
-      "sabzavotVaMevalar.subs": ["Овощи", "Фрукты", "Зелень", "Сухофрукты и орехи"],
+      "sabzavotVaMevalar.subs": [
+        "Овощи",
+        "Фрукты",
+        "Зелень",
+        "Сухофрукты и орехи"
+      ],
       "qahvaVaTayyorOvqat": "Кофе и готовая еда",
-      "qahvaVaTayyorOvqat.subs": ["Кофе и чай", "Готовые блюда", "Салаты"],
+      "qahvaVaTayyorOvqat.subs": [
+        "Кофе и чай",
+        "Готовые блюда",
+        "Салаты"
+      ],
       "sutMahsulotlari": "Молочные продукты",
-      "sutMahsulotlari.subs": ["Молоко", "Кефир / Йогурт", "Творог", "Сыр", "Масло"],
+      "sutMahsulotlari.subs": [
+        "Молоко",
+        "Кефир / Йогурт",
+        "Творог",
+        "Сыр",
+        "Масло"
+      ],
       "goshtParrandaVaBaliq": "Мясо, птица и рыба",
-      "goshtParrandaVaBaliq.subs": ["Говядина", "Курица", "Баранина", "Рыба", "Колбаса и сосиски"],
+      "goshtParrandaVaBaliq.subs": [
+        "Говядина",
+        "Курица",
+        "Баранина",
+        "Рыба",
+        "Колбаса и сосиски"
+      ],
       "suvVaIchimliklar": "Вода и напитки",
-      "suvVaIchimliklar.subs": ["Вода", "Соки и компоты", "Холодный чай и кофе", "Газированные напитки", "Энергетические напитки и альтернативный бар"],
+      "suvVaIchimliklar.subs": [
+        "Вода",
+        "Соки и компоты",
+        "Холодный чай и кофе",
+        "Газированные напитки",
+        "Энергетические напитки и альтернативный бар"
+      ],
       "shirinliklarVaDesertlar": "Сладости и десерты",
-      "shirinliklarVaDesertlar.subs": ["Шоколад", "Печенье и вафли", "Торт и пирожное", "Мороженое"],
+      "shirinliklarVaDesertlar.subs": [
+        "Шоколад",
+        "Печенье и вафли",
+        "Торт и пирожное",
+        "Мороженое"
+      ],
       "bakaleya": "Бакалея",
-      "bakaleya.subs": ["Крупы (рис, гречка)", "Мука и макароны", "Растительное масло", "Соль, сахар, специи", "Консервы"],
+      "bakaleya.subs": [
+        "Крупы (рис, гречка)",
+        "Мука и макароны",
+        "Растительное масло",
+        "Соль, сахар, специи",
+        "Консервы"
+      ],
       "novvoyxona": "Хлебобулочные",
-      "novvoyxona.subs": ["Хлеб", "Булка", "Пирог"],
+      "novvoyxona.subs": [
+        "Хлеб",
+        "Булка",
+        "Пирог"
+      ],
       "muzlatilganMahsulotlar": "Замороженные продукты",
-      "muzlatilganMahsulotlar.subs": ["Замороженные овощи/фрукты", "Полуфабрикаты", "Мороженое"],
+      "muzlatilganMahsulotlar.subs": [
+        "Замороженные овощи/фрукты",
+        "Полуфабрикаты",
+        "Мороженое"
+      ],
       "bolalarVaOnalarUchun": "Для детей и мам",
-      "bolalarVaOnalarUchun.subs": ["Детское питание", "Уход за младенцем"],
+      "bolalarVaOnalarUchun.subs": [
+        "Детское питание",
+        "Уход за младенцем"
+      ],
       "uyHayvonlariUchun": "Для домашних животных",
-      "uyHayvonlariUchun.subs": ["Корм для собак", "Корм для кошек"],
+      "uyHayvonlariUchun.subs": [
+        "Корм для собак",
+        "Корм для кошек"
+      ],
       "gozallikVaGigiyena": "Красота и гигиена",
-      "gozallikVaGigiyena.subs": ["Косметика", "Личная гигиена"],
+      "gozallikVaGigiyena.subs": [
+        "Косметика",
+        "Личная гигиена"
+      ],
       "uyUchunTovarlar": "Товары для дома",
-      "uyUchunTovarlar.subs": ["Бытовая химия", "Посуда"]
+      "uyUchunTovarlar.subs": [
+        "Бытовая химия",
+        "Посуда"
+      ]
     },
     "restoranKafe": {
       "label": "Ресторан/Кафе",
       "xomashyo": "Сырьё",
-      "xomashyo.subs": ["Мясо", "Овощи", "Специи", "Мучные изделия"],
+      "xomashyo.subs": [
+        "Мясо",
+        "Овощи",
+        "Специи",
+        "Мучные изделия"
+      ],
       "ichimliklar": "Напитки",
-      "ichimliklar.subs": ["Газированные напитки", "Вода", "Кофе в зернах", "Чай"],
+      "ichimliklar.subs": [
+        "Газированные напитки",
+        "Вода",
+        "Кофе в зернах",
+        "Чай"
+      ],
       "tayyorMahsulotlar": "Готовая продукция",
-      "tayyorMahsulotlar.subs": ["Соусы и кетчуп", "Консервированные продукты"],
+      "tayyorMahsulotlar.subs": [
+        "Соусы и кетчуп",
+        "Консервированные продукты"
+      ],
       "birMartalikIdishlar": "Одноразовая посуда",
-      "birMartalikIdishlar.subs": ["Стакан", "Салфетка", "Пакет"]
+      "birMartalikIdishlar.subs": [
+        "Стакан",
+        "Салфетка",
+        "Пакет"
+      ]
     },
     "agro": {
       "label": "Агро",
       "uruglik": "Семена",
-      "uruglik.subs": ["Семена зерновых", "Семена овощей", "Рассада"],
+      "uruglik.subs": [
+        "Семена зерновых",
+        "Семена овощей",
+        "Рассада"
+      ],
       "ogitlar": "Удобрения",
-      "ogitlar.subs": ["Минеральные удобрения", "Органические удобрения"],
+      "ogitlar.subs": [
+        "Минеральные удобрения",
+        "Органические удобрения"
+      ],
       "chorvaOzuqasi": "Корм для скота",
-      "chorvaOzuqasi.subs": ["Сено-фураж", "Витаминные добавки"],
+      "chorvaOzuqasi.subs": [
+        "Сено-фураж",
+        "Витаминные добавки"
+      ],
       "veterinariya": "Ветеринария",
-      "veterinariya.subs": ["Лекарства", "Вакцины"]
+      "veterinariya.subs": [
+        "Лекарства",
+        "Вакцины"
+      ]
     },
     "klinika": {
       "label": "Клиника",
       "tibbiyAsboblar": "Медицинские инструменты",
-      "tibbiyAsboblar.subs": ["Диагностические инструменты", "Хирургические инструменты"],
+      "tibbiyAsboblar.subs": [
+        "Диагностические инструменты",
+        "Хирургические инструменты"
+      ],
       "doriVositalari": "Лекарства",
-      "doriVositalari.subs": ["Антибиотики", "Обезболивающие", "Витамины"],
+      "doriVositalari.subs": [
+        "Антибиотики",
+        "Обезболивающие",
+        "Витамины"
+      ],
       "sarflanadiganMateriallar": "Расходные материалы",
-      "sarflanadiganMateriallar.subs": ["Шприц", "Перчатки", "Бинт"]
+      "sarflanadiganMateriallar.subs": [
+        "Шприц",
+        "Перчатки",
+        "Бинт"
+      ]
     },
     "kongilochar": {
       "label": "Развлечения",
       "oyinJihozlari": "Игровое оборудование",
-      "oyinJihozlari.subs": ["Детские аттракционы", "Компьютерное игровое оборудование"],
+      "oyinJihozlari.subs": [
+        "Детские аттракционы",
+        "Компьютерное игровое оборудование"
+      ],
       "ovqatVaIchimlikNuqtasi": "Пункт питания",
-      "ovqatVaIchimlikNuqtasi.subs": ["Попкорн", "Мороженое", "Напитки"]
+      "ovqatVaIchimlikNuqtasi.subs": [
+        "Попкорн",
+        "Мороженое",
+        "Напитки"
+      ]
     }
   },
-   "marketplaceHub": {
+  "marketplaceHub": {
     "title": "Рынок",
     "locations": "Места",
     "products": "Товары",
     "services": "Услуги",
     "bank": "Банковские услуги",
     "loading": "Загрузка...",
-    "reelsTitle": "Видео"
+    "reelsTitle": "Видео",
+    "demoTitle": "Демо-видео",
+    "demoType": "Видео",
+    "demoUser": "Админ"
   },
-  "marketplace": {
-    "reels": {
-      "location": "Место",
-      "equipment": "Техника",
-      "service": "Услуга",
-      "post": "Пост"
-    }
-  },
-  "home": {
-      "heroPhrases": [
-      "G.R.U везде",
-      "G.R.U для вас",
-      "G.R.U просто",
-      "G.R.U к будущему",
-      "G.R.U новая возможность",
-      "G.R.U ваш партнёр"
-    ],
-    "categoriesTitle": "Категории",
-    "categoriesSub": "Выберите нужное направление",
-    "ctaAi": "AI помощник",
-    "ctaMarketplace": "Рынок",
-    "ctaBusiness": "Бизнес",
-    "premiumBadge": "Premium участник",
-    "showLess": "Меньше",
-    "showAll": "Все",
-    "marketplaceTitle": "Рынок",
-    "marketplaceSub": "Выберите нужный раздел",
-    "marketplaceLocations": "Места",
-    "marketplaceProducts": "Товары",
-    "marketplaceServices": "Услуги",
-    "marketplaceBank": "Банковские услуги",
-    "marketplaceBankAlt": "Банковские услуги"
-  },
-   "productTypes": {
+  "productTypes": {
     "title": "Выберите тип товара",
     "texnika": "Техника",
     "oziqovqat": "Продукты",
     "mebel": "Мебель",
     "boshqa": "Другое"
-  },
-  "marketplace": {
-    "products": {
-      "catalogTitle": "Выберите каталог",
-      "empty": "В этой категории пока нет товаров"
-    }
   },
   "catalog": {
     "sabzavotVaMevalar": {
@@ -1269,40 +1414,13 @@
       }
     }
   },
-   "marketplace": {
-    "catalog": {
-      "notFound": "Каталог не найден",
-      "empty": "В этом разделе пока нет товаров",
-      "all": "Все"
-    }
-   },
-   "serviceCats": {
+  "serviceCats": {
     "repair": "Строительство и сантехника",
     "marketing": "SMM и маркетинг",
     "event": "Организация мероприятий",
     "accounting": "Бухгалтерия",
     "website": "Создание сайтов",
     "internet": "Интернет"
-  },
-   "services": {
-      "catsTitle": "Выберите тип услуги"
-    },
-    "marketplace": {
-    "bank": {
-      "title": "Банковские услуги",
-      "individual": "Физическое лицо",
-      "legal": "Юридическое лицо",
-      "empty": "В этом разделе пока нет услуг",
-      "scrollTop": "Наверх",
-      "categories": {
-        "credit": "Кредиты",
-        "cards": "Карты",
-        "deposits": "Депозиты",
-        "pko": "Наличные / РКО",
-        "moneyTransfers": "Денежные переводы",
-        "qrPayment": "QR платежи"
-      }
-    }
   },
   "bankService": {
     "notFound": "Услуга не найдена",
@@ -1319,7 +1437,8 @@
     "bank": "Банк",
     "requiresAccount": "Требуется бизнес-счёт",
     "otherServicesShort": "Другие услуги",
-    "otherServices": "Другие услуги {{bank}}"
+    "otherServices": "Другие услуги {{bank}}",
+    "apply": "Подать заявку"
   },
   "level2": {
     "Issiqxona": "Теплица",
@@ -1480,7 +1599,6 @@
   "level3": {
     "Issiqxona qurish va boshqarish": "Строительство и управление теплицей",
     "Mevali bog'lar": "Фруктовые сады",
-   
     "Parrandachilik fermasi": "Птицеферма",
     "Baliq yetishtirish": "Рыбоводство",
     "Asal ishlab chiqarish": "Производство меда",
@@ -1632,6 +1750,204 @@
     "Onlayn psixologik yordam xizmati": "Онлайн психологическая помощь",
     "Birgalikda ishlash uchun ijaraga olinadigan xona": "Коворкинг",
     "Online psixolog": "Онлайн психолог"
+  },
+  "addService": {
+    "errors": {
+      "loginRequired": "Пожалуйста, сначала войдите в систему",
+      "selectCategory": "Выберите категорию",
+      "companyRequired": "Введите название компании",
+      "submitError": "Ошибка: {error}"
+    },
+    "back": "Назад",
+    "title": "Добавить услугу",
+    "fields": {
+      "name": "Название услуги *",
+      "namePlaceholder": "Название услуги",
+      "description": "Описание *",
+      "descriptionPlaceholder": "Подробно об услуге",
+      "direction": "Направление *",
+      "directionPlaceholder": "Выберите",
+      "category": "Категория *",
+      "categoryPlaceholder": "Выберите",
+      "providerType": "Тип исполнителя *",
+      "providerIndividual": "Физическое лицо",
+      "providerBusiness": "Бизнес",
+      "company": "Название компании *",
+      "companyPlaceholder": "Например: Toza Suv ООО",
+      "website": "Веб-сайт",
+      "websitePlaceholder": "https://example.com",
+      "priceRange": "Диапазон цен *",
+      "priceRangePlaceholder": "100 000 – 500 000 сум",
+      "phone": "Телефон *",
+      "phonePlaceholder": "+998 90 123 45 67",
+      "email": "Email",
+      "emailPlaceholder": "email@example.com",
+      "media": "Фото и видео"
+    },
+    "sectionTitle": "Дополнительная информация",
+    "tagsLabel": "Быстрые теги услуги (необязательно, можно несколько)",
+    "submitting": "Загрузка...",
+    "submit": "Добавить услугу",
+    "success": "Услуга успешно добавлена!"
+  },
+  "mkt": {
+    "categories": "Категория",
+    "searchPlaceholder": "Поиск...",
+    "all": "Все",
+    "popular": "Популярные товары",
+    "noProducts": "Пока нет товаров",
+    "profile": {
+      "payment": "Способы оплаты",
+      "settings": "Настройки",
+      "help": "Помощь",
+      "about": "О приложении",
+      "logout": "Выйти"
+    },
+    "tabs": {
+      "home": "Главная",
+      "locations": "Места",
+      "products": "Товары",
+      "services": "Услуги",
+      "profile": "Профиль"
+    },
+    "brand": "Маркетплейс",
+    "add": "Добавить"
+  },
+  "addVideo": {
+    "errors": {
+      "videoOnly": "Можно загружать только видео",
+      "fileTooLarge": "Размер видео не должен превышать 100 МБ",
+      "videoRequired": "Пожалуйста, выберите видео",
+      "uploadFailed": "Ошибка при загрузке видео"
+    },
+    "title": "Новое видео",
+    "subtitle": "Поделитесь видео и найдите новую аудиторию",
+    "selectVideo": "Выберите видео",
+    "dragDrop": "Перетащите видео сюда или нажмите, чтобы выбрать",
+    "removeVideo": "Удалить видео",
+    "previewTitle": "Заголовок видео",
+    "portrait": "Формат 9:16",
+    "landscape": "Горизонтальное",
+    "detailsTitle": "Информация о видео",
+    "detailsSubtitle": "Кратко опишите видео для зрителей",
+    "fields": {
+      "title": "Заголовок",
+      "titlePlaceholder": "Кратко о вашем видео",
+      "description": "Описание",
+      "descriptionPlaceholder": "Напишите подробное описание..."
+    },
+    "portraitTip": "Для Reels лучше подходит вертикальное видео 9:16.",
+    "uploading": "Видео загружается",
+    "changeVideo": "Заменить",
+    "publish": "Опубликовать",
+    "success": "Видео успешно загружено"
+  },
+  "becomeProvider": {
+    "errors": {
+      "incomplete": "Пожалуйста, заполните все обязательные поля",
+      "submit": "Ошибка при регистрации"
+    },
+    "type": {
+      "title": "В каком качестве вы оказываете услуги?",
+      "desc": "Это можно изменить позже",
+      "individual": "Физическое лицо",
+      "individualDesc": "Как самостоятельный мастер или специалист",
+      "company": "Компания",
+      "companyDesc": "Как компания с командой"
+    },
+    "direction": {
+      "title": "Выберите направление",
+      "desc": "К какой сфере относится ваша услуга?",
+      "count": "профессий"
+    },
+    "category": {
+      "title": "Выберите профессию"
+    },
+    "details": {
+      "title": "Информация об услуге",
+      "desc": "По этим данным вас найдут клиенты"
+    },
+    "fields": {
+      "company": "Название компании",
+      "companyPlaceholder": "Например: ZUMO Service ООО",
+      "name": "Название услуги",
+      "namePlaceholder": "Например: Быстрая и качественная сантехника",
+      "description": "Описание",
+      "descriptionPlaceholder": "Опишите опыт, условия работы и преимущества",
+      "phone": "Телефон",
+      "priceRange": "Диапазон цен",
+      "pricePlaceholder": "Например: 100 000 – 300 000 сум",
+      "email": "Email",
+      "website": "Веб-сайт",
+      "media": "Фото и видео"
+    },
+    "companyStaffNote": "После создания компании вы сможете добавить сотрудников.",
+    "review": {
+      "title": "Медиа и подтверждение",
+      "desc": "Добавьте фото или видео работ (необязательно)"
+    },
+    "summary": {
+      "type": "Тип",
+      "direction": "Направление",
+      "category": "Профессия"
+    },
+    "eyebrow": "ZUMO Услуги",
+    "title": "Стать исполнителем",
+    "subtitle": "Покажите своё мастерство — клиенты найдут вас сами",
+    "buttons": {
+      "back": "Назад",
+      "submitting": "Отправка...",
+      "submit": "Зарегистрироваться",
+      "next": "Далее"
+    },
+    "success": "Поздравляем! Теперь вы исполнитель"
+  },
+  "businessDirections": {
+    "categoriesSubtitle": "Направление",
+    "recentTitle": "Недавно просмотренные",
+    "adsTitle": "Объявления",
+    "loading": "Загрузка...",
+    "noAds": "В этом направлении пока нет объявлений"
+  },
+  "filters": {
+    "all": "Все",
+    "locations": "Места",
+    "equipment": "Техника",
+    "food": "Продукты",
+    "catalog": "Каталог",
+    "furniture": "Мебель"
+  },
+  "subcategory": {
+    "investment": "Инвестиции",
+    "premiumLock": "Цены и расчёты доступны премиум-участникам",
+    "premiumLink": "Стать премиум",
+    "noDataTitle": "Нет данных",
+    "noDataDesc": "В этом разделе пока нет данных",
+    "locations": "Места",
+    "noAddress": "Адрес не указан",
+    "products": "Товары"
+  },
+  "notFound": {
+    "text": "Страница не найдена или была перемещена.",
+    "home": "На главную"
+  },
+  "physic": {
+    "heroTitle": "ZUMO — для каждого",
+    "title": "Направления для физических лиц",
+    "soon": "Скоро запуск",
+    "badge": "Скоро"
+  },
+  "comingSoon": {
+    "badge": "Скоро",
+    "text": "Мы работаем над этим разделом. Сообщим, когда он запустится.",
+    "toMarket": "А пока загляните на рынок",
+    "bank": {
+      "title": "Банковские продукты",
+      "text": "Онлайн-заявки на кредит, QR-оплату, карты и другие банковские услуги скоро будут доступны."
+    },
+    "directions": {
+      "title": "150+ бизнес-направлений",
+      "text": "Выберите направление — нужные места, оборудование и услуги в одном месте. Скоро запуск."
+    }
   }
-
 }

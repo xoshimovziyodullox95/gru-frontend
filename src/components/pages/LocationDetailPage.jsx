@@ -1,7 +1,11 @@
+import { safeGoBack } from '../utils/navigation.js';
+import { recordRecentlyViewed } from '../utils/recentlyViewed.js';
+import useBodyScrollLock from '../../hooks/useBodyScrollLock.js';
+import ShareSheet from '../common/ShareSheet.jsx';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getLocationById, uploadLocationMedia, getLocations } from '../services/locations';
+import { getLocationById, uploadLocationMedia } from '../services/locations';
 import { getEquipment } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/formatPrice';
@@ -9,13 +13,12 @@ import { getImageUrl } from '../utils/imageUrl';
 
 import MortgageCalculator from '../common/MortgageCalculator';
 import {
-  MapPin, Phone, TrendingUp, ArrowLeft, ShieldCheck,
-  Award, Briefcase, Calendar, Quote, X,
+  MapPin, Phone, ArrowLeft, ShieldCheck, Share2,
+  Calendar, X,
   Ruler, Eye, Building2, User,
-  Hammer, Wrench, Megaphone, Package, QrCode,
-  Banknote, CreditCard, CalendarDays, Calculator, Monitor,
+  Hammer, Megaphone, Calculator, Monitor,
   ChevronDown, ChevronUp, ChevronLeft, ChevronRight, MessageCircle, Crown,
-  Wifi, FileText, FileCheck2, ShoppingCart, Star, Navigation,
+  Wifi, FileText, Navigation,
   Layers, DoorOpen, Zap, Wind, Lightbulb, Footprints, Maximize2, Landmark,Utensils
 } from 'lucide-react';
 import '../../styles/locationPage.css';
@@ -32,29 +35,8 @@ function isMortgageEligible(location) {
   return location?.currency === 'UZS' && getNumericPrice(location) >= 2000000000;
 }
 
-const CertificateModal = ({ isOpen, onClose, title, url, isPdf }) => {
-  if (!isOpen) return null;
-  return (
-    <div className="cert-modal-overlay" onClick={onClose}>
-      <div className="cert-modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="cert-modal-header">
-          <h3>{title}</h3>
-          <button onClick={onClose} className="cert-modal-close"><X size={20} /></button>
-        </div>
-        <div className="cert-modal-body">
-          {isPdf ? (
-            <iframe src={url} className="cert-pdf-viewer" title={title} />
-          ) : (
-            <a href={url} target="_blank" rel="noopener noreferrer" className="cert-link">Hujjatni ochish</a>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
-  const { t } = useTranslation();
+  const closeRef = useRef(onClose);
 
   const goPrev = useCallback(
     () => setActiveIndex((prev) => (prev - 1 + images.length) % images.length),
@@ -66,35 +48,34 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
   );
 
   useEffect(() => {
-    if (!isOpen) return;
+    closeRef.current = onClose;
+  }, [onClose]);
+
+  useBodyScrollLock(isOpen);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') closeRef.current?.();
       if (e.key === 'ArrowRight') goNext();
       if (e.key === 'ArrowLeft') goPrev();
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = prevOverflow;
     };
-  }, [isOpen, onClose, goNext, goPrev]);
+  }, [isOpen, goNext, goPrev]);
 
   if (!isOpen) return null;
 
-  const currentImage = images?.[activeIndex] || '/images/placeholder.jpg';
-  const safeImageUrl = getImageUrl(currentImage) || '/images/placeholder.jpg';
+  const currentImage = images?.[activeIndex] || '/images/zumo-placeholder.svg';
+  const safeImageUrl = getImageUrl(currentImage) || '/images/zumo-placeholder.svg';
 
   return (
     <div className="ImageViewerOverlay">
-      <button className="ImageViewerBackBtn" onClick={onClose}>
-        <ArrowLeft size={18} /> {t('location.back')}
-      </button>
-      <button className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
+      <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
         <X size={22} />
       </button>
 
@@ -118,7 +99,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
           onClick={(e) => e.stopPropagation()}
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = '/images/placeholder.jpg';
+            e.target.src = '/images/zumo-placeholder.svg';
           }}
         />
       </div>
@@ -126,7 +107,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
       {images.length > 1 && (
         <div className="ImageViewerThumbs" onClick={(e) => e.stopPropagation()}>
           {images.map((img, idx) => {
-            const thumbSrc = getImageUrl(img) || '/images/placeholder.jpg';
+            const thumbSrc = getImageUrl(img) || '/images/zumo-placeholder.svg';
             return (
               <button
                 key={idx}
@@ -138,7 +119,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
                   alt={`thumb-${idx}`}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/images/placeholder.jpg';
+                    e.target.src = '/images/zumo-placeholder.svg';
                   }}
                 />
               </button>
@@ -171,7 +152,7 @@ const UserInfoCard = ({ user }) => {
           src={avatarUrl}
           alt={user.full_name || user.email}
           className="user-avatar"
-          onError={(e) => { e.target.src = '/images/placeholder.jpg'; }}
+          onError={(e) => { e.target.src = '/images/zumo-placeholder.svg'; }}
         />
         <div className="user-details">
           <p><strong>{user.full_name || t('location.fullName')}</strong></p>
@@ -244,7 +225,7 @@ const ServiceButtons = ({ level1 }) => {
 };
 // =============================================
 
-const EquipmentCarousel = ({ items, location, onAddToCalculator }) => {
+const EquipmentCarousel = ({ items, location }) => {
   const { t } = useTranslation();
   const trackRef = useRef(null);
 
@@ -290,7 +271,7 @@ const EquipmentCarousel = ({ items, location, onAddToCalculator }) => {
                   type="equipment"
                   maxQuantity={maxQuantity}
                   title={item.name || item.title || 'Nomsiz texnika'}
-                  image={item.images?.[0] ? getImageUrl(item.images[0]) : '/images/placeholder-equipment.jpg'}
+                  image={item.images?.[0] ? getImageUrl(item.images[0]) : '/images/zumo-placeholder.svg'}
                   price={formatPrice(item.price, item.currency) || 'Narxi mavjud emas'}
                   link={`/equipment/${itemId}`}
                   createdAt={location?.createdAt}
@@ -391,35 +372,14 @@ export default function LocationDetailPage() {
   const [error, setError] = useState(null);
   const [showPhone, setShowPhone] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [modal, setModal] = useState({ open: false, title: '', url: '', isPdf: false });
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [reels, setReels] = useState([]);
   const [reelsLoading, setReelsLoading] = useState(true);
 
   const isOwner = location?.userId?._id === user?.id || user?.email === 'xoshimovabdullox95@gmail.com';
-
-  const addToCart = (item) => {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingIndex = cart.findIndex((i) => i.id === item.id);
-    if (existingIndex !== -1) cart[existingIndex].quantity += 1;
-    else cart.push({ ...item, quantity: 1 });
-    localStorage.setItem('cart', JSON.stringify(cart));
-    window.dispatchEvent(new Event('cartUpdated'));
-    alert(t('common.save'));
-  };
-
-  const handleAddToCart = () => {
-    if (!location) return;
-    addToCart({
-      id: location._id,
-      title: location.title,
-      price: parseFloat(location.price_range?.replace(/[^\d]/g, '')) || 0,
-      type: 'location',
-      image: location.images?.[0] ? getImageUrl(location.images[0]) : '/images/placeholder.jpg',
-    });
-  };
 
   const handleChat = () => {
     const targetId = location?.userId?._id || location?.userId;
@@ -461,6 +421,15 @@ export default function LocationDetailPage() {
           return;
         }
         setLocation(locRes.data);
+        recordRecentlyViewed(user?._id || user?.id, {
+          id: locRes.data._id || id,
+          type: 'location',
+          title: locRes.data.title || locRes.data.name || 'E’lon',
+          image: locRes.data.images?.[0] || locRes.data.image || locRes.data.imageUrl || '',
+          price: locRes.data.price_per_month ? `${locRes.data.price_per_month} ${locRes.data.currency || "so'm"}/oy` : (locRes.data.price_range || ''),
+          currency: locRes.data.currency,
+          link: `/location/${locRes.data._id || id}`,
+        });
         setActiveImageIndex(0);
 
         const level1 = locRes.data.level1;
@@ -475,7 +444,7 @@ export default function LocationDetailPage() {
       }
     };
     loadData();
-  }, [id, t]);
+  }, [id, t, user]);
 
   useEffect(() => {
     const loadReels = async () => {
@@ -528,49 +497,43 @@ export default function LocationDetailPage() {
     });
   };
 
-  const openLexModal = () =>
-    setModal({ open: true, title: t('location.certificateSubsidy'), url: 'https://lex.uz/docs/-5841077', isPdf: false });
-  const openPdfModal = () =>
-    setModal({ open: true, title: t('location.certificateTechnical'), url: '/files/texnik-muvofiqlik-sertifikati.pdf', isPdf: true });
-  const closeModal = () => setModal({ ...modal, open: false });
-
   if (loading) return <div className="StatusScreen">{t('location.loading')}</div>;
 
   if (error || !location) {
     return (
       <div className="StatusScreen Error">
-        <h2>⚠️ {t('location.error')}</h2>
+        <h2>{t('location.error')}</h2>
         <p>{error || t('location.notFound')}</p>
-        <button onClick={() => navigate(-1)} className="BackActionBtn">
+        <button onClick={() => safeGoBack(navigate)} className="BackActionBtn">
           <ArrowLeft size={16} /> {t('location.back')}
         </button>
       </div>
     );
   }
 
-  const images = location?.images?.filter((img) => img !== '/images/placeholder-location.jpg')?.length
+  const images = location?.images?.filter((img) => img !== '/images/zumo-placeholder.svg')?.length
     ? location.images
     : [`/images/locations/${location?.title?.toLowerCase().replace(/\s+/g, '-') || 'default'}.jpg`];
 
-  const { details = {}, nearby = [], creativeReason = '', traffic = [], category } = location;
+  const { details = {}, nearby = [], creativeReason = '', traffic = [] } = location;
   const showMortgage = isMortgageEligible(location);
 
   return (
     <div className="LocationPageWrapper">
       <div className="MainViewport">
-        <button className="BackActionBtn" onClick={() => navigate(-1)}>
+        <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
           <ArrowLeft size={16} /> {t('location.back')}
         </button>
 
         <div className="image-gallery">
           <div className="image-gallery-main-wrap" onClick={() => setImageModalOpen(true)}>
             <img
-              src={getImageUrl(images[activeImageIndex]) || '/images/placeholder.jpg'}
+              src={getImageUrl(images[activeImageIndex]) || '/images/zumo-placeholder.svg'}
               alt={location.title}
               className="image-gallery-main"
               loading="eager"
               decoding="async"
-              onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+              onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
             />
             <div className="image-gallery-zoom-hint">
               <Maximize2 size={14} /> {t('location.viewFull') || "Kattalashtirib ko'rish"}
@@ -585,10 +548,10 @@ export default function LocationDetailPage() {
                   onClick={() => setActiveImageIndex(idx)}
                 >
                   <img
-                    src={getImageUrl(img) || '/images/placeholder.jpg'}
+                    src={getImageUrl(img) || '/images/zumo-placeholder.svg'}
                     alt={`thumb-${idx}`}
                     loading="lazy"
-                    onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+                    onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
                   />
                 </button>
               ))}
@@ -700,9 +663,14 @@ export default function LocationDetailPage() {
               <span className="PriceTagValue">
                 {location.price_range || '5 000 000'} {location.currency === 'UZS' ? "so'm" : '$'}
               </span>
-              <button onClick={handleAddToCart} className="add-to-cart-btn">
-                <ShoppingCart size={16} /> {t('location.addToCart')}
+              <button onClick={handleChat} className="add-to-cart-btn">
+                <MessageCircle size={16} /> {t('location.chatWithOwner', 'Joy egasi bilan bog‘lanish')}
               </button>
+              {user && (
+                <button type="button" onClick={() => setShareOpen(true)} className="add-to-cart-btn location-share-btn">
+                  <Share2 size={16} /> {t('common.share', 'Do‘stga yuborish')}
+                </button>
+              )}
             </div>
 
             <div className="calculator-panel">
@@ -760,12 +728,6 @@ export default function LocationDetailPage() {
               )}
             </div>
 
-            <div className="chat-with-owner">
-              <button onClick={handleChat} className="chat-owner-btn">
-                <MessageCircle size={18} /> {t('location.chatWithOwner')}
-              </button>
-            </div>
-
             {isOwner && (
               <div className="media-upload-section">
                 <label className="upload-btn">
@@ -797,10 +759,8 @@ export default function LocationDetailPage() {
           </div>
         </div>
 
-        <EquipmentCarousel items={equipment} location={location} onAddToCalculator={addToCalculator} />
+        <EquipmentCarousel items={equipment} location={location} />
       </div>
-
-      <CertificateModal isOpen={modal.open} onClose={closeModal} title={modal.title} url={modal.url} isPdf={modal.isPdf} />
 
       <ImageViewerModal
         isOpen={imageModalOpen}
@@ -809,6 +769,18 @@ export default function LocationDetailPage() {
         activeIndex={activeImageIndex}
         setActiveIndex={setActiveImageIndex}
         title={location.title}
+      />
+      <ShareSheet
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        listing={{
+          id: location._id,
+          title: location.title,
+          link: `/location/${location._id}`,
+          listingType: 'location',
+          thumbnailUrl: getImageUrl(images[0]) || '',
+          price: location.price_range || location.price_per_month || '',
+        }}
       />
     </div>
   );

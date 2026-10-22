@@ -87,7 +87,7 @@
 
 .bsd-cart-btn-inline { margin: 0; }
 .bsd-in-cart {
-  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  background: var(--cyan) !important;
 }
 
 /* ===== HUJJATLAR / SHARTLAR ===== */
@@ -167,3 +167,56 @@
   .bsd-hero-name { font-size: 1.15rem; }
   .bsd-related-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; }
 }
+/* ===== Ariza formasi ===== */
+.bsd-apply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+.bsd-apply-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--textMuted);
+}
+.bsd-apply-form input,
+.bsd-apply-form textarea {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+.bsd-apply-form input:focus,
+.bsd-apply-form textarea:focus { outline: none; border-color: var(--cyan); }
+.bsd-apply-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.bsd-apply-cancel {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.bsd-apply-done {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--cyan);
+  background: rgba(0, 212, 255, 0.08);
+  color: var(--text);
+  font-size: 0.88rem;
+}
+.bsd-apply-done svg { color: var(--cyan); flex-shrink: 0; }
+.bsd-apply-done a { color: var(--cyan); font-weight: 700; margin-left: auto; }
+.bsd-spin { animation: bsd-spin 1s linear infinite; }
+@keyframes bsd-spin { to { transform: rotate(360deg); } }

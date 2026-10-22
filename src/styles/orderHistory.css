@@ -1,0 +1,354 @@
+/* ============================================================
+   ORDER HISTORY PAGE
+   ============================================================ */
+
+.oh-page {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  min-height: 100vh;
+  background: var(--bg, #041326);
+}
+
+.oh-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.oh-back {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(13, 38, 71, 0.8);
+  border: 1px solid rgba(100, 181, 246, 0.2);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.oh-back:hover {
+  background: rgba(33, 150, 243, 0.2);
+}
+
+.oh-header h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.oh-header p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* Tabs */
+
+.oh-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 16px;
+  background: rgba(13, 38, 71, 0.6);
+  border-radius: 12px;
+}
+
+.oh-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 9px;
+  color: #94a3b8;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.oh-tab.is-on {
+  color: #ffffff;
+  background: linear-gradient(135deg, #2196f3, #00b4ff);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.35);
+}
+
+/* Filter */
+
+.oh-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 0 4px;
+  color: #94a3b8;
+}
+
+.oh-filter__select {
+  padding: 8px 14px;
+  border: 1px solid rgba(100, 181, 246, 0.2);
+  border-radius: 10px;
+  background: rgba(13, 38, 71, 0.6);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* List */
+
+.oh-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.oh-card {
+  padding: 16px;
+  background: rgba(13, 38, 71, 0.5);
+  border: 1px solid rgba(100, 181, 246, 0.15);
+  border-radius: 16px;
+}
+
+.oh-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.oh-card__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.oh-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.oh-card__date {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.oh-card__category {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* Other */
+
+.oh-card__other {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+}
+
+.oh-card__other-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2196f3, #00b4ff);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.oh-card__other-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.oh-card__other-info small {
+  color: #94a3b8;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.oh-card__other-info strong {
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.oh-card__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: #4ade80;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.oh-card__price small {
+  color: #94a3b8;
+  font-size: 9.5px;
+  font-weight: 500;
+}
+
+.oh-card__desc {
+  margin: 0 0 8px;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.oh-card__address {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 10px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.oh-card__address svg {
+  color: #ff6f00;
+  flex-shrink: 0;
+}
+
+/* Review */
+
+.oh-card__review {
+  padding: 12px 14px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 10px;
+}
+
+.oh-card__stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.oh-card__stars span {
+  margin-left: 6px;
+  color: #fbbf24;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.oh-card__review p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Rate */
+
+.oh-card__rate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 18px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.oh-card__rate-btn:hover {
+  background: rgba(251, 191, 36, 0.2);
+  border-color: rgba(251, 191, 36, 0.6);
+}
+
+/* Empty */
+
+.oh-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.oh-empty svg {
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.oh-empty h3 {
+  margin: 0 0 4px;
+  color: #94a3b8;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Skeletons */
+
+.oh-skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.oh-skeleton {
+  height: 140px;
+  border-radius: 16px;
+  background: linear-gradient(90deg,
+    rgba(13, 38, 71, 0.5) 0%,
+    rgba(33, 150, 243, 0.1) 50%,
+    rgba(13, 38, 71, 0.5) 100%);
+  background-size: 200% 100%;
+  animation: ohShimmer 1.5s infinite;
+}
+
+@keyframes ohShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 480px) {
+  .oh-page { padding: 16px 12px 40px; }
+  .oh-header h1 { font-size: 20px; }
+}

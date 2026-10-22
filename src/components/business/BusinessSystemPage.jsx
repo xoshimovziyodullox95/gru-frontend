@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, LayoutDashboard, Package, Warehouse, ShoppingCart, Wallet, Users } from 'lucide-react';
@@ -31,7 +32,7 @@ function BusinessSystemInner() {
   return (
     <div className="bk-page">
       <div className="bk-header">
-        <button className="bk-btn bk-btn-secondary" onClick={() => navigate(-1)}>
+        <button className="bk-btn bk-btn-secondary" onClick={() => safeGoBack(navigate)}>
           <ArrowLeft size={16} /> Orqaga
         </button>
         <div className="bk-header-actions">

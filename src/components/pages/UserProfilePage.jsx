@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/pages/UserProfilePage.jsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -38,8 +39,8 @@ export default function UserProfilePage() {
 
   return (
     <div className="user-profile-wrapper">
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        ← Orqaga
+      <button className="back-btn" onClick={() => safeGoBack(navigate)}>
+        в†ђ Orqaga
       </button>
       <div className="user-profile-header">
         <img src={user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.email)}&background=00E5FF&color=fff&size=120`} alt="Avatar" className="profile-avatar" />
@@ -56,7 +57,7 @@ export default function UserProfilePage() {
         <div className="listing-grid">
           {locations.map(loc => (
             <div key={loc._id} className="listing-card" onClick={() => navigate(`/location/${loc._id}`)}>
-              <img src={loc.images?.[0] || '/images/placeholder.jpg'} alt={loc.title} />
+              <img src={loc.images?.[0] || '/images/zumo-placeholder.svg'} alt={loc.title} />
               <h4>{loc.title}</h4>
               <p>{loc.address}</p>
             </div>
@@ -67,7 +68,7 @@ export default function UserProfilePage() {
         <div className="listing-grid">
           {equipment.map(eq => (
             <div key={eq._id} className="listing-card" onClick={() => navigate(`/equipment/${eq._id}`)}>
-              <img src={eq.images?.[0] || '/images/placeholder.jpg'} alt={eq.title} />
+              <img src={eq.images?.[0] || '/images/zumo-placeholder.svg'} alt={eq.title} />
               <h4>{eq.title}</h4>
               <p>{eq.price} so'm</p>
             </div>

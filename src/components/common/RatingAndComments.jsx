@@ -136,10 +136,10 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
             comments.map((c) => (
               <div key={c._id} className="rac-comment-item">
                 <img
-                  src={c.userId?.avatar_url || '/images/placeholder.jpg'}
+                  src={c.userId?.avatar_url || '/images/zumo-placeholder.svg'}
                   alt=""
                   className="rac-comment-avatar"
-                  onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
                 />
                 <div className="rac-comment-body">
                   <strong>{c.userId?.fullName || c.userId?.full_name || 'Foydalanuvchi'}</strong>
@@ -150,7 +150,7 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
 
                   {(c.replies || []).map((r) => (
                     <div key={r._id} className="rac-reply-item">
-                      <img src={r.userId?.avatar_url || '/images/placeholder.jpg'} alt="" className="rac-reply-avatar" />
+                      <img src={r.userId?.avatar_url || '/images/zumo-placeholder.svg'} alt="" className="rac-reply-avatar" />
                       <div>
                         <strong>{r.userId?.fullName || r.userId?.full_name || 'Foydalanuvchi'}</strong>
                         <span>{r.text}</span>

@@ -56,6 +56,7 @@ export default function MarketplaceFilters({
     { value: 'location', label: t('marketplaceFilters.typeLocation') },
     { value: 'equipment', label: t('marketplaceFilters.typeEquipment') },
     { value: 'service', label: t('marketplaceFilters.typeService') },
+    { value: 'bank_service', label: t('marketplaceFilters.bankServices', 'Bank xizmatlari') },
   ];
 
   // ========== BANK XIZMATLARI ==========

@@ -1,8 +1,10 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/BroadcastAdPage.jsx
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, Send, Image as ImageIcon, Video, Users, X } from 'lucide-react';
+import { ArrowLeft, Upload, Send, Users, X } from 'lucide-react';
 import api from '../services/api';
+import { getSubscribers } from '../services/user';
 import '../../styles/broadcastAd.css';
 
 export default function BroadcastAdPage() {
@@ -14,11 +16,32 @@ export default function BroadcastAdPage() {
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [audienceCount, setAudienceCount] = useState(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    let active = true;
+    getSubscribers()
+      .then((response) => { if (active) setAudienceCount(Array.isArray(response.data) ? response.data.length : 0); })
+      .catch(() => { if (active) setAudienceCount(null); });
+    return () => { active = false; };
+  }, []);
 
   const handleFileSelect = (e) => {
     const selected = e.target.files?.[0];
     if (!selected) return;
+    if (selected.size > 100 * 1024 * 1024) {
+      setError('Fayl hajmi 100 MB dan oshmasligi kerak');
+      e.target.value = '';
+      return;
+    }
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime'];
+    if (!allowed.includes(selected.type)) {
+      setError('JPG, PNG, WEBP, MP4, WEBM yoki MOV fayl tanlang');
+      e.target.value = '';
+      return;
+    }
+    if (preview) URL.revokeObjectURL(preview);
     setFile(selected);
     setPreview(URL.createObjectURL(selected));
     setIsVideo(selected.type.startsWith('video/'));
@@ -37,9 +60,7 @@ export default function BroadcastAdPage() {
       const formData = new FormData();
       formData.append('media', file);
       formData.append('caption', caption);
-      const res = await api.post('/broadcast/ad', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      const res = await api.post('/broadcast/ad', formData);
       setResult(res.data);
     } catch (err) {
       setError(err.response?.data?.error || err.message);
@@ -49,6 +70,7 @@ export default function BroadcastAdPage() {
   };
 
   const reset = () => {
+    if (preview) URL.revokeObjectURL(preview);
     setFile(null);
     setPreview(null);
     setCaption('');
@@ -58,15 +80,15 @@ export default function BroadcastAdPage() {
 
   return (
     <div className="ba-page">
-      <button className="BackActionBtn" onClick={() => navigate(-1)}>
+      <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} /> Orqaga
       </button>
 
       <div className="ba-header">
         <h1><Send size={22} /> Reklama tarqatish</h1>
         <p className="ba-subtitle">
-          Banner yoki video yuklang — u sizdan avval buyurtma bergan{' '}
-          <strong>barcha do'konchilarga</strong> avtomatik yuboriladi
+          Rasm yoki video reklama sizga obuna bo‘lgan mijozlarga yuboriladi
+          {audienceCount !== null ? ` · ${audienceCount} ta obunachi` : ''}.
         </p>
       </div>
 
@@ -83,7 +105,7 @@ export default function BroadcastAdPage() {
             <div className="ba-upload-zone" onClick={() => fileInputRef.current?.click()}>
               <Upload size={36} />
               <p>Banner rasmi yoki video yuklang</p>
-              <span className="ba-upload-hint">JPG, PNG, MP4 — 100MB gacha</span>
+              <span className="ba-upload-hint">JPG, PNG, WEBP, MP4, WEBM, MOV — 100 MB gacha</span>
             </div>
           ) : (
             <div className="ba-preview-zone">
@@ -114,9 +136,10 @@ export default function BroadcastAdPage() {
               />
 
               {error && <div className="pt-error">{error}</div>}
+              {audienceCount === 0 && <div className="pt-error">Hozircha obunachilaringiz yo‘q. Reklama yuborish uchun avval mijozlar sizga obuna bo‘lishi kerak.</div>}
 
-              <button className="ba-send-btn" onClick={handleSend} disabled={sending}>
-                {sending ? 'Yuborilmoqda...' : <><Send size={18} /> Barcha mijozlarga yuborish</>}
+              <button className="ba-send-btn" onClick={handleSend} disabled={sending || audienceCount === 0}>
+                {sending ? 'Yuborilmoqda...' : <><Send size={18} /> Obunachilarga yuborish</>}
               </button>
             </>
           )}

@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import {
   useEffect,
   useRef,
@@ -297,7 +298,7 @@ export default function AddVideoPostForm() {
         <button
           type="button"
           className="avf-back-btn"
-          onClick={() => navigate(-1)}
+          onClick={() => safeGoBack(navigate)}
           disabled={uploading}
         >
           <ArrowLeft size={18} />
@@ -309,7 +310,7 @@ export default function AddVideoPostForm() {
 
         <div className="avf-page-heading">
           <span className="avf-eyebrow">
-            G.R.U Reels
+            ZUMO Reels
           </span>
 
           <h1 className="avf-title">
@@ -382,7 +383,7 @@ export default function AddVideoPostForm() {
                 </span>
 
                 <span className="avf-upload-limit">
-                  MP4, WebM, MOV · maksimum 100 MB
+                  MP4, WebM, MOV В· maksimum 100 MB
                 </span>
               </button>
             ) : (
@@ -457,7 +458,7 @@ export default function AddVideoPostForm() {
                     )}
 
                     {videoMeta.duration > 0 &&
-                      ` · ${formatDuration(
+                      ` В· ${formatDuration(
                         videoMeta.duration
                       )}`}
                   </span>

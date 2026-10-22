@@ -12,7 +12,7 @@ export default function BusinessSwitcher() {
 
   const allBusinesses = [
     ...myBusinesses.owned.map((b) => ({ ...b, role: 'owner' })),
-    ...myBusinesses.staffed.map((b) => ({ ...b, role: null })),
+    ...myBusinesses.staffed.map((b) => ({ ...b, role: b.staffRole || null })),
   ];
 
   const handleCreate = async (e) => {
@@ -100,7 +100,7 @@ export default function BusinessSwitcher() {
               onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg)'}
               onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              {b.name} {b.role === 'owner' && <span className="bk-badge bk-badge-cyan">Egasi</span>}
+              {b.name} <span className={`bk-badge ${b.role === 'owner' ? 'bk-badge-cyan' : 'bk-badge-amber'}`}>{b.role === 'owner' ? 'Egasi' : (b.role || 'Xodim')}</span>
             </div>
           ))}
           <div

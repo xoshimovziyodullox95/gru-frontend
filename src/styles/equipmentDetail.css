@@ -647,8 +647,19 @@
 
 /* Chat tugmasi */
 .chat-with-owner {
+  display: grid;
+  gap: 0.6rem;
   margin-top: -0.5rem;
   margin-bottom: 1.25rem;
+}
+.equipment-share-btn {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--cyan) 55%, transparent);
+  color: var(--cyan);
+  box-shadow: none;
+}
+.equipment-share-btn:hover {
+  background: color-mix(in srgb, var(--cyan) 12%, transparent);
 }
 .chat-owner-btn {
   display: flex;

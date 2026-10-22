@@ -3,11 +3,14 @@ import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
-  console.log('🎨 Hozirgi tema (ThemeToggle):', theme);
 
   return (
     <button
+      type="button"
       onClick={toggleTheme}
+      aria-label={theme === 'dark' ? 'Yorug‘ mavzuga o‘tish' : 'Qorong‘i mavzuga o‘tish'}
+      aria-pressed={theme === 'dark'}
+      title={theme === 'dark' ? 'Yorug‘ mavzu' : 'Qorong‘i mavzu'}
       className="relative w-12 h-6 rounded-full bg-gray-300 dark:bg-gray-600 transition-colors duration-300 focus:outline-none"
     >
       <span

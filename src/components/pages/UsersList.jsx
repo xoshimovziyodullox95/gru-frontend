@@ -59,7 +59,7 @@ export default function UsersList() {
         ) : (
           users.map(user => (
             <div key={user._id} className="user-card">
-              <img src={user.avatar_url || '/images/placeholder.jpg'} alt={user.fullName} />
+              <img src={user.avatar_url || '/images/zumo-placeholder.svg'} alt={user.fullName} />
               <div className="user-info">
                 <h4>{user.fullName || 'Ism yo‘q'}</h4>
                 <span>{user.email}</span>

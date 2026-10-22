@@ -1,15 +1,14 @@
 // src/components/SettingsModal.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Settings, X, LogOut, QrCode, Bell, Shield, User,
-  CheckCircle, Globe, Clock, Smartphone, Key, Users,
-  ChevronRight, Crown, Eye, Lock, Database, Server,
-  Briefcase, Calendar, Mail, Hash, Sun, Moon, Edit,
+  CheckCircle, Globe,
+  ChevronRight, Crown,
+  Briefcase, Calendar, Mail, Hash, Sun, Moon, Edit, LifeBuoy, FileText,
 } from 'lucide-react';
 import QRCodeGenerator from './QRCodeGenerator';
-import ActivityList from './ActivityList';
 import ToggleSwitch from '../common/ToggleSwitch';
 import ThemeToggle from '../common/ThemeToggle';
 import '../../styles/settings.css';
@@ -51,22 +50,28 @@ const ProfessionalAccountModal = ({ onClose, profile, isPremium }) => {
 // ============================================================
 const NotificationsModal = ({ onClose }) => {
   const { t } = useTranslation();
-  const [settings, setSettings] = useState({
-    likes: true,
-    comments: true,
-    followers: true,
-    messages: true,
+  const [settings, setSettings] = useState(() => {
+    const defaults = { likes: true, comments: true, messages: true, orders: true, ads: true };
+    try {
+      return { ...defaults, ...JSON.parse(localStorage.getItem('zumo_notification_preferences') || '{}') };
+    } catch {
+      return defaults;
+    }
   });
+  useEffect(() => {
+    localStorage.setItem('zumo_notification_preferences', JSON.stringify(settings));
+  }, [settings]);
 
   const toggle = (key) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const rows = [
     { key: 'likes', label: t('settings.notifLikes') },
     { key: 'comments', label: t('settings.notifComments') },
-    { key: 'followers', label: t('settings.notifFollowers') },
     { key: 'messages', label: t('settings.notifMessages') },
+    { key: 'orders', label: t('settings.notifOrders', 'Buyurtmalar') },
+    { key: 'ads', label: t('settings.notifAds', 'Obunachilardan reklama') },
   ];
 
   return (
@@ -226,6 +231,25 @@ const InterfaceModal = ({ onClose }) => {
   );
 };
 
+const HelpAndPoliciesModal = ({ onClose }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="settings-submodal" onClick={onClose}>
+      <div className="settings-submodal-content" onClick={(event) => event.stopPropagation()}>
+        <div className="settings-submodal-header">
+          <h3><LifeBuoy size={20} /> {t('settings.helpAndPolicies', 'Yordam va qoidalar')}</h3>
+          <button type="button" onClick={onClose} aria-label={t('common.close', 'Yopish')}><X size={20} /></button>
+        </div>
+        <div className="settings-submodal-body settings-help-links">
+          <Link to="/notifications" className="settings-link-btn"><Bell size={16} /> {t('settings.notifications', 'Bildirishnomalar')}</Link>
+          <Link to="/my-orders" className="settings-link-btn"><FileText size={16} /> {t('nav.myOrders', 'Buyurtmalarim')}</Link>
+          <Link to="/profile" className="settings-link-btn"><Shield size={16} /> {t('settings.accountInfo', 'Hisob ma’lumotlari')}</Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ============================================================
 // ASOSIY SETTINGS MODAL
 // ============================================================
@@ -234,7 +258,6 @@ export default function SettingsModal({
   onClose,
   profile,
   user,
-  stats,
   isPremium,
   onLogout,
   onOpenEditProfile
@@ -252,6 +275,7 @@ export default function SettingsModal({
     { id: 'interface', label: t('settings.interface'), icon: Globe, component: InterfaceModal },
     { id: 'account', label: t('settings.accountInfo'), icon: User, component: AccountInfoModal },
     { id: 'verified', label: t('settings.verified'), icon: CheckCircle, component: VerifiedModal },
+    { id: 'help', label: t('settings.helpAndPolicies', 'Yordam va qoidalar'), icon: LifeBuoy, component: HelpAndPoliciesModal },
   ];
 
   const handleMenuItemClick = (item) => {

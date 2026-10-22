@@ -3,9 +3,16 @@ import { useState, useEffect, useCallback } from 'react';
 
 const CART_KEY = 'cart';
 
+// Backend faqat shu turlarni buyurtma qiladi; boshqasi (masalan eski
+// "service_provider") savatda qolsa butun checkout rad etiladi.
+const ORDERABLE_TYPES = ['equipment', 'bank_service'];
+
 function readCart() {
   try {
-    return JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+    const items = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+    return Array.isArray(items)
+      ? items.filter((i) => ORDERABLE_TYPES.includes(i.itemType || 'equipment'))
+      : [];
   } catch {
     return [];
   }
@@ -90,10 +97,15 @@ export function useCart() {
   }, []);
 
   const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
-  const totalPrice = cart.reduce(
-    (sum, i) => sum + (parseFloat(i.price) || 0) * i.quantity,
-    0
-  );
+  // Turli valyutalarni bir songa qo'shib bo'lmaydi — har biri alohida
+  const totalsByCurrency = cart.reduce((acc, i) => {
+    const amount = (parseFloat(i.price) || 0) * i.quantity;
+    if (!amount) return acc;
+    const cur = i.currency || 'UZS';
+    acc[cur] = (acc[cur] || 0) + amount;
+    return acc;
+  }, {});
+  const totalPrice = Object.values(totalsByCurrency).reduce((a, b) => a + b, 0);
 
   return {
     cart,
@@ -105,5 +117,6 @@ export function useCart() {
     clearCart,
     totalItems,
     totalPrice,
+    totalsByCurrency,
   };
 }

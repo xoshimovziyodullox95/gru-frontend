@@ -1,29 +1,51 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+/* ============================================================
+   CHAT CONTEXT
+   Socket global — boshqa komponentlar ham ishlatadi
+   ============================================================ */
+
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
 import { useAuth } from './AuthContext';
 import { getConversations, getMessages } from '../services/chat';
-import {  getSocket } from '../lib/socket';
+import { getSocket } from '../lib/socket';
 
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
   const { user, session } = useAuth();
+
   const [socket, setSocket] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
 
+  /* ============================================================
+     SOCKET — GLOBAL (disconnect qilmaymiz!)
+     ============================================================ */
+
   useEffect(() => {
-    if (session?.access_token) {
-      initSocket().then(s => setSocket(s));
-    }
-    return () => {
-      const s = getSocket();
-      if (s) s.disconnect();
-    };
+    if (!session?.access_token) return undefined;
+
+    /* ✅ Faqat olish — disconnect qilish yo'q */
+    const s = getSocket();
+    setSocket(s);
+
+    return undefined;
+    /* ❌ return () => socket.disconnect() — O'CHIRILDI */
   }, [session]);
+
+  /* ============================================================
+     CONVERSATIONS
+     ============================================================ */
 
   useEffect(() => {
     if (user) fetchConversations();
+     
   }, [user]);
 
   const fetchConversations = async () => {
@@ -31,7 +53,7 @@ export const ChatProvider = ({ children }) => {
       const res = await getConversations();
       setConversations(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('Conversations xato:', err);
     }
   };
 
@@ -41,29 +63,57 @@ export const ChatProvider = ({ children }) => {
       setMessages(res.data);
       setActiveChat(withEmail);
     } catch (err) {
-      console.error(err);
+      console.error('Messages xato:', err);
     }
   };
 
   const sendMessage = (to, message) => {
-    if (socket) {
-      socket.emit('send_message', { from: user.email, to, message });
+    const s = socket || getSocket();
+    if (s?.connected) {
+      s.emit('send_message', {
+        from: user.email,
+        to,
+        message,
+      });
     }
   };
 
+  /* ============================================================
+     RECEIVE MESSAGE
+     ============================================================ */
+
   useEffect(() => {
-    if (!socket) return;
-    socket.on('receive_message', (msg) => {
+    if (!socket) return undefined;
+
+    const handler = (msg) => {
       if (activeChat === msg.from) {
-        setMessages(prev => [...prev, msg]);
+        setMessages((prev) => [...prev, msg]);
       }
       fetchConversations();
-    });
-    return () => socket.off('receive_message');
+    };
+
+    socket.on('receive_message', handler);
+
+    return () => {
+      /* ✅ Faqat shu event'ni o'chiramiz — socket EMAS */
+      socket.off('receive_message', handler);
+    };
   }, [socket, activeChat]);
 
+  /* ============================================================
+     RENDER
+     ============================================================ */
+
   return (
-    <ChatContext.Provider value={{ conversations, activeChat, messages, sendMessage, fetchMessages }}>
+    <ChatContext.Provider
+      value={{
+        conversations,
+        activeChat,
+        messages,
+        sendMessage,
+        fetchMessages,
+      }}
+    >
       {children}
     </ChatContext.Provider>
   );

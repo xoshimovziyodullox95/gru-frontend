@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/MarketplaceProductTypes.jsx
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ export default function MarketplaceProductTypes() {
 
   return (
     <div className="mph-page">
-      <button className="mph-back" onClick={() => navigate(-1)}>
+      <button className="mph-back" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={18} /> {translate('common.back')}
       </button>
       <h2 className="mph-subtitle">{translate('productTypes.title')}</h2>

@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Building2 } from 'lucide-react';
@@ -27,7 +28,7 @@ export default function BranchesPage() {
 
   return (
     <div className="bp-page">
-      <button className="BackActionBtn" onClick={() => navigate(-1)}>
+      <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} /> Orqaga
       </button>
       <h1 className="bp-title"><Building2 size={22} /> Mening filiallarim ({locations.length})</h1>
@@ -41,7 +42,7 @@ export default function BranchesPage() {
             <div className="bp-locations-grid">
               {locs.map((loc) => (
                 <div key={loc._id} className="bp-location-card" onClick={() => navigate(`/location/${loc._id}`)}>
-                  <img src={loc.images?.[0] || '/images/placeholder.jpg'} alt={loc.title} />
+                  <img src={loc.images?.[0] || '/images/zumo-placeholder.svg'} alt={loc.title} />
                   <div className="bp-location-info">
                     <h4>{loc.title}</h4>
                     <p><MapPin size={13} /> {loc.address}</p>

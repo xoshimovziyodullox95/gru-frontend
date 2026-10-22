@@ -2,15 +2,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Inbox, Bell, Activity, LogOut, Landmark, Clock, MessageCircle, Check, X, Loader2 } from 'lucide-react';
-import api from '../services/api';
+import { Inbox, Bell, Activity, LogOut, Landmark, Clock, MessageCircle, Check, X, Loader2, Phone } from 'lucide-react';
+import { getBankApplications, updateBankApplicationStatus } from '../services/orders';
 import '../../styles/bankDashboard.css';
 
 const STATUS_LABELS = {
   new: { label: "Yangi", color: 'cyan' },
-  in_progress: { label: 'Jarayonda', color: 'amber' },
-  approved: { label: 'Tasdiqlandi', color: 'green' },
-  rejected: { label: 'Rad etildi', color: 'red' },
+  in_progress: { label: 'Jarayonda', color: 'blue' },
+  approved: { label: 'Tasdiqlandi', color: 'solid' },
+  rejected: { label: 'Rad etildi', color: 'muted' },
 };
 
 export default function BankDashboard() {
@@ -20,49 +20,39 @@ export default function BankDashboard() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
 
+  const [filter, setFilter] = useState('all');
+
   useEffect(() => {
-    const fetchApplications = async () => {
-      try {
-        const res = await api.get('/notifications');
-        const bankApps = res.data.filter(
-          (n) => n.itemType === 'bank_service' && n.type === 'order'
-        );
-        setApplications(bankApps);
-      } catch (err) {
+    getBankApplications()
+      .then((res) => setApplications(res.data?.applications || []))
+      .catch((err) => {
         console.error('Arizalarni yuklashda xatolik:', err);
         setApplications([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchApplications();
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const newCount = applications.filter((a) => (a.status || 'new') === 'new').length;
+  const newCount = applications.filter((a) => a.status === 'new').length;
   const inProgressCount = applications.filter((a) => a.status === 'in_progress').length;
   const todayCount = applications.filter((a) => {
     const today = new Date().toDateString();
     return new Date(a.createdAt).toDateString() === today;
   }).length;
 
-  const markAsRead = async (id) => {
-    const app = applications.find((a) => a._id === id);
-    if (app?.read) return;
-    try {
-      await api.put(`/notifications/${id}/read`);
-      setApplications((prev) => prev.map((a) => (a._id === id ? { ...a, read: true } : a)));
-    } catch (err) {
-      console.error('Belgilashda xatolik:', err);
-    }
-  };
+  const visible = filter === 'all' ? applications : applications.filter((a) => a.status === filter);
 
   const updateStatus = async (id, status) => {
+    let note;
+    if (status === 'rejected') {
+      note = window.prompt('Rad etish sababi (mijozga ko‘rinadi):', '');
+      if (note === null) return;
+    }
     setUpdatingId(id);
     try {
-      const res = await api.patch(`/notifications/${id}/status`, { status });
-      setApplications((prev) => prev.map((a) => (a._id === id ? res.data : a)));
+      const res = await updateBankApplicationStatus(id, status, note);
+      setApplications((prev) => prev.map((a) => (a._id === id ? res.data.application : a)));
     } catch (err) {
-      console.error('Status o\'zgartirishda xatolik:', err);
+      alert(err.response?.data?.error || 'Holatni o‘zgartirib bo‘lmadi');
     } finally {
       setUpdatingId(null);
     }
@@ -110,38 +100,56 @@ export default function BankDashboard() {
       </div>
 
       <section className="bd-section">
-        <h2>So'nggi arizalar</h2>
+        <div className="bd-section-head">
+          <h2>Arizalar</h2>
+          <div className="bd-filters">
+            {[['all', 'Hammasi'], ['new', 'Yangi'], ['in_progress', 'Jarayonda'], ['approved', 'Tasdiqlangan'], ['rejected', 'Rad etilgan']].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                className={`bd-filter ${filter === key ? 'active' : ''}`}
+                onClick={() => setFilter(key)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
         {loading ? (
           <p className="bd-empty">Yuklanmoqda...</p>
-        ) : applications.length === 0 ? (
+        ) : visible.length === 0 ? (
           <div className="bd-empty">
             <Inbox size={40} />
             <p>Hozircha arizalar yo'q</p>
           </div>
         ) : (
           <div className="bd-applications-list">
-            {applications.map((app) => {
+            {visible.map((app) => {
               const status = app.status || 'new';
               const statusInfo = STATUS_LABELS[status];
+              const client = app.userId || {};
               return (
-                <div
-                  key={app._id}
-                  className={`bd-app-item ${!app.read ? 'unread' : ''}`}
-                  onClick={() => markAsRead(app._id)}
-                >
+                <div key={app._id} className={`bd-app-item ${status === 'new' ? 'unread' : ''}`}>
                   <div className="bd-app-icon">
                     <Landmark size={18} />
                   </div>
                   <div className="bd-app-info">
                     <p className="bd-app-title">
-                      <strong>{app.fromUserId?.fullName || 'Mijoz'}</strong> ariza berdi:{' '}
-                      <span className="bd-app-service">{app.orderInfo?.title}</span>
+                      <strong>{client.fullName || client.full_name || 'Mijoz'}</strong> ariza berdi:{' '}
+                      <span className="bd-app-service">{app.serviceName}</span>
                     </p>
                     <div className="bd-app-meta">
-                      {app.orderInfo?.provider && <span>{app.orderInfo.provider}</span>}
-                      {app.fromUserId?.email && <span>{app.fromUserId.email}</span>}
-                      {app.fromUserId?.phone && <span>{app.fromUserId.phone}</span>}
+                      {app.provider && <span>{app.provider}</span>}
+                      {client.email && <span>{client.email}</span>}
+                      {(app.phone || client.phone) && (
+                        <a href={`tel:${app.phone || client.phone}`}><Phone size={12} /> {app.phone || client.phone}</a>
+                      )}
                     </div>
+                    {app.comment && <p className="bd-app-comment">“{app.comment}”</p>}
+                    {app.staffNote && <p className="bd-app-note">Izoh: {app.staffNote}</p>}
+                    {app.handledBy && (
+                      <p className="bd-app-handled">Ko‘rib chiqdi: {app.handledBy.fullName || app.handledBy.full_name}</p>
+                    )}
 
                     <div className="bd-app-actions" onClick={(e) => e.stopPropagation()}>
                       <span className={`bd-status-badge bd-status-${statusInfo.color}`}>
@@ -151,12 +159,12 @@ export default function BankDashboard() {
                       <button
                         type="button"
                         className="bd-chat-btn"
-                        onClick={() => openChat(app.fromUserId)}
+                        onClick={() => openChat(client)}
                       >
                         <MessageCircle size={14} /> Chatga o'tish
                       </button>
 
-                      {status !== 'in_progress' && status !== 'approved' && status !== 'rejected' && (
+                      {status === 'new' && (
                         <button
                           type="button"
                           className="bd-action-btn bd-action-progress"
@@ -165,6 +173,16 @@ export default function BankDashboard() {
                         >
                           {updatingId === app._id ? <Loader2 size={13} className="bd-spin" /> : null}
                           Jarayonga olish
+                        </button>
+                      )}
+                      {status === 'new' && (
+                        <button
+                          type="button"
+                          className="bd-action-btn bd-action-reject"
+                          disabled={updatingId === app._id}
+                          onClick={() => updateStatus(app._id, 'rejected')}
+                        >
+                          <X size={13} /> Rad etish
                         </button>
                       )}
                       {status === 'in_progress' && (
@@ -194,7 +212,7 @@ export default function BankDashboard() {
                     {new Date(app.createdAt).toLocaleDateString()}{' '}
                     {new Date(app.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
-                  {!app.read && <span className="bd-app-dot" />}
+                  {status === 'new' && <span className="bd-app-dot" />}
                 </div>
               );
             })}

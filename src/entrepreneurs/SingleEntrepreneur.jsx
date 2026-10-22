@@ -1,9 +1,11 @@
-const SingleEntrepreneurCard = ({ entrepreneur }) => {
+import { Quote } from 'lucide-react';
+
+export default function SingleEntrepreneurCard({ entrepreneur }) {
   if (!entrepreneur) return null;
   return (
     <div className="single-entrepreneur-card">
       <div className="entrepreneur-image-square">
-        <img src={entrepreneur.image} alt={entrepreneur.name} onError={(e) => e.target.src = '/images/placeholder.jpg'} />
+        <img src={entrepreneur.image} alt={entrepreneur.name} onError={(e) => e.target.src = '/images/zumo-placeholder.svg'} />
       </div>
       <div className="entrepreneur-details">
         <h3 className="entrepreneur-name">{entrepreneur.name}</h3>
@@ -17,4 +19,4 @@ const SingleEntrepreneurCard = ({ entrepreneur }) => {
       </div>
     </div>
   );
-};
+}

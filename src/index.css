@@ -5,32 +5,35 @@
 /* ===== CSS VARIABLES ===== */
 :root {
   --bg: #0A1628;
-  --card: #0F2040;
-  --border: #1A3A6A;
+  --card: #122A4F;
+  --border: #23508A;
   --text: #E8F4FD;
   --textMuted: #8AB4D0;
   --cyan: #00D4FF;
-  --shadow: rgba(0, 212, 255, 0.1);
+  --cyan-rgb: 0, 212, 255;
+  --shadow: rgba(0, 0, 0, 0.35);
 }
 
 html:not(.dark) {
   --bg: #F0F6FC;
   --card: #FFFFFF;
-  --border: #1A3A6A;
+  --border: #D6E1EC;
   --text: #0A1628;
   --textMuted: #4A6A8A;
   --cyan: #00AACC;
+  --cyan-rgb: 0, 170, 204;
   --shadow: rgba(10, 22, 40, 0.08);
 }
 
 html.dark {
   --bg: #0A1628;
-  --card: #0F2040;
-  --border: #1A3A6A;
+  --card: #122A4F;
+  --border: #23508A;
   --text: #E8F4FD;
   --textMuted: #8AB4D0;
   --cyan: #00D4FF;
-  --shadow: rgba(0, 212, 255, 0.1);
+  --cyan-rgb: 0, 212, 255;
+  --shadow: rgba(0, 0, 0, 0.35);
 }
 
 /* ===== GLOBAL ===== */

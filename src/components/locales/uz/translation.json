@@ -11,13 +11,19 @@
     "profile": "Profil",
     "add": "Qo'shish",
     "profileAlt": "Avatar",
-    "menu": "Menyu"
+    "menu": "Menyu",
+    "myOrders": "Buyurtmalarim"
   },
   "tooltips": {
-    "cart": "Savatga o'tish",
+    "cart": "Savat",
     "wallet": "Hamyon",
     "messages": "Xabarlar",
-    "notifications": "Bildirishnomalar"
+    "notifications": "Bildirishnomalar",
+    "dashboard": "Boshqaruv paneli",
+    "theme": "Mavzu",
+    "profile": "Profil",
+    "addListing": "E'lon qo'shish",
+    "addVideo": "Video qo'shish"
   },
   "wallet": {
     "soon": "Hamyon — tez kunda!"
@@ -32,7 +38,7 @@
     "totalSum": "Jami summa",
     "checkout": "Buyurtma berish"
   },
-     "common": {
+  "common": {
     "loading": "Yuklanmoqda...",
     "error": "Xatolik yuz berdi",
     "save": "Saqlash",
@@ -40,20 +46,67 @@
     "delete": "O'chirish",
     "edit": "Tahrirlash",
     "back": "Orqaga",
-        "locationsTitle": "Joylar"
-        
-  
+    "locationsTitle": "Joylar",
+    "searchPlaceholder": "Nima qidiryapsiz?",
+    "suggestions": "Mos natijalar",
+    "recentSearches": "Oxirgi qidiruvlar",
+    "clearAll": "Tozalash",
+    "noRecentSearches": "Hozircha qidiruvlar yo‘q",
+    "close": "Yopish",
+    "previous": "Oldingilari",
+    "next": "Keyingilari",
+    "untitled": "E’lon",
+    "scrollTop": "Tepaga qaytish",
+    "share": "Do‘stga yuborish"
   },
   "home": {
-    
-    "categoriesTitle": "Yo'nalishlar",
-    "categoriesSub": "180+ biznes turini kashf eting",
-    "showAll": "Barcha yo'nalishlar",
-    "showLess": "Kamroq ko'rsat",
-    "ctaAi": "G.R.U AI",
-    "ctaMarketplace": "Marketplace",
-    "ctaBusiness": "Biznesingiz gru bilan",
-    "premiumBadge": "Premium a'zo"
+    "heroPhrases": [
+      "ZUMO har qayerda",
+      "ZUMO siz uchun",
+      "ZUMO bilan oson",
+      "ZUMO kelajak sari",
+      "ZUMO yangi imkoniyat",
+      "ZUMO sizning hamkoringiz"
+    ],
+    "categoriesTitle": "Kategoriyalar",
+    "categoriesSub": "Sizga kerakli yo‘nalishni tanlang",
+    "ctaAi": "AI yordamchi",
+    "ctaMarketplace": "Bozor",
+    "ctaBusiness": "Biznes",
+    "premiumBadge": "Premium aʼzo",
+    "showLess": "Kamroq",
+    "showAll": "Hammasi",
+    "marketplaceTitle": "Bozor",
+    "marketplaceSub": "Kerakli bo'limni tanlang",
+    "marketplaceLocations": "Joylar",
+    "marketplaceProducts": "Tovarlar",
+    "marketplaceServices": "Xizmatlar",
+    "marketplaceBank": "Bank xizmatlari",
+    "marketplaceBankAlt": "Bank xizmatlari",
+    "hub": {
+      "label": "ZUMO xizmatlari",
+      "market": "Bozor",
+      "marketSub": "Tovar, joy va xizmatlar",
+      "request": "Usta chaqirish",
+      "requestSub": "So‘rov yuboring — takliflar keladi",
+      "locations": "Joylar",
+      "products": "Texnika",
+      "services": "Xizmatlar",
+      "bank": "Bank",
+      "directions": "Yo‘nalishlar",
+      "erp": "Boshqaruv",
+      "ai": "AI yordamchi",
+      "lessons": "Darslar"
+    },
+    "providerBanner": {
+      "providerTitle": "Sizda hunar bormi?",
+      "providerSubtitle": "Mijozlar sizni topsin!",
+      "sellerTitle": "Tovaringiz bormi?",
+      "sellerSubtitle": "Biz bilan soting",
+      "businessTitle": "Biznesingiz bormi?",
+      "businessSubtitle": "Uni rivojlantiring"
+    },
+    "seeMore": "Yana ko‘rish"
   },
   "categories": {
     "Agro": "Qishloq xo‘jaligi",
@@ -65,41 +118,29 @@
     "Ko'ngilochar": "Koʻngilochar",
     "Yangi biznes": "Yangi biznes"
   },
-   "marketplace": {
-    "loading": "Yuklanmoqda...",
-    "empty": "Hozircha eʼlonlar mavjud emas",
-    "title": "Bozor",
-    "subShowAll": "Barcha eʼlon",
-    "subLatest": "Eng so‘nggi eʼlonlar",
-    "showLess": "Kamroq ko‘rsatish",
-    "showAll": "Barcha eʼlonlarni ko‘rish",
-    "reels": {
-      "location": "📍 Joy",
-      "equipment": "🔧 Texnika",
-      "service": "📦 Xizmat",
-      "post": "Video",
-    "trending": "Ommabop"
-    }
-  },
-
   "marketplace": {
-    "bank": {
-      "title": "Bank xizmatlari",
-      "individual": "Jismoniy shaxs",
-      "legal": "Yuridik shaxs",
-      "empty": "Bu bo'limda hozircha xizmat yo'q",
-      "scrollTop": "Yuqoriga",
-      "categories": {
-        "credit": "Kreditlar",
-        "cards": "Kartalar",
-        "deposits": "Depozitlar",
-        "pko": "Naqd pul / PKO",
-        "moneyTransfers": "Pul o‘tkazmalari",
-        "qrPayment": "QR to‘lovlar"
-      }
+    "catalog": {
+      "notFound": "Katalog topilmadi",
+      "empty": "Bu bo‘limda hozircha mahsulot yo‘q",
+      "all": "Barchasi"
+    },
+    "types": {
+      "equipment": "Tovar",
+      "location": "Joy",
+      "service": "Xizmat"
+    },
+    "reels": {
+      "post": "Post"
+    },
+    "products": {
+      "catalogTitle": "Tovar turlari",
+      "empty": "Hozircha tovar yo‘q"
+    },
+    "services": {
+      "catsTitle": "Xizmat yo‘nalishlari"
     }
   },
-   "marketplaceReels": {
+  "marketplaceReels": {
     "title": "Videolar",
     "count": "{{count}} ta",
     "comments": "Kommentlar",
@@ -125,7 +166,12 @@
       "addListing": "E'lon qo'shish",
       "profile": "Shaxsiy kabinet",
       "terms": "Foydalanish shartlari",
-      "privacy": "Maxfiylik siyosati"
+      "privacy": "Maxfiylik siyosati",
+      "directions": "Biznes yo‘nalishlari",
+      "bank": "Bank xizmatlari",
+      "ai": "AI yordamchi",
+      "request": "Usta chaqirish",
+      "orders": "Buyurtmalarim"
     },
     "apps": {
       "download": "Yuklab oling",
@@ -145,11 +191,11 @@
       "thankYou": "Rahmat! ✓"
     },
     "copyright": {
-      "text": "© {year} G.R.U Corporation — Barcha huquqlar himoyalangan",
+      "text": "© {year} ZUMO Corporation — Barcha huquqlar himoyalangan",
       "madeWith": "Sevgi bilan O‘zbekistonda yaratilgan"
     }
   },
-    "categoryPage": {
+  "categoryPage": {
     "back": "Orqaga",
     "description": "Quyidagi kategoriyalardan birini tanlang",
     "searchPlaceholder": "Qidirish...",
@@ -159,7 +205,6 @@
     "invest": "${min} – ${max}"
   },
   "categoriesLevel2": {
-
     "Issiqxona": "Issiqxona",
     "Intensiv bog'": "Intensiv bog'",
     "Molxona": "Molxona",
@@ -221,26 +266,26 @@
     "Massajxonasi": "Massajxonasi",
     "Xususiy tez yordam stansiyasi": "Xususiy tez yordam stansiyasi",
     "Qurilish va ta'mirlash kompaniyasi": "Qurilish va ta'mirlash kompaniyasi",
-"Santexnika ustaxonasi": "Santexnika ustaxonasi",
-"Kreativ / SMM agentlik": "Kreativ / SMM agentlik",
-"Maishiy texnika ta'mirlash ustaxonasi": "Maishiy texnika ta'mirlash ustaxonasi",
-"Avtoservis / Detailing markazi": "Avtoservis / Detailing markazi",
-"Kimyoviy tozalash (Ximchistka)": "Kimyoviy tozalash (Ximchistka)",
-"Klining (Cleaning) kompaniyasi": "Klining (Cleaning) kompaniyasi",
-"Go'zallik saloni / Barbershop": "Go'zallik saloni / Barbershop",
-"Yuk tashish va logistika kompaniyasi": "Yuk tashish va logistika kompaniyasi",
-"IT va dasturlash studiyasi": "IT va dasturlash studiyasi",
-"Buxgalteriya va audit ofisi": "Buxgalteriya va audit ofisi",
-"Yuridik / Advokatlik firmasi": "Yuridik / Advokatlik firmasi",
-"Tarjima va viza markazi": "Tarjima va viza markazi",
-"Rieltorlik agentligi": "Rieltorlik agentligi",
-"Dezinfeksiya xizmati markazi": "Dezinfeksiya xizmati markazi",
-"Poligrafiya va bosmaxona": "Poligrafiya va bosmaxona",
-"Xavfsizlik tizimlari do'koni": "Xavfsizlik tizimlari do'koni",
-"Vetklinika / Gruming salon": "Vetklinika / Gruming salon",
-"Event-agentlik": "Event-agentlik",
-"Kadrlar agentligi (HR)": "Kadrlar agentligi (HR)",
-"Xususiy bog'cha": "Xususiy bog'cha",
+    "Santexnika ustaxonasi": "Santexnika ustaxonasi",
+    "Kreativ / SMM agentlik": "Kreativ / SMM agentlik",
+    "Maishiy texnika ta'mirlash ustaxonasi": "Maishiy texnika ta'mirlash ustaxonasi",
+    "Avtoservis / Detailing markazi": "Avtoservis / Detailing markazi",
+    "Kimyoviy tozalash (Ximchistka)": "Kimyoviy tozalash (Ximchistka)",
+    "Klining (Cleaning) kompaniyasi": "Klining (Cleaning) kompaniyasi",
+    "Go'zallik saloni / Barbershop": "Go'zallik saloni / Barbershop",
+    "Yuk tashish va logistika kompaniyasi": "Yuk tashish va logistika kompaniyasi",
+    "IT va dasturlash studiyasi": "IT va dasturlash studiyasi",
+    "Buxgalteriya va audit ofisi": "Buxgalteriya va audit ofisi",
+    "Yuridik / Advokatlik firmasi": "Yuridik / Advokatlik firmasi",
+    "Tarjima va viza markazi": "Tarjima va viza markazi",
+    "Rieltorlik agentligi": "Rieltorlik agentligi",
+    "Dezinfeksiya xizmati markazi": "Dezinfeksiya xizmati markazi",
+    "Poligrafiya va bosmaxona": "Poligrafiya va bosmaxona",
+    "Xavfsizlik tizimlari do'koni": "Xavfsizlik tizimlari do'koni",
+    "Vetklinika / Gruming salon": "Vetklinika / Gruming salon",
+    "Event-agentlik": "Event-agentlik",
+    "Kadrlar agentligi (HR)": "Kadrlar agentligi (HR)",
+    "Xususiy bog'cha": "Xususiy bog'cha",
     "Xususiy maktab": "Xususiy maktab",
     "Tillar o'quv markazi": "Tillar o'quv markazi",
     "IT-akademiya": "IT-akademiya",
@@ -280,7 +325,7 @@
     "Suvenirlar va milliy hunarmandchilik do'koni": "Suvenirlar va milliy hunarmandchilik do'koni",
     "Optika do'koni": "Optika do'koni",
     "Mato va pardalar do'koni": "Mato va pardalar do'koni",
-     "Bolalar o'yin maydonchasi (Playzone)": "Bolalar o'yin maydonchasi (Playzone)",
+    "Bolalar o'yin maydonchasi (Playzone)": "Bolalar o'yin maydonchasi (Playzone)",
     "Kinoteatr": "Kinoteatr",
     "VR va PlayStation klubi": "VR va PlayStation klubi",
     "Akvapark / Suzish havzasi": "Akvapark / Suzish havzasi",
@@ -300,7 +345,7 @@
     "SPA va sauna majmuasi": "SPA va sauna majmuasi",
     "Tir (Otishma galereyasi)": "Tir (Otishma galereyasi)",
     "Ilmiy muzey va ko'rgazma zali": "Ilmiy muzey va ko'rgazma zali",
-     "Startap inkubatori": "Startap inkubatori",
+    "Startap inkubatori": "Startap inkubatori",
     "AI va Machine Learning studiyasi": "AI va Machine Learning studiyasi",
     "Blokcheyn va kripto markazi": "Blokcheyn va kripto markazi",
     "E-commerce va dropshipping platformasi": "E-commerce va dropshipping platformasi",
@@ -321,14 +366,14 @@
     "Kovorking va kreativ makon (Coworking)": "Kovorking va kreativ makon (Coworking)",
     "Onlayn psixologik yordam markazi": "Onlayn psixologik yordam markazi"
   },
-   "landing": {
+  "landing": {
     "heroPhrases": [
-      "G.R.U har qayerda",
-      "G.R.U siz uchun",
-      "G.R.U bilan oson",
-      "G.R.U kelajak sari",
-      "G.R.U yangi imkoniyat",
-      "G.R.U sizning hamkoringiz"
+      "ZUMO har qayerda",
+      "ZUMO siz uchun",
+      "ZUMO bilan oson",
+      "ZUMO elajak sari",
+      "ZUMO yangi imkoniyat",
+      "ZUMO sizning hamkoringiz"
     ],
     "register": "Ro'yxatdan o'tish",
     "login": "Kirish",
@@ -368,7 +413,7 @@
       "save": "Saqlash",
       "cancel": "Bekor qilish"
     },
-     "businessDashboard": {
+    "businessDashboard": {
       "title": "Business statistics",
       "locations": "Locations",
       "equipment": "Equipment",
@@ -376,7 +421,7 @@
       "views": "Views",
       "details": "More details"
     },
-    "bioPlaceholder": "Salom! Men GRU da o'z e'lonlarimni boshqaraman.",
+    "bioPlaceholder": "Salom! Men ZUMO da o'z e'lonlarimni boshqaraman.",
     "avatarUpload": "Avatar yuklash",
     "activity": {
       "loading": "Faoliyatlar yuklanmoqda...",
@@ -404,7 +449,10 @@
     },
     "settings": {
       "title": "Sozlamalar"
-    }
+    },
+    "roleCompany": "Kompaniya",
+    "roleSeller": "Sotuvchi",
+    "becomeProvider": "Xizmat ko‘rsatuvchi bo‘lish"
   },
   "settings": {
     "title": "Sozlamalar",
@@ -438,6 +486,9 @@
     "interfaceLanguage": "Til",
     "interfaceTheme": "Ko'rinish rejimi",
     "interfaceThemeLabel": "Yorug' / Qorong'i",
+    "helpAndPolicies": "Yordam va qoidalar",
+    "notifOrders": "Buyurtmalar",
+    "notifAds": "Obunachilardan reklama",
     "langUz": "O'zbek",
     "langRu": "Русский",
     "langEn": "English",
@@ -446,7 +497,7 @@
     "copy": "Nusxalash",
     "copied": "Nusxalandi"
   },
-    "location": {
+  "location": {
     "loading": "Yuklanmoqda...",
     "error": "Xatolik",
     "notFound": "Ma'lumot topilmadi",
@@ -481,7 +532,7 @@
     "creativeReasonTitle": "Nega aynan bu yerda biznes ochish kerak?",
     "creativeReasonEmpty": "Bu ma'lumot hali to'ldirilmagan.",
     "creativeReasonPremium": "Premium xizmat sifatida biz tahlil tayyorlaymiz",
-    "creativeReasonAdmin": "GRU ekspertlari tomonidan tayyorlangan",
+    "creativeReasonAdmin": "ZUMO ekspertlari tomonidan tayyorlangan",
     "competition": "Raqobat:",
     "metaSqm": "m²",
     "metaFootTraffic": "ko'rish",
@@ -491,10 +542,11 @@
     "detailPower": "220V rozetkalar",
     "detailVentilation": "Ventilyatsiya",
     "statusScreenError": "Xatolik",
-    "views": "ko'rish"
+    "views": "ko'rish",
+    "viewFull": "Kattalashtirib ko‘rish",
+    "uploadMedia": "Rasm yoki video yuklash"
   },
-  
-    "calculator": {
+  "calculator": {
     "title": "Kalkulyator",
     "empty": "Hech narsa tanlanmagan",
     "total": "Umumiy summa:",
@@ -502,7 +554,7 @@
     "addAll": "+ Barcha texnikalarni tanlash",
     "orderPlaced": "Buyurtma qabul qilindi!"
   },
-    "equipment": {
+  "equipment": {
     "loading": "Yuklanmoqda...",
     "error": "Xatolik",
     "notFound": "Maʼlumot topilmadi",
@@ -556,36 +608,38 @@
     "unitMonth": "oy",
     "unitCm": "sm",
     "unitKg": "kg",
-    "unitL": "l"
+    "unitL": "l",
+    "viewFull": "Kattalashtirib ko‘rish",
+    "inCart": "Savatda",
+    "addToCart": "Savatga qo‘shish"
   },
-  
-    "serviceProvider": {
-      "back": "Orqaga",
-      "loading": "Yuklanmoqda...",
-      "error": "Xatolik yuz berdi",
-      "notFound": "Xizmat topilmadi",
-      "loadError": "Ma'lumotlarni yuklashda xatolik",
-      "about": "Xizmat haqida",
-      "defaultDescription": "Bu xizmat haqida ma'lumot kiritilmagan",
-      "speciality": "Mutaxassislik",
-      "priceRange": "Narx oralig'i",
-      "contactTitle": "Bog'lanish",
-      "showPhone": "Telefon raqamni ko'rsatish",
-      "chatWithOwner": "Egasi bilan yozishish",
-      "otherServices": "{{company}}ning boshqa xizmatlari",
-      "apply": "To'g'ridan-to'g'ri ariza berish",
-      "applySuccess": "Ariza yuborildi!",
-      "applyError": "Xatolik yuz berdi",
-      "addToCart": "Savatga qo'shish",
-      "inCart": "Savatda",
-      "noOwnerInfo": "Bu xizmat egasi haqida ma'lumot yo'q",
-      "badgeBusiness": "Korxona",
-      "badgeIndividual": "Shaxsiy",
-      "badgeTop": "Top",
-      "badgeVerified": "Tasdiqlangan",
-      "owner": "Xizmat egasi",
-      "fullName": "Ism sharif"
-    },  
+  "serviceProvider": {
+    "back": "Orqaga",
+    "loading": "Yuklanmoqda...",
+    "error": "Xatolik yuz berdi",
+    "notFound": "Xizmat topilmadi",
+    "loadError": "Ma'lumotlarni yuklashda xatolik",
+    "about": "Xizmat haqida",
+    "defaultDescription": "Bu xizmat haqida ma'lumot kiritilmagan",
+    "speciality": "Mutaxassislik",
+    "priceRange": "Narx oralig'i",
+    "contactTitle": "Bog'lanish",
+    "showPhone": "Telefon raqamni ko'rsatish",
+    "chatWithOwner": "Egasi bilan yozishish",
+    "otherServices": "{{company}}ning boshqa xizmatlari",
+    "apply": "To'g'ridan-to'g'ri ariza berish",
+    "applySuccess": "Ariza yuborildi!",
+    "applyError": "Xatolik yuz berdi",
+    "addToCart": "Savatga qo'shish",
+    "inCart": "Savatda",
+    "noOwnerInfo": "Bu xizmat egasi haqida ma'lumot yo'q",
+    "badgeBusiness": "Korxona",
+    "badgeIndividual": "Shaxsiy",
+    "badgeTop": "Top",
+    "badgeVerified": "Tasdiqlangan",
+    "owner": "Xizmat egasi",
+    "fullName": "Ism sharif"
+  },
   "universalCard": {
     "favAdd": "Sevimlilarga qo‘shish",
     "favRemove": "Sevimlilardan olib tashlash",
@@ -595,8 +649,7 @@
     "details": "Batafsil",
     "noImage": "placeholder"
   },
- 
-    "addListingChoice": {
+  "addListingChoice": {
     "title": "Yangi e’lon qo‘shish",
     "subtitle": "Uch qadamda e’loningizni to‘g‘ri bo‘limga joylang",
     "back": "Orqaga qaytish",
@@ -635,8 +688,7 @@
       "empty": "Hech narsa topilmadi"
     }
   },
-
-   "addListing": {
+  "addListing": {
     "title": "E’lon ma’lumotlari",
     "subtitle": "Quyidagi maydonlarni to‘ldiring va e’loningizni joylashtiring",
     "back": "Orqaga",
@@ -712,7 +764,8 @@
       "descriptionPlaceholder": "Joy haqida batafsil",
       "address": "Manzil matni",
       "addressPlaceholder": "Xaritadan tanlanganda avtomatik to'ladi",
-      "addressLabel": "Manzil *"
+      "addressLabel": "Manzil *",
+      "media": "Rasmlar va videolar"
     },
     "sections": {
       "locationDetails": "Joy haqida",
@@ -854,7 +907,7 @@
       "ml": "ml"
     }
   },
-   "addService": {
+  "addService": {
     "title": "Yangi xizmat qo'shish",
     "back": "Orqaga qaytish",
     "submit": "Xizmatni qo'shish",
@@ -895,30 +948,34 @@
     "tagsLabel": "Tezkor xizmat teglari (ixtiyoriy, bir nechtasini tanlash mumkin)"
   },
   "services": {
-    "construction": "Qurilish va ta'mirlash",
-    "plumbing": "Santexnika xizmatlari",
+    "catsTitle": "Xizmat turini tanlang",
+    "construction": "Qurilish va ta’mirlash",
+    "plumbing": "Santexnika",
     "smm": "SMM va marketing",
-    "supply": "Jihozlar va ta'minot",
-    "event": "Event tashkil qilish",
-    "qrPayment": "QR to'lov",
+    "supply": "Jihozlar ta’minoti",
+    "event": "Tadbirlar tashkil etish",
+    "qrPayment": "QR to‘lov",
     "pko": "PKO",
     "credit": "Kredit",
-    "installment": "Rassrochka",
+    "installment": "Muddatli to‘lov",
     "accounting": "Buxgalteriya",
     "website": "Sayt yaratish",
     "internet": "Internet",
-    "deposits": "Vkladlar (Depozit)",
+    "deposits": "Depozitlar",
     "cards": "Kartalar",
-    "moneyTransfers": "Pul o'tkazmalari"
+    "moneyTransfers": "Pul o‘tkazmalari",
+    "repair": "Qurilish va santexnika",
+    "products": "Mahsulotlar",
+    "bankServices": "Bank xizmatlari"
   },
-    "aiAssistant": {
-    "title": "G.R.U AI",
+  "aiAssistant": {
+    "title": "ZUMO AI",
     "backHome": "Bosh sahifa",
     "newChat": "Yangi chat",
     "loadingChats": "Yuklanmoqda...",
     "noChats": "Hali chatlar yo'q",
     "newChatTitle": "Yangi chat",
-    "placeholder": "G.R.U AI'dan so'rang...",
+    "placeholder": "ZUMO AI'dan so'rang...",
     "welcomeTitle": "Xush kelibsiz{{name}}!",
     "welcomeSub": "Sizga qanday yordam bera olaman?",
     "errorMessage": "Kechirasiz, xatolik yuz berdi. Qayta urinib ko'ring.",
@@ -927,12 +984,11 @@
     "accountName": "Foydalanuvchi",
     "loading": "Yuklanmoqda...",
     "settings": "Sozlamalar",
-    "brand": "G.R.U",
+    "brand": "ZUMO",
     "brandSub": "AI",
     "sidebarHint": "Hali chatlar yo'q"
   },
   "marketplacePage": {
-    
     "back": "Bosh sahifa",
     "title": "Barcha e'lonlar",
     "searchPlaceholder": "Joy, texnika yoki xizmat qidirish...",
@@ -951,16 +1007,19 @@
       "typeService": "Xizmatlar",
       "direction": "Yo'nalish",
       "serviceTags": "Xizmat teglari"
-    }
+    },
+    "noResults": "Mos kategoriya yoki e’lon topilmadi",
+    "search": "Qidirish"
   },
-   "marketplaceFilters": {
+  "marketplaceFilters": {
     "types": "Turi",
     "typeLocation": "Joylar",
     "typeEquipment": "Tovarlar",
     "typeService": "Xizmatlar",
     "direction": "Yo'nalish",
     "serviceTags": "Xizmat turlari",
-    "clear": "Filtrlarni olib tashlash"
+    "clear": "Filtrlarni olib tashlash",
+    "bankServices": "Bank xizmatlari"
   },
   "servicesSlugs": {
     "credit": "kredit",
@@ -979,8 +1038,8 @@
     "website": "sayt-yaratish",
     "internet": "internet"
   },
-   "cartPage": {
-     "emptyTitle": "Savat bo'sh",
+  "cartPage": {
+    "emptyTitle": "Savat bo'sh",
     "emptyDesc": "Hozircha savatingizda hech qanday mahsulot yo‘q. Bozorni ko‘rib chiqing!",
     "backToShop": "Bozorga qaytish",
     "backBtn": "Orqaga",
@@ -1003,7 +1062,7 @@
     "bankSuccess": "Arizangiz bank xodimiga yuborildi! Tez orada siz bilan bog‘lanadi.",
     "submitting": "Yuborilmoqda..."
   },
-   "chat": {
+  "chat": {
     "loading": "Yuklanmoqda...",
     "sidebarTitle": "Suhbatlar",
     "searchPlaceholder": "Foydalanuvchi qidirish...",
@@ -1057,7 +1116,7 @@
       "sent": "Yuborilgan"
     }
   },
-    "notifications": {
+  "notifications": {
     "title": "Bildirishnomalar",
     "back": "Orqaga",
     "markAllRead": "Hammasini o'qilgan qilish",
@@ -1071,142 +1130,201 @@
     "orderDetails": " {{quantity}} ta",
     "newNotification": "sizga yangi bildirishnoma yubordi"
   },
-    "addLocation.fields.region": "Viloyat",
-    "addLocation.fields.regionPlaceholder": "Tanlang",
-    
-  "tooltips": {
-    "cart": "Savat",
-    "wallet": "Hamyon",
-    "messages": "Xabarlar",
-    "notifications": "Bildirishnomalar",
-    "dashboard": "Boshqaruv paneli",
-    "theme": "Mavzu",
-    "profile": "Profil",
-    "addListing": "E'lon qo'shish",
-    "addVideo": "Video qo'shish"
-  },"catalogs": {
+  "addLocation.fields.region": "Viloyat",
+  "addLocation.fields.regionPlaceholder": "Tanlang",
+  "catalogs": {
     "dokonlar": {
       "label": "Do'konlar",
       "sabzavotVaMevalar": "Sabzavot va mevalar",
-      "sabzavotVaMevalar.subs": ["Sabzavotlar", "Mevalar", "Ko'katlar", "Quruq mevalar va yong'oqlar"],
+      "sabzavotVaMevalar.subs": [
+        "Sabzavotlar",
+        "Mevalar",
+        "Ko'katlar",
+        "Quruq mevalar va yong'oqlar"
+      ],
       "qahvaVaTayyorOvqat": "Qahva va tayyor ovqat",
-      "qahvaVaTayyorOvqat.subs": ["Qahva va choy", "Tayyor taomlar", "Salatlar"],
+      "qahvaVaTayyorOvqat.subs": [
+        "Qahva va choy",
+        "Tayyor taomlar",
+        "Salatlar"
+      ],
       "sutMahsulotlari": "Sut mahsulotlari",
-      "sutMahsulotlari.subs": ["Sut", "Qatiq / Kefir", "Tvorog", "Pishloq", "Sariyog'"],
+      "sutMahsulotlari.subs": [
+        "Sut",
+        "Qatiq / Kefir",
+        "Tvorog",
+        "Pishloq",
+        "Sariyog'"
+      ],
       "goshtParrandaVaBaliq": "Go'sht, parranda va baliq",
-      "goshtParrandaVaBaliq.subs": ["Mol go'shti", "Tovuq go'shti", "Qo'y go'shti", "Baliq", "Kolbasa va sosiska"],
+      "goshtParrandaVaBaliq.subs": [
+        "Mol go'shti",
+        "Tovuq go'shti",
+        "Qo'y go'shti",
+        "Baliq",
+        "Kolbasa va sosiska"
+      ],
       "suvVaIchimliklar": "Suv va ichimliklar",
-      "suvVaIchimliklar.subs": ["Suv", "Sharbatlar va kompotlar", "Sovuq choy va qahva", "Gazlangan ichimliklar", "Energetik ichimliklar va alternativ bar"],
+      "suvVaIchimliklar.subs": [
+        "Suv",
+        "Sharbatlar va kompotlar",
+        "Sovuq choy va qahva",
+        "Gazlangan ichimliklar",
+        "Energetik ichimliklar va alternativ bar"
+      ],
       "shirinliklarVaDesertlar": "Shirinliklar va desertlar",
-      "shirinliklarVaDesertlar.subs": ["Shokolad", "Pechene va vaflya", "Tort va pirojnoe", "Muzqaymoq"],
+      "shirinliklarVaDesertlar.subs": [
+        "Shokolad",
+        "Pechene va vaflya",
+        "Tort va pirojnoe",
+        "Muzqaymoq"
+      ],
       "bakaleya": "Bakaleya",
-      "bakaleya.subs": ["Yormalar (guruch, grechka)", "Un va makaron", "O'simlik yog'i", "Tuz, shakar, ziravorlar", "Konservalar"],
+      "bakaleya.subs": [
+        "Yormalar (guruch, grechka)",
+        "Un va makaron",
+        "O'simlik yog'i",
+        "Tuz, shakar, ziravorlar",
+        "Konservalar"
+      ],
       "novvoyxona": "Novvoyxona",
-      "novvoyxona.subs": ["Non", "Bulochka", "Pirog"],
+      "novvoyxona.subs": [
+        "Non",
+        "Bulochka",
+        "Pirog"
+      ],
       "muzlatilganMahsulotlar": "Muzlatilgan mahsulotlar",
-      "muzlatilganMahsulotlar.subs": ["Muzlatilgan sabzavot/meva", "Yarim tayyor mahsulotlar", "Muzqaymoq"],
+      "muzlatilganMahsulotlar.subs": [
+        "Muzlatilgan sabzavot/meva",
+        "Yarim tayyor mahsulotlar",
+        "Muzqaymoq"
+      ],
       "bolalarVaOnalarUchun": "Bolalar va onalar uchun",
-      "bolalarVaOnalarUchun.subs": ["Bolalar taomi", "Chaqaloq parvarishi"],
+      "bolalarVaOnalarUchun.subs": [
+        "Bolalar taomi",
+        "Chaqaloq parvarishi"
+      ],
       "uyHayvonlariUchun": "Uy hayvonlari uchun",
-      "uyHayvonlariUchun.subs": ["It ovqati", "Mushuk ovqati"],
+      "uyHayvonlariUchun.subs": [
+        "It ovqati",
+        "Mushuk ovqati"
+      ],
       "gozallikVaGigiyena": "Go'zallik va gigiyena",
-      "gozallikVaGigiyena.subs": ["Kosmetika", "Shaxsiy gigiyena"],
+      "gozallikVaGigiyena.subs": [
+        "Kosmetika",
+        "Shaxsiy gigiyena"
+      ],
       "uyUchunTovarlar": "Uy uchun tovarlar",
-      "uyUchunTovarlar.subs": ["Maishiy kimyo", "Idish-tovoq"]
+      "uyUchunTovarlar.subs": [
+        "Maishiy kimyo",
+        "Idish-tovoq"
+      ]
     },
     "restoranKafe": {
       "label": "Restoran/Kafe",
       "xomashyo": "Xomashyo",
-      "xomashyo.subs": ["Go'sht", "Sabzavot", "Ziravorlar", "Un mahsulotlari"],
+      "xomashyo.subs": [
+        "Go'sht",
+        "Sabzavot",
+        "Ziravorlar",
+        "Un mahsulotlari"
+      ],
       "ichimliklar": "Ichimliklar",
-      "ichimliklar.subs": ["Gazlangan ichimliklar", "Suv", "Qahva doni", "Choy"],
+      "ichimliklar.subs": [
+        "Gazlangan ichimliklar",
+        "Suv",
+        "Qahva doni",
+        "Choy"
+      ],
       "tayyorMahsulotlar": "Tayyor mahsulotlar",
-      "tayyorMahsulotlar.subs": ["Sous va ketchup", "Konservalangan mahsulotlar"],
+      "tayyorMahsulotlar.subs": [
+        "Sous va ketchup",
+        "Konservalangan mahsulotlar"
+      ],
       "birMartalikIdishlar": "Bir martalik idishlar",
-      "birMartalikIdishlar.subs": ["Stakan", "Salfetka", "Paket"]
+      "birMartalikIdishlar.subs": [
+        "Stakan",
+        "Salfetka",
+        "Paket"
+      ]
     },
     "agro": {
       "label": "Agro",
       "uruglik": "Urug'lik",
-      "uruglik.subs": ["G'alla urug'i", "Sabzavot urug'i", "Ko'chat"],
+      "uruglik.subs": [
+        "G'alla urug'i",
+        "Sabzavot urug'i",
+        "Ko'chat"
+      ],
       "ogitlar": "O'g'itlar",
-      "ogitlar.subs": ["Mineral o'g'it", "Organik o'g'it"],
+      "ogitlar.subs": [
+        "Mineral o'g'it",
+        "Organik o'g'it"
+      ],
       "chorvaOzuqasi": "Chorva ozuqasi",
-      "chorvaOzuqasi.subs": ["Yem-xashak", "Vitamin qo'shimchalar"],
+      "chorvaOzuqasi.subs": [
+        "Yem-xashak",
+        "Vitamin qo'shimchalar"
+      ],
       "veterinariya": "Veterinariya",
-      "veterinariya.subs": ["Dori-darmon", "Vaksina"]
+      "veterinariya.subs": [
+        "Dori-darmon",
+        "Vaksina"
+      ]
     },
     "klinika": {
       "label": "Klinika",
       "tibbiyAsboblar": "Tibbiy asboblar",
-      "tibbiyAsboblar.subs": ["Diagnostika asboblari", "Jarrohlik asboblari"],
+      "tibbiyAsboblar.subs": [
+        "Diagnostika asboblari",
+        "Jarrohlik asboblari"
+      ],
       "doriVositalari": "Dori vositalari",
-      "doriVositalari.subs": ["Antibiotiklar", "Og'riq qoldiruvchilar", "Vitaminlar"],
+      "doriVositalari.subs": [
+        "Antibiotiklar",
+        "Og'riq qoldiruvchilar",
+        "Vitaminlar"
+      ],
       "sarflanadiganMateriallar": "Sarflanadigan materiallar",
-      "sarflanadiganMateriallar.subs": ["Shprits", "Qo'lqop", "Bint"]
+      "sarflanadiganMateriallar.subs": [
+        "Shprits",
+        "Qo'lqop",
+        "Bint"
+      ]
     },
     "kongilochar": {
       "label": "Ko'ngilochar",
       "oyinJihozlari": "O'yin jihozlari",
-      "oyinJihozlari.subs": ["Bolalar attraksioni", "Kompyuter o'yin uskunalari"],
+      "oyinJihozlari.subs": [
+        "Bolalar attraksioni",
+        "Kompyuter o'yin uskunalari"
+      ],
       "ovqatVaIchimlikNuqtasi": "Ovqat va ichimlik nuqtasi",
-      "ovqatVaIchimlikNuqtasi.subs": ["Popkorn", "Muzqaymoq", "Ichimliklar"]
+      "ovqatVaIchimlikNuqtasi.subs": [
+        "Popkorn",
+        "Muzqaymoq",
+        "Ichimliklar"
+      ]
     }
   },
-   "marketplaceHub": {
+  "marketplaceHub": {
     "title": "Bozor",
     "locations": "Joylar",
     "products": "Tovarlar",
     "services": "Xizmatlar",
     "bank": "Bank xizmatlari",
     "loading": "Yuklanmoqda...",
-    "reelsTitle": "Videolar"
+    "reelsTitle": "Videolar",
+    "demoTitle": "Demo video",
+    "demoType": "Video",
+    "demoUser": "Admin"
   },
-  "marketplace": {
-    "reels": {
-      "location": "Joy",
-      "equipment": "Texnika",
-      "service": "Xizmat",
-      "post": "Post"
-    }
-  },
-   "home": {
-    "heroPhrases": [
-      "G.R.U har qayerda",
-      "G.R.U siz uchun",
-      "G.R.U bilan oson",
-      "G.R.U kelajak sari",
-      "G.R.U yangi imkoniyat",
-      "G.R.U sizning hamkoringiz"
-    ],
-    "categoriesTitle": "Kategoriyalar",
-    "categoriesSub": "Sizga kerakli yo‘nalishni tanlang",
-    "ctaAi": "AI yordamchi",
-    "ctaMarketplace": "Bozor",
-    "ctaBusiness": "Biznes",
-    "premiumBadge": "Premium aʼzo",
-    "showLess": "Kamroq",
-    "showAll": "Hammasi",
-    "marketplaceTitle": "Bozor",
-    "marketplaceSub": "Kerakli bo'limni tanlang",
-    "marketplaceLocations": "Joylar",
-    "marketplaceProducts": "Tovarlar",
-    "marketplaceServices": "Xizmatlar",
-    "marketplaceBank": "Bank xizmatlari",
-    "marketplaceBankAlt": "Bank xizmatlari"
-  },
-    "productTypes": {
+  "productTypes": {
     "title": "Tovar turini tanlang",
     "texnika": "Texnika",
     "oziqovqat": "Mahsulot",
     "mebel": "Mebel",
     "boshqa": "Boshqa"
-  },
-  "marketplace": {
-    "products": {
-      "catalogTitle": "Katalogni tanlang",
-      "empty": "Bu turda hozircha tovar yo'q"
-    }
   },
   "catalog": {
     "sabzavotVaMevalar": {
@@ -1320,14 +1438,7 @@
       }
     }
   },
-   "marketplace": {
-    "catalog": {
-      "notFound": "Katalog topilmadi",
-      "empty": "Bu bo‘limda hozircha mahsulot yo‘q",
-      "all": "Barchasi"
-    }
-  },
-    "serviceCats": {
+  "serviceCats": {
     "repair": "Qurilish va santexnika",
     "marketing": "SMM va marketing",
     "event": "Event tashkil qilish",
@@ -1335,24 +1446,22 @@
     "website": "Sayt yaratish",
     "internet": "Internet"
   },
-      "services": {
-      "catsTitle": "Xizmat turini tanlang"
-    },
-     "bank": {
-      "title": "Bank xizmatlari",
-      "individual": "Jismoniy shaxs",
-      "legal": "Yuridik shaxs",
-      "empty": "Bu bo'limda hozircha xizmat yo'q",
-      "scrollTop": "Yuqoriga",
-      "categories": {
-        "credit": "Kreditlar",
-        "cards": "Kartalar",
-        "deposits": "Depozitlar",
-        "pko": "Naqd pul / PKO",
-        "moneyTransfers": "Pul o‘tkazmalari",
-        "qrPayment": "QR to‘lovlar"
-      }},
-        "bankService": {
+  "bank": {
+    "title": "Bank xizmatlari",
+    "individual": "Jismoniy shaxs",
+    "legal": "Yuridik shaxs",
+    "empty": "Bu bo'limda hozircha xizmat yo'q",
+    "scrollTop": "Yuqoriga",
+    "categories": {
+      "credit": "Kreditlar",
+      "cards": "Kartalar",
+      "deposits": "Depozitlar",
+      "pko": "Naqd pul / PKO",
+      "moneyTransfers": "Pul o‘tkazmalari",
+      "qrPayment": "QR to‘lovlar"
+    }
+  },
+  "bankService": {
     "notFound": "Xizmat topilmadi",
     "commission": "Komissiya",
     "setupFee": "O'rnatish",
@@ -1367,9 +1476,10 @@
     "bank": "Bank",
     "requiresAccount": "Biznes hisob raqami talab qilinadi",
     "otherServicesShort": "Boshqa xizmatlar",
-    "otherServices": "{{bank}}ning boshqa xizmatlari"
+    "otherServices": "{{bank}}ning boshqa xizmatlari",
+    "apply": "Ariza yuborish"
   },
-   "level2": {
+  "level2": {
     "Issiqxona": "Issiqxona",
     "Intensiv bog'": "Intensiv bog'",
     "Chorvachilik": "Chorvachilik",
@@ -1680,14 +1790,165 @@
     "Onlayn psixologik yordam xizmati": "Onlayn psixologik yordam xizmati",
     "Birgalikda ishlash uchun ijaraga olinadigan xona": "Birgalikda ishlash uchun ijaraga olinadigan xona",
     "Online psixolog": "Online psixolog"
+  },
+  "mkt": {
+    "categories": "Kategoriya",
+    "searchPlaceholder": "Qidirish...",
+    "all": "Barchasi",
+    "popular": "Mashhur tovarlar",
+    "noProducts": "Hozircha tovarlar yo‘q",
+    "profile": {
+      "payment": "To‘lov usullari",
+      "settings": "Sozlamalar",
+      "help": "Yordam",
+      "about": "Ilova haqida",
+      "logout": "Chiqish"
+    },
+    "tabs": {
+      "home": "Asosiy",
+      "locations": "Joylar",
+      "products": "Tovarlar",
+      "services": "Xizmatlar",
+      "profile": "Profil"
+    },
+    "brand": "Marketplace",
+    "add": "Qo‘shish"
+  },
+  "addVideo": {
+    "errors": {
+      "videoOnly": "Faqat video fayl yuklash mumkin",
+      "fileTooLarge": "Video hajmi 100 MB dan oshmasligi kerak",
+      "videoRequired": "Iltimos, video tanlang",
+      "uploadFailed": "Video yuklashda xatolik yuz berdi"
+    },
+    "title": "Yangi video",
+    "subtitle": "Videongizni ulashing va yangi auditoriyaga yetib boring",
+    "selectVideo": "Video tanlang",
+    "dragDrop": "Videoni shu yerga tashlang yoki tanlash uchun bosing",
+    "removeVideo": "Videoni olib tashlash",
+    "previewTitle": "Video sarlavhasi",
+    "portrait": "9:16 mos",
+    "landscape": "Gorizontal",
+    "detailsTitle": "Video ma’lumotlari",
+    "detailsSubtitle": "Tomoshabinlar uchun qisqacha ma’lumot kiriting",
+    "fields": {
+      "title": "Sarlavha",
+      "titlePlaceholder": "Videongiz haqida qisqacha",
+      "description": "Tavsif",
+      "descriptionPlaceholder": "Batafsil tavsif yozing..."
+    },
+    "portraitTip": "Reels uchun 9:16 vertikal video yaxshiroq ko‘rinadi.",
+    "uploading": "Video yuklanmoqda",
+    "changeVideo": "Almashtirish",
+    "publish": "Joylashtirish",
+    "success": "Video muvaffaqiyatli yuklandi"
+  },
+  "becomeProvider": {
+    "errors": {
+      "incomplete": "Iltimos, barcha majburiy maydonlarni to‘ldiring",
+      "submit": "Ro‘yxatdan o‘tishda xatolik yuz berdi"
+    },
+    "type": {
+      "title": "Siz kim sifatida xizmat ko‘rsatasiz?",
+      "desc": "Keyinchalik bu ma’lumotni o‘zgartirishingiz mumkin",
+      "individual": "Jismoniy shaxs",
+      "individualDesc": "O‘zingiz mustaqil usta yoki mutaxassis sifatida",
+      "company": "Firma",
+      "companyDesc": "Jamoa bilan ishlaydigan kompaniya sifatida"
+    },
+    "direction": {
+      "title": "Yo‘nalishni tanlang",
+      "desc": "Xizmatingiz qaysi sohaga tegishli?",
+      "count": "ta kasb"
+    },
+    "category": {
+      "title": "Kasbingizni tanlang"
+    },
+    "details": {
+      "title": "Xizmat ma’lumotlari",
+      "desc": "Mijozlar sizni shu ma’lumotlar orqali topadi"
+    },
+    "fields": {
+      "company": "Firma nomi",
+      "companyPlaceholder": "Masalan: ZUMO Service MCHJ",
+      "name": "Xizmat nomi",
+      "namePlaceholder": "Masalan: Tez va sifatli santexnika xizmati",
+      "description": "Tavsif",
+      "descriptionPlaceholder": "Tajribangiz, ish sharoitlari va afzalliklaringiz haqida yozing",
+      "phone": "Telefon",
+      "priceRange": "Narx oralig‘i",
+      "pricePlaceholder": "Masalan: 100 000 – 300 000 so‘m",
+      "email": "Email",
+      "website": "Veb-sayt",
+      "media": "Rasm va videolar"
+    },
+    "companyStaffNote": "Firma yaratilgandan keyin xodimlarni qo‘shishingiz mumkin.",
+    "review": {
+      "title": "Media va tasdiqlash",
+      "desc": "Ishlaringizdan rasm yoki video qo‘shing (ixtiyoriy)"
+    },
+    "summary": {
+      "type": "Tur",
+      "direction": "Yo‘nalish",
+      "category": "Kasb"
+    },
+    "eyebrow": "ZUMO Xizmatlar",
+    "title": "Xizmat ko‘rsatuvchi bo‘lish",
+    "subtitle": "Hunaringizni ko‘rsating — mijozlar sizni o‘zlari topsin",
+    "buttons": {
+      "back": "Orqaga",
+      "submitting": "Yuborilmoqda...",
+      "submit": "Ro‘yxatdan o‘tish",
+      "next": "Keyingi"
+    },
+    "success": "Tabriklaymiz! Siz endi xizmat ko‘rsatuvchisiz"
+  },
+  "businessDirections": {
+    "categoriesSubtitle": "Yo‘nalish",
+    "recentTitle": "Oxirgi ko‘rilgan e’lonlar",
+    "adsTitle": "E’lonlar",
+    "loading": "Yuklanmoqda...",
+    "noAds": "Bu yo‘nalishda hozircha e’lon yo‘q"
+  },
+  "filters": {
+    "all": "Hammasi",
+    "locations": "Joylar",
+    "equipment": "Texnika",
+    "food": "Oziq-ovqat",
+    "catalog": "Katalog",
+    "furniture": "Mebel"
+  },
+  "subcategory": {
+    "investment": "Investitsiya",
+    "premiumLock": "Narx va hisob-kitoblar premium aʼzolar uchun",
+    "premiumLink": "Premium boʻlish",
+    "noDataTitle": "Maʼlumot yoʻq",
+    "noDataDesc": "Bu boʻlimda hozircha maʼlumot yoʻq",
+    "locations": "Joylar",
+    "noAddress": "Manzil mavjud emas",
+    "products": "Tovarlar"
+  },
+  "notFound": {
+    "text": "Bu sahifa topilmadi yoki ko‘chirilgan.",
+    "home": "Bosh sahifa"
+  },
+  "physic": {
+    "heroTitle": "ZUMO — har bir inson uchun",
+    "title": "Jismoniy shaxslar uchun yo‘nalishlar",
+    "soon": "Tez orada ishga tushadi",
+    "badge": "Tez kunda"
+  },
+  "comingSoon": {
+    "badge": "Tez kunda",
+    "text": "Bu bo‘lim ustida ishlayapmiz. Ishga tushganda sizga xabar beramiz.",
+    "toMarket": "Hozircha bozorni ko‘ring",
+    "bank": {
+      "title": "Bank mahsulotlari",
+      "text": "Kredit, QR to‘lov, kartalar va boshqa bank xizmatlariga onlayn ariza berish tez orada ishga tushadi."
+    },
+    "directions": {
+      "title": "150+ biznes yo‘nalishi",
+      "text": "Yo‘nalishingizni tanlang — kerakli joy, uskuna va xizmatlarni bitta joyda topasiz. Tez orada ishga tushadi."
+    }
   }
-  
-
-  
-  
 }
-
-
-
-
-

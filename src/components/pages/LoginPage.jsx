@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Eye, EyeOff, LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, LogIn, Mail, Lock, AlertCircle, Smartphone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getReturnPath, clearReturnPath, markAccountCreated } from '../../hooks/useGuestMode';
+import PhoneOtpLoginForm from '../forms/PhoneOtpLoginForm';
+import { getUserProfile } from '../services/user';
 import '../../styles/auth.css';
 
 export default function LoginPage() {
@@ -17,6 +19,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
+  const [loginMethod, setLoginMethod] = useState('email');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,8 +34,23 @@ export default function LoginPage() {
   // 🔥 Agar user allaqachon login bo'lsa (masalan sahifani to'g'ridan-to'g'ri
   //    ochib qo'ygan bo'lsa) — kerakli manzilga yo'naltiramiz
 useEffect(() => {
-  if (user) {
-    const role = user.user_metadata?.role || 'user';
+  let cancelled = false;
+  const redirectAuthenticatedUser = async () => {
+    if (!user) return;
+    let role = user.user_metadata?.role || 'user';
+
+    // SMS bilan kirgan foydalanuvchining import qilingan roli backendda
+    // telefon tasdiqlangandan keyin aniqlanadi.
+    if (user.user_metadata?.auth_method === 'phone_otp') {
+      try {
+        const { data } = await getUserProfile();
+        role = data?.role || role;
+      } catch {
+        // Backend vaqtincha javob bermasa, Supabase metadata bo‘yicha davom etamiz.
+      }
+    }
+    if (cancelled) return;
+
     let fallback = '/home';
     if (role === 'company' || role === 'business') fallback = '/dashboard';
     if (role === 'bank_employee') fallback = '/bank-dashboard';
@@ -40,7 +58,9 @@ useEffect(() => {
     const target = getTarget(fallback);
     clearReturnPath();
     navigate(target, { replace: true });
-  }
+  };
+  void redirectAuthenticatedUser();
+  return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [user, navigate]);
   const handleLogin = async (e) => {
@@ -119,7 +139,7 @@ navigate(target, { replace: true });
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">G.R.U</h1>
+        <h1 className="auth-title">ZUMO</h1>
         <p className="auth-subtitle">Xush kelibsiz</p>
 
         <button onClick={handleGoogleLogin} className="google-btn">
@@ -132,9 +152,30 @@ navigate(target, { replace: true });
           Google orqali kirish
         </button>
 
-        <div className="divider"><span>yoki email orqali</span></div>
+        <div className="auth-method-switch" role="tablist" aria-label="Kirish usulini tanlang">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={loginMethod === 'phone'}
+            className={loginMethod === 'phone' ? 'active' : ''}
+            onClick={() => { setLoginMethod('phone'); setError(''); }}
+          >
+            <Smartphone size={17} /> Telefon
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={loginMethod === 'email'}
+            className={loginMethod === 'email' ? 'active' : ''}
+            onClick={() => { setLoginMethod('email'); setError(''); }}
+          >
+            <Mail size={17} /> Email
+          </button>
+        </div>
 
-        <form onSubmit={handleLogin}>
+        <div className="divider"><span>{loginMethod === 'phone' ? 'SMS kod bilan kirish' : 'email orqali kirish'}</span></div>
+
+        {loginMethod === 'phone' ? <PhoneOtpLoginForm /> : <form onSubmit={handleLogin}>
           {error && (
             <div className="error-message">
               <AlertCircle size={16} />
@@ -193,10 +234,14 @@ navigate(target, { replace: true });
           <button type="submit" className="auth-button" disabled={loading}>
             {loading ? 'Yuklanmoqda...' : <><LogIn size={18} /> Kirish</>}
           </button>
-        </form>
+        </form>}
 
         <p className="signup-link">
-          Hisobingiz yo‘qmi? <Link to="/register" className="link">Ro‘yxatdan o‘tish</Link>
+          {loginMethod === 'phone' ? (
+            <>Telefon orqali birinchi marta kirsangiz, kod tasdiqlangach hisob ochiladi. <Link to="/register" className="link">Email bilan ro‘yxatdan o‘tish</Link></>
+          ) : (
+            <>Hisobingiz yo‘qmi? <Link to="/register" className="link">Ro‘yxatdan o‘tish</Link></>
+          )}
         </p>
       </div>
     </div>

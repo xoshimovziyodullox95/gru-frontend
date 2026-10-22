@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/SupplierWarehousePage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -119,7 +120,7 @@ export default function SupplierWarehousePage() {
 
   return (
     <div className="wh-page">
-      <button className="BackActionBtn" onClick={() => navigate(-1)}>
+      <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} /> Orqaga
       </button>
 
@@ -217,7 +218,7 @@ export default function SupplierWarehousePage() {
                 </div>
                 <div className="wh-item-meta">
                   {item.expiryMonths && <span>Yaroqlilik: {item.expiryMonths} oy</span>}
-                  {lowStock && <span className="wh-alert-badge">⚠ Zaxira kam qoldi</span>}
+                  {lowStock && <span className="wh-alert-badge">вљ  Zaxira kam qoldi</span>}
                 </div>
                 <div className="wh-item-actions">
                   <button onClick={() => startEdit(item)}><Edit2 size={15} /></button>

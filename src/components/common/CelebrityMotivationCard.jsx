@@ -51,7 +51,7 @@ export default function CelebrityMotivationCard({ category }) {
       <div className="celebrity-photo-wrap">
          <img src={getImageUrl(celebrity.photo)}
           className="celebrity-photo"
-          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder-avatar.jpg'; }}
+          onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
         />
         <span className="celebrity-category-tag">{CATEGORY_LABELS[category] || celebrity.categoryLabel}</span>
       </div>

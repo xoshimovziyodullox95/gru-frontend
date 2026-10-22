@@ -83,7 +83,7 @@ export default function MarketplaceCatalogItems() {
               id={eq._id}
               type="equipment"
               title={eq.title}
-              image={eq.images?.[0] || '/images/placeholder-equipment.jpg'}
+              image={eq.images?.[0] || '/images/zumo-placeholder.svg'}
               price={eq.price}
               currency={eq.currency}
               link={`/equipment/${eq._id}`}

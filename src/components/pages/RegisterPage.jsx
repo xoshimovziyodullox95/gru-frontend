@@ -1,4 +1,4 @@
-// src/components/pages/RegisterPage.jsx
+﻿// src/components/pages/RegisterPage.jsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -14,7 +14,7 @@ const DIRECTIONS = [
   { id: 'kongilochar', label: 'Ko‘ngilochar' },
   { id: 'restoran', label: 'Restoran / Kafe' },
   { id: 'xizmatlar', label: 'Xizmatlar' },
-  { id: 'talim', label: 'Taʼlim' },
+  { id: 'talim', label: 'TaКјlim' },
   { id: 'yangi-biznes', label: 'Yangi biznes' },
 ];
 
@@ -50,15 +50,15 @@ export default function RegisterPage() {
     }
     if (role === 'company' && !direction) {
       setError('Iltimos, yo‘nalishni tanlang');
-      toast.error('Yo‘nalish tanlanmagan');a
+      toast.error('Yo‘nalish tanlanmagan');
       return;
     }
 
     setLoading(true);
-    setDebugInfo('⏳ Ro‘yxatdan o‘tish boshlanmoqda...');
+    setDebugInfo('вЏі Ro‘yxatdan o‘tish boshlanmoqda...');
 
     try {
-      console.log('📤 Yuborilayotgan maʼlumotlar:', {
+      console.log('рџ“¤ Yuborilayotgan maКјlumotlar:', {
         email,
         fullName,
         role,
@@ -79,10 +79,10 @@ export default function RegisterPage() {
         }
       });
 
-      console.log('📥 Supabase javobi:', { data, error });
+      console.log('рџ“Ґ Supabase javobi:', { data, error });
 
       if (error) {
-        setDebugInfo(`❌ Xatolik: ${error.message}`);
+        setDebugInfo(`вќЊ Xatolik: ${error.message}`);
         setError(error.message);
         toast.error(error.message);
         setLoading(false);
@@ -90,30 +90,30 @@ export default function RegisterPage() {
       }
 
       if (data.user?.identities?.length === 0) {
-        setDebugInfo('⚠️ Bu email allaqachon ro‘yxatdan o‘tgan');
+        setDebugInfo('вљ пёЏ Bu email allaqachon ro‘yxatdan o‘tgan');
         setError('Bu email allaqachon ro‘yxatdan o‘tgan');
         toast.error('Bu email allaqachon ro‘yxatdan o‘tgan');
         setLoading(false);
         return;
       }
 
-      // 🔥 Bu qurilmada endi "ro'yxatdan o'tgan" deb belgilanadi —
+      // рџ”Ґ Bu qurilmada endi "ro'yxatdan o'tgan" deb belgilanadi —
       //    Landing sahifasida bundan keyin faqat "Kirish" tugmasi ko'rinadi,
       //    va guest-mode flag (agar bo'lgan bo'lsa) tozalanadi
       markAccountCreated();
 
-      setDebugInfo('✅ Ro‘yxatdan o‘tdingiz! Login sahifasiga o‘tish...');
-      toast.success('✅ Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.');
+      setDebugInfo('вњ… Ro‘yxatdan o‘tdingiz! Login sahifasiga o‘tish...');
+      toast.success('вњ… Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.');
 
-      // 🔥 1 soniya kutib, login sahifasiga o‘tish
+      // рџ”Ґ 1 soniya kutib, login sahifasiga o‘tish
       setTimeout(() => {
         navigate('/login');
       }, 1500);
 
     } catch (err) {
-      console.error('❌ Kutilmagan xatolik:', err);
-      setDebugInfo(`❌ Xatolik: ${err.message}`);
-      setError(err.message || 'Nomaʼlum xatolik yuz berdi');
+      console.error('вќЊ Kutilmagan xatolik:', err);
+      setDebugInfo(`вќЊ Xatolik: ${err.message}`);
+      setError(err.message || 'NomaКјlum xatolik yuz berdi');
       toast.error(err.message || 'Xatolik yuz berdi');
       setLoading(false);
     }
@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
   const handleGoogleLogin = async () => {
     try {
-      // 🔥 Google orqali ham signup/login bo'lishi mumkin —
+      // рџ”Ґ Google orqali ham signup/login bo'lishi mumkin —
       //    shu tugma bosilganda ham "ro'yxatdan o'tgan" deb belgilaymiz,
       //    chunki OAuth qaytib kelganda Landing'da "Kirish"gina chiqishi kerak
       markAccountCreated();
@@ -136,7 +136,7 @@ export default function RegisterPage() {
           }
         }
       });
-    } catch (err) {
+    } catch {
       toast.error('Google orqali kirishda xatolik');
     }
   };
@@ -144,7 +144,7 @@ export default function RegisterPage() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1 className="auth-title">G.R.U</h1>
+        <h1 className="auth-title">ZUMO</h1>
         <p className="auth-subtitle">Ro‘yxatdan o‘tish</p>
 
         <button onClick={handleGoogleLogin} className="google-btn">

@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/MarketplaceLocations.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,7 @@ export default function MarketplaceLocations() {
 
   return (
     <div className="mph-page">
-      <button className="mph-back" onClick={() => navigate(-1)}>
+      <button className="mph-back" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={18} /> {t('common.back')}
       </button>
       <h2 className="mph-subtitle">{t('common.locationsTitle')}</h2>
@@ -36,7 +37,7 @@ export default function MarketplaceLocations() {
             id={loc._id}
             type="location"
             title={loc.title}
-            image={loc.images?.[0] || '/images/placeholder.jpg'}
+            image={loc.images?.[0] || '/images/zumo-placeholder.svg'}
             price={loc.price_range}
             currency={loc.currency}
             link={`/location/${loc._id}`}

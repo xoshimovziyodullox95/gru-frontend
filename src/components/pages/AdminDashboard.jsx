@@ -124,7 +124,7 @@ export default function AdminDashboard() {
   return (
     <div className="ad-page">
       <div className="ad-header">
-        <h1><Crown size={24} /> G.R.U Admin</h1>
+        <h1><Crown size={24} /> ZUMO Admin</h1>
         <div className="ad-header-right">
           <p className="ad-welcome">Xush kelibsiz, {user.user_metadata?.full_name || user.email}</p>
           <button className="ad-logout-btn" onClick={handleLogout}>

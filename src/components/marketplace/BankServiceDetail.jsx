@@ -1,13 +1,14 @@
 // src/components/pages/BankServiceDetail.jsx
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  ArrowLeft, Landmark, CheckCircle2, ShoppingCart, Check,
+  ArrowLeft, Landmark, CheckCircle2, Send, Check, Loader2,
   FileText, ClipboardList, AlertTriangle, Building2, Percent, Sparkles, ShieldCheck
 } from 'lucide-react';
 import { getBankServiceById, getBankServices } from '../services/bankServices';
-import { useCart } from '../hooks/useCart';
+import { useAuth } from '../context/AuthContext';
+import { createBankApplication } from '../services/orders';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/bankServiceDetail.css';
 
@@ -18,7 +19,14 @@ export default function BankServiceDetail() {
   const [relatedServices, setRelatedServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errored, setErrored] = useState(false);
-  const { getQuantity, increment, removeItem } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [applyOpen, setApplyOpen] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [comment, setComment] = useState('');
+  const [applying, setApplying] = useState(false);
+  const [applied, setApplied] = useState(null); // { duplicate }
 
   useEffect(() => {
     setLoading(true);
@@ -57,22 +65,26 @@ export default function BankServiceDetail() {
     );
   }
 
-  const inCart = getQuantity(service._id) > 0;
+  const openApply = () => {
+    if (!user) {
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+    setPhone((prev) => prev || user.phone || user.user_metadata?.phone || '');
+    setApplyOpen(true);
+  };
 
-  const handleCartClick = () => {
-    if (inCart) {
-      removeItem(service._id);
-    } else {
-      increment({
-        id: service._id,
-        title: service.serviceName,
-        price: 0,
-        image: service.providerLogo,
-        itemType: 'bank_service',
-        type: 'bank_service',
-        provider: service.provider,
-        subCategory: service.subCategory,
-      });
+  const submitApplication = async (e) => {
+    e.preventDefault();
+    setApplying(true);
+    try {
+      const res = await createBankApplication(service._id, { phone, comment });
+      setApplied({ duplicate: res.data.duplicate });
+      setApplyOpen(false);
+    } catch (err) {
+      alert(err.response?.data?.error || 'Ariza yuborilmadi');
+    } finally {
+      setApplying(false);
     }
   };
 
@@ -122,17 +134,51 @@ export default function BankServiceDetail() {
             </div>
           </div>
 
-          <button
-            type="button"
-            className={`chat-owner-btn bsd-cart-btn-inline ${inCart ? 'bsd-in-cart' : ''}`}
-            onClick={handleCartClick}
-          >
-            {inCart ? (
-              <><Check size={18} /> {t('bankService.inCart', 'Savatda')}</>
-            ) : (
-              <><ShoppingCart size={18} /> {t('bankService.addToCart', "Savatga qo'shish va ariza berish")}</>
-            )}
-          </button>
+          {applied ? (
+            <div className="bsd-apply-done">
+              <Check size={18} />
+              <span>
+                {applied.duplicate
+                  ? 'Bu xizmatga arizangiz allaqachon ko‘rib chiqilmoqda.'
+                  : 'Ariza yuborildi. Bank javobi bildirishnoma orqali keladi.'}
+              </span>
+              <Link to="/my-orders?tab=bank">Arizalarim</Link>
+            </div>
+          ) : applyOpen ? (
+            <form className="bsd-apply-form" onSubmit={submitApplication}>
+              <label>
+                Telefon raqamingiz
+                <input
+                  type="tel"
+                  required
+                  placeholder="+998 90 123 45 67"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </label>
+              <label>
+                Izoh (ixtiyoriy)
+                <textarea
+                  rows={3}
+                  placeholder="Masalan: kredit summasi, biznes turi"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+              </label>
+              <div className="bsd-apply-actions">
+                <button type="button" className="bsd-apply-cancel" onClick={() => setApplyOpen(false)}>
+                  Bekor qilish
+                </button>
+                <button type="submit" className="chat-owner-btn bsd-cart-btn-inline" disabled={applying}>
+                  {applying ? <Loader2 size={18} className="bsd-spin" /> : <Send size={18} />} Yuborish
+                </button>
+              </div>
+            </form>
+          ) : (
+            <button type="button" className="chat-owner-btn bsd-cart-btn-inline" onClick={openApply}>
+              <Send size={18} /> {t('bankService.apply', 'Ariza yuborish')}
+            </button>
+          )}
         </div>
 
         <div className="LayoutGrid">

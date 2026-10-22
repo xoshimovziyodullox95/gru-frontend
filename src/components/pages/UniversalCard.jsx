@@ -59,7 +59,7 @@ export default function UniversalCard({
   src={getImageUrl(image)}
           alt={title}
           className="uc-image"
-          onError={(e) => { e.target.onerror = null; e.target.src = '/images/placeholder.jpg'; }}
+          onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
         />
 
   

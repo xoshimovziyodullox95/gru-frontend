@@ -17,3 +17,9 @@ export const replyMessage = (messageId, text) => api.post(`/chat/messages/${mess
 export const getUnreadCount = () => api.get('/chat/unread-count');
 export const editMessage = (messageId, text) => api.put(`/chat/messages/${messageId}`, { message: text });
 export const deleteMessage = (messageId) => api.delete(`/chat/messages/${messageId}`);
+
+// 🔥 YANGI: shu odamdan kelgan hamma xabarni bir so'rovda o'qildi qilish
+export const markChatRead = (userId) => api.put(`/chat/read/${userId}`);
+
+// 🔥 YANGI: MongoDB'dagi o'z ID'im (xabarlar "men yozdim / u yozdi" ajratishi uchun)
+export const getChatMe = () => api.get('/chat/me');

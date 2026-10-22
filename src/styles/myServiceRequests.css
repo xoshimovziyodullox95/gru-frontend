@@ -1,0 +1,111 @@
+.my-service-requests {
+  width: min(920px, calc(100% - 32px));
+  min-height: 70vh;
+  margin: 32px auto;
+  color: var(--text-primary, #172033);
+}
+
+.my-service-requests__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.my-service-requests__header h1,
+.my-service-requests__header p,
+.my-service-requests__card p,
+.my-service-requests__empty p {
+  margin: 0;
+}
+
+.my-service-requests__header h1 { font-size: 1.35rem; }
+.my-service-requests__header p { margin-top: 4px; color: #718096; }
+
+.my-service-requests__back,
+.my-service-requests__new,
+.my-service-requests__empty button,
+.my-service-requests__message button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.my-service-requests__back {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  background: #eef2f7;
+  color: inherit;
+}
+
+.my-service-requests__new,
+.my-service-requests__empty button,
+.my-service-requests__message button {
+  padding: 11px 14px;
+  background: #0f766e;
+  color: #fff;
+}
+
+.my-service-requests__new { margin-left: auto; white-space: nowrap; }
+
+.my-service-requests__list { display: grid; gap: 12px; }
+
+.my-service-requests__card {
+  display: block;
+  padding: 18px;
+  border: 1px solid #e5eaf0;
+  border-radius: 14px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.my-service-requests__card-top,
+.my-service-requests__card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.my-service-requests__card p { margin: 12px 0; line-height: 1.5; }
+.my-service-requests__card-bottom { color: #718096; font-size: .9rem; }
+
+.my-service-requests__status {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #e8eef5;
+  color: #334155;
+  font-size: .8rem;
+  white-space: nowrap;
+}
+
+.my-service-requests__status--open { background: #fff4d6; color: #8a5b00; }
+.my-service-requests__status--completed { background: #dcfce7; color: #166534; }
+.my-service-requests__status--cancelled { background: #fee2e2; color: #991b1b; }
+
+.my-service-requests__empty,
+.my-service-requests__message {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 48px 20px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  color: #64748b;
+  text-align: center;
+}
+
+.my-service-requests__empty h2 { margin: 0; color: #172033; }
+
+@media (max-width: 560px) {
+  .my-service-requests__header { flex-wrap: wrap; }
+  .my-service-requests__new { margin-left: auto; }
+  .my-service-requests__card-top,
+  .my-service-requests__card-bottom { align-items: flex-start; flex-direction: column; }
+}

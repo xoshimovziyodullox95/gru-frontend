@@ -12,8 +12,8 @@
   export const markNotificationRead = (id) => api.put(`/posts/notifications/${id}/read`);
 
   // services/posts.js
-  export const createVideoPost = (formData) =>
-    api.post('/posts', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const createVideoPost = (formData, onUploadProgress) =>
+  api.post('/posts', formData, { onUploadProgress });
 
   export const createYoutubePost = ({ title, description, youtubeUrl, relatedId, relatedType }) =>
     api.post('/posts', { title, description, youtubeUrl, relatedId, relatedType });

@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -18,10 +19,6 @@ export default function AIAssistantPage() {
   const [authToken, setAuthToken] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setAuthToken(session?.access_token || null);
-    });
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setAuthToken(session?.access_token || null);
     });
@@ -163,7 +160,7 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
 
   // Back tugmasi bosilganda oldingi sahifaga qaytish
   const handleGoBack = () => {
-    navigate(-1);
+    safeGoBack(navigate);
   };
 
   const inputBar = (
@@ -257,7 +254,7 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
       {/* ===== MAIN CHAT AREA ===== */}
       <div className="gru-ai-main">
         <header className="gru-ai-header">
-          {/* 🔥 YANGI: Orqaga qaytish tugmasi (har doim ko'rinadi) */}
+          {/* рџ”Ґ YANGI: Orqaga qaytish tugmasi (har doim ko'rinadi) */}
           <button className="gru-ai-back-header-btn" onClick={handleGoBack} aria-label="Orqaga">
             <ArrowLeft size={20} />
           </button>
@@ -300,7 +297,7 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
                       <div className="gru-ai-attachments">
                         {m.attachments.map((a, i) => (
                           <span key={i} className="gru-ai-attachment-chip">
-                            📎 {a.name}
+                            рџ“Ћ {a.name}
                           </span>
                         ))}
                       </div>
@@ -325,8 +322,8 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
                   <div className="gru-ai-file-preview">
                     {files.map((f, i) => (
                       <span key={i} className="gru-ai-attachment-chip removable">
-                        📎 {f.name}
-                        <button onClick={() => removeFile(i)}>×</button>
+                        рџ“Ћ {f.name}
+                        <button onClick={() => removeFile(i)}>Г—</button>
                       </span>
                     ))}
                   </div>

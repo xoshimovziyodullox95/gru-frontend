@@ -11,27 +11,9 @@ export function BusinessProvider({ children }) {
   const [activeWarehouse, setActiveWarehouse] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const loadBusinesses = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await getMyBusinesses();
-      setMyBusinesses(res.data);
-
-      // Birinchi marta kirilganda, agar faqat bitta biznes bo'lsa, avtomatik tanlaymiz
-      const all = [...res.data.owned, ...res.data.staffed];
-      if (all.length === 1) {
-        selectBusiness(all[0], res.data.owned.some((b) => b._id === all[0]._id) ? 'owner' : null);
-      }
-    } catch (err) {
-      console.error('Bizneslarni yuklashda xatolik:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   const selectBusiness = useCallback(async (business, role) => {
     setActiveBusiness(business);
-    setMyRole(role || 'owner');
+    setMyRole(role || null);
     setActiveWarehouse(null);
     try {
       const res = await getWarehouses(business._id);
@@ -43,7 +25,29 @@ export function BusinessProvider({ children }) {
     }
   }, []);
 
+  const loadBusinesses = useCallback(async () => {
+    try {
+      setLoading(true);
+      const res = await getMyBusinesses();
+      setMyBusinesses(res.data);
+
+      // Bitta biznes bo'lsa avtomatik tanlaymiz, lekin staff rolini ham saqlaymiz.
+      const all = [...res.data.owned, ...res.data.staffed];
+      if (all.length === 1) {
+        const business = all[0];
+        const isOwner = res.data.owned.some((entry) => entry._id === business._id);
+        selectBusiness(business, isOwner ? 'owner' : business.staffRole);
+      }
+    } catch (err) {
+      console.error('Bizneslarni yuklashda xatolik:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectBusiness]);
+
   useEffect(() => {
+    // This effect starts the asynchronous business bootstrap; state updates follow API responses.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadBusinesses();
   }, [loadBusinesses]);
 
@@ -59,4 +63,6 @@ export function BusinessProvider({ children }) {
   );
 }
 
+// Context provider and its hook intentionally live together in this module.
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBusiness = () => useContext(BusinessContext);

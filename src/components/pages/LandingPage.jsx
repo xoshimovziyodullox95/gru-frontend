@@ -4,8 +4,7 @@ import '../../styles/landing.css';
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [animationPhase, setAnimationPhase] =
-    useState('entering');
+  const [animationPhase, setAnimationPhase] = useState('entering');
 
   useEffect(() => {
     document.body.classList.add('landing-page-active');
@@ -17,9 +16,7 @@ export default function LandingPage() {
     const timers = [];
 
     const openHomePage = () => {
-      document.body.classList.remove(
-        'landing-page-active'
-      );
+      document.body.classList.remove('landing-page-active');
 
       navigate('/home', {
         replace: true,
@@ -27,11 +24,7 @@ export default function LandingPage() {
     };
 
     if (reducedMotionMedia.matches) {
-      const navigationTimer = window.setTimeout(
-        openHomePage,
-        500
-      );
-
+      const navigationTimer = window.setTimeout(openHomePage, 500);
       timers.push(navigationTimer);
     } else {
       const activeTimer = window.setTimeout(() => {
@@ -46,11 +39,7 @@ export default function LandingPage() {
         openHomePage();
       }, 2600);
 
-      timers.push(
-        activeTimer,
-        fadeTimer,
-        navigationTimer
-      );
+      timers.push(activeTimer, fadeTimer, navigationTimer);
     }
 
     return () => {
@@ -58,9 +47,7 @@ export default function LandingPage() {
         window.clearTimeout(timer);
       });
 
-      document.body.classList.remove(
-        'landing-page-active'
-      );
+      document.body.classList.remove('landing-page-active');
     };
   }, [navigate]);
 
@@ -69,13 +56,10 @@ export default function LandingPage() {
       className={`gru-splash ${animationPhase}`}
       role="status"
       aria-live="polite"
-      aria-label="G.R.U yuklanmoqda"
+      aria-label="ZUMO yuklanmoqda"
     >
       {/* Orqa fon effektlari */}
-      <div
-        className="gru-splash__background"
-        aria-hidden="true"
-      >
+      <div className="gru-splash__background" aria-hidden="true">
         <div className="gru-splash__orb gru-splash__orb--left" />
         <div className="gru-splash__orb gru-splash__orb--right" />
       </div>
@@ -83,69 +67,43 @@ export default function LandingPage() {
       {/* Asosiy kontent */}
       <div className="gru-splash__content">
         <div className="gru-splash__logo-container">
-          <div
-            className="gru-splash__glow"
-            aria-hidden="true"
-          />
+          <div className="gru-splash__glow" aria-hidden="true" />
 
-          <h1
-            className="gru-splash__logo"
-            aria-label="G.R.U"
-          >
+          <h1 className="gru-splash__logo" aria-label="ZUMO">
             <span
               className="gru-splash__letter"
-              style={{
-                '--letter-delay': '0.25s',
-              }}
+              style={{ '--letter-delay': '0.25s' }}
             >
-              G
+              Z
             </span>
 
             <span
-              className="gru-splash__dot"
-              style={{
-                '--dot-delay': '0.4s',
-              }}
-              aria-hidden="true"
-            />
-
-            <span
               className="gru-splash__letter"
-              style={{
-                '--letter-delay': '0.45s',
-              }}
-            >
-              R
-            </span>
-
-            <span
-              className="gru-splash__dot"
-              style={{
-                '--dot-delay': '0.6s',
-              }}
-              aria-hidden="true"
-            />
-
-            <span
-              className="gru-splash__letter"
-              style={{
-                '--letter-delay': '0.65s',
-              }}
+              style={{ '--letter-delay': '0.4s' }}
             >
               U
             </span>
+
+            <span
+              className="gru-splash__letter"
+              style={{ '--letter-delay': '0.55s' }}
+            >
+              M
+            </span>
+
+            <span
+              className="gru-splash__letter"
+              style={{ '--letter-delay': '0.7s' }}
+            >
+              O
+            </span>
           </h1>
 
-          <p className="gru-splash__tagline">
-            Yangi imkoniyat
-          </p>
+          <p className="gru-splash__tagline">Yangi imkoniyat</p>
         </div>
 
-        {/* Yuklanish chizig‘i */}
-        <div
-          className="gru-splash__loader"
-          aria-hidden="true"
-        >
+        {/* Yuklanish chizig'i */}
+        <div className="gru-splash__loader" aria-hidden="true">
           <div className="gru-splash__loader-bar" />
         </div>
       </div>

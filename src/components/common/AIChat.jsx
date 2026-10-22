@@ -13,11 +13,27 @@ export default function AIChat() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Salom! Men G.R.U AI yordamchisiman. Nima kerak?"
+      content: "Salom! Men ZUMO AI yordamchisiman. Nima kerak?"
     }
   ]);
 
   const messagesEndRef = useRef(null);
+
+  // Pastga o'qiyotganda tugma matnni yopmasin — yashirinadi, yuqoriga
+  // aylantirganda yoki sahifa oxirida qayta chiqadi.
+  const [hideToggle, setHideToggle] = useState(false);
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      const atBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 40;
+      if (Math.abs(y - lastY) < 8) return;
+      setHideToggle(y > lastY && y > 120 && !atBottom);
+      lastY = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -68,8 +84,9 @@ export default function AIChat() {
   return (
     <>
       <button
-        className="ai-chat-toggle"
+        className={`ai-chat-toggle ${hideToggle && !isOpen ? 'ai-chat-toggle--hidden' : ''}`}
         onClick={() => setIsOpen(true)}
+        aria-label="ZUMO AI yordamchi"
       >
         <MessageCircle size={24} />
       </button>
@@ -77,7 +94,7 @@ export default function AIChat() {
       {isOpen && (
         <div className="ai-chat-modal">
           <div className="ai-chat-header">
-            <h3>G.R.U AI</h3>
+            <h3>ZUMO AI</h3>
 
             <button
               className="ai-chat-close"
@@ -116,7 +133,7 @@ export default function AIChat() {
                           src={card.image}
                           alt={card.title}
                           onError={(e) => {
-                            e.target.src = '/images/placeholder.jpg';
+                            e.target.src = '/images/zumo-placeholder.svg';
                           }}
                         />
 

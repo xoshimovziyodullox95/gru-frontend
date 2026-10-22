@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -232,7 +233,7 @@ export default function AddLocationForm() {
 
   return (
     <div className="add-location-form-container">
-      <button type="button" className="alf-back-btn" onClick={() => navigate(-1)}>
+      <button type="button" className="alf-back-btn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} />
         {t('addLocation.back')}
       </button>

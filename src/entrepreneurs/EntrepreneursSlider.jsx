@@ -35,7 +35,7 @@ export default function EntrepreneursSlider() {
     <div className="entrepreneurs-slider">
       <button className="slider-nav prev" onClick={prev}><ChevronLeft size={24} /></button>
       <div className="slider-content">
-        <div className="slider-image"><img src={current.image} alt={current.name} onError={(e) => e.target.src = '/images/placeholder.jpg'} /></div>
+        <div className="slider-image"><img src={current.image} alt={current.name} onError={(e) => e.target.src = '/images/zumo-placeholder.svg'} /></div>
         <div className="slider-text">
           <Quote size={32} className="quote-icon" />
           <p className="slogan">{current.slogan}</p>

@@ -1,5 +1,5 @@
 /* ============================================================
-   G.R.U HOME PAGE
+   ZUMO HOME PAGE
    ============================================================ */
 
 import { useEffect, useMemo, useState } from 'react';
@@ -13,13 +13,9 @@ import {
   Crown,
   GraduationCap,
   HeartPulse,
-  Landmark,
   Lightbulb,
-  MapPin,
-  Package,
   PartyPopper,
   ShoppingBag,
-  Sparkles,
   Sprout,
   Store,
   UtensilsCrossed,
@@ -30,16 +26,17 @@ import {
 
 import { useAuth } from '../context/AuthContext';
 import CategoryCard from '../common/CategoryCard';
-import UniversalCard from './UniversalCard';
 import MarketplaceReels from '../marketplace/MarketplaceReels';
+import ZumoQuickMenu from '../common/ZumoQuickMenu.jsx';
+import HomeListingCarousel from '../home/HomeListingCarousel.jsx';
+import { useFavorites } from '../hooks/useFavorites';
 
 import { getLevel1 } from '../services/categories';
 import { getPosts } from '../services/videos';
 import { getLocations } from '../services/locations';
 import { getEquipment } from '../services/equipment';
 import { getServiceProviders } from '../services/serviceProviders';
-
-import { formatPrice } from '../utils/formatPrice';
+import { getRecentlyViewed } from '../utils/recentlyViewed.js';
 
 import '../../styles/home.css';
 
@@ -66,58 +63,11 @@ const FALLBACK_COLORS = [
 ];
 
 const VISIBLE_CATEGORIES_COUNT = 8;
-const HOME_PRODUCTS_LIMIT = 8;
 
 const FALLBACK_HERO_PHRASES = [
-  'G.R.U kelajak sari',
-  'Yangi imkoniyatlar sari',
-  'Biznesingizni rivojlantiring',
-];
-
-/* Marketplace teaser — 4 yo'nalish.
-   Bank rangi: toza qizil (#e63946), pushti emas. */
-const MARKET_ITEMS = [
-  {
-    id: 'locations',
-    icon: MapPin,
-    accent: '#00b4d8',
-    titleKey: 'home.marketplaceLocations',
-    titleFallback: 'Joylar',
-    subKey: 'home.marketplaceLocationsSub',
-    subFallback: 'Eng yaxshi maskanlar',
-    path: '/marketplace/locations',
-  },
-  {
-    id: 'products',
-    icon: Package,
-    accent: '#eab308',
-    titleKey: 'home.marketplaceProducts',
-    titleFallback: 'Tovarlar',
-    subKey: 'home.marketplaceProductsSub',
-    subFallback: 'Sifatli mahsulotlar',
-    path: '/marketplace/products',
-  },
-  {
-    id: 'services',
-    icon: Briefcase,
-    accent: '#10b981',
-    titleKey: 'home.marketplaceServices',
-    titleFallback: 'Xizmatlar',
-    subKey: 'home.marketplaceServicesSub',
-    subFallback: 'Ishonchli xizmatlar',
-    path: '/marketplace/services',
-  },
-  {
-    id: 'bank',
-    icon: Landmark,
-    image: '/images/logo/universalbank.jpg',
-    accent: '#e63946',
-    titleKey: 'home.marketplaceBank',
-    titleFallback: 'Bank xizmatlari',
-    subKey: 'home.marketplaceBankSub',
-    subFallback: 'Moliyaviy yechimlar',
-    path: '/marketplace/bank',
-  },
+  'bilan oson',
+  'yangi imkoniyat',
+  'kelajak sari',
 ];
 
 const REEL_SOURCES = [
@@ -156,6 +106,73 @@ const REEL_SOURCES = [
 ];
 
 const EMPTY_CONTENT = { locations: [], equipment: [], services: [], posts: [] };
+const pendingHomeReads = new Map();
+
+function shareHomeRead(key, startRequest) {
+  const existing = pendingHomeReads.get(key);
+  if (existing) return existing;
+
+  const request = Promise.resolve().then(startRequest);
+  pendingHomeReads.set(key, request);
+  const clear = () => {
+    if (pendingHomeReads.get(key) === request) pendingHomeReads.delete(key);
+  };
+  request.then(clear, clear);
+  return request;
+}
+
+function normalizeHomeListings(content) {
+  const getId = (item) => item?._id || item?.id;
+  const locations = content.locations.map((item) => {
+    const id = getId(item);
+    if (!id) return null;
+    return {
+      id: String(id), type: 'location', title: item.title || item.name || 'Joy',
+      image: item.images?.[0] || item.image || item.imageUrl || '/images/placeholder.jpg',
+      price: item.price_range || (item.price_per_month ? `${item.price_per_month} ${item.currency || "so'm"}/oy` : 'Narx so‘rov asosida'),
+      link: `/location/${id}`, createdAt: item.createdAt || item.created_at,
+      lat: item.lat == null ? null : Number(item.lat),
+      lng: item.lng == null ? null : Number(item.lng),
+      address: item.address || '',
+    };
+  });
+  const equipment = content.equipment.map((item) => {
+    const id = getId(item);
+    if (!id) return null;
+    return {
+      id: String(id), type: 'equipment', title: item.title || item.name || 'Tovar',
+      image: item.images?.[0] || item.image || item.imageUrl || '/images/placeholder-equipment.jpg',
+      price: item.price ?? 'Narx so‘rov asosida', currency: item.currency,
+      link: `/equipment/${id}`, createdAt: item.createdAt || item.created_at,
+      isTop: Boolean(item.isTop || item.is_top), isVerified: Boolean(item.isVerified || item.is_verified),
+      maxQuantity: item.stockQuantity,
+    };
+  });
+  const services = content.services.map((item) => {
+    const id = getId(item);
+    if (!id) return null;
+    return {
+      id: String(id), type: 'service', title: item.name || item.title || 'Xizmat',
+      image: item.image || item.images?.[0] || item.imageUrl || '/images/service-providers/default.jpg',
+      price: item.price_range || item.price || 'Narx so‘rov asosida',
+      link: `/service-provider/${id}`, createdAt: item.createdAt || item.created_at,
+      isTop: Boolean(item.is_top), isVerified: Boolean(item.is_verified),
+    };
+  });
+  return [...locations, ...equipment, ...services]
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+}
+
+function distanceBetweenKm(from, to) {
+  const radians = (degrees) => (degrees * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+  const dLat = radians(to.lat - from.lat);
+  const dLng = radians(to.lng - from.lng);
+  const value = Math.sin(dLat / 2) ** 2
+    + Math.cos(radians(from.lat)) * Math.cos(radians(to.lat)) * Math.sin(dLng / 2) ** 2;
+  return earthRadiusKm * 2 * Math.atan2(Math.sqrt(value), Math.sqrt(1 - value));
+}
 
 /* ============================================================
    HELPERS
@@ -316,79 +333,8 @@ function buildReels(items, source, currentUserId, t) {
   });
 }
 
-function formatMarketplaceProducts(items) {
-  if (!Array.isArray(items)) return [];
-
-  return items
-    .filter((item) => item?._id || item?.id)
-    .slice(0, HOME_PRODUCTS_LIMIT)
-    .map((item) => {
-      const id = item._id || item.id;
-
-      return {
-        id,
-        type: 'equipment',
-        title: item.title || item.name || 'Tovar',
-        image:
-          item.images?.[0] ||
-          item.image ||
-          item.thumbnail ||
-          '/images/placeholder-equipment.jpg',
-        price:
-          formatPrice(item.price, item.currency) || 'Narxi mavjud emas',
-        link: `/equipment/${id}`,
-        isTop: Boolean(item.isTop || item.is_top),
-        isVerified: Boolean(item.isVerified || item.is_verified),
-        maxQuantity:
-          typeof item.stockQuantity === 'number'
-            ? item.stockQuantity
-            : undefined,
-      };
-    });
-}
-
-/* ============================================================
-   SMALL COMPONENTS
-   ============================================================ */
-
-function SeeMoreButton({ label, onClick, className = '' }) {
-  return (
-    <button
-      type="button"
-      className={`home-products-see-all ${className}`.trim()}
-      onClick={onClick}
-    >
-      <span>{label}</span>
-      <ArrowRight size={16} />
-    </button>
-  );
-}
-
-function ProductSkeletons() {
-  return (
-    <div className="home-products-grid">
-      {Array.from({ length: HOME_PRODUCTS_LIMIT }).map((_, index) => (
-        <div
-          key={`product-skeleton-${index}`}
-          className="home-product-skeleton"
-          aria-hidden="true"
-        >
-          <div className="home-product-skeleton__image" />
-          <div className="home-product-skeleton__body">
-            <div className="home-product-skeleton__line home-product-skeleton__line--title" />
-            <div className="home-product-skeleton__line" />
-            <div className="home-product-skeleton__line home-product-skeleton__line--price" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 /* ============================================================
    HOME ROLE BANNERS
-   Rasmlar: public/images/ ichida (PNG, fon shaffof, atrofi kesilgan)
-   `wide: true` — yotiq (keng) rasm uchun, ko'proq joy beriladi
    ============================================================ */
 
 const PROVIDER_IMAGE = '/images/service-human.png';
@@ -529,6 +475,7 @@ function HomeRoleBanners({ t, navigate }) {
 export default function HomePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { favorites } = useFavorites();
   const { t, i18n } = useTranslation();
 
   const userId = user?.id || user?._id || null;
@@ -538,14 +485,17 @@ export default function HomePage() {
   const [showAllCategories, setShowAllCategories] = useState(false);
 
   const [content, setContent] = useState(EMPTY_CONTENT);
-  const [contentLoading, setContentLoading] = useState(true);
+  const [homeContentLoaded, setHomeContentLoaded] = useState(false);
+  const [nearbyPosition, setNearbyPosition] = useState(null);
+  const [nearbyLoading, setNearbyLoading] = useState(false);
+  const [nearbyError, setNearbyError] = useState('');
 
   const [reelOverrides, setReelOverrides] = useState({});
 
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [isPhraseFading, setIsPhraseFading] = useState(false);
 
-  const [failedMarketImages, setFailedMarketImages] = useState({});
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   /* ==========================================================
      HERO PHRASES
@@ -567,9 +517,6 @@ export default function HomePage() {
   }, [t, i18n.resolvedLanguage]);
 
   useEffect(() => {
-    setPhraseIndex(0);
-    setIsPhraseFading(false);
-
     if (heroPhrases.length <= 1) return undefined;
 
     let fadeTimeoutId;
@@ -596,7 +543,7 @@ export default function HomePage() {
   useEffect(() => {
     let mounted = true;
 
-    getLevel1()
+    shareHomeRead('categories:uz', getLevel1)
       .then((response) => {
         if (mounted) setRawCategories(getResponseArray(response));
       })
@@ -618,12 +565,12 @@ export default function HomePage() {
     let mounted = true;
 
     async function loadHomeContent() {
-      const results = await Promise.allSettled([
-        getLocations({ limit: 50 }),
-        getEquipment({ limit: 50 }),
-        getServiceProviders({ limit: 50 }),
-        getPosts(),
-      ]);
+      const results = await shareHomeRead(`home-content:${userId || 'guest'}`, () => Promise.allSettled([
+        getLocations({ limit: 24 }),
+        getEquipment({ limit: 24 }),
+        getServiceProviders({ limit: 24 }),
+        getPosts({ limit: 30 }),
+      ]));
 
       if (!mounted) return;
 
@@ -642,8 +589,7 @@ export default function HomePage() {
         services: pick(results[2], 'Xizmatlar'),
         posts: pick(results[3], 'Postlar'),
       });
-
-      setContentLoading(false);
+      setHomeContentLoaded(true);
     }
 
     loadHomeContent();
@@ -651,7 +597,7 @@ export default function HomePage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [userId]);
 
   /* ==========================================================
      DERIVED
@@ -685,11 +631,6 @@ export default function HomePage() {
     ? categories
     : categories.slice(0, VISIBLE_CATEGORIES_COUNT);
 
-  const marketProducts = useMemo(
-    () => formatMarketplaceProducts(content.equipment),
-    [content.equipment]
-  );
-
   const reels = useMemo(
     () =>
       REEL_SOURCES.flatMap((source) =>
@@ -701,6 +642,68 @@ export default function HomePage() {
     [content, userId, reelOverrides, t, i18n.resolvedLanguage]
   );
 
+  const homeListings = useMemo(() => normalizeHomeListings(content), [content]);
+  const recentlyViewed = useMemo(() => getRecentlyViewed(userId), [userId]);
+  const recommendedListings = useMemo(() => {
+    const interestTypes = new Set([
+      ...favorites.map((item) => item.type),
+      ...recentlyViewed.map((item) => item.type),
+    ].filter(Boolean));
+    const viewedIds = new Set(recentlyViewed.map((item) => `${item.type}-${item.id}`));
+    const favoriteIds = new Set(favorites.map((item) => `${item.type}-${item.id}`));
+    const candidates = homeListings.filter((item) => !favoriteIds.has(`${item.type}-${item.id}`));
+    return candidates
+      .map((item) => ({
+        item,
+        score: (interestTypes.has(item.type) ? 10 : 0)
+          + (viewedIds.has(`${item.type}-${item.id}`) ? 2 : 0),
+      }))
+      .sort((a, b) => b.score - a.score || new Date(b.item.createdAt || 0) - new Date(a.item.createdAt || 0))
+      .slice(0, 12)
+      .map(({ item }) => item);
+  }, [favorites, recentlyViewed, homeListings]);
+
+  const todayListings = useMemo(() => {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    return homeListings.filter((item) => {
+      const createdAt = new Date(item.createdAt);
+      return !Number.isNaN(createdAt.getTime()) && createdAt >= startOfToday;
+    });
+  }, [homeListings]);
+
+  const nearbyListings = useMemo(() => {
+    if (!nearbyPosition) return [];
+    return homeListings
+      .filter((item) => item.type === 'location' && Number.isFinite(item.lat) && Number.isFinite(item.lng))
+      .map((item) => ({ ...item, distanceKm: distanceBetweenKm(nearbyPosition, item) }))
+      .filter((item) => item.distanceKm <= 50)
+      .sort((a, b) => a.distanceKm - b.distanceKm)
+      .slice(0, 12);
+  }, [homeListings, nearbyPosition]);
+
+  const requestNearbyLocation = () => {
+    if (!navigator.geolocation) {
+      setNearbyError('Bu qurilmada joylashuvni aniqlash ishlamaydi.');
+      return;
+    }
+    setNearbyLoading(true);
+    setNearbyError('');
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setNearbyPosition({ lat: coords.latitude, lng: coords.longitude });
+        setNearbyLoading(false);
+      },
+      (error) => {
+        setNearbyError(error.code === error.PERMISSION_DENIED
+          ? 'Yaqin joylarni topish uchun brauzer sozlamalarida joylashuvga ruxsat bering.'
+          : 'Joylashuv aniqlanmadi. Qayta urinib ko‘ring.');
+        setNearbyLoading(false);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  };
+
   const handleReelUpdate = (reelId, updates) => {
     setReelOverrides((current) => ({
       ...current,
@@ -709,7 +712,6 @@ export default function HomePage() {
   };
 
   const goMarketplace = () => navigate('/marketplace');
-  const seeMoreLabel = t('home.seeMore', 'Yana ko‘rish');
 
   /* ==========================================================
      RENDER
@@ -717,6 +719,12 @@ export default function HomePage() {
 
   return (
     <main className="home-container">
+      {/* Topbar (portal orqali body'ga chiqadi) */}
+      <ZumoQuickMenu isOpen={isMenuOpen} onToggle={setIsMenuOpen} />
+
+      {/* Topbar ostidan bo'sh joy */}
+      <div className="home-container__spacer" aria-hidden="true" />
+
       {/* ================= HERO ================= */}
 
       <section className="hero-section">
@@ -737,20 +745,27 @@ export default function HomePage() {
         <div className="hero-content">
           <div className="hero-title-wrapper">
             <h1
-              className={`hero-title ${isPhraseFading ? 'fade-out' : 'fade-in'}`}
+              className={`hero-title ${
+                isPhraseFading ? 'fade-out' : 'fade-in'
+              }`}
             >
               {heroPhrases[phraseIndex] || FALLBACK_HERO_PHRASES[0]}
             </h1>
           </div>
 
-          <div className="hero-cta-buttons">
+          <div className="hero-cta-grid">
             <button
               type="button"
-              className="hero-cta-btn cta-ai"
-              onClick={() => navigate('/ai-assistant')}
+              className="hero-cta-btn cta-request"
+              onClick={() => navigate('/request')}
             >
-              <Sparkles size={18} strokeWidth={2} />
-              <span>{t('home.ctaAi', 'AI yordamchi')}</span>
+              <span className="hero-cta-btn__icon">
+                <Wrench size={20} strokeWidth={2} />
+              </span>
+              <span className="hero-cta-btn__text">
+                <strong>{t('home.ctaRequest', 'Usta kerakmi?')}</strong>
+                <small>{t('home.ctaRequestSub', 'Xizmat so‘rovi yuborish')}</small>
+              </span>
             </button>
 
             <button
@@ -758,17 +773,45 @@ export default function HomePage() {
               className="hero-cta-btn cta-marketplace"
               onClick={goMarketplace}
             >
-              <ShoppingBag size={18} strokeWidth={2} />
-              <span>{t('home.ctaMarketplace', 'Bozor')}</span>
+              <span className="hero-cta-btn__icon">
+                <ShoppingBag size={20} strokeWidth={2} />
+              </span>
+              <span className="hero-cta-btn__text">
+                <strong>{t('home.ctaMarketplace', 'Bozor')}</strong>
+                <small>{t('home.ctaMarketplaceSub', 'Tovar va joylar')}</small>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="hero-cta-btn cta-bank"
+              onClick={() => navigate('/bank-services')}
+            >
+              <span className="hero-cta-btn__icon hero-cta-btn__icon--logo">
+                <img
+                  src="/images/logo/universalbank.jpg"
+                  alt=""
+                  className="hero-cta-btn__logo"
+                />
+              </span>
+              <span className="hero-cta-btn__text">
+                <strong>{t('home.ctaBank', 'Bank mahsulotlari')}</strong>
+                <small>{t('home.ctaBankSub', 'Moliyaviy xizmatlar')}</small>
+              </span>
             </button>
 
             <button
               type="button"
               className="hero-cta-btn cta-digitalize"
-              onClick={() => navigate('/business')}
+              onClick={() => navigate('/business-directions')}
             >
-              <Zap size={18} strokeWidth={2} />
-              <span>{t('home.ctaBusiness', 'Biznes')}</span>
+              <span className="hero-cta-btn__icon">
+                <Zap size={20} strokeWidth={2} />
+              </span>
+              <span className="hero-cta-btn__text">
+                <strong>{t('home.ctaBusiness', "150+ biznes yo'nalish")}</strong>
+                <small>{t('home.ctaBusinessSub', 'Tanlang va boshlang')}</small>
+              </span>
             </button>
           </div>
 
@@ -789,7 +832,7 @@ export default function HomePage() {
             {t('home.categoriesTitle', 'Kategoriyalar')}
           </h2>
           <p className="cats-sub">
-            {t('home.categoriesSub', 'Sizga kerakli yo‘nalishni tanlang')}
+            {t('home.categoriesSub', "Sizga kerakli yo'nalishni tanlang")}
           </p>
         </header>
 
@@ -815,143 +858,56 @@ export default function HomePage() {
               onClick={() => setShowAllCategories((value) => !value)}
             >
               {showAllCategories
-                ? `↑ ${t('home.showLess', 'Kamroq ko‘rsatish')}`
-                : `↓ ${t('home.showAll', 'Barchasini ko‘rsatish')} (${categories.length})`}
+                ? `↑ ${t('home.showLess', "Kamroq ko'rsatish")}`
+                : `↓ ${t('home.showAll', "Barchasini ko'rsatish")} (${
+                    categories.length
+                  })`}
             </button>
           </div>
         )}
       </section>
 
+      {homeContentLoaded && (
+        <>
+          <HomeListingCarousel
+            title="Bugun qo‘shilganlar"
+            subtitle="Yangi joylangan tovar, joy va xizmatlar"
+            items={todayListings}
+            emptyTitle="Bugun yangi e’lon yo‘q"
+            emptyText="Yangi e’lonlar joylanishi bilan shu yerda paydo bo‘ladi."
+            actionLabel="Barcha e’lonlar"
+          />
+          <HomeListingCarousel
+            title="Sizga mos"
+            subtitle={favorites.length || recentlyViewed.length
+              ? 'Ko‘rgan va saqlagan e’lonlaringizga yaqin takliflar'
+              : 'Yangi e’lonlardan boshlash uchun tavsiyalar'}
+            items={recommendedListings}
+            emptyTitle="Tavsiya uchun e’lon yo‘q"
+            emptyText="Keyinroq qaytib ko‘ring yoki barcha e’lonlarni oching."
+            actionLabel="Barcha e’lonlar"
+          />
+          <HomeListingCarousel
+            title="Yaqin atrofda"
+            subtitle={nearbyPosition
+              ? 'Sizga 50 km gacha yaqin joylar masofa bo‘yicha saralandi'
+              : 'Joylashuvni ulasangiz, atrofingizdagi joylarni masofasi bilan topamiz'}
+            items={nearbyListings}
+            emptyTitle={nearbyPosition ? 'Yaqin joylar topilmadi' : 'Yaqin joylarni ko‘rmoqchimisiz?'}
+            emptyText={nearbyError || (nearbyPosition
+              ? 'Hozircha 50 km ichida koordinatasi bor e’lon topilmadi.'
+              : 'Joylashuv faqat siz ruxsat berganingizda aniqlanadi.')}
+            actionLabel={nearbyLoading ? 'Aniqlanmoqda…' : nearbyPosition ? 'Qayta aniqlash' : 'Joylashuvni ulash'}
+            actionKind="location"
+            actionDisabled={nearbyLoading}
+            onAction={requestNearbyLocation}
+          />
+        </>
+      )}
+
       {/* ================= 3 TA ROL BANNERI ================= */}
 
       <HomeRoleBanners t={t} navigate={navigate} />
-
-      {/* ================= PRODUCTS ================= */}
-
-      <section className="home-products-section">
-        <header className="home-products-header">
-          <span className="home-products-eyebrow">
-            <Package size={14} strokeWidth={2.4} />
-            {t('home.productsEyebrow', 'Marketplace')}
-          </span>
-
-          <h2 className="home-products-title">
-            {t('home.latestProducts', 'Yangi tovarlar')}
-          </h2>
-
-          <p className="home-products-subtitle">
-            {t('home.latestProductsSub', 'Marketplace’dagi so‘nggi takliflar')}
-          </p>
-
-          <SeeMoreButton
-            label={seeMoreLabel}
-            onClick={goMarketplace}
-            className="home-products-see-all--top"
-          />
-        </header>
-
-        {contentLoading ? (
-          <ProductSkeletons />
-        ) : marketProducts.length > 0 ? (
-          <div className="uc-grid home-products-grid">
-            {marketProducts.map((item) => (
-              <UniversalCard
-                key={`home-equipment-${item.id}`}
-                id={item.id}
-                type={item.type}
-                title={item.title}
-                image={item.image}
-                price={item.price}
-                link={item.link}
-                isTop={item.isTop}
-                isVerified={item.isVerified}
-                maxQuantity={item.maxQuantity}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="home-products-empty">
-            <div className="home-products-empty__icon">
-              <Package size={34} strokeWidth={1.7} />
-            </div>
-            <p className="home-products-empty__title">
-              {t('home.noProducts', 'Hozircha tovarlar mavjud emas')}
-            </p>
-            <p className="home-products-empty__hint">
-              {t(
-                'home.noProductsHint',
-                'Tez orada yangi takliflar paydo bo‘ladi'
-              )}
-            </p>
-          </div>
-        )}
-
-        <div className="home-products-more">
-          <SeeMoreButton label={seeMoreLabel} onClick={goMarketplace} />
-        </div>
-      </section>
-
-      {/* ================= MARKET ================= */}
-
-      <section className="home-market-teaser">
-        <header className="cats-header">
-          <h2 className="cats-title">{t('home.marketplaceTitle', 'Bozor')}</h2>
-          <p className="cats-sub">
-            {t('home.marketplaceSub', 'Kerakli bo‘limni tanlang')}
-          </p>
-        </header>
-
-        <div className="home-market-grid">
-          {MARKET_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const hasImage =
-              Boolean(item.image) && !failedMarketImages[item.id];
-
-            return (
-              <button
-                key={item.id}
-                type="button"
-                className={`home-market-card home-market-card--${item.id}`}
-                style={{ '--market-accent': item.accent }}
-                onClick={() => navigate(item.path)}
-              >
-                <span
-                  className={`home-market-card__icon${
-                    hasImage ? ' home-market-card__icon--logo' : ''
-                  }`}
-                  aria-hidden="true"
-                >
-                  {hasImage ? (
-                    <img
-                      className="home-market-card__logo"
-                      src={item.image}
-                      alt=""
-                      loading="lazy"
-                      onError={() =>
-                        setFailedMarketImages((current) => ({
-                          ...current,
-                          [item.id]: true,
-                        }))
-                      }
-                    />
-                  ) : (
-                    <Icon size={24} strokeWidth={2} />
-                  )}
-                </span>
-
-                <span className="home-market-card__text">
-                  <strong>{t(item.titleKey, item.titleFallback)}</strong>
-                  <small>{t(item.subKey, item.subFallback)}</small>
-                </span>
-
-                <span className="home-market-card__arrow" aria-hidden="true">
-                  <ArrowRight size={15} strokeWidth={2.4} />
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
 
       {/* ================= REELS ================= */}
 

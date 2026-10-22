@@ -14,6 +14,26 @@ export const signIn = async (email, password) => {
   return { data, error };
 };
 
+export const sendPhoneLoginCode = async (phone) => {
+  const { data, error } = await supabase.auth.signInWithOtp({
+    phone,
+    options: {
+      shouldCreateUser: true,
+      data: { role: 'user', auth_method: 'phone_otp' },
+    },
+  });
+  return { data, error };
+};
+
+export const verifyPhoneLoginCode = async (phone, token) => {
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone,
+    token,
+    type: 'sms',
+  });
+  return { data, error };
+};
+
 export const signOut = async () => {
   await supabase.auth.signOut();
 };

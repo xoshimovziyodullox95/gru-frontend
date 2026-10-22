@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useEffect, useRef, useState, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -206,7 +207,7 @@ export default function AddListingChoice() {
 
   return (
     <div className="add-listing-choice-container">
-      <button type="button" className="alc-back-btn" onClick={() => navigate(-1)}>
+      <button type="button" className="alc-back-btn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} />
         {t('addListingChoice.back')}
       </button>

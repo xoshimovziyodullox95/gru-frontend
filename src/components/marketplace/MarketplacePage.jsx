@@ -1,33 +1,55 @@
 // src/pages/MarketplacePage.jsx
 import { useEffect, useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getLocations } from '../services/locations';
 import { getEquipment } from '../services/equipment';
 import { getServiceProviders } from '../services/serviceProviders';
 import { getBankServices } from '../services/bankServices';
+import { getLevel1 } from '../services/categories';
 import ServiceProviderCard from '../marketplace/ServiceProviderCard';
 import { formatPrice } from '../utils/formatPrice';
 
 import {
-  ArrowLeft, MapPin, Ruler, Tag,
+  MapPin, Ruler, Tag, ArrowLeft,
   Search, Store, Loader2, Inbox, SlidersHorizontal, X
 } from 'lucide-react';
 import UniversalCard from '../pages/UniversalCard';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import MarketplaceFilters from '../marketplace/MarketplaceFilters';
+import SearchOverlay from '../common/SearchOverlay';
 import '../../styles/marketplace.css';
+
+const searchableText = (value) => (typeof value === 'string' ? value.toLocaleLowerCase('uz-UZ') : '');
 
 export default function MarketplacePage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get('q') || '');
 
   const [selectedTypes, setSelectedTypes] = useState(new Set());
-  const [selectedLevel1s, setSelectedLevel1s] = useState(new Set());
+  const [selectedLevel1s, setSelectedLevel1s] = useState(
+    () => new Set(searchParams.get('level1') ? [searchParams.get('level1')] : [])
+  );
   const [selectedServiceCats, setSelectedServiceCats] = useState(new Set());
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(() => searchParams.get('openSearch') === '1');
+
+  useEffect(() => {
+    let active = true;
+    getLevel1()
+      .then((response) => {
+        if (!active) return;
+        const data = response?.data?.data ?? response?.data;
+        setCategories(Array.isArray(data) ? data : []);
+      })
+      .catch((error) => console.error('Qidiruv kategoriyalari yuklanmadi:', error));
+    return () => { active = false; };
+  }, []);
 
   // ========== MA'LUMOTLARNI YUKLASH ==========
   useEffect(() => {
@@ -40,16 +62,22 @@ export default function MarketplacePage() {
           getBankServices()
         ]);
 
-        console.log('📦 BANK SERVICES RESPONSE:', bankRes.data);
-
-        const locations = locRes.data.map(item => ({
+        const asArray = (response) => {
+          const data = response?.data ?? response;
+          if (Array.isArray(data)) return data;
+          if (Array.isArray(data?.data)) return data.data;
+          if (Array.isArray(data?.items)) return data.items;
+          if (Array.isArray(data?.results)) return data.results;
+          return [];
+        };
+        const locations = asArray(locRes).map(item => ({
           id: item._id,
           type: 'location',
           level1: item.level1,
           title: item.title,
           description: item.description || 'Joy haqida ma\'lumot',
           price: item.price_range || item.price_per_month || 'Narxi mavjud emas',
-          image: item.images?.[0] || '/images/placeholder.jpg',
+          image: item.images?.[0] || '/images/zumo-placeholder.svg',
           link: `/location/${item._id}`,
           createdAt: item.createdAt,
           meta: [
@@ -58,21 +86,21 @@ export default function MarketplacePage() {
           ],
         }));
 
-        const equipment = eqRes.data.map(item => ({
+        const equipment = asArray(eqRes).map(item => ({
           id: item._id,
           type: 'equipment',
           level1: item.level1,
           title: item.title,
           description: item.description || 'Texnika haqida ma\'lumot',
           price: formatPrice(item.price, item.currency) || 'Narxi mavjud emas',
-          image: item.images?.[0] || '/images/placeholder-equipment.jpg',
+          image: item.images?.[0] || '/images/zumo-placeholder.svg',
           link: `/equipment/${item._id}`,
           createdAt: item.createdAt,
           meta: [],
           maxQuantity: typeof item.stockQuantity === 'number' ? item.stockQuantity : undefined,
         }));
 
-const services = servRes.data.map(item => ({
+const services = asArray(servRes).map(item => ({
   id: item._id,
   type: 'service',
   level1: item.level1,
@@ -91,7 +119,7 @@ const services = servRes.data.map(item => ({
 }));
 
         // ========== BANK / QR XIZMATLAR ==========
-        const bankServices = (bankRes.data || [])
+        const bankServices = asArray(bankRes)
           .filter(item => item.category === 'bank_service')
           .map(item => ({
             id: item._id,
@@ -108,8 +136,7 @@ const services = servRes.data.map(item => ({
         console.log('📦 BANK SERVICES FORMATLANGAN:', bankServices);
 
         const all = [...locations, ...equipment, ...services, ...bankServices];
-        const shuffled = all.sort(() => Math.random() - 0.5);
-        setItems(shuffled);
+        setItems(all.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)));
       } catch (err) {
         console.error('Marketplace yuklash xatosi:', err);
       } finally {
@@ -121,10 +148,6 @@ const services = servRes.data.map(item => ({
 
   // ========== FILTRLASH ==========
   const filteredItems = useMemo(() => {
-    console.log('🟢 FILTREDITEMS USEMEMO ISHGA TUSHDI');
-    console.log('📌 TANLANGAN SERVICE CATS:', [...selectedServiceCats]);
-    console.log('📌 BARCHA ITEMS TURLARI:', items.map(i => ({ type: i.type, title: i.title, subCategory: i.subCategory })));
-
     let result = items;
 
     // 1. TYPE bo'yicha filtr
@@ -143,7 +166,6 @@ const services = servRes.data.map(item => ({
         // Bank xizmatlari uchun
         if (item.type === 'bank_service') {
           const match = selectedServiceCats.has(item.subCategory);
-          console.log(`📌 bank_service: ${item.serviceName}, subCategory: ${item.subCategory}, match: ${match}`);
           return match;
         }
         // Oddiy service'lar uchun (serviceTags)
@@ -157,25 +179,26 @@ const services = servRes.data.map(item => ({
 
     // 4. Qidiruv bo'yicha filtr
     if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
+      const term = searchableText(searchTerm);
       result = result.filter(item => {
         if (item.type === 'bank_service') {
           return (
-            item.serviceName?.toLowerCase().includes(term) ||
-            item.provider?.toLowerCase().includes(term) ||
-            item.description?.toLowerCase().includes(term)
+            searchableText(item.serviceName).includes(term) ||
+            searchableText(item.provider).includes(term) ||
+            searchableText(item.description).includes(term)
           );
         }
         return (
-          item.title?.toLowerCase().includes(term) ||
-          item.description?.toLowerCase().includes(term) ||
-          item.type?.toLowerCase().includes(term) ||
-          (item.meta && item.meta.some(m => m.text.toLowerCase().includes(term)))
+          searchableText(item.title).includes(term) ||
+          searchableText(item.description).includes(term) ||
+          searchableText(item.level1).includes(term) ||
+          searchableText(item.type).includes(term) ||
+          (item.serviceTags || []).some((tag) => searchableText(tag).includes(term)) ||
+          (item.meta && item.meta.some((meta) => searchableText(meta.text).includes(term)))
         );
       });
     }
 
-    console.log('📊 FILTR NATIJASI:', result.length, 'ta item');
     return result;
   }, [items, searchTerm, selectedTypes, selectedLevel1s, selectedServiceCats]);
 
@@ -227,15 +250,15 @@ const services = servRes.data.map(item => ({
   return (
     <div className="marketplace-page">
       <div className="marketplace-page-header">
-        <Link to="/" className="marketplace-back-btn">
-          <ArrowLeft size={20} />
-          <span>{t('marketplacePage.back')}</span>
-        </Link>
-
         <h1 className="marketplace-page-title">
           <Store size={24} />
           {t('marketplacePage.title')}
         </h1>
+
+        <button type="button" className="marketplace-back-btn" onClick={() => navigate('/marketplace')}>
+          <ArrowLeft size={18} />
+          <span>{t('common.back', 'Orqaga')}</span>
+        </button>
 
         <div className="marketplace-search-bar">
           <Search size={18} className="marketplace-search-icon" />
@@ -243,7 +266,8 @@ const services = servRes.data.map(item => ({
             type="text"
             placeholder={t('marketplacePage.searchPlaceholder')}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onClick={() => setIsSearchOpen(true)}
+            readOnly
             className="marketplace-search-input"
           />
           {searchTerm && (
@@ -257,10 +281,40 @@ const services = servRes.data.map(item => ({
           )}
         </div>
 
-        <button className="mp-mobile-filter-btn" onClick={() => setShowMobileFilters(true)}>
+        <button type="button" className="mp-mobile-filter-btn" onClick={() => setShowMobileFilters(true)}>
           <SlidersHorizontal size={16} /> {t('marketplacePage.filterButton')}
         </button>
       </div>
+      <SearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSearch={setSearchTerm}
+        storageKey="zumo_recent_search_marketplace"
+        placeholder={t('marketplacePage.searchPlaceholder')}
+        initialValue={searchTerm}
+        suggestions={[
+          ...categories.map((category) => ({
+            id: category.key,
+            label: t(`categories.${category.key}`, { defaultValue: category.name || category.key }),
+            kind: 'category',
+            hint: t('mkt.categories', 'Kategoriya'),
+          })),
+          ...items.map((item) => ({
+            id: item.id,
+            label: item.type === 'bank_service' ? item.serviceName : item.title,
+            kind: 'listing',
+            hint: item.level1 || item.provider || item.type,
+          })).filter((item) => item.label),
+        ]}
+        onSelectSuggestion={(suggestion) => {
+          if (suggestion.kind === 'category') {
+            setSelectedLevel1s(new Set([suggestion.id]));
+            setSearchTerm('');
+            return;
+          }
+          setSearchTerm(suggestion.label);
+        }}
+      />
 
       <div className="marketplace-body">
         <MarketplaceFilters

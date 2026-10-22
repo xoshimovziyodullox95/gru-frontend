@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -115,12 +116,9 @@ export default function AddServiceForm() {
   };
 
   // Tarjima qilingan level nomlari
-  const level1Display = t(`categories.${level1}`, { defaultValue: level1 });
-  const level2Display = t(`categoriesLevel2.${level2}`, { defaultValue: level2 });
-
   return (
     <div className="add-form-container">
-      <button type="button" className="back-action-btn" onClick={() => navigate(-1)}>
+      <button type="button" className="back-action-btn" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={16} />
         {t('addService.back')}
       </button>

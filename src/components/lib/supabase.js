@@ -8,4 +8,14 @@
     throw new Error('Missing Supabase environment variables');
   }
 
-  export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  const clientKey = '__ZUMO_SUPABASE_CLIENT__';
+  export const supabase = globalThis[clientKey] || (globalThis[clientKey] = createClient(
+    supabaseUrl,
+    supabaseAnonKey,
+    {
+      auth: {
+        // Give normal auth operations enough time to queue behind a refresh.
+        lockAcquireTimeout: 10000,
+      },
+    }
+  ));

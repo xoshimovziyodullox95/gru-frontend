@@ -56,12 +56,12 @@ export default function MarketplaceProductList() {
                 onClick={() => navigate(`/marketplace/products/oziqovqat/${key}`)}
               >
                 <img
-                  src={cat.image || '/images/placeholder.jpg'}
+                  src={cat.image || '/images/zumo-placeholder.svg'}
                   alt={cat.label}
                   className="mph-catalog-list-img"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/images/placeholder.jpg';
+                    e.target.src = '/images/zumo-placeholder.svg';
                   }}
                 />
                 <div className="mph-catalog-list-info">
@@ -94,7 +94,7 @@ export default function MarketplaceProductList() {
               id={eq._id}
               type="equipment"
               title={eq.title}
-              image={eq.images?.[0] || '/images/placeholder-equipment.jpg'}
+              image={eq.images?.[0] || '/images/zumo-placeholder.svg'}
               price={eq.price}
               currency={eq.currency}
               link={`/equipment/${eq._id}`}

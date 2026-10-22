@@ -1,3 +1,4 @@
+﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/MarketplaceServiceCats.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +27,7 @@ export default function MarketplaceServiceCats() {
 
   return (
     <div className="mph-page">
-      <button className="mph-back" onClick={() => navigate(-1)}>
+      <button className="mph-back" onClick={() => safeGoBack(navigate)}>
         <ArrowLeft size={18} /> {t('common.back')}
       </button>
       <h2 className="mph-subtitle">{t('marketplace.services.catsTitle')}</h2>

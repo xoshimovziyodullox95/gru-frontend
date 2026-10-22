@@ -1,12 +1,9 @@
 // App.jsx
-import { useEffect, useRef } from 'react';
 import {
   BrowserRouter,
   Routes,
   Route,
   useLocation,
-  useNavigate,
-  Navigate,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -15,18 +12,20 @@ import { AuthProvider, useAuth } from './components/context/AuthContext.jsx';
 import { ChatProvider } from './components/context/ChatContext';
 import { CartProvider } from './components/context/CartContext';
 import { ThemeProvider } from './components/context/ThemeContext.jsx';
+import OrderHistoryPage from './components/pages/OrderHistoryPage';
 
-import { useGuestMode, setReturnPath } from './hooks/useGuestMode';
 
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
 import AIChat from './components/common/AIChat';
+import ActiveOrderBar from './components/common/ActiveOrderBar';
 import NotificationListener from './components/common/NotificationListener';
+import ZumoGuide from './components/common/ZumoGuide.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 import ScrollToTop from './components/common/ScrollToTop';
 import RequireRole from './components/RequireRole';
-
+import BusinessDirectionsPage from './components/pages/BusinessDirectionsPage.jsx';
 import LandingPage from './components/pages/LandingPage.jsx';
 import AIAssistantPage from './components/pages/AIAssistantPage';
 import HomePage from './components/pages/HomePage.jsx';
@@ -59,6 +58,14 @@ import PhysicPage from './components/pages/PhysicPage';
 import PhysicCategoryPage from './components/pages/PhysicCategoryPage';
 import BroadcastAdPage from './components/pages/BroadcastAdPage';
 import BecomeProviderPage from './components/pages/BecomeProviderPage.jsx';
+import RequestDetailPage from './components/pages/RequestDetailPage';
+import ProviderRequestsPage from './components/pages/ProviderRequestsPage';
+import RequestPage from './components/pages/RequestPage';
+import MyServiceRequestsPage from './components/pages/MyServiceRequestsPage';
+import PostDetailPage from './components/pages/PostDetailPage';
+import NotFoundPage from './components/pages/NotFoundPage';
+import ComingSoonPage from './components/pages/ComingSoonPage';
+import { Compass, Landmark } from 'lucide-react';
 
 import AddListingChoice from './components/pages/AddListingChoice.jsx';
 import AddLocationForm from './components/forms/AddLocationForm.jsx';
@@ -68,8 +75,16 @@ import EditLocationForm from './components/forms/EditLocationForm.jsx';
 import EditEquipmentForm from './components/forms/EditEquipmentForm.jsx';
 import EditServiceForm from './components/forms/EditServiceForm.jsx';
 
-import MarketplacePage from './components/marketplace/MarketplacePage';
 import BankServiceDetail from './components/marketplace/BankServiceDetail.jsx';
+
+/* ============================================================
+   MARKETPLACE
+   ============================================================ */
+
+import MarketplaceLayout from './components/marketplace/MarketplaceLayout';
+import MarketplaceHome from './components/marketplace/MarketplaceHome';
+import MarketplacePage from './components/marketplace/MarketplacePage';
+import SavedListingsPage from './components/pages/SavedListingsPage.jsx';
 
 import GamePage from './components/game/GamePage.jsx';
 import BusinessSystemPage from './components/business/BusinessSystemPage.jsx';
@@ -82,12 +97,13 @@ import MarketplaceServiceCats from './components/pages/MarketplaceServiceCats';
 import MarketplaceServiceList from './components/pages/MarketplaceServiceList';
 import MarketplaceBank from './components/pages/MarketplaceBank';
 
+import './styles/toast.css';
+
 /* ============================================================
    CONSTANTS
    ============================================================ */
 
-let appHasMounted = false;
-
+/* Auth sahifalar — navbar/footer yashiriladi */
 const AUTH_PATHS = [
   '/login',
   '/register',
@@ -95,40 +111,54 @@ const AUTH_PATHS = [
   '/reset-password',
 ];
 
+/* Global navbar ko‘rsatilmaydigan sahifalar */
+const HIDE_CHROME_PATHS = [
+  '/home',
+  '/chat',
+  '/notifications',
+  '/profile',
+  '/add-video',
+];
+
+/* Hali ishga tushmagan bo'limlar — "Tez kunda" sahifasi ko'rsatiladi.
+   Bo'lim tayyor bo'lganda shu yerda false qiling, asl sahifa qaytadi. */
+const COMING_SOON = {
+  businessDirections: true,
+  bank: true,
+};
+
+const bankSoon = (
+  <ComingSoonPage
+    section="bank"
+    icon={Landmark}
+    title="Bank mahsulotlari"
+    description="Kredit, QR to‘lov, kartalar va boshqa bank xizmatlariga onlayn ariza berish tez orada ishga tushadi."
+  />
+);
+
+const directionsSoon = (
+  <ComingSoonPage
+    section="directions"
+    icon={Compass}
+    title="150+ biznes yo‘nalishi"
+    description="Yo‘nalishingizni tanlang — kerakli joy, uskuna va xizmatlarni bitta joyda topasiz. Tez orada ishga tushadi."
+  />
+);
+
+/* AIChat YASHIRILADIGAN sahifalar — bu yerda floating chat kerak emas */
+const HIDE_AI_CHAT_PATHS = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/ai-assistant', // to'liq sahifa AI allaqachon bor
+];
+
 /* ============================================================
    ENTRY GATE
-   Birinchi yuklanishda splash ko‘rsatiladi,
-   keyin foydalanuvchi o‘zi ochgan sahifaga qaytadi.
    ============================================================ */
 
 function EntryGate({ children }) {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const didCheck = useRef(false);
-
-  useEffect(() => {
-    if (didCheck.current) return;
-    didCheck.current = true;
-
-    if (appHasMounted) return;
-    appHasMounted = true;
-
-    const isAuthPath = AUTH_PATHS.includes(location.pathname);
-
-    if (location.pathname !== '/' && !isAuthPath) {
-      const returnTo = location.pathname + location.search;
-
-      setReturnPath(returnTo);
-
-      /* Qaytish manzili LandingPage ga state orqali beriladi */
-      navigate('/', {
-        replace: true,
-        state: { returnTo },
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return children;
 }
 
@@ -138,14 +168,24 @@ function EntryGate({ children }) {
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideNavFooter = AUTH_PATHS.includes(location.pathname);
+
+  /* Navbar/Footer yashiriladigan sahifalar:
+     - Auth sahifalar (login, register, ...)
+     - /home, /chat, /notifications, /profile, /add-video */
+  const hideNavbar =
+    AUTH_PATHS.includes(location.pathname) ||
+    HIDE_CHROME_PATHS.includes(location.pathname);
 
   return (
     <>
-      {!hideNavFooter && <Navbar />}
+      {!hideNavbar && <Navbar />}
+
+      {!hideNavbar && <ActiveOrderBar />}
+
       <main className="flex-grow">{children}</main>
-      {!hideNavFooter && <Footer />}
-      <AIChat />
+
+      {!AUTH_PATHS.includes(location.pathname) &&
+        (!hideNavbar || location.pathname === '/home') && <Footer />}
     </>
   );
 }
@@ -154,16 +194,12 @@ function Layout({ children }) {
    ROUTE HELPERS
    ============================================================ */
 
-/* Foydalanuvchi yoki mehmon ko‘ra oladigan sahifa */
-function BrowseRoute({ canBrowse, children }) {
-  if (!canBrowse) {
-    return <Navigate to="/" replace />;
-  }
-
+/* Ko'rish sahifalari hamma uchun ochiq — buyurtma, chat kabi amallar
+   o'z sahifasida login so'raydi. */
+function BrowseRoute({ children }) {
   return <Layout>{children}</Layout>;
 }
 
-/* Faqat tizimga kirgan foydalanuvchi uchun */
 function PrivateRoute({ children }) {
   return (
     <ProtectedRoute>
@@ -172,7 +208,10 @@ function PrivateRoute({ children }) {
   );
 }
 
-/* Rol talab qiladigan sahifa */
+function FullScreenRoute({ children }) {
+  return <ProtectedRoute>{children}</ProtectedRoute>;
+}
+
 function RoleRoute({ roles, children }) {
   return (
     <RequireRole allowedRoles={roles}>
@@ -182,26 +221,44 @@ function RoleRoute({ roles, children }) {
 }
 
 /* ============================================================
+   GLOBAL AIChat WRAPPER — hamma joyda ko'rinadi (ba'zilarni hisobga olmaganda)
+   ============================================================ */
+
+function GlobalAIChat() {
+  const location = useLocation();
+
+  if (HIDE_AI_CHAT_PATHS.includes(location.pathname)) {
+    return null;
+  }
+
+  return <AIChat />;
+}
+
+/* ============================================================
    MAIN ROUTES
    ============================================================ */
 
 function MainRoutes() {
-  const { user, loading } = useAuth();
-  const { isGuest } = useGuestMode();
-
-  const canBrowse = Boolean(user) || isGuest;
+  const location = useLocation();
+  const { loading } = useAuth();
 
   if (loading) {
-    return <div className="loading-spinner">⏳ Yuklanmoqda...</div>;
+    return <div className="loading-spinner">Yuklanmoqda...</div>;
   }
 
-  const browse = (page) => (
-    <BrowseRoute canBrowse={canBrowse}>{page}</BrowseRoute>
-  );
+  const browse = (page) => <BrowseRoute>{page}</BrowseRoute>;
 
   const priv = (page) => <PrivateRoute>{page}</PrivateRoute>;
-
+  const full = (page) => <FullScreenRoute>{page}</FullScreenRoute>;
   const open = (page) => <Layout>{page}</Layout>;
+
+  /* Marketplace uchun yordamchi */
+  // Each marketplace URL owns a fresh shell so its entrance animation/state
+  // cannot stay attached to the previous page after client-side navigation.
+  const mkt = (page) => (
+    <MarketplaceLayout key={location.pathname}>{page}</MarketplaceLayout>
+  );
+  const marketplaceBrowse = mkt;
 
   return (
     <Routes>
@@ -210,16 +267,32 @@ function MainRoutes() {
 
       {/* ===== BROWSE ===== */}
       <Route path="/home" element={browse(<HomePage />)} />
+      <Route path="/saved" element={browse(<SavedListingsPage />)} />
       <Route path="/category/:level1" element={browse(<CategoryPage />)} />
-      <Route path="/subcategory/:level1/:level2" element={browse(<SubcategoryPage />)} />
-      <Route path="/location/:id" element={browse(<LocationPage />)} />
-      <Route path="/equipment/:id" element={browse(<EquipmentDetailPage />)} />
-      <Route path="/services/:slug" element={browse(<ServicePage />)} />
-      <Route path="/service-provider/:id" element={open(<ServiceProviderDetailPage />)} />
-      <Route path="/cart" element={browse(<CartPage />)} />
+      <Route
+        path="/subcategory/:level1/:level2"
+        element={browse(<SubcategoryPage />)}
+      />
+      <Route path="/location/:id" element={marketplaceBrowse(<LocationPage />)} />
+      <Route path="/equipment/:id" element={marketplaceBrowse(<EquipmentDetailPage />)} />
+      <Route path="/services/:slug" element={marketplaceBrowse(<ServicePage />)} />
+      <Route
+        path="/service-provider/:id"
+        element={mkt(<ServiceProviderDetailPage />)}
+      />
+
+      {/* SAVAT — marketplace layout ichida */}
+      <Route path="/cart" element={mkt(<CartPage />)} />
+
       <Route path="/profile/:userId" element={browse(<ProfilePage />)} />
-      <Route path="/bank-services" element={browse(<BankServicesListPage />)} />
-      <Route path="/bank-service/:id" element={browse(<BankServiceDetail />)} />
+
+      <Route path="/posts/:id" element={browse(<PostDetailPage />)} />
+
+      <Route
+        path="/bank-services"
+        element={browse(COMING_SOON.bank ? bankSoon : <BankServicesListPage />)}
+      />
+      <Route path="/bank-service/:id" element={browse(COMING_SOON.bank ? bankSoon : <BankServiceDetail />)} />
 
       {/* ===== AI ===== */}
       <Route path="/ai-assistant" element={<AIAssistantPage />} />
@@ -231,19 +304,41 @@ function MainRoutes() {
       <Route path="/chat" element={priv(<ChatPage />)} />
       <Route path="/notifications" element={priv(<NotificationsPage />)} />
 
-      {/* ===== E’LON QO‘SHISH ===== */}
+      {/* ===== REQUEST ===== */}
+      <Route path="/request" element={full(<RequestPage />)} />
+      <Route path="/my-requests" element={priv(<MyServiceRequestsPage />)} />
+      <Route path="/requests/:id" element={full(<RequestDetailPage />)} />
+      <Route
+        path="/provider-requests"
+        element={priv(<ProviderRequestsPage />)}
+      />
+      <Route
+        path="/provider-requests/:id"
+        element={full(<RequestDetailPage />)}
+      />
+
+      {/* ===== E'LON QO'SHISH ===== */}
       <Route path="/add-listing" element={priv(<AddListingChoice />)} />
       <Route path="/add-location" element={priv(<AddLocationForm />)} />
       <Route path="/add-equipment" element={priv(<AddEquipmentForm />)} />
       <Route path="/add-service" element={priv(<AddServiceForm />)} />
       <Route path="/add-video" element={priv(<AddVideoPostForm />)} />
 
-      {/* ===== XIZMAT KO‘RSATUVCHI BO‘LISH ===== */}
-      <Route path="/become-provider" element={priv(<BecomeProviderPage />)} />
+      {/* ===== BECOME PROVIDER ===== */}
+      <Route
+        path="/become-provider"
+        element={priv(<BecomeProviderPage />)}
+      />
 
       {/* ===== EDIT ===== */}
-      <Route path="/edit/location/:id" element={priv(<EditLocationForm />)} />
-      <Route path="/edit/equipment/:id" element={priv(<EditEquipmentForm />)} />
+      <Route
+        path="/edit/location/:id"
+        element={priv(<EditLocationForm />)}
+      />
+      <Route
+        path="/edit/equipment/:id"
+        element={priv(<EditEquipmentForm />)}
+      />
       <Route path="/edit/service/:id" element={priv(<EditServiceForm />)} />
 
       {/* ===== GAME / LESSONS / BUSINESS ===== */}
@@ -251,7 +346,13 @@ function MainRoutes() {
       <Route path="/lessons" element={priv(<LessonsPage />)} />
       <Route path="/business" element={priv(<BusinessSystemPage />)} />
 
-      {/* ===== BIZNES QO‘SHIMCHA ===== */}
+      {/* ===== 150+ BIZNES YO'NALISH — tanlash sahifasi ===== */}
+      <Route
+        path="/business-directions"
+        element={COMING_SOON.businessDirections ? open(directionsSoon) : <BusinessDirectionsPage />}
+      />
+
+      {/* ===== BIZNES ===== */}
       <Route path="/my-branches" element={priv(<BranchesPage />)} />
       <Route path="/supplier-stats" element={priv(<SupplierStatsPage />)} />
       <Route path="/my-orders" element={priv(<MyOrdersPage />)} />
@@ -284,23 +385,53 @@ function MainRoutes() {
 
       {/* ===== PHYSIC ===== */}
       <Route path="/physic" element={open(<PhysicPage />)} />
-      <Route path="/physic/:categoryKey" element={open(<PhysicCategoryPage />)} />
+      <Route
+        path="/physic/:categoryKey"
+        element={open(<PhysicCategoryPage />)}
+      />
 
-      {/* ===== MARKETPLACE ===== */}
-      <Route path="/marketplace" element={open(<MarketplacePage />)} />
-      <Route path="/marketplace/locations" element={open(<MarketplaceLocations />)} />
-      <Route path="/marketplace/products" element={open(<MarketplaceProductTypes />)} />
+      {/* ========================================================
+          ===== MARKETPLACE (Yandex Go uslubi) =====
+          ======================================================== */}
+
+      <Route path="/marketplace" element={mkt(<MarketplaceHome />)} />
+      <Route path="/marketplace/all" element={mkt(<MarketplacePage />)} />
+
+      <Route
+        path="/marketplace/profile"
+        element={mkt(<ProfilePage />)}
+      />
+
+      <Route
+        path="/marketplace/locations"
+        element={mkt(<MarketplaceLocations />)}
+      />
+      <Route
+        path="/marketplace/products"
+        element={mkt(<MarketplaceProductTypes />)}
+      />
       <Route
         path="/marketplace/products/oziqovqat/:catalog"
-        element={open(<MarketplaceCatalogItems />)}
+        element={mkt(<MarketplaceCatalogItems />)}
       />
-      <Route path="/marketplace/products/:type" element={open(<MarketplaceProductList />)} />
-      <Route path="/marketplace/services" element={open(<MarketplaceServiceCats />)} />
-      <Route path="/marketplace/services/:slug" element={open(<MarketplaceServiceList />)} />
-      <Route path="/marketplace/bank" element={open(<MarketplaceBank />)} />
+      <Route
+        path="/marketplace/products/:type"
+        element={mkt(<MarketplaceProductList />)}
+      />
+      <Route
+        path="/marketplace/services"
+        element={mkt(<MarketplaceServiceCats />)}
+      />
+      <Route
+        path="/marketplace/services/:slug"
+        element={mkt(<MarketplaceServiceList />)}
+      />
+      <Route path="/marketplace/bank" element={mkt(COMING_SOON.bank ? bankSoon : <MarketplaceBank />)} />
+
+      <Route path="/history" element={priv(<OrderHistoryPage />)} />
 
       {/* ===== 404 ===== */}
-      <Route path="*" element={<Navigate to="/home" replace />} />
+      <Route path="*" element={open(<NotFoundPage />)} />
     </Routes>
   );
 }
@@ -321,12 +452,25 @@ function App() {
                 <NotificationListener />
                 <MainRoutes />
               </EntryGate>
+
+              {/* ✅ GLOBAL AI CHAT — hamma sahifada ko'rinadi */}
+              <ZumoGuide />
+              <GlobalAIChat />
             </BrowserRouter>
 
             <ToastContainer
               position="top-right"
-              autoClose={5000}
+              autoClose={3500}
+              hideProgressBar={false}
+              newestOnTop={true}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable
+              pauseOnHover
               theme="dark"
+              limit={3}
+              toastClassName="gru-toast"
             />
           </ChatProvider>
         </CartProvider>
