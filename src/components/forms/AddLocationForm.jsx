@@ -1,572 +1,264 @@
-﻿import { safeGoBack } from '../utils/navigation.js';
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+﻿// src/components/forms/AddLocationForm.jsx
+// "Joy: ijara yoki sotuv" — OLX uslubidagi qisqa forma.
+// Avvalgi murakkab maydonlar (odamlar oqimi, yaqin obyektlar, ventilyatsiya, raqobat, UVP) olib tashlandi —
+// oddiy foydalanuvchi ularni to'ldira olmasdi.
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Store, Building2, Warehouse, Home, LandPlot, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createLocation, uploadLocationMedia } from '../services/locations';
-import { useCategories } from '../hooks/useCategories';
-import MediaUploader from '../MediaUploader';
+import { getUserProfile } from '../services/user';
 import LocationMapPicker from './LocationMapPicker';
-import SuccessModal from '../common/SuccessModal.jsx';
-import AITextEnhanceButton from "../common/AITextEnhanceButton.jsx";
-import {
-  Plus,
-  Trash2,
-  Plug,
-  Wind,
-  BookOpen,
-  GraduationCap,
-  Coffee,
-  Pill,
-  Building2,
-  ShoppingBag,
-  Landmark,
-  MapPin,
-  ArrowLeft,
-} from 'lucide-react';
-import '../../styles/addLocationForm.css';
-import '../../styles/aienhance.css'; // <-- AI uslubi
+import SuccessModal from '../common/SuccessModal';
+import AITextEnhanceButton from '../common/AITextEnhanceButton';
+import { safeGoBack } from '../utils/navigation.js';
+import { T } from '../utils/T';
+import { Field, FormSection, PhotoPicker, Segmented } from './listingKit';
+import { REGIONS } from './listingConstants';
+import '../../styles/aienhance.css';
 
-// NEARBY_TYPES
-const getNearbyTypes = (t) => [
-  { value: 'school', label: t('addLocation.nearby.types.school'), Icon: BookOpen, emoji: '\ud83c\udfeb' },
-  { value: 'university', label: t('addLocation.nearby.types.university'), Icon: GraduationCap, emoji: '\ud83c\udf93' },
-  { value: 'cafe', label: t('addLocation.nearby.types.cafe'), Icon: Coffee, emoji: '\u2615' },
-  { value: 'pharmacy', label: t('addLocation.nearby.types.pharmacy'), Icon: Pill, emoji: '\ud83d\udc8a' },
-  { value: 'hospital', label: t('addLocation.nearby.types.hospital'), Icon: Building2, emoji: '\ud83c\udfe5' },
-  { value: 'mall', label: t('addLocation.nearby.types.mall'), Icon: ShoppingBag, emoji: '\ud83c\udfec' },
-  { value: 'bank', label: t('addLocation.nearby.types.bank'), Icon: Landmark, emoji: '\ud83c\udfe6' },
-  { value: 'other', label: t('addLocation.nearby.types.other'), Icon: MapPin, emoji: '\ud83d\udccd' },
+// Joy turi — Location.category da saqlanadi
+const PLACE_TYPES = [
+  { id: 'dokon', icon: Store, label: 'Do‘kon / savdo joyi' },
+  { id: 'ofis', icon: Building2, label: 'Ofis' },
+  { id: 'ombor', icon: Warehouse, label: 'Ombor / sex' },
+  { id: 'xonadon', icon: Home, label: 'Uy / xonadon' },
+  { id: 'yer', icon: LandPlot, label: 'Yer uchastkasi' },
 ];
 
-const TRAFFIC_HOURS = Array.from({ length: 13 }, (_, i) => {
-  const hour = 9 + i;
-  return `${String(hour).padStart(2, '0')}:00`;
-});
-
-// O'zbekiston viloyatlari (12 ta)
-const REGIONS = [
-  { value: 'toshkent', label: 'Toshkent' },
-  { value: 'toshkentViloyati', label: 'Toshkent-vioyati' },
-  { value: 'samarqand', label: 'Samarqand' },
-  { value: 'buxoro', label: 'Buxoro' },
-  { value: 'andijon', label: 'Andijon' },
-  { value: 'fargona', label: "Farg'ona" },
-  { value: 'namangan', label: 'Namangan' },
-  { value: 'qashqadaryo', label: 'Qashqadaryo' },
-  { value: 'surxondaryo', label: 'Surxondaryo' },
-  { value: 'jizzax', label: 'Jizzax' },
-  { value: 'sirdaryo', label: 'Sirdaryo' },
-  { value: 'navoiy', label: 'Navoiy' },
-  { value: 'xorazm', label: 'Xorazm' },
-];
+const TITLE_MAX = 70;
+const DESC_MAX = 3000;
 
 export default function AddLocationForm() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
 
-  const { level1List, level2List, level1, level2, setLevel1, setLevel2 } = useCategories(
-    queryParams.get('level1') || ''
-  );
-
-  const [formData, setFormData] = useState({
+  const [photos, setPhotos] = useState([]);
+  const [form, setForm] = useState({
+    dealType: 'rent',
+    placeType: '',
     title: '',
-    address: '',
-    phone: '',
-    price_range: '',
-    currency: 'USD',
-    competitors_info: '',
-    uvp: '',
+    price: '',
+    currency: 'UZS',
+    sqm: '',
+    rooms: '',
+    floor: '',
     description: '',
     region: '',
+    address: '',
+    phone: '',
   });
-
   const [coords, setCoords] = useState({ lat: null, lng: null });
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [doneId, setDoneId] = useState(null);
 
-  const [details, setDetails] = useState({
-    sqm: '',
-    floor: '',
-    rooms: '',
-    power: '',
-  });
+  useEffect(() => {
+    getUserProfile()
+      .then((res) => setForm((f) => (f.phone ? f : { ...f, phone: res.data?.phone || '' })))
+      .catch(() => {});
+  }, []);
 
-  const [ventilation, setVentilation] = useState({ has: '', count: '' });
-  const [nearby, setNearby] = useState([]);
-  const [creativeReason, setCreativeReason] = useState('');
-
-  const [traffic, setTraffic] = useState(
-    TRAFFIC_HOURS.map((hour) => ({ hour, count: '' }))
-  );
-
-  const [mediaFiles, setMediaFiles] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [successInfo, setSuccessInfo] = useState(null);
-
-  const nearbyTypes = getNearbyTypes(t);
-  const NEARBY_BY_VALUE = nearbyTypes.reduce((acc, item) => {
-    acc[item.value] = item;
-    return acc;
-  }, {});
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const set = (name, value) => {
+    setForm((f) => ({ ...f, [name]: value }));
+    setErrors((e) => ({ ...e, [name]: undefined }));
   };
 
-  const handleDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setDetails((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleMapSelect = ({ lat, lng, address }) => {
+  const onMap = ({ lat, lng, address }) => {
     setCoords({ lat, lng });
-    if (address) {
-      setFormData((prev) => ({ ...prev, address }));
-    }
+    setErrors((e) => ({ ...e, map: undefined, address: undefined }));
+    if (address) setForm((f) => ({ ...f, address }));
   };
 
-  const addNearbyRow = () => {
-    setNearby((prev) => [...prev, { name: '', type: 'other', distance: '' }]);
+  const validate = () => {
+    const e = {};
+    if (!photos.length) e.photos = T('Kamida bitta rasm qo‘shing');
+    if (!form.placeType) e.placeType = T('Joy turini tanlang');
+    if (form.title.trim().length < 3) e.title = T('Sarlavhani yozing (kamida 3 ta belgi)');
+    if (!(Number(form.price) > 0)) e.price = T('Narxni kiriting');
+    if (!form.region) e.region = T('Viloyatni tanlang');
+    if (!coords.lat || !coords.lng) e.map = T('Xaritada joyni belgilang');
+    if (form.address.trim().length < 3) e.address = T('Manzilni yozing');
+    if (form.phone.replace(/\D/g, '').length < 9) e.phone = T('Telefon raqamini kiriting');
+    setErrors(e);
+    return !Object.keys(e).length;
   };
 
-  const updateNearbyRow = (index, field, value) => {
-    setNearby((prev) =>
-      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row))
-    );
-  };
-
-  const removeNearbyRow = (index) => {
-    setNearby((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateTrafficRow = (index, value) => {
-    setTraffic((prev) =>
-      prev.map((row, i) => (i === index ? { ...row, count: value } : row))
-    );
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!user) {
-      alert(t('addLocation.errors.loginRequired'));
-      navigate('/login');
+  const submit = async (ev) => {
+    ev.preventDefault();
+    if (!user) return navigate('/login');
+    if (!validate()) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    if (!level1 || !level2) {
-      alert(t('addLocation.errors.selectDirectionCategory'));
-      return;
-    }
-    if (!coords.lat || !coords.lng) {
-      alert(t('addLocation.errors.selectLocation'));
-      return;
-    }
-
-    setLoading(true);
-    setUploadProgress(0);
-
+    setSaving(true);
+    setProgress(0);
     try {
-      const cleanDetails = {
-        sqm: details.sqm ? Number(details.sqm) : 0,
-        floor: details.floor ? Number(details.floor) : 0,
-        rooms: details.rooms ? Number(details.rooms) : 0,
-        power: details.power ? Number(details.power) : 0,
-        ventilation:
-          ventilation.has === 'yes'
-            ? `Bor (${ventilation.count || '?'} ta chiqish joyi)`
-            : ventilation.has === 'no'
-            ? "Yo'q"
-            : '',
-      };
-
-      const cleanNearby = nearby
-        .filter((row) => row.name.trim() !== '' && row.distance !== '')
-        .map((row) => ({
-          name: row.name.trim(),
-          type: row.type || 'other',
-          distance: Number(row.distance),
-          icon: NEARBY_BY_VALUE[row.type]?.emoji || '\ud83d\udccd',
-        }));
-
-      const cleanTraffic = traffic
-        .filter((row) => row.count !== '' && row.count !== null)
-        .map((row) => ({ hour: row.hour, count: Number(row.count) }));
-
-      const payload = {
-        ...formData,
-        level1,
-        category: level2,
-        level2,
+      const price = Number(form.price);
+      const res = await createLocation({
+        title: form.title.trim(),
+        description: form.description.trim(),
+        address: form.address.trim(),
+        region: form.region,
+        phone: form.phone.trim(),
+        dealType: form.dealType,
+        price_range: String(price),
+        price_per_month: form.dealType === 'rent' ? price : 0,
+        currency: form.currency,
+        level1: 'marketplace',
+        category: form.placeType,
         lat: coords.lat,
         lng: coords.lng,
-        details: cleanDetails,
-        nearby: cleanNearby,
-        creativeReason: creativeReason.trim(),
-        traffic: cleanTraffic,
-      };
-
-      const locRes = await createLocation(payload);
-      const locationId = locRes.data._id;
-
-      if (mediaFiles.length > 0) {
-        const formDataMedia = new FormData();
-        mediaFiles.forEach((mf) => formDataMedia.append('media', mf.file));
-
-        await uploadLocationMedia(locationId, formDataMedia, (progressEvent) => {
-          const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          setUploadProgress(percent);
-        });
-      }
-
-      setSuccessInfo({ target: `/location/${locationId}` });
+        details: {
+          sqm: Number(form.sqm) || 0,
+          rooms: Number(form.rooms) || 0,
+          floor: Number(form.floor) || 0,
+        },
+      });
+      const id = res.data._id;
+      const fd = new FormData();
+      photos.forEach((p) => fd.append('media', p.file));
+      await uploadLocationMedia(id, fd, (e) => setProgress(Math.round((e.loaded * 100) / (e.total || 1))));
+      setDoneId(id);
     } catch (err) {
-      console.error(err);
-      alert(t('addLocation.errors.submitError', { error: err.response?.data?.error || err.message }));
+      setErrors({ submit: err.response?.data?.error || T('E’lonni joylab bo‘lmadi. Qayta urinib ko‘ring.') });
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  const currentNearbyIcon = (type) => NEARBY_BY_VALUE[type]?.Icon || MapPin;
+  const showRooms = form.placeType === 'xonadon' || form.placeType === 'ofis';
 
   return (
-    <div className="add-location-form-container">
-      <button type="button" className="alf-back-btn" onClick={() => safeGoBack(navigate)}>
-        <ArrowLeft size={16} />
-        {t('addLocation.back')}
-      </button>
-
-      <form onSubmit={handleSubmit} className="add-location-form">
-        <h2>{t('addLocation.title')}</h2>
-
-        <div className="form-group">
-          <label>{t('addLocation.fields.name')}</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-            placeholder={t('addLocation.fields.namePlaceholder')}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>{t('addLocation.fields.phone')}</label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>{t('addLocation.fields.region')}</label>
-          <select
-            name="region"
-            value={formData.region}
-            onChange={handleChange}
-            required
-          >
-            <option value="">{t('addLocation.fields.regionPlaceholder')}</option>
-            {REGIONS.map((region) => (
-              <option key={region.value} value={region.value}>
-                {region.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>{t('addLocation.fields.direction')}</label>
-            <select value={level1} onChange={(e) => setLevel1(e.target.value)} required>
-              <option value="">{t('addLocation.fields.directionPlaceholder')}</option>
-              {level1List.map((l1) => (
-                <option key={l1.key} value={l1.key}>
-                  {t(`categories.${l1.key}`, { defaultValue: l1.name || l1.key })}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>{t('addLocation.fields.category')}</label>
-            <select
-              value={level2}
-              onChange={(e) => setLevel2(e.target.value)}
-              required
-              disabled={!level1}
-            >
-              <option value="">{t('addLocation.fields.categoryPlaceholder')}</option>
-              {level2List.map((l2) => {
-                const key = l2.key || l2.level2;
-                return (
-                  <option key={key} value={key}>
-                    {t(`categoriesLevel2.${key}`, { defaultValue: l2.name || key })}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label>{t('addLocation.fields.priceRange')}</label>
-          <div className="price-currency-row">
-            <input
-              type="text"
-              name="price_range"
-              value={formData.price_range}
-              onChange={handleChange}
-              placeholder={t('addLocation.fields.priceRangePlaceholder')}
-            />
-            <select
-              name="currency"
-              value={formData.currency}
-              onChange={handleChange}
-              className="currency-select"
-            >
-              <option value="USD">USD ($)</option>
-              <option value="UZS">UZS (so'm)</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label>{t('addLocation.fields.competitors')}</label>
-          <textarea
-            name="competitors_info"
-            rows="2"
-            value={formData.competitors_info}
-            onChange={handleChange}
-            placeholder={t('addLocation.fields.competitorsPlaceholder')}
-          />
-        </div>
-
-        {/* ===== AI TUGMA BILAN TAVSIF ===== */}
-        <div className="form-group">
-          <label>{t('addLocation.fields.description')}</label>
-          <AITextEnhanceButton
-            value={formData.description}
-            onChange={(newText) => setFormData(prev => ({ ...prev, description: newText }))}
-          />
-          <textarea
-            name="description"
-            rows="4"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder={t('addLocation.fields.descriptionPlaceholder')}
-          />
-        </div>
-
-        <div className="section-block">
-          <h3 className="section-title">{t('addLocation.fields.addressLabel')}</h3>
-          <p className="section-hint">{t('addLocation.sectionHints.address')}</p>
-          <LocationMapPicker lat={coords.lat} lng={coords.lng} onSelect={handleMapSelect} />
-          <div className="form-group" style={{ marginTop: '0.8rem' }}>
-            <label>{t('addLocation.fields.address')}</label>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder={t('addLocation.fields.addressPlaceholder')}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="section-block">
-          <h3 className="section-title">{t('addLocation.sections.locationDetails')}</h3>
-          <div className="form-row">
-            <div className="form-group">
-              <label>{t('addLocation.details.sqm')}</label>
-              <input
-                type="number"
-                name="sqm"
-                value={details.sqm}
-                onChange={handleDetailsChange}
-                placeholder={t('addLocation.details.sqmPlaceholder')}
-              />
-            </div>
-            <div className="form-group">
-              <label>{t('addLocation.details.floor')}</label>
-              <input
-                type="number"
-                name="floor"
-                value={details.floor}
-                onChange={handleDetailsChange}
-                placeholder={t('addLocation.details.floorPlaceholder')}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>{t('addLocation.details.rooms')}</label>
-              <input
-                type="number"
-                name="rooms"
-                value={details.rooms}
-                onChange={handleDetailsChange}
-                placeholder={t('addLocation.details.roomsPlaceholder')}
-              />
-            </div>
-            <div className="form-group">
-              <label><Plug size={14} className="inline-icon" /> {t('addLocation.details.power')}</label>
-              <input
-                type="number"
-                name="power"
-                value={details.power}
-                onChange={handleDetailsChange}
-                placeholder={t('addLocation.details.powerPlaceholder')}
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label><Wind size={14} className="inline-icon" /> {t('addLocation.details.ventilation')}</label>
-            <div className="toggle-group">
-              <button
-                type="button"
-                className={`toggle-btn ${ventilation.has === 'yes' ? 'active' : ''}`}
-                onClick={() => setVentilation((v) => ({ ...v, has: 'yes' }))}
-              >
-                {t('addLocation.details.ventilationHas')}
-              </button>
-              <button
-                type="button"
-                className={`toggle-btn ${ventilation.has === 'no' ? 'active' : ''}`}
-                onClick={() => setVentilation({ has: 'no', count: '' })}
-              >
-                {t('addLocation.details.ventilationHasNot')}
-              </button>
-            </div>
-
-            {ventilation.has === 'yes' && (
-              <div className="collapse-field">
-                <label>{t('addLocation.details.ventilationCount')}</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={ventilation.count}
-                  onChange={(e) => setVentilation((v) => ({ ...v, count: e.target.value }))}
-                  placeholder={t('addLocation.details.ventilationCountPlaceholder')}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="section-block">
-          <h3 className="section-title">{t('addLocation.sections.nearbyObjects')}</h3>
-          <p className="section-hint">{t('addLocation.sectionHints.nearby')}</p>
-
-          {nearby.map((row, index) => {
-            const Icon = currentNearbyIcon(row.type);
-            return (
-              <div className="nearby-row" key={index}>
-                <div className="nearby-icon-preview">
-                  <Icon size={18} />
-                </div>
-                <select
-                  value={row.type}
-                  onChange={(e) => updateNearbyRow(index, 'type', e.target.value)}
-                  className="nearby-type"
-                >
-                  {nearbyTypes.map((t) => (
-                    <option key={t.value} value={t.value}>{t.label}</option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  placeholder={t('addLocation.nearby.namePlaceholder')}
-                  value={row.name}
-                  onChange={(e) => updateNearbyRow(index, 'name', e.target.value)}
-                  className="nearby-name"
-                />
-                <input
-                  type="number"
-                  placeholder={t('addLocation.nearby.distancePlaceholder')}
-                  value={row.distance}
-                  onChange={(e) => updateNearbyRow(index, 'distance', e.target.value)}
-                  className="nearby-distance"
-                />
-                <button
-                  type="button"
-                  className="icon-btn remove"
-                  onClick={() => removeNearbyRow(index)}
-                  aria-label={t('addLocation.nearby.removeLabel')}
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            );
-          })}
-
-          <button type="button" className="add-row-btn" onClick={addNearbyRow}>
-            <Plus size={16} /> {t('addLocation.nearby.addButton')}
-          </button>
-        </div>
-
-        <div className="section-block">
-          <h3 className="section-title">{t('addLocation.sections.whyHere')}</h3>
-          <p className="section-hint">{t('addLocation.sectionHints.whyHere')}</p>
-          <textarea
-            rows="4"
-            value={creativeReason}
-            onChange={(e) => setCreativeReason(e.target.value)}
-            placeholder={t('addLocation.creativeReason.placeholder')}
-          />
-        </div>
-
-        <div className="section-block">
-          <h3 className="section-title">{t('addLocation.sections.footTraffic')}</h3>
-          <p className="section-hint">{t('addLocation.sectionHints.traffic')}</p>
-          <div className="traffic-grid">
-            {traffic.map((row, index) => (
-              <div className="traffic-cell" key={row.hour}>
-                <label>{t('addLocation.traffic.hourLabel', { hour: row.hour.replace(':00', '') })}</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={row.count}
-                  onChange={(e) => updateTrafficRow(index, e.target.value)}
-                  placeholder={t('addLocation.traffic.placeholder')}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <MediaUploader
-          mediaFiles={mediaFiles}
-          setMediaFiles={setMediaFiles}
-          label={t('addLocation.fields.media')}
-        />
-
-        {uploadProgress > 0 && uploadProgress < 100 && (
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${uploadProgress}%` }} />
-          </div>
-        )}
-
-        <button type="submit" disabled={loading} className="submit-btn">
-          {loading ? t('addLocation.submitting') : t('addLocation.submit')}
+    <form className="lf-page" onSubmit={submit} noValidate>
+      <header className="lf-head">
+        <button type="button" className="lf-back" onClick={() => safeGoBack(navigate)} aria-label={T('Orqaga')}>
+          <ArrowLeft size={20} />
         </button>
-      </form>
+        <div>
+          <h1>{T('Joy e’loni')}</h1>
+          <p>{T('Ijaraga berish yoki sotish')}</p>
+        </div>
+      </header>
 
-      {successInfo && (
-        <SuccessModal
-          message={t('addLocation.success')}
-          onDone={() => navigate(successInfo.target)}
+      <FormSection>
+        <Segmented
+          ariaLabel={T('E’lon turi')}
+          value={form.dealType}
+          onChange={(v) => set('dealType', v)}
+          options={[{ value: 'rent', label: T('Ijaraga beraman') }, { value: 'sale', label: T('Sotaman') }]}
         />
+      </FormSection>
+
+      <FormSection title={T('Rasmlar')}>
+        <PhotoPicker photos={photos} setPhotos={(p) => { setPhotos(p); setErrors((e) => ({ ...e, photos: undefined })); }} error={errors.photos} />
+      </FormSection>
+
+      <FormSection title={T('Asosiy ma’lumot')}>
+        <div className="lf-field">
+          <span className="lf-field__label">{T('Joy turi')}</span>
+          <div className="lf-cats">
+            {PLACE_TYPES.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className={`lf-cat ${form.placeType === c.id ? 'is-on' : ''}`}
+                onClick={() => set('placeType', c.id)}
+              >
+                <span className="lf-cat__icon"><c.icon size={18} /></span>
+                <span>{T(c.label)}</span>
+              </button>
+            ))}
+          </div>
+          {errors.placeType && <span className="lf-field__error">{errors.placeType}</span>}
+        </div>
+
+        <Field label={T('Sarlavha')} counter={`${form.title.length}/${TITLE_MAX}`} error={errors.title}>
+          <input
+            value={form.title}
+            maxLength={TITLE_MAX}
+            onChange={(e) => set('title', e.target.value)}
+            placeholder={T('Masalan: Chilonzorda 40 m² do‘kon')}
+          />
+        </Field>
+
+        <div className="lf-row">
+          <Field label={T('Maydoni (m²)')}>
+            <input type="number" inputMode="decimal" min="0" value={form.sqm} onChange={(e) => set('sqm', e.target.value)} placeholder="0" />
+          </Field>
+          {showRooms ? (
+            <Field label={T('Xonalar soni')}>
+              <input type="number" inputMode="numeric" min="0" value={form.rooms} onChange={(e) => set('rooms', e.target.value)} placeholder="0" />
+            </Field>
+          ) : (
+            <Field label={T('Qavat')}>
+              <input type="number" inputMode="numeric" value={form.floor} onChange={(e) => set('floor', e.target.value)} placeholder="1" />
+            </Field>
+          )}
+        </div>
+      </FormSection>
+
+      <FormSection title={form.dealType === 'rent' ? T('Ijara narxi (oyiga)') : T('Narx')}>
+        <div className="lf-row lf-row--price">
+          <Field label={T('Narxi')} error={errors.price}>
+            <input type="number" inputMode="numeric" min="0" value={form.price} onChange={(e) => set('price', e.target.value)} placeholder="0" />
+          </Field>
+          <Segmented
+            ariaLabel={T('Valyuta')}
+            value={form.currency}
+            onChange={(v) => set('currency', v)}
+            options={[{ value: 'UZS', label: T('so‘m') }, { value: 'USD', label: '$' }]}
+          />
+        </div>
+      </FormSection>
+
+      <FormSection title={T('Tavsif')}>
+        <Field label={T('Joy haqida')} counter={`${form.description.length}/${DESC_MAX}`} hint={T('Holati, kommunal xizmatlar, kirish yo‘li, nimaga mos — mijoz nimani bilishi kerak bo‘lsa')}>
+          <AITextEnhanceButton value={form.description} onChange={(text) => set('description', text.slice(0, DESC_MAX))} />
+          <textarea
+            rows={5}
+            maxLength={DESC_MAX}
+            value={form.description}
+            onChange={(e) => set('description', e.target.value)}
+            placeholder={T('Masalan: yangi ta’mirlangan, suv va gaz bor, avtobus bekatiga 2 daqiqa.')}
+          />
+        </Field>
+      </FormSection>
+
+      <FormSection title={T('Manzil')}>
+        <Field label={T('Viloyat')} error={errors.region}>
+          <select value={form.region} onChange={(e) => set('region', e.target.value)}>
+            <option value="">{T('Viloyatni tanlang')}</option>
+            {REGIONS.map((r) => <option key={r} value={r}>{T(r)}</option>)}
+          </select>
+        </Field>
+        <div className={`lf-field ${errors.map ? 'has-error' : ''}`}>
+          <span className="lf-field__label">{T('Xaritada belgilang')}</span>
+          <LocationMapPicker lat={coords.lat} lng={coords.lng} onSelect={onMap} />
+          {errors.map && <span className="lf-field__error">{errors.map}</span>}
+        </div>
+        <Field label={T('Manzil')} error={errors.address} hint={T('Xaritadan tanlasangiz avtomatik to‘ladi')}>
+          <input value={form.address} onChange={(e) => set('address', e.target.value)} placeholder={T('Tuman, ko‘cha, uy raqami')} />
+        </Field>
+        <Field label={T('Telefon')} error={errors.phone}>
+          <input type="tel" autoComplete="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="+998 90 000 00 00" />
+        </Field>
+      </FormSection>
+
+      {errors.submit && <p className="lf-field__error" role="alert" style={{ marginTop: 14 }}>{errors.submit}</p>}
+
+      <div className="lf-submit">
+        <button type="submit" disabled={saving}>
+          {saving && <Loader2 size={18} className="lf-spin" />}
+          {saving ? T('Joylanmoqda...') : T('E’lonni joylash')}
+        </button>
+        {saving && progress > 0 && <div className="lf-progress"><span style={{ width: `${progress}%` }} /></div>}
+      </div>
+
+      {doneId && (
+        <SuccessModal message={T('E’loningiz joylandi!')} onDone={() => navigate(`/location/${doneId}`)} />
       )}
-    </div>
+    </form>
   );
 }

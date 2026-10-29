@@ -1,0 +1,176 @@
+/* Shared mobile/tablet guardrails for listing detail pages. */
+.EquipmentPageWrapper,
+.LocationPageWrapper {
+  width: 100%;
+  min-width: 0;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.EquipmentPageWrapper .LayoutGrid,
+.LocationPageWrapper .LayoutGrid {
+  grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+}
+
+.EquipmentPageWrapper .InformationContent,
+.EquipmentPageWrapper .ActionSidebar,
+.LocationPageWrapper .InformationContent,
+.LocationPageWrapper .ActionSidebar,
+.DetailsModule,
+.ContactSurface,
+.PriceIndicatorCard {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.equipment-gallery-main,
+.image-gallery-main {
+  width: 100%;
+  min-width: 0;
+}
+
+.equipment-gallery-img,
+.image-gallery-main img {
+  max-width: 100%;
+}
+
+.EquipmentPageWrapper .DirectPhoneLink,
+.EquipmentPageWrapper .AddressLine a,
+.EquipmentPageWrapper .user-email,
+.LocationPageWrapper .DirectPhoneLink,
+.LocationPageWrapper .AddressLine a,
+.LocationPageWrapper .user-email {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 1024px) {
+  .EquipmentPageWrapper .LayoutGrid,
+  .LocationPageWrapper .LayoutGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .EquipmentPageWrapper .ActionSidebar,
+  .LocationPageWrapper .ActionSidebar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-items: start;
+  }
+
+  .EquipmentPageWrapper .ActionSidebar > *,
+  .LocationPageWrapper .ActionSidebar > * {
+    min-width: 0;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .EquipmentPageWrapper,
+  .LocationPageWrapper {
+    padding-inline: 12px;
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  .EquipmentPageWrapper .ActionSidebar,
+  .LocationPageWrapper .ActionSidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .EquipmentPageWrapper .ActionSidebar > *,
+  .LocationPageWrapper .ActionSidebar > * {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .equipment-gallery-main,
+  .image-gallery-main {
+    height: auto;
+    min-height: 200px;
+    aspect-ratio: 4 / 3;
+  }
+
+  .equipment-gallery-img,
+  .image-gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .spd-hero-card {
+    padding: 16px;
+  }
+
+  .spd-hero-top {
+    align-items: flex-start;
+  }
+
+  .spd-hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .spd-hero-actions button {
+    width: 100%;
+    min-height: 46px;
+  }
+
+  .chat-with-owner {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .chat-owner-btn,
+  .spd-chat-btn,
+  .spd-order-btn {
+    min-height: 46px;
+  }
+}
+
+@media (max-width: 380px) {
+  .EquipmentPageWrapper,
+  .LocationPageWrapper {
+    padding-inline: 9px;
+  }
+
+  .DetailsModule,
+  .ContactSurface,
+  .PriceIndicatorCard {
+    padding: 14px 12px;
+  }
+
+  .spd-hero-logo {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ---------- Telefon/planshet: narx va "Savatga" sarlavhadan keyin darrov ---------- */
+@media (max-width: 1024px) {
+  .EquipmentPageWrapper .LayoutGrid,
+  .LocationPageWrapper .LayoutGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  /* Ichki kartalar LayoutGrid'ning bevosita bolasi bo'ladi — tartibni order bilan beramiz */
+  .EquipmentPageWrapper .InformationContent { display: contents; }
+  .EquipmentPageWrapper .InformationContent > * { order: 3; margin-bottom: 0; }
+  .EquipmentPageWrapper .InformationContent > .DetailsModule { order: 1; }
+  .EquipmentPageWrapper .ActionSidebar { order: 2; }
+}
+
+@media (max-width: 640px) {
+  /* Wrapper + MainViewport ichki chekinishlari ustma-ust tushib, chetda ortiqcha joy qolardi */
+  .EquipmentPageWrapper .MainViewport,
+  .LocationPageWrapper .MainViewport {
+    padding: 8px 0 0;
+  }
+  /* Mahsulot rasmi kesilmasin — to'liq ko'rinsin */
+  .EquipmentPageWrapper .equipment-gallery-img {
+    object-fit: contain;
+    background: #fff;
+  }
+}

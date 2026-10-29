@@ -1,8 +1,9 @@
 // src/components/marketplace/BankServiceCard.jsx
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { Landmark, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import UniversalBankLogo from '../common/UniversalBankLogo';
 
 export default function BankServiceCard({
   id,
@@ -36,7 +37,7 @@ export default function BankServiceCard({
               onError={() => setErrored(true)}
             />
           ) : (
-            <Landmark size={16} />
+            <UniversalBankLogo size={22} />
           )}
         </div>
       </div>

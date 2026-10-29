@@ -16,7 +16,7 @@
 }
 
 .category-card-inner {
-  background: rgba(10, 17, 40, 0.85);
+  background: rgba(var(--surface-rgb), 0.85);
   backdrop-filter: blur(8px);
   border-radius: 1.2rem;
   overflow: hidden;
@@ -53,7 +53,7 @@
 .category-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #FFFFFF;
+  color: var(--text);
   margin: 0;
   text-align: center;
   letter-spacing: -0.3px;

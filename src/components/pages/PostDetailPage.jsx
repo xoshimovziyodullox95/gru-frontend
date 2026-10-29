@@ -20,8 +20,11 @@ import ShareSheet from '../common/ShareSheet';
 import toast from 'react-hot-toast';
 import '../../styles/post-detail.css';
 
+import { T } from '../utils/T';
 const AVATAR_PLACEHOLDER = '/images/zumo-placeholder.svg';
-const MEDIA_BASE = 'http://localhost:5000';
+import { BACKEND_ORIGIN } from '../utils/imageUrl';
+// Backend manzili .env dan (ilova va serverda ham ishlaydi)
+const MEDIA_BASE = BACKEND_ORIGIN;
 
 /* ============================================================
    YORDAMCHI
@@ -95,7 +98,7 @@ function VideoPlayer({ src, poster }) {
         type="button"
         className="pd-player__mute"
         onClick={toggleMute}
-        aria-label={isMuted ? 'Ovozni yoqish' : "Ovozni o'chirish"}
+        aria-label={isMuted ? T('Ovozni yoqish') : "Ovozni o'chirish"}
       >
         {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
       </button>
@@ -105,7 +108,7 @@ function VideoPlayer({ src, poster }) {
           type="button"
           className="pd-player__play"
           onClick={togglePlay}
-          aria-label="Davom ettirish"
+          aria-label={T('Davom ettirish')}
         >
           <Play size={48} fill="currentColor" />
         </button>
@@ -147,7 +150,7 @@ function CommentItem({ comment, onReply }) {
           <strong>
             {comment.userId?.fullName ||
               comment.userId?.email ||
-              'Foydalanuvchi'}
+              T('Foydalanuvchi')}
           </strong>
           <span className="pd-comment__time">{formatDate(comment.createdAt)}</span>
         </div>
@@ -159,7 +162,7 @@ function CommentItem({ comment, onReply }) {
           className="pd-comment__reply-btn"
           onClick={() => setShowReplyForm(!showReplyForm)}
         >
-          <Reply size={12} /> Javob berish
+          <Reply size={12} /> {T('Javob berish')}
         </button>
 
         {/* Replies */}
@@ -177,7 +180,7 @@ function CommentItem({ comment, onReply }) {
               <strong>
                 {reply.userId?.fullName ||
                   reply.userId?.email ||
-                  'Foydalanuvchi'}
+                  T('Foydalanuvchi')}
               </strong>
               <p>{reply.text}</p>
             </div>
@@ -188,7 +191,7 @@ function CommentItem({ comment, onReply }) {
           <form className="pd-reply-form" onSubmit={submitReply}>
             <input
               type="text"
-              placeholder="Javob yozing..."
+              placeholder={T('Javob yozing...')}
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               autoFocus
@@ -240,7 +243,7 @@ export default function PostDetailPage() {
         );
 
         if (!found) {
-          setError('Post topilmadi');
+          setError(T('Post topilmadi'));
           setLoading(false);
           return;
         }
@@ -257,7 +260,7 @@ export default function PostDetailPage() {
       })
       .catch((err) => {
         console.error('Post xato:', err);
-        setError('Postni yuklab bo\'lmadi');
+        setError(T('Postni yuklab bo\'lmadi'));
         setLoading(false);
       });
   }, [id]);
@@ -266,7 +269,7 @@ export default function PostDetailPage() {
 
   const toggleLike = async () => {
     if (!post || !user) {
-      toast.error('Avval tizimga kiring');
+      toast.error(T('Avval tizimga kiring'));
       return;
     }
 
@@ -294,7 +297,7 @@ export default function PostDetailPage() {
       }
     } catch (err) {
       console.error('Like xato:', err);
-      toast.error('Xatolik');
+      toast.error(T('Xatolik'));
     }
   };
 
@@ -302,7 +305,7 @@ export default function PostDetailPage() {
 
   const toggleDislike = async () => {
     if (!post || !user) {
-      toast.error('Avval tizimga kiring');
+      toast.error(T('Avval tizimga kiring'));
       return;
     }
 
@@ -321,7 +324,7 @@ export default function PostDetailPage() {
       }
     } catch (err) {
       console.error('Dislike xato:', err);
-      toast.error('Xatolik');
+      toast.error(T('Xatolik'));
     }
   };
 
@@ -353,10 +356,10 @@ export default function PostDetailPage() {
 
       setComments((prev) => [...prev, newComment]);
       setCommentText('');
-      toast.success('Izoh qo\'shildi');
+      toast.success(T('Izoh qo\'shildi'));
     } catch (err) {
       console.error('Comment xato:', err);
-      toast.error('Izoh qo\'shilmadi');
+      toast.error(T('Izoh qo\'shilmadi'));
     } finally {
       setCommentSending(false);
     }
@@ -390,7 +393,7 @@ export default function PostDetailPage() {
       );
     } catch (err) {
       console.error('Reply xato:', err);
-      toast.error('Javob yuborilmadi');
+      toast.error(T('Javob yuborilmadi'));
     }
   };
 
@@ -400,7 +403,7 @@ export default function PostDetailPage() {
     return (
       <div className="pd-loading">
         <Loader2 size={28} className="spin" />
-        <span>Yuklanmoqda...</span>
+        <span>{T('Yuklanmoqda...')}</span>
       </div>
     );
   }
@@ -408,9 +411,9 @@ export default function PostDetailPage() {
   if (error || !post) {
     return (
       <div className="pd-error">
-        <h2>{error || 'Post topilmadi'}</h2>
+        <h2>{error || T('Post topilmadi')}</h2>
         <button onClick={() => safeGoBack(navigate)} className="pd-btn">
-          <ArrowLeft size={18} /> Orqaga
+          <ArrowLeft size={18} /> {T('Orqaga')}
         </button>
       </div>
     );
@@ -418,7 +421,7 @@ export default function PostDetailPage() {
 
   const owner = post.userId && typeof post.userId === 'object' ? post.userId : {};
   const ownerName =
-    owner.fullName || owner.full_name || owner.email || 'Foydalanuvchi';
+    owner.fullName || owner.full_name || owner.email || T('Foydalanuvchi');
   const ownerAvatar = owner.avatar_url || owner.avatarUrl || null;
   const ownerId = owner._id || owner.id || post.userId;
 
@@ -428,7 +431,7 @@ export default function PostDetailPage() {
   const shareReel = {
     id: post._id,
     originalId: post._id,
-    title: post.title || 'Video',
+    title: post.title || T('Video'),
     link: `/posts/${post._id}`,
     itemType: 'post',
     thumbnailUrl: thumbnail,
@@ -446,7 +449,7 @@ export default function PostDetailPage() {
           type="button"
           className="pd-header__back"
           onClick={() => safeGoBack(navigate)}
-          aria-label="Orqaga"
+          aria-label={T('Orqaga')}
         >
           <ArrowLeft size={20} />
         </button>
@@ -471,7 +474,7 @@ export default function PostDetailPage() {
           </div>
         </button>
 
-        <button type="button" className="pd-header__more" aria-label="Ko'proq">
+        <button type="button" className="pd-header__more" aria-label={T('Ko\'proq')}>
           <MoreVertical size={20} />
         </button>
       </header>
@@ -489,7 +492,7 @@ export default function PostDetailPage() {
 
       {/* Title & actions */}
       <div className="pd-info">
-        <h1 className="pd-info__title">{post.title || 'Video'}</h1>
+        <h1 className="pd-info__title">{post.title || T('Video')}</h1>
 
         {post.description && (
           <p className="pd-info__desc">{post.description}</p>
@@ -497,10 +500,10 @@ export default function PostDetailPage() {
 
         <div className="pd-info__meta">
           <span>
-            <Eye size={14} /> {post.views || 0} ko'rish
+            <Eye size={14} /> {post.views || 0} {T('ko\'rish')}
           </span>
           <span>•</span>
-          <span>{comments.length} izoh</span>
+          <span>{comments.length} {T('izoh')}</span>
         </div>
       </div>
 
@@ -525,7 +528,7 @@ export default function PostDetailPage() {
           onClick={toggleDislike}
         >
           <ThumbsDown size={24} fill={disliked ? 'currentColor' : 'none'} />
-          <span>Yoqmadi</span>
+          <span>{T('Yoqmadi')}</span>
         </button>
 
         <button type="button" className="pd-action">
@@ -539,7 +542,7 @@ export default function PostDetailPage() {
           onClick={() => setShareOpen(true)}
         >
           <Share2 size={24} />
-          <span>Ulashish</span>
+          <span>{T('Ulashish')}</span>
         </button>
       </div>
 
@@ -552,7 +555,7 @@ export default function PostDetailPage() {
         {comments.length === 0 ? (
           <div className="pd-comments__empty">
             <MessageCircle size={32} />
-            <span>Hozircha izohlar yo'q</span>
+            <span>{T('Hozircha izohlar yo\'q')}</span>
           </div>
         ) : (
           <div className="pd-comments__list">
@@ -571,7 +574,7 @@ export default function PostDetailPage() {
       <form className="pd-comment-form" onSubmit={submitComment}>
         <input
           type="text"
-          placeholder="Izoh yozing..."
+          placeholder={T('Izoh yozing...')}
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           maxLength={1000}

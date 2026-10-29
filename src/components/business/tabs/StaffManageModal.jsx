@@ -3,11 +3,12 @@ import { X, UserPlus, Trash2, Search } from 'lucide-react';
 import api from '../../services/api';
 import { getStaff, addStaff, updateStaffRole, removeStaff } from '../../services/business';
 
+import { T } from '../../utils/T';
 const ROLES = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'director', label: 'Direktor' },
-  { value: 'cashier', label: 'Kassir' },
-  { value: 'warehouse_worker', label: 'Omborchi' },
+  { value: 'admin', label: T('Admin') },
+  { value: 'director', label: T('Direktor') },
+  { value: 'cashier', label: T('Kassir') },
+  { value: 'warehouse_worker', label: T('Omborchi') },
 ];
 
 export default function StaffManageModal({ businessId, onClose }) {
@@ -60,7 +61,7 @@ export default function StaffManageModal({ businessId, onClose }) {
       setSearchResults([]);
       loadStaff();
     } catch (err) {
-      setError(err.response?.data?.error || 'Xatolik yuz berdi');
+      setError(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setAdding(false);
     }
@@ -72,7 +73,7 @@ export default function StaffManageModal({ businessId, onClose }) {
   };
 
   const handleRemove = async (member) => {
-    if (!confirm(`${member.userId?.fullName || 'Xodim'}ni ishdan bo'shatasizmi?`)) return;
+    if (!confirm(T('{{v}}ni ishdan bo\'shatasizmi?', { v: member.userId?.fullName || 'Xodim' }))) return;
     await removeStaff(businessId, member._id);
     loadStaff();
   };
@@ -81,7 +82,7 @@ export default function StaffManageModal({ businessId, onClose }) {
     <div className="bk-modal-overlay" onClick={onClose}>
       <div className="bk-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 520 }}>
         <div className="bk-modal-header">
-          <h3>Xodimlar</h3>
+          <h3>{T('Xodimlar')}</h3>
           <button className="bk-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
 
@@ -89,13 +90,13 @@ export default function StaffManageModal({ businessId, onClose }) {
           <div className="bk-search" style={{ maxWidth: '100%', marginBottom: 10 }}>
             <Search size={16} />
             <input
-              placeholder="Ism yoki email bo'yicha qidirish..."
+              placeholder={T('Ism yoki email bo\'yicha qidirish...')}
               value={search}
               onChange={(e) => { setSearch(e.target.value); setSelectedUser(null); }}
             />
           </div>
 
-          {searching && <div className="bk-muted" style={{ fontSize: '0.8rem' }}>Qidirilmoqda...</div>}
+          {searching && <div className="bk-muted" style={{ fontSize: '0.8rem' }}>{T('Qidirilmoqda...')}</div>}
 
           {!selectedUser && searchResults.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 10 }}>
@@ -115,13 +116,13 @@ export default function StaffManageModal({ businessId, onClose }) {
           {selectedUser && (
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '0.85rem' }}>
-                Tanlandi: <strong>{selectedUser.fullName || selectedUser.email}</strong>
+                {T('Tanlandi:')} <strong>{selectedUser.fullName || selectedUser.email}</strong>
               </span>
               <select className="bk-select" value={role} onChange={(e) => setRole(e.target.value)}>
                 {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
               </select>
               <button className="bk-btn bk-btn-primary" onClick={handleAdd} disabled={adding}>
-                <UserPlus size={14} /> {adding ? 'Qo\'shilmoqda...' : 'Qo\'shish'}
+                <UserPlus size={14} /> {adding ? T('Qo\'shilmoqda...') : T('Qo\'shish')}
               </button>
             </div>
           )}
@@ -130,13 +131,13 @@ export default function StaffManageModal({ businessId, onClose }) {
         </div>
 
         {loading ? (
-          <div className="bk-empty">Yuklanmoqda...</div>
+          <div className="bk-empty">{T('Yuklanmoqda...')}</div>
         ) : staff.length === 0 ? (
-          <div className="bk-empty">Hali xodim qo'shilmagan</div>
+          <div className="bk-empty">{T('Hali xodim qo\'shilmagan')}</div>
         ) : (
           <div className="bk-table-wrap">
             <table className="bk-table">
-              <thead><tr><th>Ism</th><th>Rol</th><th></th></tr></thead>
+              <thead><tr><th>{T('Ism')}</th><th>{T('Rol')}</th><th></th></tr></thead>
               <tbody>
                 {staff.map((m) => (
                   <tr key={m._id}>

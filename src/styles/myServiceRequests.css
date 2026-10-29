@@ -2,7 +2,7 @@
   width: min(920px, calc(100% - 32px));
   min-height: 70vh;
   margin: 32px auto;
-  color: var(--text-primary, #172033);
+  color: var(--text);
 }
 
 .my-service-requests__header {
@@ -19,8 +19,8 @@
   margin: 0;
 }
 
-.my-service-requests__header h1 { font-size: 1.35rem; }
-.my-service-requests__header p { margin-top: 4px; color: #718096; }
+.my-service-requests__header h1 { font-size: 1.35rem; color: var(--text); }
+.my-service-requests__header p { margin-top: 4px; color: var(--textMuted); }
 
 .my-service-requests__back,
 .my-service-requests__new,
@@ -39,7 +39,7 @@
   width: 42px;
   height: 42px;
   flex: 0 0 42px;
-  background: #eef2f7;
+  background: rgba(var(--text-rgb), 0.08);
   color: inherit;
 }
 
@@ -48,7 +48,7 @@
 .my-service-requests__message button {
   padding: 11px 14px;
   background: #0f766e;
-  color: #fff;
+  color: var(--text);
 }
 
 .my-service-requests__new { margin-left: auto; white-space: nowrap; }
@@ -58,9 +58,9 @@
 .my-service-requests__card {
   display: block;
   padding: 18px;
-  border: 1px solid #e5eaf0;
+  border: 1px solid var(--border);
   border-radius: 14px;
-  background: #fff;
+  background: var(--card);
   color: inherit;
   text-decoration: none;
 }
@@ -74,20 +74,26 @@
 }
 
 .my-service-requests__card p { margin: 12px 0; line-height: 1.5; }
-.my-service-requests__card-bottom { color: #718096; font-size: .9rem; }
+.my-service-requests__card-bottom { color: var(--textMuted); font-size: .9rem; }
 
 .my-service-requests__status {
   padding: 5px 9px;
   border-radius: 999px;
-  background: #e8eef5;
-  color: #334155;
+  background: rgba(var(--text-rgb), 0.08);
+  color: var(--textSoft);
   font-size: .8rem;
+  font-weight: 600;
   white-space: nowrap;
 }
 
-.my-service-requests__status--open { background: #fff4d6; color: #8a5b00; }
-.my-service-requests__status--completed { background: #dcfce7; color: #166534; }
-.my-service-requests__status--cancelled { background: #fee2e2; color: #991b1b; }
+/* Ikkala mavzuda ham o'qiladigan rangli belgilar */
+.my-service-requests__status--open { background: rgba(245, 158, 11, 0.16); color: #d97706; }
+.my-service-requests__status--accepted,
+.my-service-requests__status--on_way,
+.my-service-requests__status--arrived,
+.my-service-requests__status--in_progress { background: rgba(var(--cyan-rgb), 0.14); color: var(--cyan); }
+.my-service-requests__status--completed { background: rgba(34, 197, 94, 0.16); color: #16a34a; }
+.my-service-requests__status--cancelled { background: rgba(239, 68, 68, 0.14); color: var(--danger, #dc2626); }
 
 .my-service-requests__empty,
 .my-service-requests__message {
@@ -95,13 +101,13 @@
   justify-items: center;
   gap: 12px;
   padding: 48px 20px;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--border);
   border-radius: 16px;
-  color: #64748b;
+  color: var(--textMuted);
   text-align: center;
 }
 
-.my-service-requests__empty h2 { margin: 0; color: #172033; }
+.my-service-requests__empty h2 { margin: 0; color: var(--text); }
 
 @media (max-width: 560px) {
   .my-service-requests__header { flex-wrap: wrap; }

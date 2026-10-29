@@ -20,10 +20,10 @@ import {
 
 import IncomingRequestModal from '../provider/IncomingRequestModal';
 import IncomingOfferModal from '../client/IncomingOfferModal';
-import RatingModal from './RatingModal';
 
 import '../../styles/notificationsPage.css';
 
+import { T } from '../utils/T';
 export default function NotificationListener() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -52,7 +52,6 @@ export default function NotificationListener() {
   const [currentRequest, setCurrentRequest] = useState(null);
   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
 
-  const [ratingModal, setRatingModal] = useState(null);
 
   /* ============================================================
      URL orqali modal (?open_request=xxx&rate=1)
@@ -81,7 +80,8 @@ export default function NotificationListener() {
 
         /* Client + rate=1 → Rating modal */
         if (openRating && data.viewer === 'client' && !data.review?.rating) {
-          setRatingModal(data);
+          // Baho endi alohida sahifada
+          navigate(`/requests/${data._id}/done`, { replace: true });
         }
         /* Provider → Request modal */
         else if (data.viewer === 'provider') {
@@ -106,7 +106,7 @@ export default function NotificationListener() {
     return () => {
       cancelled = true;
     };
-  }, [user, location.search]);
+  }, [user, location.search, navigate]);
 
   /* ============================================================
      Service Worker'dan message
@@ -222,7 +222,7 @@ export default function NotificationListener() {
           const fromName =
             notif.fromUserId?.fullName ||
             notif.fromUserId?.full_name ||
-            'Foydalanuvchi';
+            T('Foydalanuvchi');
 
           /* 🔧 Service request — Provider modal */
           if (notif.type === 'service_request') {
@@ -249,7 +249,7 @@ export default function NotificationListener() {
               createdAt: notif.createdAt,
               provider: {
                 _id: notif.fromUserId?._id,
-                name: notif.fromUserId?.fullName || 'Usta',
+                name: notif.fromUserId?.fullName || T('Usta'),
               },
             });
             setCurrentRequest({
@@ -262,11 +262,11 @@ export default function NotificationListener() {
 
           /* Boshqa */
           if (notif.type === 'offer_accepted') {
-            toast.success('🎉 Taklifingiz qabul qilindi!', {
+            toast.success(T('🎉 Taklifingiz qabul qilindi!'), {
               toastId: `accepted-${notif.itemId}`,
             });
           } else if (notif.type === 'offer_declined') {
-            toast.warn('Mijoz boshqa taklifni tanladi', {
+            toast.warn(T('Mijoz boshqa taklifni tanladi'), {
               toastId: `declined-${notif.itemId}`,
             });
           } else if (notif.type === 'order') {
@@ -276,13 +276,13 @@ export default function NotificationListener() {
               yetkazildi: 'Buyurtmangiz yetkazildi',
             };
             const statusMessage = notif.orderInfo?.status
-              ? orderStatusMessages[notif.orderInfo.status] || 'Buyurtma holati yangilandi'
-              : `${fromName} sizga buyurtma berdi`;
+              ? orderStatusMessages[notif.orderInfo.status] || T('Buyurtma holati yangilandi')
+              : T('{{fromName}} sizga buyurtma berdi', { fromName: fromName });
             toast.info(statusMessage, {
               toastId: `order-${notif.itemId}`,
             });
           } else if (notif.type === 'like') {
-            toast.info(`${fromName} postingizga like bosdi`, {
+            toast.info(T('{{fromName}} postingizga like bosdi', { fromName: fromName }), {
               toastId: `like-${notif.itemId}`,
             });
           } else if (notif.type === 'comment' || notif.type === 'reply') {
@@ -291,7 +291,7 @@ export default function NotificationListener() {
               { toastId: `comment-${notif.itemId}` }
             );
           } else if (notif.type === 'ad_broadcast') {
-            toast.info(`${fromName} yangi reklama yubordi`, {
+            toast.info(T('{{fromName}} yangi reklama yubordi', { fromName: fromName }), {
               toastId: `broadcast-ad-${notif.itemId}`,
             });
           }
@@ -310,7 +310,7 @@ export default function NotificationListener() {
             arrivalMinutes: data.offer.arrivalMinutes || 30,
             status: data.offer.status || 'pending',
             createdAt: data.offer.createdAt,
-            provider: data.offer.provider || { name: 'Usta' },
+            provider: data.offer.provider || { name: T('Usta') },
           });
           setCurrentRequest({ _id: data.requestId });
           setIsOfferModalOpen(true);
@@ -339,7 +339,7 @@ export default function NotificationListener() {
             if (request.review?.rating) return;
 
             console.log('⭐ Rating modal ochilmoqda:', request._id);
-            setRatingModal(request);
+            navigate(`/requests/${request._id}/done`);
           } catch (err) {
             console.warn('Rating modal xato:', err);
           }
@@ -376,7 +376,7 @@ export default function NotificationListener() {
         delete socket.__statusHandler;
       }
     };
-  }, [user]);
+  }, [user, navigate]);
 
   /* ============================================================
      MODAL HANDLERS — Provider (request)
@@ -413,7 +413,7 @@ export default function NotificationListener() {
       if (!requestId) return;
 
       await acceptServiceRequestOffer(requestId, offer._id);
-      toast.success('🎉 Usta tanlandi!', {
+      toast.success(T('🎉 Usta tanlandi!'), {
         toastId: `accept-${requestId}`,
       });
 
@@ -421,7 +421,7 @@ export default function NotificationListener() {
       navigate(`/requests/${requestId}`);
     } catch (err) {
       toast.error(
-        err.response?.data?.error || "Qabul qilib bo'lmadi",
+        err.response?.data?.error || T('Qabul qilib bo\'lmadi'),
         { toastId: `accept-error-${currentRequest?._id}` }
       );
     }
@@ -437,13 +437,7 @@ export default function NotificationListener() {
      MODAL HANDLERS — Client (rating)
      ============================================================ */
 
-  const handleRatingClose = () => {
-    setRatingModal(null);
-  };
 
-  const handleRatingSubmitted = () => {
-    setRatingModal(null);
-  };
 
   /* ============================================================
      RENDER
@@ -468,12 +462,6 @@ export default function NotificationListener() {
         onView={handleOfferView}
       />
 
-      <RatingModal
-        isOpen={Boolean(ratingModal)}
-        request={ratingModal}
-        onClose={handleRatingClose}
-        onSubmitted={handleRatingSubmitted}
-      />
     </>
   );
 }

@@ -25,6 +25,8 @@ import ThemeToggle from '../common/ThemeToggle';
 import toast from 'react-hot-toast';
 import '../../styles/navbar.css';
 
+import { T } from '../utils/T';
+import { getImageUrl } from '../utils/imageUrl';
 const formatBadge = (n) => (n > 99 ? '99+' : n);
 
 function Tooltip({ children }) {
@@ -53,7 +55,7 @@ export default function Navbar() {
   const langMenuRef = useRef(null);
 
   const role = user?.user_metadata?.role || 'user';
-  const userName = user?.user_metadata?.full_name || user?.fullName || 'User';
+  const userName = user?.user_metadata?.full_name || user?.fullName || T('User');
 
   /* Chat sahifasida bottom-navni yashiramiz */
   const hideBottomNav =
@@ -62,15 +64,14 @@ export default function Navbar() {
 
   const getProfileLink = () => {
     const r = getUserRole();
-    if (r === 'admin') return '/admin-dashboard';
     if (r === 'bank_employee') return '/bank-dashboard';
     return '/profile';
   };
 
   const languages = [
-    { code: 'uz', label: 'Uzbek', flag: '🇺🇿' },
-    { code: 'ru', label: 'Rus', flag: '🇷🇺' },
-    { code: 'en', label: 'Eng', flag: '🇬🇧' },
+    { code: 'uz', label: 'O‘zbek', flag: '🇺🇿' },
+    { code: 'ru', label: 'Русский', flag: '🇷🇺' },
+    { code: 'en', label: 'English', flag: '🇬🇧' },
   ];
 
   const currentLang =
@@ -99,6 +100,13 @@ export default function Navbar() {
       .then((res) => setProfileAvatar(res.data.avatar_url || ''))
       .catch(() => {});
   }, [user]);
+
+  // Profilda rasm almashtirilsa — qayta yuklamasdan yangilanadi
+  useEffect(() => {
+    const onAvatar = (e) => setProfileAvatar(e.detail || '');
+    window.addEventListener('zumo:avatar', onAvatar);
+    return () => window.removeEventListener('zumo:avatar', onAvatar);
+  }, []);
 
   /* Ovoz: birinchi bosishdan keyin ishlaydi */
   useEffect(() => {
@@ -137,12 +145,12 @@ export default function Navbar() {
       if (window.location.pathname.startsWith('/chat')) return;
 
       const fromId = msg.from?._id?.toString() || msg.from?.toString();
-      const senderName = msg.senderName || 'Yangi xabar';
+      const senderName = msg.senderName || T('Yangi xabar');
       const senderAvatar = msg.senderAvatar || '/images/zumo-placeholder.svg';
 
-      let bodyText = msg.message || 'Yangi xabar';
-      if (msg.mediaType === 'image') bodyText = '📷 Rasm yuborildi';
-      else if (msg.mediaType === 'video') bodyText = '🎥 Video yuborildi';
+      let bodyText = msg.message || T('Yangi xabar');
+      if (msg.mediaType === 'image') bodyText = T('📷 Rasm yuborildi');
+      else if (msg.mediaType === 'video') bodyText = T('🎥 Video yuborildi');
       else if (bodyText.startsWith('LOC::')) bodyText = '📍 Joylashuv';
       else if (bodyText.length > 80) bodyText = bodyText.slice(0, 80) + '...';
 
@@ -279,7 +287,7 @@ export default function Navbar() {
   };
 
   const avatarUrl =
-    profileAvatar ||
+    (profileAvatar && getImageUrl(profileAvatar)) ||
     user?.user_metadata?.avatar_url ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
       userName

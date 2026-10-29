@@ -2,10 +2,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Bell, Heart, MessageCircle as CommentIcon, ShoppingBag, CheckCheck, Send } from 'lucide-react';
+import { ArrowLeft, Bell, Heart, MessageCircle as CommentIcon, ShoppingBag, CheckCheck, Send, Wrench, BadgeDollarSign, CircleCheck, CircleX, Star } from 'lucide-react';
+import { formatPrice } from '../utils/formatPrice';
+import { serviceLabel } from '../utils/i18nHelpers';
 import { getNotifications, markOneRead, markAllRead } from '../services/notifications';
 import '../../styles/notificationsPage.css';
 
+import { T } from '../utils/T';
 // ============================================================
 // Bitta notification qatori
 // ============================================================
@@ -42,9 +45,35 @@ function NotificationRow({ notif, onClick, t }) {
       orderText += t('notifications.orderDetails', { quantity: qty });
     }
     text = orderText;
+  } else if (notif.itemType === 'servicerequest') {
+    // Usta chaqirish oqimi: backend aniq matn yozadi, bu yerda faqat sarlavha va ikonka
+    const title = notif.orderInfo?.title ? serviceLabel(notif.orderInfo.title) : '';
+    const price = notif.orderInfo?.price;
+    if (notif.type === 'service_request') {
+      icon = <Wrench size={16} color="#ff8a2a" />;
+      text = `${T('yangi buyurtma berdi')}${title ? ` · ${title}` : ''}${notif.commentText ? `: “${notif.commentText}”` : ''}`;
+    } else if (notif.type === 'new_offer') {
+      icon = <BadgeDollarSign size={16} color="#00a884" />;
+      text = price ? `${formatPrice(price)} ${T('taklif qildi')}` : T('taklif yubordi');
+    } else if (notif.type === 'offer_accepted') {
+      icon = <CircleCheck size={16} color="#00c853" />;
+      text = T('taklifingizni qabul qildi — manzilga yo‘l oling');
+    } else if (notif.type === 'offer_declined') {
+      icon = <CircleX size={16} color="#8a97ab" />;
+      text = T('boshqa ustani tanladi');
+    } else if (notif.type === 'request_declined') {
+      icon = <CircleX size={16} color="#ff5c7a" />;
+      text = notif.commentText || T('buyurtmani qabul qila olmadi');
+    } else if (notif.type === 'request_review') {
+      icon = <Star size={16} color="#fbbf24" />;
+      text = notif.commentText;
+    } else {
+      icon = <Wrench size={16} color="#00b4d8" />;
+      text = notif.commentText || t('notifications.newNotification');
+    }
   } else if (notif.type === 'ad_broadcast') {
     icon = <Send size={16} color="#00a884" />;
-    text = notif.broadcastInfo?.caption || notif.commentText || 'Yangi reklama yubordi';
+    text = notif.broadcastInfo?.caption || notif.commentText || T('Yangi reklama yubordi');
   }
 
   return (
@@ -63,7 +92,7 @@ function NotificationRow({ notif, onClick, t }) {
         </span>
         {notif.type === 'ad_broadcast' && notif.broadcastInfo?.mediaUrl && (notif.broadcastInfo.isVideo
           ? <video src={notif.broadcastInfo.mediaUrl} controls preload="metadata" style={{ width: 'min(100%, 360px)', maxHeight: 220, borderRadius: 10, marginTop: 8 }} />
-          : <img src={notif.broadcastInfo.mediaUrl} alt="Reklama" loading="lazy" style={{ width: 'min(100%, 360px)', maxHeight: 220, objectFit: 'cover', borderRadius: 10, marginTop: 8 }} />)}
+          : <img src={notif.broadcastInfo.mediaUrl} alt={T('Reklama')} loading="lazy" style={{ width: 'min(100%, 360px)', maxHeight: 220, objectFit: 'cover', borderRadius: 10, marginTop: 8 }} />)}
       </div>
       {!notif.read && <span className="notif-row-dot" />}
     </div>
@@ -100,10 +129,9 @@ export default function NotificationsPage() {
       // Holat xabari xaridorga keladi, yangi buyurtma xabari sotuvchiga
       navigate(notif.orderInfo?.status ? '/my-orders' : '/received-orders');
     } else if (notif.itemType === 'servicerequest') {
-      // Faqat "new_offer" mijozga keladi, qolganlari ustaga
-      navigate(notif.type === 'new_offer'
-        ? `/requests/${notif.itemId}`
-        : `/provider-requests/${notif.itemId}`);
+      // audience: kimga yozilgan; eski yozuvlarda faqat "new_offer" mijozga kelardi
+      const forClient = notif.audience ? notif.audience === 'client' : notif.type === 'new_offer';
+      navigate(forClient ? `/requests/${notif.itemId}` : `/provider-requests/${notif.itemId}`);
     } else if (notif.itemType === 'location') {
       navigate(`/location/${notif.itemId}`);
     } else if (notif.itemType === 'equipment') {

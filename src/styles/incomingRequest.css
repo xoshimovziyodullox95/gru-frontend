@@ -15,7 +15,7 @@
 
   padding: 20px;
 
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(var(--surface-rgb), 0.7);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 
@@ -38,12 +38,12 @@
 
   overflow: hidden;
 
-  background: #0d1f38;
+  background: var(--surface);
   border: 1px solid rgba(100, 181, 246, 0.2);
   border-radius: 22px;
 
   box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.6),
+    0 24px 60px rgba(var(--surface-rgb), 0.6),
     0 0 0 1px rgba(100, 181, 246, 0.1);
 
   animation: irSlideUp 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
@@ -118,8 +118,8 @@
   border-radius: 50%;
 
   border: none;
-  background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
+  background: rgba(var(--text-rgb), 0.08);
+  color: var(--textMuted);
 
   display: grid;
   place-items: center;
@@ -129,8 +129,8 @@
 }
 
 .ir-header__close:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  background: rgba(var(--text-rgb), 0.15);
+  color: var(--text);
 }
 
 /* ================= BODY ================= */
@@ -180,7 +180,7 @@
 }
 
 .ir-category__label {
-  color: #94a3b8;
+  color: var(--textMuted);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -188,7 +188,7 @@
 }
 
 .ir-category__name {
-  color: #ffffff;
+  color: var(--text);
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.015em;
@@ -201,8 +201,8 @@
 
   padding: 14px 16px;
 
-  color: #e2e8f0;
-  background: rgba(255, 255, 255, 0.03);
+  color: var(--textMuted);
+  background: rgba(var(--text-rgb), 0.03);
   border-left: 3px solid #ff8a2a;
   border-radius: 10px;
 
@@ -231,7 +231,7 @@
   gap: 10px;
 
   font-size: 13.5px;
-  color: #cbd5e1;
+  color: var(--textMuted);
 }
 
 .ir-meta__icon {
@@ -343,7 +343,7 @@
   background: linear-gradient(135deg, #ff8a2a, #e8500a);
   box-shadow:
     0 8px 20px rgba(232, 80, 10, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    inset 0 1px 0 rgba(var(--text-rgb), 0.2);
 }
 
 .ir-btn--accept:hover {

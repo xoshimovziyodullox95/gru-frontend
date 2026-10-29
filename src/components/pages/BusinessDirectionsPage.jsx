@@ -132,6 +132,7 @@ export default function BusinessDirectionsPage() {
           currency={item.currency}
           link={item.link}
           maxQuantity={item.maxQuantity}
+          saleMode={item.saleMode}
         /></div>)}</div>
       </section>}
 
@@ -156,6 +157,7 @@ export default function BusinessDirectionsPage() {
                 currency={item.currency}
                 link={isLocation ? `/location/${item._id}` : `/equipment/${item._id}`}
                 maxQuantity={item.stockQuantity}
+                saleMode={item.saleMode}
               />;
             })}</div>}
       </div>

@@ -24,6 +24,8 @@ import { getUnreadCount as getNotifUnreadCount } from '../services/notifications
 import { getUnreadCount as getChatUnreadCount } from '../services/chat';
 import '../../styles/marketplaceLayout.css';
 
+import { T } from '../utils/T';
+import { getImageUrl } from '../utils/imageUrl';
 const formatBadge = (n) => (n > 99 ? '99+' : n);
 
 export default function MarketplaceLayout({ children, mode = 'shell', homePath = '/marketplace' }) {
@@ -59,6 +61,13 @@ export default function MarketplaceLayout({ children, mode = 'shell', homePath =
       .then((res) => setProfileAvatar(res.data.avatar_url || ''))
       .catch(() => {});
   }, [user]);
+
+  // Profilda rasm almashtirilsa — qayta yuklamasdan yangilanadi
+  useEffect(() => {
+    const onAvatar = (e) => setProfileAvatar(e.detail || '');
+    window.addEventListener('zumo:avatar', onAvatar);
+    return () => window.removeEventListener('zumo:avatar', onAvatar);
+  }, []);
 
   /* ---------- Chat unread ---------- */
   useEffect(() => {
@@ -120,10 +129,10 @@ export default function MarketplaceLayout({ children, mode = 'shell', homePath =
   };
 
   const userName =
-    user?.user_metadata?.full_name || user?.fullName || 'User';
+    user?.user_metadata?.full_name || user?.fullName || T('User');
 
   const avatarUrl =
-    profileAvatar ||
+    (profileAvatar && getImageUrl(profileAvatar)) ||
     user?.user_metadata?.avatar_url ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(
       userName
@@ -227,7 +236,7 @@ export default function MarketplaceLayout({ children, mode = 'shell', homePath =
           aria-expanded={addMenuOpen}
           aria-label={t('nav.add', 'Qo‘shish')}
         >
-          <PlusCircle size={32} strokeWidth={2} />
+          <PlusCircle size={28} strokeWidth={2} />
           <span>{t('nav.add', 'Qo‘shish')}</span>
         </button>
 

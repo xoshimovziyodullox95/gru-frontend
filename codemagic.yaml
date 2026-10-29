@@ -1,0 +1,44 @@
+# Codemagic — iPhone ilovasini bulutdagi Mac'da yig'ish (Mac kerak emas).
+#
+# ios-simulator: Apple akkauntsiz. iPhone simulyatori uchun App.app yig'adi —
+#   uni Appetize.io ga yuklab, brauzerda haqiqiy iPhone ekranida sinaysiz.
+#
+# Codemagic → Teams → Environment variables → "zumo" guruhiga qo'shing:
+#   VITE_API_URL, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY  (.env dagi qiymatlar)
+
+workflows:
+  ios-simulator:
+    name: iPhone simulyator (sinov)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      groups:
+        - zumo
+      node: 22
+      xcode: latest
+    triggering:
+      events: []
+    scripts:
+      - name: Paketlar
+        script: npm ci
+      - name: Web qismini yig'ish va iOS'ga ko'chirish
+        script: |
+          npx vite build
+          npx cap sync ios
+      - name: Simulyator uchun yig'ish (imzosiz)
+        script: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/ios \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+      - name: Appetize uchun zip
+        script: |
+          cd build/ios/Build/Products/Debug-iphonesimulator
+          zip -r "$CM_BUILD_DIR/ZUMO-simulator.zip" App.app
+    artifacts:
+      - ZUMO-simulator.zip

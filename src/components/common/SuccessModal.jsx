@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import '../../styles/successModal.css';
 
+import { T } from '../utils/T';
 /**
  * SuccessModal — muvaffaqiyat animatsiyasi: avval dumaloq spinner
  * aylanadi, so'ng silliq o'tish bilan yashil ptichka (✓) belgisiga
@@ -13,7 +14,7 @@ import '../../styles/successModal.css';
  *     <SuccessModal message="Joy muvaffaqiyatli qo'shildi!" onDone={() => navigate('/somewhere')} />
  *   )}
  */
-export default function SuccessModal({ message = 'Muvaffaqiyatli bajarildi!', onDone, spinDuration = 700, holdDuration = 1100 }) {
+export default function SuccessModal({ message = T('Muvaffaqiyatli bajarildi!'), onDone, spinDuration = 700, holdDuration = 1100 }) {
   const [showCheck, setShowCheck] = useState(false);
 
   useEffect(() => {

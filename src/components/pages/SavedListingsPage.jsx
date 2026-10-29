@@ -5,6 +5,7 @@ import { getImageUrl } from '../utils/imageUrl';
 import { safeGoBack } from '../utils/navigation.js';
 import '../../styles/savedListings.css';
 
+import { T } from '../utils/T';
 const TYPE_LABELS = {
   location: 'Joy',
   equipment: 'Tovar',
@@ -18,29 +19,29 @@ export default function SavedListingsPage() {
   return (
     <main className="saved-listings">
       <header className="saved-listings__header">
-        <button type="button" onClick={() => safeGoBack(navigate)} aria-label="Orqaga">
+        <button type="button" onClick={() => safeGoBack(navigate)} aria-label={T('Orqaga')}>
           <ArrowLeft size={19} />
         </button>
         <div>
           <span className="saved-listings__eyebrow">ZUMO</span>
-          <h1>Saqlangan e’lonlar</h1>
+          <h1>{T('Saqlangan e’lonlar')}</h1>
         </div>
         <span className="saved-listings__count">{favorites.length}</span>
       </header>
 
       {favorites.length ? (
-        <section className="saved-listings__grid" aria-label="Saqlangan e’lonlar ro‘yxati">
+        <section className="saved-listings__grid" aria-label={T('Saqlangan e’lonlar ro‘yxati')}>
           {favorites.map((item) => (
             <article className="saved-listing-card" key={`${item.type}-${item.id}`}>
               <button
                 type="button"
                 className="saved-listing-card__image"
                 onClick={() => item.link && navigate(item.link)}
-                aria-label={`${item.title || 'E’lon'} sahifasini ochish`}
+                aria-label={T('{{v}} sahifasini ochish', { v: item.title || 'E’lon' })}
                 disabled={!item.link}
               >
                 <img src={getImageUrl(item.image)} alt="" loading="lazy" />
-                <span>{TYPE_LABELS[item.type] || 'E’lon'}</span>
+                <span>{TYPE_LABELS[item.type] || T('E’lon')}</span>
               </button>
               <div className="saved-listing-card__body">
                 <button
@@ -49,17 +50,17 @@ export default function SavedListingsPage() {
                   onClick={() => item.link && navigate(item.link)}
                   disabled={!item.link}
                 >
-                  {item.title || 'Nomsiz e’lon'}
+                  {item.title || T('Nomsiz e’lon')}
                 </button>
                 <div className="saved-listing-card__footer">
-                  <strong>{item.price || 'Narxi ko‘rsatilmagan'}</strong>
+                  <strong>{item.price || T('Narxi ko‘rsatilmagan')}</strong>
                   <button
                     type="button"
                     onClick={() => toggleFavorite(item)}
-                    aria-label="Saqlanganlardan olib tashlash"
+                    aria-label={T('Saqlanganlardan olib tashlash')}
                   >
                     <Trash2 size={16} />
-                    <span>Olib tashlash</span>
+                    <span>{T('Olib tashlash')}</span>
                   </button>
                 </div>
               </div>
@@ -69,10 +70,10 @@ export default function SavedListingsPage() {
       ) : (
         <section className="saved-listings__empty">
           <span className="saved-listings__empty-icon"><Heart size={27} /></span>
-          <h2>Hozircha saqlangan e’lon yo‘q</h2>
-          <p>Yoqtirgan e’lonlaringizdagi yurak belgisini bosing — ular shu yerda saqlanadi.</p>
+          <h2>{T('Hozircha saqlangan e’lon yo‘q')}</h2>
+          <p>{T('Yoqtirgan e’lonlaringizdagi yurak belgisini bosing — ular shu yerda saqlanadi.')}</p>
           <button type="button" onClick={() => navigate('/marketplace/all')}>
-            <Search size={17} /> E’lonlarni ko‘rish
+            <Search size={17} /> {T('E’lonlarni ko‘rish')}
           </button>
         </section>
       )}

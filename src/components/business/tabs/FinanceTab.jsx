@@ -5,10 +5,11 @@ import DebtorsCreditorsView from './finance/DebtorsCreditorsView';
 import ReportsView from './finance/ReportsView';
 import '../../../styles/productsTab.css';
 
+import { T } from '../../utils/T';
 const SECTIONS = [
-  { key: 'expenses', label: 'Xarajatlar', icon: Receipt, Component: ExpensesView },
-  { key: 'debts', label: 'Qarzdorlar', icon: Users, Component: DebtorsCreditorsView },
-  { key: 'reports', label: 'Hisobotlar', icon: BarChart3, Component: ReportsView },
+  { key: 'expenses', label: T('Xarajatlar'), icon: Receipt, Component: ExpensesView },
+  { key: 'debts', label: T('Qarzdorlar'), icon: Users, Component: DebtorsCreditorsView },
+  { key: 'reports', label: T('Hisobotlar'), icon: BarChart3, Component: ReportsView },
 ];
 
 export default function FinanceTab() {

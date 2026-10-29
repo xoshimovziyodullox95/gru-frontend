@@ -20,6 +20,7 @@ import '../../styles/reels.css';
 import { getImageUrl } from '../utils/imageUrl';
 import ShareSheet from './ShareSheet';
 
+import { T } from '../utils/T';
 /* ============================================================
    REEL THUMB
    ============================================================ */
@@ -275,7 +276,7 @@ function ReelViewer({
                     className="reel-comment-reply-link"
                     onClick={() => handleReplyClick(c.id)}
                   >
-                    Javob berish
+                    {T('Javob berish')}
                   </button>
 
                   {(c.replies || []).map((r) => (
@@ -302,7 +303,7 @@ function ReelViewer({
                     >
                       <input
                         type="text"
-                        placeholder="Javob yozish..."
+                        placeholder={T('Javob yozish...')}
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         autoFocus
@@ -325,7 +326,7 @@ function ReelViewer({
         >
           <input
             type="text"
-            placeholder="Komment yozish..."
+            placeholder={T('Komment yozish...')}
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             onFocus={() => setShowComments(true)}
@@ -374,7 +375,7 @@ function ReelViewer({
             color="#fff"
             strokeWidth={2}
           />
-          <span>Dislike</span>
+          <span>{T('Dislike')}</span>
         </button>
 
         <button
@@ -392,7 +393,7 @@ function ReelViewer({
           type="button"
         >
           <Share2 size={24} color="#fff" strokeWidth={2} />
-          <span>Share</span>
+          <span>{T('Share')}</span>
         </button>
       </div>
     </div>

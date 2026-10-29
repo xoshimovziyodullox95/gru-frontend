@@ -22,8 +22,8 @@
   width: 100%;
   max-height: 94vh;
   overflow: hidden;
-  background: #0A1628;
-  color: #E8F4FD;
+  background: var(--bg);
+  color: var(--text);
   border-radius: 22px 22px 0 0;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
   animation: rt-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -43,8 +43,8 @@
   height: 40px;
   border: none;
   border-radius: 50%;
-  background: #0A1628;
-  color: #E8F4FD;
+  background: var(--bg);
+  color: var(--text);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
@@ -58,7 +58,7 @@
   min-height: 0;
   margin-top: -18px;
   border-radius: 20px 20px 0 0;
-  background: #0F2040;
+  background: var(--surface);
   padding-bottom: env(safe-area-inset-bottom);
 }
 .rt-panel--plain { margin-top: 0; }
@@ -69,7 +69,7 @@
   height: 4px;
   margin-top: 8px;
   border-radius: 4px;
-  background: rgba(232, 244, 253, 0.18);
+  background: rgba(var(--text-rgb), 0.18);
 }
 
 .rt-status { padding: 12px 20px 4px; }
@@ -78,7 +78,7 @@
   margin-bottom: 2px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #00D4FF;
+  color: var(--cyan);
 }
 .rt-status__title {
   margin: 0;
@@ -90,7 +90,7 @@
   margin: 6px 0 0;
   font-size: 0.85rem;
   line-height: 1.4;
-  color: #8AB4D0;
+  color: var(--textMuted);
 }
 
 /* Qidiruv chizig'i: noaniq (yugurib turadi) yoki qolgan vaqt */
@@ -100,14 +100,14 @@
   margin-top: 10px;
   border-radius: 3px;
   overflow: hidden;
-  background: rgba(0, 212, 255, 0.14);
+  background: rgba(var(--cyan-rgb), 0.14);
 }
 .rt-line span {
   position: absolute;
   inset: 0 auto 0 0;
   width: 100%;
   border-radius: 3px;
-  background: #00D4FF;
+  background: var(--cyan);
   transition: width 1s linear;
 }
 .rt-line--run span {
@@ -139,12 +139,12 @@
   padding: 12px 0;
   font-size: 0.9rem;
   line-height: 1.4;
-  border-bottom: 1px solid rgba(232, 244, 253, 0.07);
+  border-bottom: 1px solid rgba(var(--text-rgb), 0.07);
 }
 .rt-facts li:last-child { border-bottom: none; }
-.rt-facts svg { flex-shrink: 0; margin-top: 1px; color: #00D4FF; }
+.rt-facts svg { flex-shrink: 0; margin-top: 1px; color: var(--cyan); }
 .rt-facts__desc {
-  color: #8AB4D0;
+  color: var(--textMuted);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -158,7 +158,7 @@
   margin-bottom: 8px;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #8AB4D0;
+  color: var(--textMuted);
 }
 
 .rt-list {
@@ -178,7 +178,7 @@
   padding: 12px;
   border-radius: 16px;
   border: 1.5px solid transparent;
-  background: #0A1628;
+  background: var(--bg);
   color: inherit;
   font: inherit;
   text-align: left;
@@ -186,8 +186,8 @@
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 .rt-row.is-active {
-  border-color: #00D4FF;
-  background: rgba(0, 212, 255, 0.07);
+  border-color: var(--cyan);
+  background: rgba(var(--cyan-rgb), 0.07);
 }
 
 .rt-row__who {
@@ -208,12 +208,12 @@
   align-items: center;
   gap: 4px;
   font-size: 0.78rem;
-  color: #8AB4D0;
+  color: var(--textMuted);
 }
 .rt-row__msg {
   margin-top: 2px;
   font-size: 0.78rem;
-  color: #8AB4D0;
+  color: var(--textMuted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -228,13 +228,13 @@
   font-weight: 800;
   line-height: 1.15;
 }
-.rt-row__price small { font-size: 0.68rem; font-weight: 500; color: #8AB4D0; }
+.rt-row__price small { font-size: 0.68rem; font-weight: 500; color: var(--textMuted); }
 .rt-row__price em {
   margin-top: 3px;
   padding: 1px 7px;
   border-radius: 999px;
-  background: #00D4FF;
-  color: #0A1628;
+  background: var(--cyan);
+  color: var(--on-accent);
   font-style: normal;
   font-size: 0.62rem;
   font-weight: 800;
@@ -245,13 +245,13 @@
   flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
-  background: #122A4F;
+  background: var(--card);
 }
 .rt-avatar--letter {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #00D4FF;
+  color: var(--cyan);
   font-weight: 800;
   font-size: 1rem;
 }
@@ -260,12 +260,12 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  color: #E8F4FD;
+  color: var(--text);
   font-weight: 600;
 }
-.rt-rating svg { color: #00D4FF; fill: #00D4FF; }
-.rt-rating em { font-style: normal; font-weight: 400; color: #8AB4D0; }
-.rt-rating--new { color: #8AB4D0; font-weight: 500; }
+.rt-rating svg { color: var(--cyan); fill: var(--cyan); }
+.rt-rating em { font-style: normal; font-weight: 400; color: var(--textMuted); }
+.rt-rating--new { color: var(--textMuted); font-weight: 500; }
 
 /* ---------- Usta yo'lda ---------- */
 .rt-eta {
@@ -274,8 +274,8 @@
   gap: 8px;
   margin-bottom: 14px;
 }
-.rt-eta strong { font-size: 2.2rem; font-weight: 800; line-height: 1; color: #00D4FF; }
-.rt-eta span { font-size: 0.95rem; color: #8AB4D0; }
+.rt-eta strong { font-size: 2.2rem; font-weight: 800; line-height: 1; color: var(--cyan); }
+.rt-eta span { font-size: 0.95rem; color: var(--textMuted); }
 
 .rt-master {
   display: flex;
@@ -283,7 +283,7 @@
   gap: 12px;
   padding: 12px;
   border-radius: 16px;
-  background: #0A1628;
+  background: var(--bg);
 }
 .rt-master__actions { display: flex; gap: 8px; flex-shrink: 0; }
 .rt-round {
@@ -294,20 +294,20 @@
   height: 44px;
   border-radius: 50%;
   border: none;
-  background: #122A4F;
-  color: #00D4FF;
+  background: var(--card);
+  color: var(--cyan);
   text-decoration: none;
   cursor: pointer;
 }
 
-.rt-closed-text { margin: 0; font-size: 0.9rem; line-height: 1.5; color: #8AB4D0; }
+.rt-closed-text { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--textMuted); }
 
 /* ---------- Usta uchun: so'rov tafsilotlari ---------- */
 .rt-desc {
   margin: 0 0 4px;
   padding: 12px 14px;
   border-radius: 14px;
-  background: #0A1628;
+  background: var(--bg);
   font-size: 0.92rem;
   line-height: 1.5;
 }
@@ -338,13 +338,13 @@
 }
 .rt-btn:active { transform: scale(0.985); }
 .rt-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.rt-btn--primary { border: none; background: #00D4FF; color: #0A1628; }
-.rt-btn--ghost { border: none; background: #122A4F; color: #E8F4FD; }
+.rt-btn--primary { border: none; background: var(--cyan); color: var(--on-accent); }
+.rt-btn--ghost { border: none; background: var(--card); color: var(--text); }
 .rt-btn--text {
   min-height: 44px;
   border: none;
   background: transparent;
-  color: #8AB4D0;
+  color: var(--textMuted);
   font-size: 0.9rem;
   font-weight: 600;
 }

@@ -7,24 +7,25 @@ import { getUserProfile } from '../services/user';
 import { supabase } from '../lib/supabase';
 import '../../styles/phoneOtpLogin.css';
 
+import { T } from '../utils/T';
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 60;
 
 function getPhoneError(error) {
   const message = String(error?.message || '').toLowerCase();
   if (/sms provider|sms provider is not configured|unable to get sms provider|phone provider/i.test(message)) {
-    return 'SMS xizmati hali ulanmagan. Supabase sozlamasida Phone provayderini yoqish kerak.';
+    return T('SMS orqali kirish hozircha ishlamayapti. Iltimos, email yoki Google orqali kiring.');
   }
   if (/rate limit|too many|429|frequency/i.test(message)) {
-    return 'Kod juda ko‘p so‘raldi. Biroz kutib, qayta urinib ko‘ring.';
+    return T('Kod juda ko‘p so‘raldi. Biroz kutib, qayta urinib ko‘ring.');
   }
   if (/invalid.*phone|phone.*invalid|valid phone/i.test(message)) {
-    return 'Telefon raqamini +998 bilan to‘g‘ri kiriting.';
+    return T('Telefon raqamini +998 bilan to‘g‘ri kiriting.');
   }
   if (/invalid.*otp|otp.*invalid|token.*invalid|expired/i.test(message)) {
-    return 'Kod noto‘g‘ri yoki muddati tugagan. Kodni tekshirib qayta kiriting.';
+    return T('Kod noto‘g‘ri yoki muddati tugagan. Kodni tekshirib qayta kiriting.');
   }
-  return 'Kod yuborilmadi. Telefon raqamini tekshirib, keyinroq qayta urinib ko‘ring.';
+  return T('Kod yuborilmadi. Telefon raqamini tekshirib, keyinroq qayta urinib ko‘ring.');
 }
 
 export default function PhoneOtpLoginForm() {
@@ -59,7 +60,7 @@ export default function PhoneOtpLoginForm() {
       setStep('code');
       setOtp(Array(OTP_LENGTH).fill(''));
       setCooldown(RESEND_SECONDS);
-      toast.success(isResend ? 'Yangi kod so‘rovi yuborildi' : 'Tasdiqlash kodi yuborildi');
+      toast.success(isResend ? T('Yangi kod so‘rovi yuborildi') : T('Tasdiqlash kodi yuborildi'));
       window.setTimeout(() => inputRefs.current[0]?.focus(), 80);
     } catch (requestError) {
       setError(getPhoneError(requestError));
@@ -78,7 +79,7 @@ export default function PhoneOtpLoginForm() {
     try {
       const { data, error: verifyError } = await verifyPhoneLoginCode(phone, code);
       if (verifyError) throw verifyError;
-      if (!data?.session) throw new Error('Tasdiqlash yakunlanmadi');
+      if (!data?.session) throw new Error(T('Tasdiqlash yakunlanmadi'));
 
       // Backend tasdiqlangan telefonni tayyor profilga ulaydi; frontend rolini
       // ham shu backend profilidan olib yangilaymiz.
@@ -94,7 +95,7 @@ export default function PhoneOtpLoginForm() {
       }
 
       markAccountCreated();
-      toast.success('Telefon tasdiqlandi. ZUMO’ga xush kelibsiz!');
+      toast.success(T('Telefon tasdiqlandi. ZUMO’ga xush kelibsiz!'));
       // AuthContext Supabase session eventini olib, LoginPage foydalanuvchini yo‘naltiradi.
     } catch (verifyError) {
       setError(getPhoneError(verifyError));
@@ -160,14 +161,14 @@ export default function PhoneOtpLoginForm() {
           <div className="phone-otp-heading">
             <span className="phone-otp-icon"><Phone size={20} /></span>
             <div>
-              <h2>Telefon raqamingiz</h2>
-              <p>Kirish uchun SMS kod yuboramiz</p>
+              <h2>{T('Telefon raqamingiz')}</h2>
+              <p>{T('Kirish uchun SMS kod yuboramiz')}</p>
             </div>
           </div>
 
-          <label className="phone-number-label" htmlFor="zumo-phone-number">Telefon raqami</label>
+          <label className="phone-number-label" htmlFor="zumo-phone-number">{T('Telefon raqami')}</label>
           <div className="phone-number-field">
-            <span className="phone-country-code" aria-label="O‘zbekiston kodi">🇺🇿 +998</span>
+            <span className="phone-country-code" aria-label={T('O‘zbekiston kodi')}>🇺🇿 +998</span>
             <input
               id="zumo-phone-number"
               type="tel"
@@ -184,29 +185,29 @@ export default function PhoneOtpLoginForm() {
             />
           </div>
 
-          <p className="phone-otp-hint">6 xonali tasdiqlash kodi shu raqamga keladi.</p>
+          <p className="phone-otp-hint">{T('6 xonali tasdiqlash kodi shu raqamga keladi.')}</p>
           {error && <p className="phone-otp-error" id="phone-otp-error" role="alert">{error}</p>}
 
           <button className="auth-button phone-otp-primary" type="button" onClick={() => requestCode()} disabled={!completePhone || loading}>
-            {loading ? <><LoaderCircle size={18} className="phone-otp-spinner" /> Yuborilmoqda...</> : <>Kod yuborish <ArrowRight size={18} /></>}
+            {loading ? <><LoaderCircle size={18} className="phone-otp-spinner" /> {T('Yuborilmoqda...')}</> : <>{T('Kod yuborish')} <ArrowRight size={18} /></>}
           </button>
-          <p className="phone-otp-privacy">Kodni hech kimga bermang. Yangi raqam uchun tasdiqlangan alohida akkaunt yaratiladi.</p>
+          <p className="phone-otp-privacy">{T('Kodni hech kimga bermang. Yangi raqam uchun tasdiqlangan alohida akkaunt yaratiladi.')}</p>
         </>
       ) : (
         <>
           <button className="phone-otp-back" type="button" onClick={editPhone} disabled={loading}>
-            <ArrowLeft size={17} /> Raqamni o‘zgartirish
+            <ArrowLeft size={17} /> {T('Raqamni o‘zgartirish')}
           </button>
 
           <div className="phone-otp-heading phone-otp-code-heading">
             <span className="phone-otp-icon"><MessageCircle size={20} /></span>
             <div>
-              <h2>Kodni kiriting</h2>
-              <p><strong>+998 {digits}</strong> raqamiga yuborilgan 6 xonali kod</p>
+              <h2>{T('Kodni kiriting')}</h2>
+              <p><strong>+998 {digits}</strong> {T('raqamiga yuborilgan 6 xonali kod')}</p>
             </div>
           </div>
 
-          <div className="phone-otp-code" role="group" aria-label="Olti xonali SMS kodi" onPaste={handlePasteCode}>
+          <div className="phone-otp-code" role="group" aria-label={T('Olti xonali SMS kodi')} onPaste={handlePasteCode}>
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -225,18 +226,18 @@ export default function PhoneOtpLoginForm() {
             ))}
           </div>
 
-          <p className="phone-otp-hint">SMS kelishi biroz vaqt olishi mumkin.</p>
+          <p className="phone-otp-hint">{T('SMS kelishi biroz vaqt olishi mumkin.')}</p>
           {error && <p className="phone-otp-error" role="alert">{error}</p>}
 
           <button className="auth-button phone-otp-primary" type="button" onClick={() => verifyCode(enteredCode)} disabled={enteredCode.length !== OTP_LENGTH || loading}>
-            {loading ? <><LoaderCircle size={18} className="phone-otp-spinner" /> Tekshirilmoqda...</> : <><CheckCircle2 size={18} /> Tasdiqlash</>}
+            {loading ? <><LoaderCircle size={18} className="phone-otp-spinner" /> {T('Tekshirilmoqda...')}</> : <><CheckCircle2 size={18} /> {T('Tasdiqlash')}</>}
           </button>
 
           <div className="phone-otp-resend-row">
             {cooldown > 0 ? (
-              <span>Kodni qayta yuborish {cooldown} soniyadan keyin mumkin</span>
+              <span>{T('Kodni qayta yuborish')} {cooldown} {T('soniyadan keyin mumkin')}</span>
             ) : (
-              <button type="button" onClick={() => requestCode(true)} disabled={loading}>Kodni qayta yuborish</button>
+              <button type="button" onClick={() => requestCode(true)} disabled={loading}>{T('Kodni qayta yuborish')}</button>
             )}
           </div>
         </>

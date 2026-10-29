@@ -212,7 +212,7 @@
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid var(--cyan);
-  background: rgba(0, 212, 255, 0.08);
+  background: rgba(var(--cyan-rgb), 0.08);
   color: var(--text);
   font-size: 0.88rem;
 }

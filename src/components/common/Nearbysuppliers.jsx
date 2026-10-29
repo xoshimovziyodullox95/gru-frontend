@@ -3,6 +3,7 @@ import { MapPin, Plus, Navigation, Sparkles } from 'lucide-react';
 import { getNearbyEquipment } from '../services/equipment';
 import { getNearbySummary } from '../services/aiChat';
 import './summary.css'
+import { T } from '../utils/T';
 
 /**
  * NearbySuppliers — ikki qatlamdan iborat:
@@ -75,16 +76,16 @@ export default function NearbySuppliers({ location, selectedItems, onAdd }) {
 
   return (
     <div className="nearby-suppliers-panel">
-      <h4><Navigation size={15} /> Sizga yaqin bo'lgan takliflar</h4>
+      <h4><Navigation size={15} /> {T('Sizga yaqin bo\'lgan takliflar')}</h4>
 
       {loading ? (
-        <p className="nearby-suppliers-loading">Qidirilmoqda...</p>
+        <p className="nearby-suppliers-loading">{T('Qidirilmoqda...')}</p>
       ) : (
         <>
           {/* AI XULOSASI — faqat yuqoridagi haqiqiy ro'yxatni izohlaydi */}
           {aiLoading ? (
             <div className="nearby-ai-summary nearby-ai-loading">
-              <Sparkles size={14} /> AI tahlil qilmoqda...
+              <Sparkles size={14} /> {T('AI tahlil qilmoqda...')}
             </div>
           ) : aiSummary ? (
             <div className="nearby-ai-summary">
@@ -104,7 +105,7 @@ export default function NearbySuppliers({ location, selectedItems, onAdd }) {
                 <div className="nearby-supplier-info">
                   <span className="nearby-supplier-title">{item.title}</span>
                   <span className="nearby-supplier-meta">
-                    <MapPin size={11} /> {item.ownerLocation?.title || item.owner?.fullName || 'Nomsiz'} — {item.distanceKm} km
+                    <MapPin size={11} /> {item.ownerLocation?.title || item.owner?.fullName || T('Nomsiz')} — {item.distanceKm} km
                   </span>
                   <span className="nearby-supplier-price">${item.price?.toLocaleString()}</span>
                 </div>

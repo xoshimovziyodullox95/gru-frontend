@@ -7,6 +7,7 @@ import {
   updateInventoryCountItem, completeInventoryCount,
 } from '../../../services/business';
 
+import { T } from '../../../utils/T';
 function CountSession({ count, businessId, onClose, onCompleted }) {
   const [items, setItems] = useState(count.items);
   const [saving, setSaving] = useState({});
@@ -26,12 +27,12 @@ function CountSession({ count, businessId, onClose, onCompleted }) {
 
   const handleComplete = async () => {
     const uncounted = items.filter((i) => i.countedQuantity == null).length;
-    if (uncounted > 0 && !confirm(`${uncounted} ta mahsulot hali sanalmagan. Baribir yakunlansinmi?`)) return;
+    if (uncounted > 0 && !confirm(T('{{uncounted}} ta mahsulot hali sanalmagan. Baribir yakunlansinmi?', { uncounted: uncounted }))) return;
     try {
       await completeInventoryCount(businessId, count._id);
       onCompleted();
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     }
   };
 
@@ -40,7 +41,7 @@ function CountSession({ count, businessId, onClose, onCompleted }) {
       <div className="pt-table-wrap">
         <table className="pt-table">
           <thead>
-            <tr><th>Mahsulot</th><th>Tizimda</th><th>Sanalgan</th><th>Farq</th></tr>
+            <tr><th>{T('Mahsulot')}</th><th>{T('Tizimda')}</th><th>{T('Sanalgan')}</th><th>{T('Farq')}</th></tr>
           </thead>
           <tbody>
             {items.map((item) => (
@@ -66,9 +67,9 @@ function CountSession({ count, businessId, onClose, onCompleted }) {
       </div>
 
       <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
-        <button onClick={onClose} className="pt-btn-secondary">Yopish</button>
+        <button onClick={onClose} className="pt-btn-secondary">{T('Yopish')}</button>
         <RoleGate roles={['admin']}>
-          <button onClick={handleComplete} className="pt-btn-primary"><CheckCircle2 size={16} /> Yakunlash</button>
+          <button onClick={handleComplete} className="pt-btn-primary"><CheckCircle2 size={16} /> {T('Yakunlash')}</button>
         </RoleGate>
       </div>
     </div>
@@ -101,7 +102,7 @@ export default function InventoryCountView() {
       const full = await getInventoryCount(activeBusiness._id, res.data._id);
       setActiveSession(full.data);
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     }
   };
 
@@ -124,25 +125,25 @@ export default function InventoryCountView() {
   return (
     <>
       <div className="pt-toolbar">
-        <span className="pt-muted">Jami: {counts.length} ta sessiya</span>
+        <span className="pt-muted">{T('Jami:')} {counts.length} {T('ta sessiya')}</span>
         <RoleGate roles={['admin', 'warehouse_worker']}>
-          <button className="pt-btn-primary" onClick={handleStart}><PlayCircle size={16} /> Yangi sverka boshlash</button>
+          <button className="pt-btn-primary" onClick={handleStart}><PlayCircle size={16} /> {T('Yangi sverka boshlash')}</button>
         </RoleGate>
       </div>
 
       {loading ? (
-        <div className="pt-empty">Yuklanmoqda...</div>
+        <div className="pt-empty">{T('Yuklanmoqda...')}</div>
       ) : counts.length === 0 ? (
-        <div className="pt-empty">Hali sverka o'tkazilmagan</div>
+        <div className="pt-empty">{T('Hali sverka o\'tkazilmagan')}</div>
       ) : (
         <div className="pt-table-wrap">
           <table className="pt-table">
-            <thead><tr><th>Sana</th><th>Holati</th><th></th></tr></thead>
+            <thead><tr><th>{T('Sana')}</th><th>{T('Holati')}</th><th></th></tr></thead>
             <tbody>
               {counts.map((c) => (
                 <tr key={c._id} style={{ cursor: 'pointer' }} onClick={() => handleOpen(c)}>
                   <td>{new Date(c.createdAt).toLocaleDateString()}</td>
-                  <td>{c.status === 'completed' ? 'Yakunlangan' : 'Jarayonda'}</td>
+                  <td>{c.status === 'completed' ? T('Yakunlangan') : T('Jarayonda')}</td>
                   <td className="pt-muted">Ochish →</td>
                 </tr>
               ))}

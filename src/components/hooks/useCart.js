@@ -5,7 +5,7 @@ const CART_KEY = 'cart';
 
 // Backend faqat shu turlarni buyurtma qiladi; boshqasi (masalan eski
 // "service_provider") savatda qolsa butun checkout rad etiladi.
-const ORDERABLE_TYPES = ['equipment', 'bank_service'];
+const ORDERABLE_TYPES = ['equipment']; // bank xizmatlari "Tez kunda"
 
 function readCart() {
   try {

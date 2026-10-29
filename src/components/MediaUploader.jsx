@@ -1,5 +1,6 @@
 import { Upload, X } from 'lucide-react';
 
+import { T } from './utils/T';
 export default function MediaUploader({ mediaFiles, setMediaFiles }) {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -19,7 +20,7 @@ export default function MediaUploader({ mediaFiles, setMediaFiles }) {
   return (
     <div className="media-upload-area">
       <label className="upload-btn">
-        <Upload size={20} /> Rasm yoki video yuklash
+        <Upload size={20} /> {T('Rasm yoki video yuklash')}
         <input 
           type="file" 
           multiple 
@@ -33,7 +34,7 @@ export default function MediaUploader({ mediaFiles, setMediaFiles }) {
         {mediaFiles.map((mf, idx) => (
           <div key={idx} className="media-preview">
             {mf.type === 'image' ? 
-              <img src={mf.preview} alt="preview" /> : 
+              <img src={mf.preview} alt="" /> : 
               <video src={mf.preview} controls />}
             <button type="button" onClick={() => removeMedia(idx)} className="remove-media">
               <X size={16} />

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Star, Send, MessageSquare } from 'lucide-react';
 
+import { T } from '../utils/T';
 // itemType: 'equipment' | 'service'
 // api: { rate: fn(id, value), comment: fn(id, text), reply: fn(id, commentId, text) }
 export default function RatingAndComments({ itemId, initialRatings = [], initialComments = [], currentUser, api }) {
@@ -23,7 +24,7 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
     : 0;
 
   const handleRate = async (value) => {
-    if (!currentUser) { alert("Baholash uchun tizimga kiring"); return; }
+    if (!currentUser) { alert(T('Baholash uchun tizimga kiring')); return; }
     try {
       const res = await api.rate(itemId, value);
       setMyRating(value);
@@ -39,7 +40,7 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
 
   const handleSubmitComment = async () => {
     if (!commentText.trim()) return;
-    if (!currentUser) { alert("Komment qoldirish uchun tizimga kiring"); return; }
+    if (!currentUser) { alert(T('Komment qoldirish uchun tizimga kiring')); return; }
     setSubmitting(true);
     try {
       const res = await api.comment(itemId, commentText.trim());
@@ -84,7 +85,7 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
       {/* ===== BAHOLASH ===== */}
       <div className="rac-rating-section">
         <div className="rac-rating-header">
-          <h3 className="ModuleHeading"><Star size={18} /> Baholash</h3>
+          <h3 className="ModuleHeading"><Star size={18} /> {T('Baholash')}</h3>
           {ratings.length > 0 && (
             <span className="rac-average">
               <Star size={14} fill="#FFB800" color="#FFB800" /> {average} ({ratings.length})
@@ -109,17 +110,17 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
             </button>
           ))}
         </div>
-        {myRating > 0 && <span className="rac-my-rating">Sizning bahoyingiz: {myRating}/5</span>}
+        {myRating > 0 && <span className="rac-my-rating">{T('Sizning bahoyingiz:')} {myRating}/5</span>}
       </div>
 
       {/* ===== KOMMENTLAR ===== */}
       <div className="rac-comments-section">
-        <h3 className="ModuleHeading"><MessageSquare size={18} /> Kommentlar ({comments.length})</h3>
+        <h3 className="ModuleHeading"><MessageSquare size={18} /> {T('Kommentlar ({{count}})', { count: comments.length })}</h3>
 
         <div className="rac-comment-input-row">
           <input
             type="text"
-            placeholder="Fikringizni yozing..."
+            placeholder={T('Fikringizni yozing...')}
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmitComment()}
@@ -131,7 +132,7 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
 
         <div className="rac-comments-list">
           {comments.length === 0 ? (
-            <p className="rac-empty">Hali kommentlar yo'q. Birinchi bo'lib yozing!</p>
+            <p className="rac-empty">{T('Hali kommentlar yo\'q. Birinchi bo\'lib yozing!')}</p>
           ) : (
             comments.map((c) => (
               <div key={c._id} className="rac-comment-item">
@@ -142,17 +143,17 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
                   onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
                 />
                 <div className="rac-comment-body">
-                  <strong>{c.userId?.fullName || c.userId?.full_name || 'Foydalanuvchi'}</strong>
+                  <strong>{c.userId?.fullName || c.userId?.full_name || T('Foydalanuvchi')}</strong>
                   <span>{c.text}</span>
                   <button className="rac-reply-link" onClick={() => setActiveReplyId(activeReplyId === c._id ? null : c._id)}>
-                    Javob berish
+                    {T('Javob berish')}
                   </button>
 
                   {(c.replies || []).map((r) => (
                     <div key={r._id} className="rac-reply-item">
                       <img src={r.userId?.avatar_url || '/images/zumo-placeholder.svg'} alt="" className="rac-reply-avatar" />
                       <div>
-                        <strong>{r.userId?.fullName || r.userId?.full_name || 'Foydalanuvchi'}</strong>
+                        <strong>{r.userId?.fullName || r.userId?.full_name || T('Foydalanuvchi')}</strong>
                         <span>{r.text}</span>
                       </div>
                     </div>
@@ -162,7 +163,7 @@ export default function RatingAndComments({ itemId, initialRatings = [], initial
                     <div className="rac-reply-form">
                       <input
                         type="text"
-                        placeholder="Javob yozish..."
+                        placeholder={T('Javob yozish...')}
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSubmitReply(c._id)}

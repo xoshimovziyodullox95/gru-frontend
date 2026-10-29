@@ -4,6 +4,7 @@ import { useBusiness } from '../context/BusinessContext';
 import RoleGate from '../shared/RoleGate';
 import { getSales, getSale, refundSale } from '../../services/business';
 
+import { T } from '../../utils/T';
 function SaleDetailModal({ saleId, businessId, onClose, onRefunded }) {
   const [sale, setSale] = useState(null);
   const [refunding, setRefunding] = useState(false);
@@ -13,14 +14,14 @@ function SaleDetailModal({ saleId, businessId, onClose, onRefunded }) {
   }, [businessId, saleId]);
 
   const handleRefund = async () => {
-    if (!confirm('Bu sotuv qaytarilsinmi? Mahsulotlar omborga qaytadi.')) return;
+    if (!confirm(T('Bu sotuv qaytarilsinmi? Mahsulotlar omborga qaytadi.'))) return;
     setRefunding(true);
     try {
       await refundSale(businessId, saleId);
       onRefunded();
       onClose();
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setRefunding(false);
     }
@@ -32,20 +33,20 @@ function SaleDetailModal({ saleId, businessId, onClose, onRefunded }) {
     <div className="pt-modal-overlay" onClick={onClose}>
       <div className="pt-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 420 }}>
         <div className="pt-modal-header">
-          <h3>Sotuv tafsiloti</h3>
+          <h3>{T('Sotuv tafsiloti')}</h3>
           <button className="pt-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.88rem', marginBottom: 14 }}>
-          <div><span className="pt-muted">Sana:</span> {new Date(sale.createdAt).toLocaleString()}</div>
-          <div><span className="pt-muted">To'lov turi:</span> {sale.paymentType === 'cash' ? 'Naqd' : sale.paymentType === 'card' ? 'Karta' : 'Nasiya'}</div>
-          {sale.customerId && <div><span className="pt-muted">Mijoz:</span> {sale.customerId.name}</div>}
-          <div><span className="pt-muted">Holati:</span> {sale.status === 'completed' ? 'Yakunlangan' : sale.status === 'refunded' ? 'Qaytarilgan' : sale.status}</div>
+          <div><span className="pt-muted">{T('Sana:')}</span> {new Date(sale.createdAt).toLocaleString()}</div>
+          <div><span className="pt-muted">{T('To\'lov turi:')}</span> {sale.paymentType === 'cash' ? T('Naqd') : sale.paymentType === 'card' ? T('Karta') : T('Nasiya')}</div>
+          {sale.customerId && <div><span className="pt-muted">{T('Mijoz:')}</span> {sale.customerId.name}</div>}
+          <div><span className="pt-muted">{T('Holati:')}</span> {sale.status === 'completed' ? T('Yakunlangan') : sale.status === 'refunded' ? T('Qaytarilgan') : sale.status}</div>
         </div>
 
         <div className="pt-table-wrap" style={{ marginBottom: 14 }}>
           <table className="pt-table">
-            <thead><tr><th>Mahsulot</th><th>Miqdor</th><th>Narx</th></tr></thead>
+            <thead><tr><th>{T('Mahsulot')}</th><th>{T('Miqdor')}</th><th>{T('Narx')}</th></tr></thead>
             <tbody>
               {sale.items.map((item, idx) => (
                 <tr key={idx}>
@@ -59,16 +60,16 @@ function SaleDetailModal({ saleId, businessId, onClose, onRefunded }) {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, marginBottom: 14 }}>
-          <span>Jami:</span>
-          <span>{sale.total.toLocaleString()} so'm</span>
+          <span>{T('Jami:')}</span>
+          <span>{sale.total.toLocaleString()} {T('so\'m')}</span>
         </div>
 
         <div className="pt-modal-actions">
-          <button className="pt-btn-secondary" onClick={onClose}>Yopish</button>
+          <button className="pt-btn-secondary" onClick={onClose}>{T('Yopish')}</button>
           {sale.status === 'completed' && (
             <RoleGate roles={['admin']}>
               <button className="pt-btn-primary" onClick={handleRefund} disabled={refunding} style={{ background: '#ff5c5c' }}>
-                <RotateCcw size={14} /> {refunding ? 'Qaytarilmoqda...' : 'Qaytarish'}
+                <RotateCcw size={14} /> {refunding ? T('Qaytarilmoqda...') : T('Qaytarish')}
               </button>
             </RoleGate>
           )}
@@ -97,22 +98,22 @@ export default function SalesHistoryView() {
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) return <div className="pt-empty">Yuklanmoqda...</div>;
-  if (sales.length === 0) return <div className="pt-empty">Hali sotuvlar yo'q</div>;
+  if (loading) return <div className="pt-empty">{T('Yuklanmoqda...')}</div>;
+  if (sales.length === 0) return <div className="pt-empty">{T('Hali sotuvlar yo\'q')}</div>;
 
   return (
     <>
       <div className="pt-table-wrap">
         <table className="pt-table">
-          <thead><tr><th>Sana</th><th>To'lov</th><th>Summa</th><th>Holati</th><th></th></tr></thead>
+          <thead><tr><th>{T('Sana')}</th><th>{T('To\'lov')}</th><th>{T('Summa')}</th><th>{T('Holati')}</th><th></th></tr></thead>
           <tbody>
             {sales.map((s) => (
               <tr key={s._id}>
                 <td className="pt-muted">{new Date(s.createdAt).toLocaleString()}</td>
-                <td>{s.paymentType === 'cash' ? 'Naqd' : s.paymentType === 'card' ? 'Karta' : 'Nasiya'}</td>
+                <td>{s.paymentType === 'cash' ? T('Naqd') : s.paymentType === 'card' ? T('Karta') : T('Nasiya')}</td>
                 <td>{s.total.toLocaleString()}</td>
                 <td style={{ color: s.status === 'refunded' ? '#ff5c5c' : '#00c864' }}>
-                  {s.status === 'completed' ? 'Yakunlangan' : s.status === 'refunded' ? 'Qaytarilgan' : s.status}
+                  {s.status === 'completed' ? T('Yakunlangan') : s.status === 'refunded' ? T('Qaytarilgan') : s.status}
                 </td>
                 <td>
                   <button className="pt-icon-btn" onClick={() => setSelectedSaleId(s._id)}><Eye size={14} /></button>

@@ -6,6 +6,7 @@ import SalesHistoryView from './SalesHistoryView';
 import '../../../styles/productsTab.css';
 import '../../../styles/salesTab.css';
 
+import { T } from '../../utils/T';
 function POSView() {
   const { activeBusiness, activeWarehouse } = useBusiness();
   const [products, setProducts] = useState([]);
@@ -85,7 +86,7 @@ function POSView() {
   const handleCheckout = async () => {
     if (cart.length === 0) return;
     if (paymentType === 'credit' && !customerId) {
-      setError('Nasiya uchun mijoz tanlang');
+      setError(T('Nasiya uchun mijoz tanlang'));
       return;
     }
     setSubmitting(true);
@@ -105,20 +106,20 @@ function POSView() {
       setPaidAmount('');
       loadData();
     } catch (err) {
-      setError(err.response?.data?.error || 'Xatolik yuz berdi');
+      setError(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (!activeWarehouse) return <div className="pt-empty">Ombor tanlanmagan</div>;
+  if (!activeWarehouse) return <div className="pt-empty">{T('Ombor tanlanmagan')}</div>;
 
   return (
     <div className="pos-layout">
       <div className="pos-products">
         <div className="pt-search" style={{ maxWidth: '100%', marginBottom: 12 }}>
           <Search size={16} />
-          <input placeholder="Mahsulot qidirish..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input placeholder={T('Mahsulot qidirish...')} value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
 
         <div className="pos-product-grid">
@@ -132,9 +133,9 @@ function POSView() {
                 onClick={() => addToCart(p)}
               >
                 <span className="pos-product-name">{p.name}</span>
-                <span className="pos-product-price">{p.sellPrice?.toLocaleString()} so'm</span>
+                <span className="pos-product-price">{p.sellPrice?.toLocaleString()} {T('so\'m')}</span>
                 <span className={`pos-product-stock ${available <= 0 ? 'pos-out' : ''}`}>
-                  {available > 0 ? `${available} ${p.unit}` : 'Tugagan'}
+                  {available > 0 ? `${available} ${p.unit}` : T('Tugagan')}
                 </span>
               </button>
             );
@@ -143,10 +144,10 @@ function POSView() {
       </div>
 
       <div className="pos-cart">
-        <h3><ShoppingCart size={16} /> Savat</h3>
+        <h3><ShoppingCart size={16} /> {T('Savat')}</h3>
 
         {cart.length === 0 ? (
-          <div className="pt-empty" style={{ padding: '2rem 0' }}>Savat bo'sh</div>
+          <div className="pt-empty" style={{ padding: '2rem 0' }}>{T('Savat bo\'sh')}</div>
         ) : (
           <div className="pos-cart-items">
             {cart.map((item) => (
@@ -167,8 +168,8 @@ function POSView() {
         )}
 
         <div className="pos-total">
-          <span>Jami:</span>
-          <strong>{total.toLocaleString()} so'm</strong>
+          <span>{T('Jami:')}</span>
+          <strong>{total.toLocaleString()} {T('so\'m')}</strong>
         </div>
 
         <div className="pos-payment-types">
@@ -179,7 +180,7 @@ function POSView() {
               onClick={() => setPaymentType(t)}
               style={{ flex: 1, fontSize: '0.8rem' }}
             >
-              {t === 'cash' ? 'Naqd' : t === 'card' ? 'Karta' : 'Nasiya'}
+              {t === 'cash' ? T('Naqd') : t === 'card' ? T('Karta') : T('Nasiya')}
             </button>
           ))}
         </div>
@@ -188,18 +189,18 @@ function POSView() {
           <div className="pos-credit-fields">
             {showNewCustomer ? (
               <div style={{ display: 'flex', gap: 6 }}>
-                <input value={newCustomerName} onChange={(e) => setNewCustomerName(e.target.value)} placeholder="Mijoz ismi" style={{ flex: 1 }} />
+                <input value={newCustomerName} onChange={(e) => setNewCustomerName(e.target.value)} placeholder={T('Mijoz ismi')} style={{ flex: 1 }} />
                 <button className="pt-btn-primary" onClick={handleCreateCustomer} type="button">+</button>
               </div>
             ) : (
               <select value={customerId} onChange={(e) => e.target.value === '__new__' ? setShowNewCustomer(true) : setCustomerId(e.target.value)}>
-                <option value="">Mijozni tanlang</option>
+                <option value="">{T('Mijozni tanlang')}</option>
                 {customers.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
-                <option value="__new__">+ Yangi mijoz</option>
+                <option value="__new__">{T('+ Yangi mijoz')}</option>
               </select>
             )}
             <input
-              type="number" min="0" placeholder="Hozir to'langan summa (0 bo'lishi mumkin)"
+              type="number" min="0" placeholder={T('Hozir to\'langan summa (0 bo\'lishi mumkin)')}
               value={paidAmount} onChange={(e) => setPaidAmount(e.target.value)}
             />
           </div>
@@ -213,7 +214,7 @@ function POSView() {
           disabled={cart.length === 0 || submitting}
           onClick={handleCheckout}
         >
-          {submitting ? 'Yuborilmoqda...' : `Sotish — ${total.toLocaleString()} so'm`}
+          {submitting ? T('Yuborilmoqda...') : T('Sotish — {{total}} so‘m', { total: total.toLocaleString() })}
         </button>
       </div>
 
@@ -221,9 +222,9 @@ function POSView() {
         <div className="pt-modal-overlay" onClick={() => setSuccessSale(null)}>
           <div className="pt-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 360, textAlign: 'center' }}>
             <CheckCircle2 size={40} style={{ color: '#00c864', margin: '0 auto 12px' }} />
-            <h3>Sotuv muvaffaqiyatli!</h3>
-            <p className="pt-muted">Jami: {successSale.total?.toLocaleString()} so'm</p>
-            <button className="pt-btn-primary" style={{ marginTop: 12 }} onClick={() => setSuccessSale(null)}>Yopish</button>
+            <h3>{T('Sotuv muvaffaqiyatli!')}</h3>
+            <p className="pt-muted">{T('Jami:')} {successSale.total?.toLocaleString()} {T('so\'m')}</p>
+            <button className="pt-btn-primary" style={{ marginTop: 12 }} onClick={() => setSuccessSale(null)}>{T('Yopish')}</button>
           </div>
         </div>
       )}
@@ -242,14 +243,14 @@ export default function SalesTab() {
           className={section === 'pos' ? 'pt-btn-primary' : 'pt-btn-secondary'}
           style={{ fontSize: '0.8rem', padding: '6px 12px' }}
         >
-          <LayoutGrid size={14} /> Kassa
+          <LayoutGrid size={14} /> {T('Kassa')}
         </button>
         <button
           onClick={() => setSection('history')}
           className={section === 'history' ? 'pt-btn-primary' : 'pt-btn-secondary'}
           style={{ fontSize: '0.8rem', padding: '6px 12px' }}
         >
-          <History size={14} /> Tarix
+          <History size={14} /> {T('Tarix')}
         </button>
       </div>
 

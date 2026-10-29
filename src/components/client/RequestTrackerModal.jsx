@@ -6,10 +6,11 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   X, Clock, Star, Phone, MessageCircle, Loader2, Users, FileText,
 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 import { getSocket } from '../lib/socket';
 import {
@@ -18,6 +19,7 @@ import {
   updateRequestStatus,
 } from '../services/serviceRequests';
 
+import { serviceLabel, formatSum } from '../utils/i18nHelpers';
 import '../../styles/requestTracker.css';
 
 // Socket uzilsa ham holat yangilanib tursin
@@ -25,9 +27,7 @@ const POLL_MS = 10000;
 
 const CLOSED_STATUSES = ['cancelled', 'completed'];
 
-function formatPrice(value) {
-  return Number(value || 0).toLocaleString('uz-UZ');
-}
+const formatPrice = formatSum;
 
 function formatCountdown(ms) {
   if (ms <= 0) return '0:00';
@@ -48,7 +48,7 @@ function mergeOffers(prev, next) {
 
 function ProviderAvatar({ provider, size = 44 }) {
   const [broken, setBroken] = useState(false);
-  const name = provider?.name || 'Usta';
+  const name = provider?.name || 'U';
   if (provider?.image && !broken) {
     return (
       <img
@@ -68,8 +68,9 @@ function ProviderAvatar({ provider, size = 44 }) {
 }
 
 function Rating({ provider }) {
+  const { t } = useTranslation();
   if (!provider?.ratingsCount) {
-    return <span className="rt-rating rt-rating--new">yangi</span>;
+    return <span className="rt-rating rt-rating--new">{t('common.new', 'yangi')}</span>;
   }
   return (
     <span className="rt-rating">
@@ -83,6 +84,7 @@ function Rating({ provider }) {
 // Yangi so'rov uchun ota komponent key={request._id} beradi — holat noldan boshlanadi
 export default function RequestTrackerModal({ isOpen, request: initialRequest, onClose }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [request, setRequest] = useState(initialRequest);
   const [offers, setOffers] = useState(initialRequest?.offers || []);
@@ -178,20 +180,20 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
         setRequest((prev) => ({ ...prev, status: 'accepted', acceptedOfferId: offer._id }));
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Ustani tanlab bo‘lmadi');
+      toast.error(err.response?.data?.error || t('tracker.acceptError', 'Ustani tanlab bo‘lmadi'));
     } finally {
       setAcceptingId(null);
     }
   };
 
   const handleCancel = async () => {
-    if (!window.confirm('So‘rovni bekor qilasizmi? Ustalar endi uni ko‘rmaydi.')) return;
+    if (!window.confirm(t('tracker.cancelConfirm', 'So‘rovni bekor qilasizmi? Ustalar endi uni ko‘rmaydi.'))) return;
     setCancelling(true);
     try {
-      await updateRequestStatus(requestId, 'cancelled', 'Mijoz bekor qildi');
+      await updateRequestStatus(requestId, 'cancelled', t('tracker.cancelReason', 'Mijoz bekor qildi'));
       setRequest((prev) => ({ ...prev, status: 'cancelled' }));
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Bekor qilib bo‘lmadi');
+      toast.error(err.response?.data?.error || t('tracker.cancelError', 'Bekor qilib bo‘lmadi'));
     } finally {
       setCancelling(false);
     }
@@ -211,10 +213,12 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
   const minutesLeft = timeLeft !== null ? Math.max(0, Math.ceil(timeLeft / 60000)) : null;
 
   const TITLES = {
-    searching: 'Usta qidirilmoqda',
-    offers: 'Ustani tanlang',
-    accepted: 'Usta yo‘lda',
-    closed: status === 'completed' ? 'Ish yakunlandi' : 'So‘rov yopildi',
+    searching: request.isDirect
+      ? t('tracker.title.sentToPro', 'So‘rov ustaga yuborildi')
+      : t('tracker.title.searching', 'Usta qidirilmoqda'),
+    offers: t('tracker.title.offers', 'Ustani tanlang'),
+    accepted: t('tracker.title.accepted', 'Usta yo‘lda'),
+    closed: status === 'completed' ? t('tracker.title.completed', 'Ish yakunlandi') : t('tracker.title.closed', 'So‘rov yopildi'),
   };
 
   return (
@@ -224,7 +228,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
         {/* Mijozga xarita kerak emas — o'z manzilini biladi; faqat holat va takliflar */}
         <div className="rt-panel rt-panel--plain">
           <span className="rt-grabber" aria-hidden="true" />
-          <button type="button" className="rt-map__close" onClick={onClose} aria-label="Yopish">
+          <button type="button" className="rt-map__close" onClick={onClose} aria-label={t('common.close', 'Yopish')}>
             <X size={20} />
           </button>
 
@@ -236,7 +240,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
               </div>
             )}
             <p className="rt-status__sub">
-              {request.category || 'Xizmat'}
+              {serviceLabel(request.category)}
               {request.location?.address ? ` · ${request.location.address}` : ''}
             </p>
           </div>
@@ -248,15 +252,19 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                 <li>
                   <Users size={16} />
                   <span>
-                    {request.notifiedCount
-                      ? `${request.notifiedCount} ta yaqin ustaga yuborildi`
-                      : 'Yaqin ustalarga yuborildi'}
+                    {request.isDirect
+                      ? t('tracker.waitingPro', 'Usta narx taklif qilishi bilan shu yerda ko‘rinadi')
+                      : request.notifiedCount
+                        ? t('tracker.sentCount', '{{count}} ta yaqin ustaga yuborildi', { count: request.notifiedCount })
+                        : t('tracker.sent', 'Yaqin ustalarga yuborildi')}
                   </span>
                 </li>
                 {minutesLeft !== null && (
                   <li>
                     <Clock size={16} />
-                    <span>Takliflar {minutesLeft} daqiqa davomida qabul qilinadi</span>
+                    <span>{minutesLeft >= 90
+                      ? t('tracker.windowHours', 'Takliflar {{count}} soat davomida qabul qilinadi', { count: Math.round(minutesLeft / 60) })
+                      : t('tracker.window', 'Takliflar {{count}} daqiqa davomida qabul qilinadi', { count: minutesLeft })}</span>
                   </li>
                 )}
                 {request.description && (
@@ -272,8 +280,8 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
             {phase === 'offers' && (
               <>
                 <div className="rt-offers-meta">
-                  <span>{pendingOffers.length} ta taklif</span>
-                  {minutesLeft !== null && <span>yana {formatCountdown(timeLeft)}</span>}
+                  <span>{t('tracker.offersCount', '{{count}} ta taklif', { count: pendingOffers.length })}</span>
+                  {minutesLeft !== null && <span>{t('tracker.left', 'yana {{time}}', { time: formatCountdown(timeLeft) })}</span>}
                 </div>
                 <ul className="rt-list" role="radiogroup">
                   {pendingOffers.map((offer) => {
@@ -289,18 +297,18 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                         >
                           <ProviderAvatar provider={offer.provider} size={42} />
                           <span className="rt-row__who">
-                            <strong>{offer.provider?.name || 'Usta'}</strong>
+                            <strong>{offer.provider?.name || t('activeOrder.pro', 'Usta')}</strong>
                             <span className="rt-row__meta">
                               <Rating provider={offer.provider} />
-                              <span>· {offer.arrivalMinutes || 30} daq</span>
+                              <span>· {offer.arrivalMinutes || 30} {t('common.min', 'daq')}</span>
                             </span>
                             {offer.message && <span className="rt-row__msg">{offer.message}</span>}
                           </span>
                           <span className="rt-row__price">
                             {formatPrice(offer.price)}
-                            <small>so‘m</small>
-                            {offer._id === cheapestId && pendingOffers.length > 1 && <em>arzon</em>}
-                            {offer._id === fastestId && offer._id !== cheapestId && <em>tez</em>}
+                            <small>{t('common.sum', 'so‘m')}</small>
+                            {offer._id === cheapestId && pendingOffers.length > 1 && <em>{t('tracker.cheapest', 'arzon')}</em>}
+                            {offer._id === fastestId && offer._id !== cheapestId && <em>{t('tracker.fastest', 'tez')}</em>}
                           </span>
                         </button>
                       </li>
@@ -315,24 +323,24 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
               <>
                 <div className="rt-eta">
                   <strong>~{acceptedOffer.arrivalMinutes || request.arrivalMinutes || 30}</strong>
-                  <span>daqiqada yetib keladi</span>
+                  <span>{t('tracker.eta', 'daqiqada yetib keladi')}</span>
                 </div>
                 <div className="rt-master">
                   <ProviderAvatar provider={provider} size={48} />
                   <span className="rt-row__who">
-                    <strong>{provider.name || 'Usta'}</strong>
+                    <strong>{provider.name || t('activeOrder.pro', 'Usta')}</strong>
                     <span className="rt-row__meta">
                       <Rating provider={provider} />
-                      <span>· {formatPrice(acceptedOffer.price)} so‘m</span>
+                      <span>· {formatPrice(acceptedOffer.price)} {t('common.sum', 'so‘m')}</span>
                     </span>
                   </span>
                   <span className="rt-master__actions">
                     {provider.phone && (
-                      <a href={`tel:${provider.phone}`} className="rt-round" aria-label="Qo‘ng‘iroq">
+                      <a href={`tel:${provider.phone}`} className="rt-round" aria-label={t('common.call', 'Qo‘ng‘iroq qilish')}>
                         <Phone size={18} />
                       </a>
                     )}
-                    <button type="button" className="rt-round" onClick={openChat} aria-label="Ustaga yozish">
+                    <button type="button" className="rt-round" onClick={openChat} aria-label={t('tracker.message', 'Ustaga yozish')}>
                       <MessageCircle size={18} />
                     </button>
                   </span>
@@ -344,8 +352,8 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
             {phase === 'closed' && (
               <p className="rt-closed-text">
                 {status === 'completed'
-                  ? 'Xizmatdan foydalanganingiz uchun rahmat.'
-                  : 'So‘rov bekor qilingan yoki muddati tugagan. Kerak bo‘lsa, yangi so‘rov yuboring.'}
+                  ? t('tracker.thanks', 'Xizmatdan foydalanganingiz uchun rahmat.')
+                  : t('tracker.expired', 'So‘rov bekor qilingan yoki muddati tugagan. Kerak bo‘lsa, yangi so‘rov yuboring.')}
               </p>
             )}
           </div>
@@ -360,14 +368,14 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                 disabled={Boolean(acceptingId)}
               >
                 {acceptingId ? <Loader2 size={18} className="rt-spin" /> : null}
-                Tanlash · {formatPrice(selectedOffer.price)} so‘m
+                {t('incomingOffer.choose', 'Tanlash · {{price}} so‘m', { price: formatPrice(selectedOffer.price) })}
               </button>
             )}
 
             {(phase === 'searching' || phase === 'offers') && (
               <button type="button" className="rt-btn rt-btn--text" onClick={handleCancel} disabled={cancelling}>
                 {cancelling ? <Loader2 size={16} className="rt-spin" /> : null}
-                So‘rovni bekor qilish
+                {t('tracker.cancel', 'So‘rovni bekor qilish')}
               </button>
             )}
 
@@ -377,7 +385,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                 className="rt-btn rt-btn--ghost"
                 onClick={() => { onClose?.(); navigate(`/requests/${requestId}`); }}
               >
-                Buyurtma tafsilotlari
+                {t('tracker.details', 'Buyurtma tafsilotlari')}
               </button>
             )}
 
@@ -387,7 +395,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                 className="rt-btn rt-btn--primary"
                 onClick={() => { onClose?.(); navigate('/request'); }}
               >
-                Yangi so‘rov
+                {t('tracker.newRequest', 'Yangi so‘rov')}
               </button>
             )}
           </footer>

@@ -6,8 +6,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #0A1628;
-  color: #E8F4FD;
+  background: var(--bg);
+  color: var(--text);
 }
 .rd-center {
   align-items: center;
@@ -29,8 +29,8 @@
   height: 42px;
   border: none;
   border-radius: 50%;
-  background: #0A1628;
-  color: #E8F4FD;
+  background: var(--bg);
+  color: var(--text);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
@@ -43,8 +43,8 @@
 .rd-foot {
   position: sticky;
   bottom: 0;
-  background: #0F2040;
-  border-top: 1px solid rgba(232, 244, 253, 0.07);
+  background: var(--surface);
+  border-top: 1px solid rgba(var(--text-rgb), 0.07);
 }
 
 /* ---------- Holat qadamlari ---------- */
@@ -70,28 +70,28 @@
   right: 50%;
   width: 100%;
   height: 2px;
-  background: rgba(232, 244, 253, 0.12);
+  background: rgba(var(--text-rgb), 0.12);
 }
 .rd-steps li:first-child::before { display: none; }
 .rd-steps li.is-done::before,
-.rd-steps li.is-current::before { background: #00D4FF; }
+.rd-steps li.is-current::before { background: var(--cyan); }
 .rd-steps__dot {
   position: relative;
   z-index: 1;
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #122A4F;
-  border: 2px solid rgba(232, 244, 253, 0.2);
+  background: var(--card);
+  border: 2px solid rgba(var(--text-rgb), 0.2);
 }
-.rd-steps li.is-done .rd-steps__dot { background: #00D4FF; border-color: #00D4FF; }
+.rd-steps li.is-done .rd-steps__dot { background: var(--cyan); border-color: var(--cyan); }
 .rd-steps li.is-current .rd-steps__dot {
-  background: #0A1628;
-  border-color: #00D4FF;
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.2);
+  background: var(--bg);
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(var(--cyan-rgb), 0.2);
 }
-.rd-steps__label { font-size: 0.66rem; line-height: 1.2; color: #8AB4D0; }
-.rd-steps li.is-current .rd-steps__label { color: #E8F4FD; font-weight: 700; }
+.rd-steps__label { font-size: 0.66rem; line-height: 1.2; color: var(--textMuted); }
+.rd-steps li.is-current .rd-steps__label { color: var(--text); font-weight: 700; }
 
 /* ---------- Yo'l ko'rsatish ---------- */
 .rd-route {
@@ -100,7 +100,7 @@
   gap: 8px;
   padding: 12px;
   border-radius: 16px;
-  background: #0A1628;
+  background: var(--bg);
 }
 .rd-route__title {
   display: inline-flex;
@@ -108,41 +108,41 @@
   gap: 6px;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #00D4FF;
+  color: var(--cyan);
 }
 .rd-route__list { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .rd-chip {
   padding: 9px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(232, 244, 253, 0.14);
-  background: #122A4F;
-  color: #E8F4FD;
+  border: 1px solid rgba(var(--text-rgb), 0.14);
+  background: var(--card);
+  color: var(--text);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
 }
-.rd-chip.is-active { background: #00D4FF; border-color: #00D4FF; color: #0A1628; }
+.rd-chip.is-active { background: var(--cyan); border-color: var(--cyan); color: var(--on-accent); }
 
 /* ---------- Usta taklif formasi ---------- */
 .rd-offer-form { display: flex; flex-direction: column; gap: 14px; }
 .rd-field { display: flex; flex-direction: column; gap: 8px; }
-.rd-field > span { font-size: 0.8rem; font-weight: 600; color: #8AB4D0; }
+.rd-field > span { font-size: 0.8rem; font-weight: 600; color: var(--textMuted); }
 .rd-field input,
 .rd-field textarea {
   width: 100%;
   padding: 13px 14px;
   border-radius: 14px;
   border: 1.5px solid transparent;
-  background: #0A1628;
-  color: #E8F4FD;
+  background: var(--bg);
+  color: var(--text);
   font: inherit;
   font-size: 1rem;
   resize: vertical;
 }
 .rd-field input { font-size: 1.2rem; font-weight: 700; }
 .rd-field input:focus,
-.rd-field textarea:focus { outline: none; border-color: #00D4FF; }
+.rd-field textarea:focus { outline: none; border-color: var(--cyan); }
 
 .rd-review {
   display: flex;
@@ -150,35 +150,20 @@
   gap: 6px;
   margin: 0;
   font-size: 0.88rem;
-  color: #00D4FF;
+  color: var(--cyan);
 }
 
-@media (min-width: 900px) {
-  .rd-page {
-    flex-direction: row;
-    align-items: stretch;
-  }
-  .rd-map { flex: 1; }
-  .rd-map .rmap { height: 100vh !important; }
-  .rd-panel {
-    flex: 0 0 440px;
-    margin-top: 0;
-    border-radius: 0;
-    max-height: 100vh;
-    overflow-y: auto;
-  }
-}
 
 /* ---------- Mijoz: xaritasiz sarlavha qatori ---------- */
-.rd-topbar { padding: 14px 14px 0; background: #0F2040; }
-.rd-back--static { position: static; box-shadow: none; background: #122A4F; }
+.rd-topbar { padding: 14px 14px 0; background: var(--surface); }
+.rd-back--static { position: static; box-shadow: none; background: var(--card); }
 
 /* ---------- Mijoz: ishni tasdiqlash ---------- */
 .rd-confirm {
   padding: 14px;
   border-radius: 16px;
-  border: 1.5px solid #00D4FF;
-  background: rgba(0, 212, 255, 0.07);
+  border: 1.5px solid var(--cyan);
+  background: rgba(var(--cyan-rgb), 0.07);
 }
 .rd-confirm p { margin: 0; font-size: 0.9rem; line-height: 1.5; }
 
@@ -188,9 +173,9 @@
   flex-wrap: wrap;
   gap: 4px 10px;
   font-size: 0.72rem;
-  color: #8AB4D0;
+  color: var(--textMuted);
 }
-.rd-stats__warn { color: #E8F4FD; opacity: 0.7; text-decoration: underline dotted; }
+.rd-stats__warn { color: var(--text); opacity: 0.7; text-decoration: underline dotted; }
 
 /* ---------- Narx o'zgarishi ---------- */
 .rd-confirm__label {
@@ -198,7 +183,7 @@
   margin-bottom: 6px;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #00D4FF;
+  color: var(--cyan);
 }
 .rd-price-change {
   display: flex;
@@ -207,9 +192,9 @@
   margin-bottom: 6px;
   font-size: 1.05rem;
 }
-.rd-price-change s { color: #8AB4D0; }
+.rd-price-change s { color: var(--textMuted); }
 .rd-price-change strong { font-size: 1.25rem; }
-.rd-confirm__note { margin-top: 8px !important; font-size: 0.75rem !important; color: #8AB4D0; }
+.rd-confirm__note { margin-top: 8px !important; font-size: 0.75rem !important; color: var(--textMuted); }
 
 /* ---------- Usta: ish joyidagi bloklar ---------- */
 .rd-box {
@@ -218,7 +203,7 @@
   gap: 10px;
   padding: 12px;
   border-radius: 16px;
-  background: #0A1628;
+  background: var(--bg);
 }
 .rd-field__title {
   display: inline-flex;
@@ -226,7 +211,7 @@
   gap: 6px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #8AB4D0;
+  color: var(--textMuted);
 }
 .rd-form-actions { display: flex; gap: 8px; }
 .rd-form-actions .rt-btn { flex: 1; min-height: 44px; }
@@ -235,7 +220,7 @@
   padding: 0;
   border: none;
   background: none;
-  color: #00D4FF;
+  color: var(--cyan);
   font: inherit;
   font-size: 0.88rem;
   font-weight: 600;
@@ -268,14 +253,61 @@
   border: none;
   border-radius: 50%;
   background: #E8F4FD;
-  color: #0A1628;
+  color: var(--on-accent);
   cursor: pointer;
 }
 .rd-photo--add {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px dashed rgba(0, 212, 255, 0.5);
-  color: #00D4FF;
+  border: 1.5px dashed rgba(var(--cyan-rgb), 0.5);
+  color: var(--cyan);
   cursor: pointer;
+}
+
+/* Katta ekranda ham bitta markaziy ustun: tepada kichik xarita, ostida panel */
+@media (min-width: 900px) {
+  .rd-page {
+    align-items: center;
+    padding: 24px 16px;
+  }
+  .rd-map,
+  .rd-topbar,
+  .rd-panel {
+    width: 100%;
+    max-width: 560px;
+    flex: none;
+  }
+  .rd-map { border-radius: 20px 20px 0 0; overflow: hidden; }
+  .rd-topbar { padding: 0 0 12px; background: transparent; }
+  .rd-page--nomap .rd-panel { border-radius: 20px; }
+  .rd-panel { border-radius: 0 0 20px 20px; }
+  .rd-foot { position: static; border-radius: 0 0 20px 20px; }
+}
+
+/* Bu sahifa navbarsiz (to'liq ekran) — navbar uchun berilgan tepa bo'shliqni olib tashlaymiz */
+body:has(.rd-page) { padding-top: 0 !important; }
+
+/* Taklif qatori: usta izohi to'liq, profilga havola */
+.rt-row__msg--full { white-space: normal; -webkit-line-clamp: unset; overflow: visible; }
+.rd-inline-link {
+  align-self: flex-start;
+  margin-top: 4px;
+  color: var(--cyan, #00a6c7);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.rd-field input[type="datetime-local"] {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1.5px solid var(--border, #d8e2ee);
+  border-radius: 14px;
+  background: var(--bg, #f1f5fa);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
 }

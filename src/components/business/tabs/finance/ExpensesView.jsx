@@ -4,6 +4,7 @@ import { useBusiness } from '../../context/BusinessContext';
 import RoleGate from '../../shared/RoleGate';
 import { getExpenses, createExpense, deleteExpense } from '../../../services/business';
 
+import { T } from '../../../utils/T';
 const CATEGORIES = ['Ijara', 'Maosh', 'Kommunal', 'Transport', 'Reklama', 'Boshqa'];
 
 function ExpenseModal({ onClose, onSaved, businessId }) {
@@ -14,7 +15,7 @@ function ExpenseModal({ onClose, onSaved, businessId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.amount || Number(form.amount) <= 0) {
-      setError('Summani to\'g\'ri kiriting');
+      setError(T('Summani to\'g\'ri kiriting'));
       return;
     }
     setSaving(true);
@@ -22,7 +23,7 @@ function ExpenseModal({ onClose, onSaved, businessId }) {
       await createExpense(businessId, { ...form, amount: Number(form.amount) });
       onSaved();
     } catch (err) {
-      setError(err.response?.data?.error || 'Xatolik yuz berdi');
+      setError(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setSaving(false);
     }
@@ -32,14 +33,14 @@ function ExpenseModal({ onClose, onSaved, businessId }) {
     <div className="pt-modal-overlay" onClick={onClose}>
       <form className="pt-modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
         <div className="pt-modal-header">
-          <h3>Yangi xarajat</h3>
+          <h3>{T('Yangi xarajat')}</h3>
           <button type="button" className="pt-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
         <div className="pt-form-grid">
           <label className="pt-field">
-            <span>Kategoriya</span>
+            <span>{T('Kategoriya')}</span>
             <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {CATEGORIES.map((c) => <option key={c} value={c}>{T(c)}</option>)}
             </select>
           </label>
           <label className="pt-field">
@@ -47,18 +48,18 @@ function ExpenseModal({ onClose, onSaved, businessId }) {
             <input type="number" min="0" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="0" />
           </label>
           <label className="pt-field">
-            <span>Sana</span>
+            <span>{T('Sana')}</span>
             <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
           </label>
           <label className="pt-field pt-field-full">
-            <span>Izoh</span>
-            <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Ixtiyoriy" />
+            <span>{T('Izoh')}</span>
+            <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder={T('Ixtiyoriy')} />
           </label>
         </div>
         {error && <div className="pt-error">{error}</div>}
         <div className="pt-modal-actions">
-          <button type="button" onClick={onClose} className="pt-btn-secondary">Bekor qilish</button>
-          <button type="submit" disabled={saving} className="pt-btn-primary">{saving ? 'Saqlanmoqda...' : 'Qo\'shish'}</button>
+          <button type="button" onClick={onClose} className="pt-btn-secondary">{T('Bekor qilish')}</button>
+          <button type="submit" disabled={saving} className="pt-btn-primary">{saving ? T('Saqlanmoqda...') : T('Qo\'shish')}</button>
         </div>
       </form>
     </div>
@@ -85,7 +86,7 @@ export default function ExpensesView() {
   useEffect(() => { load(); }, [load]);
 
   const handleDelete = async (exp) => {
-    if (!confirm('O\'chirilsinmi?')) return;
+    if (!confirm(T('O\'chirilsinmi?'))) return;
     await deleteExpense(activeBusiness._id, exp._id);
     load();
   };
@@ -95,25 +96,25 @@ export default function ExpensesView() {
   return (
     <>
       <div className="pt-toolbar">
-        <span className="pt-muted">Jami: {total.toLocaleString()} so'm</span>
+        <span className="pt-muted">{T('Jami:')} {total.toLocaleString()} {T('so\'m')}</span>
         <RoleGate roles={['admin', 'director']}>
-          <button className="pt-btn-primary" onClick={() => setShowModal(true)}><Plus size={16} /> Yangi xarajat</button>
+          <button className="pt-btn-primary" onClick={() => setShowModal(true)}><Plus size={16} /> {T('Yangi xarajat')}</button>
         </RoleGate>
       </div>
 
       {loading ? (
-        <div className="pt-empty">Yuklanmoqda...</div>
+        <div className="pt-empty">{T('Yuklanmoqda...')}</div>
       ) : expenses.length === 0 ? (
-        <div className="pt-empty">Hali xarajat qo'shilmagan</div>
+        <div className="pt-empty">{T('Hali xarajat qo\'shilmagan')}</div>
       ) : (
         <div className="pt-table-wrap">
           <table className="pt-table">
-            <thead><tr><th>Sana</th><th>Kategoriya</th><th>Izoh</th><th>Summa</th><th></th></tr></thead>
+            <thead><tr><th>{T('Sana')}</th><th>{T('Kategoriya')}</th><th>{T('Izoh')}</th><th>{T('Summa')}</th><th></th></tr></thead>
             <tbody>
               {expenses.map((e) => (
                 <tr key={e._id}>
                   <td className="pt-muted">{new Date(e.date).toLocaleDateString()}</td>
-                  <td>{e.category}</td>
+                  <td>{T(e.category)}</td>
                   <td className="pt-muted">{e.description || '—'}</td>
                   <td>{e.amount.toLocaleString()}</td>
                   <td>

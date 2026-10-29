@@ -5,6 +5,7 @@ import { ArrowLeft, MapPin, Building2 } from 'lucide-react';
 import { getMyLocations } from '../services/user';
 import '../../styles/branchesPage.css';
 
+import { T } from '../utils/T';
 export default function BranchesPage() {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
@@ -18,23 +19,23 @@ export default function BranchesPage() {
   }, []);
 
   const grouped = locations.reduce((acc, loc) => {
-    const key = loc.region || "Belgilanmagan";
+    const key = loc.region || T('Belgilanmagan');
     if (!acc[key]) acc[key] = [];
     acc[key].push(loc);
     return acc;
   }, {});
 
-  if (loading) return <div className="StatusScreen">Yuklanmoqda...</div>;
+  if (loading) return <div className="StatusScreen">{T('Yuklanmoqda...')}</div>;
 
   return (
     <div className="bp-page">
       <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
-        <ArrowLeft size={16} /> Orqaga
+        <ArrowLeft size={16} /> {T('Orqaga')}
       </button>
-      <h1 className="bp-title"><Building2 size={22} /> Mening filiallarim ({locations.length})</h1>
+      <h1 className="bp-title"><Building2 size={22} /> {T('Mening filiallarim ({{count}})', { count: locations.length })}</h1>
 
       {Object.keys(grouped).length === 0 ? (
-        <div className="bp-empty">Hozircha filial qo'shilmagan</div>
+        <div className="bp-empty">{T('Hozircha filial qo\'shilmagan')}</div>
       ) : (
         Object.entries(grouped).map(([region, locs]) => (
           <div key={region} className="bp-region-block">

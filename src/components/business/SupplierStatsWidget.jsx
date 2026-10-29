@@ -5,6 +5,7 @@ import { Package, DollarSign, ChevronRight, Truck } from 'lucide-react';
 import { getSupplierStats } from '../services/user';
 import '../../styles/businessSummaryWidget.css';
 
+import { T } from '../utils/T';
 export default function SupplierStatsWidget() {
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
@@ -22,7 +23,7 @@ export default function SupplierStatsWidget() {
   return (
     <div className="bsw-card" onClick={() => navigate('/supplier-stats')}>
       <div className="bsw-header">
-        <span className="bsw-title"><Truck size={14} style={{ marginRight: 6 }} />Postavshik ko'rsatkichlari</span>
+        <span className="bsw-title"><Truck size={14} style={{ marginRight: 6 }} />{T('Postavshik ko\'rsatkichlari')}</span>
         <ChevronRight size={16} />
       </div>
       <div className="bsw-stats" style={{ gridTemplateColumns: 'repeat(2, 1fr)' }}>
@@ -30,14 +31,14 @@ export default function SupplierStatsWidget() {
           <Package size={16} className="bsw-icon-green" />
           <div>
             <span className="bsw-stat-value">{stats.totalOrders}</span>
-            <span className="bsw-stat-label">Jami buyurtmalar</span>
+            <span className="bsw-stat-label">{T('Jami buyurtmalar')}</span>
           </div>
         </div>
         <div className="bsw-stat">
           <DollarSign size={16} className="bsw-icon-amber" />
           <div>
             <span className="bsw-stat-value">${stats.totalIncome.toLocaleString()}</span>
-            <span className="bsw-stat-label">Taxminiy kirim</span>
+            <span className="bsw-stat-label">{T('Taxminiy kirim')}</span>
           </div>
         </div>
       </div>

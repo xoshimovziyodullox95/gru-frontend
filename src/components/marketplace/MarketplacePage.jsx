@@ -1,12 +1,12 @@
 // src/pages/MarketplacePage.jsx
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useUrlParam, useUrlSet, useScrollRestore } from '../hooks/useUrlState';
 import { useTranslation } from 'react-i18next';
 import { getLocations } from '../services/locations';
 import { getEquipment } from '../services/equipment';
 import { getServiceProviders } from '../services/serviceProviders';
-import { getBankServices } from '../services/bankServices';
-import { getLevel1 } from '../services/categories';
+import { useProductCategories } from '../utils/productCategories';
 import ServiceProviderCard from '../marketplace/ServiceProviderCard';
 import { formatPrice } from '../utils/formatPrice';
 
@@ -15,11 +15,11 @@ import {
   Search, Store, Loader2, Inbox, SlidersHorizontal, X
 } from 'lucide-react';
 import UniversalCard from '../pages/UniversalCard';
-import BankServiceCard from '../marketplace/BankServiceCard';
 import MarketplaceFilters from '../marketplace/MarketplaceFilters';
 import SearchOverlay from '../common/SearchOverlay';
 import '../../styles/marketplace.css';
 
+import { T } from '../utils/T';
 const searchableText = (value) => (typeof value === 'string' ? value.toLocaleLowerCase('uz-UZ') : '');
 
 export default function MarketplacePage() {
@@ -27,39 +27,26 @@ export default function MarketplacePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [items, setItems] = useState([]);
-  const [categories, setCategories] = useState([]);
+  // Tovar kategoriyalari (OLX kabi) — filtr, ichki bo'limlar va qidiruv uchun
+  const { categories } = useProductCategories();
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState(() => searchParams.get('q') || '');
-
-  const [selectedTypes, setSelectedTypes] = useState(new Set());
-  const [selectedLevel1s, setSelectedLevel1s] = useState(
-    () => new Set(searchParams.get('level1') ? [searchParams.get('level1')] : [])
-  );
-  const [selectedServiceCats, setSelectedServiceCats] = useState(new Set());
+  // Filtrlar URL'da — e'londan orqaga qaytganda saqlanib qoladi
+  const [searchTerm, setSearchTerm] = useUrlParam('q');
+  const [selectedTypes, setSelectedTypes] = useUrlSet('type');
+  const [selectedLevel1s, setSelectedLevel1s] = useUrlSet('level1');
+  const [selectedServiceCats, setSelectedServiceCats] = useUrlSet('svc');
+  const [selectedSubs, setSelectedSubs] = useUrlSet('sub');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(() => searchParams.get('openSearch') === '1');
-
-  useEffect(() => {
-    let active = true;
-    getLevel1()
-      .then((response) => {
-        if (!active) return;
-        const data = response?.data?.data ?? response?.data;
-        setCategories(Array.isArray(data) ? data : []);
-      })
-      .catch((error) => console.error('Qidiruv kategoriyalari yuklanmadi:', error));
-    return () => { active = false; };
-  }, []);
 
   // ========== MA'LUMOTLARNI YUKLASH ==========
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const [locRes, eqRes, servRes, bankRes] = await Promise.all([
+        const [locRes, eqRes, servRes] = await Promise.all([
           getLocations(),
           getEquipment(),
           getServiceProviders(),
-          getBankServices()
         ]);
 
         const asArray = (response) => {
@@ -75,13 +62,13 @@ export default function MarketplacePage() {
           type: 'location',
           level1: item.level1,
           title: item.title,
-          description: item.description || 'Joy haqida ma\'lumot',
+          description: item.description || T('Joy haqida ma\'lumot'),
           price: item.price_range || item.price_per_month || 'Narxi mavjud emas',
           image: item.images?.[0] || '/images/zumo-placeholder.svg',
           link: `/location/${item._id}`,
           createdAt: item.createdAt,
           meta: [
-            { icon: MapPin, text: item.address || 'Manzil mavjud emas' },
+            { icon: MapPin, text: item.address || T('Manzil mavjud emas') },
             ...(item.sqm ? [{ icon: Ruler, text: `${item.sqm} m²` }] : []),
           ],
         }));
@@ -90,14 +77,16 @@ export default function MarketplacePage() {
           id: item._id,
           type: 'equipment',
           level1: item.level1,
+          sub: item.category,
           title: item.title,
-          description: item.description || 'Texnika haqida ma\'lumot',
+          description: item.description || T('Texnika haqida ma\'lumot'),
           price: formatPrice(item.price, item.currency) || 'Narxi mavjud emas',
           image: item.images?.[0] || '/images/zumo-placeholder.svg',
           link: `/equipment/${item._id}`,
           createdAt: item.createdAt,
           meta: [],
           maxQuantity: typeof item.stockQuantity === 'number' ? item.stockQuantity : undefined,
+          saleMode: item.saleMode,
         }));
 
 const services = asArray(servRes).map(item => ({
@@ -107,7 +96,7 @@ const services = asArray(servRes).map(item => ({
   serviceTags: [item.service_category],   // <-- TUZATILDI: massiv ichiga category qo'yildi
   title: item.name,
   company: item.company,
-  description: item.description || 'Xizmat haqida ma\'lumot',
+  description: item.description || T('Xizmat haqida ma\'lumot'),
   price: item.price_range || 'Narxi mavjud emas',
   image: item.image || '/images/service-providers/default.jpg',
   link: `/service-provider/${item._id}`,
@@ -118,24 +107,7 @@ const services = asArray(servRes).map(item => ({
   meta: item.speciality ? [{ icon: Tag, text: item.speciality }] : [],
 }));
 
-        // ========== BANK / QR XIZMATLAR ==========
-        const bankServices = asArray(bankRes)
-          .filter(item => item.category === 'bank_service')
-          .map(item => ({
-            id: item._id,
-            type: 'bank_service',
-            serviceName: item.serviceName,
-            provider: item.provider,
-            providerLogo: item.providerLogo || '/images/logo/default.png',
-            description: item.description || '',
-            commission: item.commission || '0%',
-            subCategory: item.subCategory || 'other', // 🔥 muhim: 'qr-payment' yoki 'credit' va h.k.
-            createdAt: item.createdAt,
-          }));
-
-        console.log('📦 BANK SERVICES FORMATLANGAN:', bankServices);
-
-        const all = [...locations, ...equipment, ...services, ...bankServices];
+        const all = [...equipment, ...services, ...locations];
         setItems(all.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)));
       } catch (err) {
         console.error('Marketplace yuklash xatosi:', err);
@@ -146,6 +118,21 @@ const services = asArray(servRes).map(item => ({
     fetchAll();
   }, []);
 
+  // Kategoriya va ichki bo'lim nomlari (joriy tilda) — qidiruv shular bo'yicha ham ishlaydi
+  const categoryNames = useMemo(() => {
+    const map = new Map();
+    categories.forEach((cat) => {
+      map.set(cat.id, cat.name);
+      cat.subs.forEach((sub) => map.set(`${cat.id}/${sub.id}`, `${cat.name} ${sub.name}`));
+    });
+    return map;
+  }, [categories]);
+
+  // Bitta kategoriya tanlangan bo'lsa — uning ichki bo'limlari chip bo'lib chiqadi
+  const activeCategory = selectedLevel1s.size === 1
+    ? categories.find((cat) => selectedLevel1s.has(cat.id)) || null
+    : null;
+
   // ========== FILTRLASH ==========
   const filteredItems = useMemo(() => {
     let result = items;
@@ -155,43 +142,29 @@ const services = asArray(servRes).map(item => ({
       result = result.filter((item) => selectedTypes.has(item.type));
     }
 
-    // 2. LEVEL1 bo'yicha filtr
+    // 2. Tovar kategoriyasi va ichki bo'lim bo'yicha
     if (selectedLevel1s.size > 0) {
       result = result.filter((item) => selectedLevel1s.has(item.level1));
     }
+    if (selectedSubs.size > 0) {
+      result = result.filter((item) => item.type === 'equipment' && selectedSubs.has(item.sub));
+    }
 
-    // 3. SERVICE TAGS / subCategory bo'yicha filtr
+    // 3. Xizmat yo'nalishi bo'yicha (ustaning level1 si — yo'nalish slug'i)
     if (selectedServiceCats.size > 0) {
-      result = result.filter((item) => {
-        // Bank xizmatlari uchun
-        if (item.type === 'bank_service') {
-          const match = selectedServiceCats.has(item.subCategory);
-          return match;
-        }
-        // Oddiy service'lar uchun (serviceTags)
-        if (item.type === 'service') {
-          return (item.serviceTags || []).some((tag) => selectedServiceCats.has(tag));
-        }
-        // Boshqa turlar (location, equipment) – service tag filtriga tushmaydi
-        return false;
-      });
+      result = result.filter((item) => item.type === 'service' && selectedServiceCats.has(item.level1));
     }
 
     // 4. Qidiruv bo'yicha filtr
     if (searchTerm.trim()) {
       const term = searchableText(searchTerm);
       result = result.filter(item => {
-        if (item.type === 'bank_service') {
-          return (
-            searchableText(item.serviceName).includes(term) ||
-            searchableText(item.provider).includes(term) ||
-            searchableText(item.description).includes(term)
-          );
-        }
         return (
           searchableText(item.title).includes(term) ||
           searchableText(item.description).includes(term) ||
           searchableText(item.level1).includes(term) ||
+          searchableText(categoryNames.get(item.level1)).includes(term) ||
+          searchableText(categoryNames.get(`${item.level1}/${item.sub}`)).includes(term) ||
           searchableText(item.type).includes(term) ||
           (item.serviceTags || []).some((tag) => searchableText(tag).includes(term)) ||
           (item.meta && item.meta.some((meta) => searchableText(meta.text).includes(term)))
@@ -200,7 +173,9 @@ const services = asArray(servRes).map(item => ({
     }
 
     return result;
-  }, [items, searchTerm, selectedTypes, selectedLevel1s, selectedServiceCats]);
+  }, [items, searchTerm, selectedTypes, selectedLevel1s, selectedSubs, selectedServiceCats, categoryNames]);
+
+  useScrollRestore(!loading);
 
   // ========== YORDAMCHI FUNKSIYALAR ==========
   const toggleType = (type) => {
@@ -217,14 +192,21 @@ const services = asArray(servRes).map(item => ({
       next.has(level1) ? next.delete(level1) : next.add(level1);
       return next;
     });
+    setSelectedSubs(new Set()); // ichki bo'lim boshqa kategoriyaga tegishli bo'lib qolmasin
+  };
+
+  const toggleSub = (sub) => {
+    setSelectedSubs((prev) => {
+      const next = new Set(prev);
+      next.has(sub) ? next.delete(sub) : next.add(sub);
+      return next;
+    });
   };
 
   const toggleServiceCat = (slug) => {
-    console.log('🔄 TOGGLE SERVICE CAT:', slug);
     setSelectedServiceCats((prev) => {
       const next = new Set(prev);
       next.has(slug) ? next.delete(slug) : next.add(slug);
-      console.log('🔄 YANGI TANLANGANLAR:', [...next]);
       return next;
     });
   };
@@ -233,6 +215,7 @@ const services = asArray(servRes).map(item => ({
     setSelectedTypes(new Set());
     setSelectedLevel1s(new Set());
     setSelectedServiceCats(new Set());
+    setSelectedSubs(new Set());
     setSearchTerm('');
   };
 
@@ -294,21 +277,22 @@ const services = asArray(servRes).map(item => ({
         initialValue={searchTerm}
         suggestions={[
           ...categories.map((category) => ({
-            id: category.key,
-            label: t(`categories.${category.key}`, { defaultValue: category.name || category.key }),
+            id: category.id,
+            label: category.name,
             kind: 'category',
             hint: t('mkt.categories', 'Kategoriya'),
           })),
           ...items.map((item) => ({
             id: item.id,
-            label: item.type === 'bank_service' ? item.serviceName : item.title,
+            label: item.title,
             kind: 'listing',
-            hint: item.level1 || item.provider || item.type,
+            hint: categoryNames.get(item.level1) || t(`marketplace.types.${item.type}`, { defaultValue: item.type }),
           })).filter((item) => item.label),
         ]}
         onSelectSuggestion={(suggestion) => {
           if (suggestion.kind === 'category') {
             setSelectedLevel1s(new Set([suggestion.id]));
+            setSelectedSubs(new Set());
             setSearchTerm('');
             return;
           }
@@ -322,17 +306,45 @@ const services = asArray(servRes).map(item => ({
           onToggleType={toggleType}
           selectedLevel1s={selectedLevel1s}
           onToggleLevel1={toggleLevel1}
+          selectedSubs={selectedSubs}
+          onToggleSub={toggleSub}
           selectedServiceCats={selectedServiceCats}
           onToggleServiceCat={toggleServiceCat}
           onClearAll={clearAllFilters}
         />
 
         <div className="marketplace-content">
+          {activeCategory && (
+            <div className="mp-subcats" role="group" aria-label={activeCategory.name}>
+              <h2 className="mp-subcats__title">
+                <activeCategory.icon size={18} /> {activeCategory.name}
+              </h2>
+              <div className="mp-subcats__chips">
+                <button
+                  type="button"
+                  className={`mp-subcat ${selectedSubs.size === 0 ? 'is-on' : ''}`}
+                  onClick={() => setSelectedSubs(new Set())}
+                >
+                  {T('Hammasi')}
+                </button>
+                {activeCategory.subs.map((sub) => (
+                  <button
+                    key={sub.id}
+                    type="button"
+                    className={`mp-subcat ${selectedSubs.has(sub.id) ? 'is-on' : ''}`}
+                    onClick={() => toggleSub(sub.id)}
+                  >
+                    {sub.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {filteredItems.length === 0 ? (
             <div className="marketplace-empty">
               <Inbox size={48} />
               <p>{t('marketplacePage.empty')}</p>
-              {(searchTerm || selectedTypes.size > 0 || selectedLevel1s.size > 0 || selectedServiceCats.size > 0) && (
+              {(searchTerm || selectedTypes.size > 0 || selectedLevel1s.size > 0 || selectedSubs.size > 0 || selectedServiceCats.size > 0) && (
                 <button
                   className="marketplace-clear-search-btn"
                   onClick={clearAllFilters}
@@ -344,20 +356,6 @@ const services = asArray(servRes).map(item => ({
           ) : (
             <div className="uc-grid">
              {filteredItems.map(item => {
-  if (item.type === 'bank_service') {
-    return (
-      <BankServiceCard
-        key={`bank_service-${item.id}`}
-        id={item.id}
-        serviceName={item.serviceName}
-        provider={item.provider}
-        providerLogo={item.providerLogo}
-        description={item.description}
-        commission={item.commission}
-      />
-    );
-  }
-
   if (item.type === 'service') {
     return (
       <ServiceProviderCard
@@ -384,6 +382,7 @@ const services = asArray(servRes).map(item => ({
       isTop={item.isTop}
       isVerified={item.isVerified}
       maxQuantity={item.maxQuantity}
+      saleMode={item.saleMode}
     />
   );
 })}
@@ -404,6 +403,8 @@ const services = asArray(servRes).map(item => ({
               onToggleType={toggleType}
               selectedLevel1s={selectedLevel1s}
               onToggleLevel1={toggleLevel1}
+              selectedSubs={selectedSubs}
+              onToggleSub={toggleSub}
               selectedServiceCats={selectedServiceCats}
               onToggleServiceCat={toggleServiceCat}
               onClearAll={clearAllFilters}

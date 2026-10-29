@@ -99,6 +99,7 @@ export default function MarketplaceProductList() {
               currency={eq.currency}
               link={`/equipment/${eq._id}`}
               maxQuantity={eq.stockQuantity}
+              saleMode={eq.saleMode}
             />
           ))}
         </div>

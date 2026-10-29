@@ -8,12 +8,13 @@ import InventoryCountView from './warehouse/InventoryCountView';
 import WarehouseManageView from './warehouse/WarehouseManageView';
 import '../../../styles/productsTab.css';
 
+import { T } from '../../utils/T';
 const SECTIONS = [
-  { key: 'stock', label: 'Qoldiqlar', icon: Package, Component: StockView },
-  { key: 'purchase', label: 'Kirim', icon: Truck, Component: PurchaseOrdersView },
-  { key: 'transfer', label: "Ko'chirish", icon: ArrowLeftRight, Component: TransfersView },
-  { key: 'count', label: 'Sverka', icon: ClipboardCheck, Component: InventoryCountView },
-  { key: 'manage', label: 'Omborlar', icon: Settings, Component: WarehouseManageView },
+  { key: 'stock', label: T('Qoldiqlar'), icon: Package, Component: StockView },
+  { key: 'purchase', label: T('Kirim'), icon: Truck, Component: PurchaseOrdersView },
+  { key: 'transfer', label: T('Ko\'chirish'), icon: ArrowLeftRight, Component: TransfersView },
+  { key: 'count', label: T('Sanash'), icon: ClipboardCheck, Component: InventoryCountView },
+  { key: 'manage', label: T('Omborlar'), icon: Settings, Component: WarehouseManageView },
 ];
 
 export default function WarehouseTab() {

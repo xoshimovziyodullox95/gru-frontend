@@ -16,8 +16,8 @@
   padding: 0.4rem 1.2rem;
   border-radius: 2rem;
   border: 1px solid var(--border, #2a2a2a);
-  background: var(--card, #141414);
-  color: var(--textMuted, #a0a0a0);
+  background: var(--card, var(--surface));
+  color: var(--textMuted);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -67,7 +67,7 @@
   justify-content: center;
   min-height: 60vh;
   gap: 1rem;
-  color: var(--textMuted, #a0a0a0);
+  color: var(--textMuted);
 }
 .mo-loading .mo-spin {
   color: var(--cyan, #00e5ff);
@@ -83,22 +83,22 @@
 .mo-empty {
   text-align: center;
   padding: 4rem 2rem;
-  background: var(--card, #141414);
+  background: var(--card, var(--surface));
   border-radius: 2rem;
   border: 1px dashed var(--border, #2a2a2a);
 }
 .mo-empty-icon {
-  color: var(--textMuted, #a0a0a0);
+  color: var(--textMuted);
   opacity: 0.4;
   margin-bottom: 0.5rem;
 }
 .mo-empty h3 {
   font-size: 1.2rem;
-  color: var(--text, #fff);
+  color: var(--text);
   margin: 0.5rem 0 0.2rem;
 }
 .mo-empty p {
-  color: var(--textMuted, #a0a0a0);
+  color: var(--textMuted);
   font-size: 0.9rem;
 }
 
@@ -119,11 +119,11 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.2rem;
-  background: var(--card, #141414);
+  background: var(--card, var(--surface));
   border: 1px solid var(--border, #2a2a2a);
   border-radius: 1.2rem;
   transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(var(--surface-rgb), 0.1);
 }
 .mo-item:hover {
   border-color: var(--cyan, #00e5ff);
@@ -154,7 +154,7 @@
   border-radius: 1rem;
   object-fit: cover;
   flex-shrink: 0;
-  background: var(--bg, #0a0a0a);
+  background: var(--bg, var(--bg));
   transition: transform 0.3s;
 }
 .mo-item:hover .mo-item-img {
@@ -172,7 +172,7 @@
 .mo-item-title {
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--text, #fff);
+  color: var(--text);
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
@@ -180,7 +180,7 @@
 }
 .mo-item-meta {
   font-size: 0.8rem;
-  color: var(--textMuted, #a0a0a0);
+  color: var(--textMuted);
 }
 
 /* ===== BUYER ROW ===== */
@@ -203,7 +203,7 @@
   align-items: center;
   gap: 4px;
   font-size: 0.8rem;
-  color: var(--textMuted, #a0a0a0);
+  color: var(--textMuted);
 }
 .mo-item-seller svg {
   color: var(--cyan, #00e5ff);
@@ -218,7 +218,7 @@
   transition: color 0.2s;
 }
 .mo-buyer-phone:hover {
-  color: #fff;
+  color: var(--text);
   text-decoration: underline;
 }
 .mo-location-link {
@@ -231,7 +231,7 @@
   transition: color 0.2s;
 }
 .mo-location-link:hover {
-  color: #fff;
+  color: var(--text);
   text-decoration: underline;
 }
 
@@ -299,13 +299,13 @@
 .mo-archive-title {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--textMuted, #a0a0a0);
+  color: var(--textMuted);
   margin: 0;
 }
 .mo-archive-count {
   font-size: 0.75rem;
-  color: var(--textMuted, #a0a0a0);
-  background: var(--card, #141414);
+  color: var(--textMuted);
+  background: var(--card, var(--surface));
   padding: 0.1rem 0.6rem;
   border-radius: 1rem;
   border: 1px solid var(--border, #2a2a2a);
@@ -443,7 +443,7 @@
 .mo-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(var(--surface-rgb), 0.65);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -536,7 +536,7 @@
 .mo-tab.active {
   background: var(--cyan);
   border-color: var(--cyan);
-  color: #0A1628;
+  color: var(--on-accent);
 }
 .mo-empty {
   display: flex;
@@ -581,8 +581,8 @@
   white-space: nowrap;
 }
 .mo-status-badge.mo-tone-wait { color: var(--textMuted); border: 1px dashed var(--border); background: transparent; }
-.mo-status-badge.mo-tone-active { color: var(--cyan); border: 1px solid var(--cyan); background: rgba(0, 212, 255, 0.08); }
-.mo-status-badge.mo-tone-done { color: #0A1628; border: 1px solid var(--cyan); background: var(--cyan); }
+.mo-status-badge.mo-tone-active { color: var(--cyan); border: 1px solid var(--cyan); background: rgba(var(--cyan-rgb), 0.08); }
+.mo-status-badge.mo-tone-done { color: var(--on-accent); border: 1px solid var(--cyan); background: var(--cyan); }
 .mo-status-badge.mo-tone-closed { color: var(--textMuted); border: 1px solid var(--border); background: transparent; text-decoration: none; }
 .mo-item-info .mo-status-badge { align-self: flex-start; margin-top: 4px; }
 

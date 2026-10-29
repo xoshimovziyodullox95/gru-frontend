@@ -126,9 +126,9 @@
   padding: 3px 10px;
   border-radius: 999px;
 }
-.bd-status-cyan { background: rgba(0,212,255,0.15); color: var(--cyan); }
-.bd-status-blue { background: rgba(0,212,255,0.08); color: var(--text); border: 1px solid var(--cyan); }
-.bd-status-solid { background: var(--cyan); color: #0A1628; }
+.bd-status-cyan { background: rgba(var(--cyan-rgb),0.15); color: var(--cyan); }
+.bd-status-blue { background: rgba(var(--cyan-rgb),0.08); color: var(--text); border: 1px solid var(--cyan); }
+.bd-status-solid { background: var(--cyan); color: var(--on-accent); }
 .bd-status-muted { background: transparent; color: var(--textMuted); border: 1px solid var(--border); }
 
 .bd-chat-btn {
@@ -154,10 +154,10 @@
   border-radius: 0.6rem;
   border: none;
   cursor: pointer;
-  color: #fff;
+  color: var(--text);
 }
 .bd-action-progress { background: transparent; color: var(--cyan); border: 1px solid var(--cyan); }
-.bd-action-approve { background: var(--cyan); color: #0A1628; font-weight: 700; }
+.bd-action-approve { background: var(--cyan); color: var(--on-accent); font-weight: 700; }
 .bd-action-reject { background: transparent; color: var(--text); border: 1px solid var(--border); }
 .bd-action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
@@ -182,7 +182,7 @@
   font-size: 0.75rem;
   cursor: pointer;
 }
-.bd-filter.active { background: var(--cyan); border-color: var(--cyan); color: #0A1628; font-weight: 700; }
+.bd-filter.active { background: var(--cyan); border-color: var(--cyan); color: var(--on-accent); font-weight: 700; }
 .bd-app-meta a { color: inherit; display: inline-flex; align-items: center; gap: 3px; }
 .bd-app-comment, .bd-app-note, .bd-app-handled {
   margin: 6px 0 0;

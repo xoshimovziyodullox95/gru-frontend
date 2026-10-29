@@ -482,7 +482,7 @@
   border-radius: 0.75rem;
   object-fit: contain;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 14px rgba(var(--surface-rgb), 0.2);
 }
 
 .mp-provider-logo-fallback {
@@ -520,7 +520,7 @@
 .mp-mobile-filter-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(var(--surface-rgb), 0.6);
   z-index: 1000;
   display: flex;
   align-items: flex-end;
@@ -793,4 +793,45 @@
   background: var(--cyan);
   border-color: var(--cyan);
   color: #071022;
+}
+
+/* ---------- Ichki bo'limlar (OLX kabi chiplar) ---------- */
+.mp-subcats { margin: 0 0 16px; }
+.mp-subcats__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.mp-subcats__title svg { color: var(--cyan); }
+.mp-subcats__chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.mp-subcats__chips::-webkit-scrollbar { display: none; }
+.mp-subcat {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mp-subcat:hover { border-color: rgba(var(--cyan-rgb), 0.6); }
+.mp-subcat.is-on {
+  border-color: var(--cyan);
+  background: rgba(var(--cyan-rgb), 0.14);
+  color: var(--cyan);
 }

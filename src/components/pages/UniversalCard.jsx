@@ -1,18 +1,12 @@
 // src/components/UniversalCard.jsx
 import { Link } from 'react-router-dom';
-import { Heart, Flame, ShieldCheck } from 'lucide-react';
+import { Heart, Flame, ShieldCheck, ShoppingCart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useFavorites } from '../hooks/useFavorites';
-import { useAuth } from '../context/AuthContext';
 import { useCart } from '../hooks/useCart';
 import CartStepper from '../CartStepper';
 import '../../styles/universalCard.css';
 import { formatPrice } from '../utils/formatPrice';
-const TYPE_LABELS = {
-  location: 'universalCard.typeLocation',
-  equipment: 'universalCard.typeEquipment',
-  service: 'universalCard.typeService',
-};
 import { getImageUrl } from '../utils/imageUrl';
 export default function UniversalCard({
   id,
@@ -25,9 +19,9 @@ export default function UniversalCard({
   isTop = false,
   isVerified = false,
   maxQuantity,
+  saleMode = 'store',
 })  {
   const { t } = useTranslation();
-  const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
   const favored = isFavorite(id, type);
   const { getQuantity, increment, decrement } = useCart();
@@ -44,7 +38,7 @@ export default function UniversalCard({
     toggleFavorite({ id, type, title, image, price, link });
   };
 
-  const isOrderableProduct = type === 'equipment';
+  const isOrderableProduct = type === 'equipment' && saleMode !== 'classified';
 
   const getBadgeText = (badgeType) => {
     if (badgeType === 'top') return t('universalCard.badgeTop');
@@ -81,28 +75,38 @@ export default function UniversalCard({
         )}
       </div>
 
+      {/* Uzum uslubi: narx → nom → bitta amal. Butun karta havola, shuning uchun "Batafsil" tugmasi yo'q */}
       <div className="uc-body">
+        <span className="uc-price">
+          {(typeof price === 'number' ? formatPrice(price, currency) : price) || t('universalCard.priceNotAvailable')}
+        </span>
         <h3 className="uc-title">{title}</h3>
-
-        <div className="uc-footer">
-         <span className="uc-price">
-  {(typeof price === 'number' ? formatPrice(price, currency) : price) || t('universalCard.priceNotAvailable')}
-</span>
-        </div>
-
-        {isOrderableProduct ? (
-          <div className="uc-cart-row">
-            <button type="button" className="uc-btn uc-btn--secondary">{t('universalCard.details')}</button>
-            <CartStepper
-              quantity={quantity}
-              maxQuantity={maxQuantity}
-              onIncrement={() => increment(cartItem)}
-              onDecrement={() => decrement(cartItem)}
-            />
-          </div>
-        ) : (
-          <button type="button" className="uc-btn">{t('universalCard.details')}</button>
+        {type === 'equipment' && !isOrderableProduct && (
+          <span className="uc-sale-hint">{t('universalCard.contactSeller', 'Sotuvchi bilan kelishiladi')}</span>
         )}
+
+        <div className="uc-action">
+          {isOrderableProduct ? (
+            quantity > 0 || maxQuantity === 1 ? (
+              <CartStepper
+                quantity={quantity}
+                maxQuantity={maxQuantity}
+                onIncrement={() => increment(cartItem)}
+                onDecrement={() => decrement(cartItem)}
+              />
+            ) : (
+              <button
+                type="button"
+                className="uc-btn"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); increment(cartItem); }}
+              >
+                <ShoppingCart size={15} /> {t('universalCard.addToCart', 'Savatga')}
+              </button>
+            )
+          ) : (
+            <span className="uc-btn uc-btn--ghost">{t('universalCard.details')}</span>
+          )}
+        </div>
       </div>
     </Link>
   );

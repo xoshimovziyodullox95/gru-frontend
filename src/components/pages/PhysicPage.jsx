@@ -5,15 +5,16 @@ import { Sparkles, ShoppingBag } from 'lucide-react';
 import '../../styles/home.css';
 import '../../styles/physicPage.css';
 
+import { T } from '../utils/T';
 const physicCategories = [
-  { key: 'otkazmalar', name: "To'lovlar va o'tkazmalar", emoji: '💸' },
-  { key: 'moliya', name: 'Bank va moliya xizmatlari', emoji: '🏦' },
-  { key: 'kochmasmulk', name: "Ko'chmas mulk va ta'mirlash", emoji: '🏗️' },
-  { key: 'talim', name: "Ta'lim va kurslar", emoji: '🎓' },
-  { key: 'shaxsiyxizmat', name: 'Shaxsiy xizmatlar (usta, tozalash)', emoji: '🔧' },
-  { key: 'ish', name: 'Ish va frilans', emoji: '💼' },
-  { key: 'sugurta', name: "Sug'urta xizmatlari", emoji: '🛡️' },
-  { key: 'ikkilamchi', name: "Ikkilamchi bozor (foydalanilgan tovarlar)", emoji: '♻️' },
+  { key: 'otkazmalar', name: T('To\'lovlar va o\'tkazmalar'), emoji: '💸' },
+  { key: 'moliya', name: T('Bank va moliya xizmatlari'), emoji: '🏦' },
+  { key: 'kochmasmulk', name: T('Ko\'chmas mulk va ta\'mirlash'), emoji: '🏗️' },
+  { key: 'talim', name: T('Ta\'lim va kurslar'), emoji: '🎓' },
+  { key: 'shaxsiyxizmat', name: T('Shaxsiy xizmatlar (usta, tozalash)'), emoji: '🔧' },
+  { key: 'ish', name: T('Ish va frilans'), emoji: '💼' },
+  { key: 'sugurta', name: T('Sug\'urta xizmatlari'), emoji: '🛡️' },
+  { key: 'ikkilamchi', name: T('Ikkilamchi bozor (foydalanilgan tovarlar)'), emoji: '♻️' },
 ];
 
 const COLOR_PALETTE = [

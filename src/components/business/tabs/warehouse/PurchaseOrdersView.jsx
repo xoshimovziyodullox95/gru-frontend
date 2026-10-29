@@ -7,6 +7,7 @@ import {
   getPurchaseOrders, createPurchaseOrder, receivePurchaseOrder, payPurchaseOrder,
   getSuppliers, createSupplier, getProducts,
 } from '../../../services/business';
+import { T } from '../../../utils/T';
 import ImageRecognizeModal from '../warehouse/Imagerecognizemodal'; // rasm orqali aniqlash
 
 // ============================================================
@@ -81,7 +82,7 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
     e.preventDefault();
     const validItems = items.filter((i) => i.productId && i.quantity && i.unitCost);
     if (!supplierId || validItems.length === 0) {
-      setError('Yetkazib beruvchi va kamida bitta to\'liq qator kerak (narxini ham kiriting)');
+      setError(T('Yetkazib beruvchi va kamida bitta to\'liq qator kerak (narxini ham kiriting)'));
       return;
     }
     setSaving(true);
@@ -98,7 +99,7 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
       });
       onSaved();
     } catch (err) {
-      setError(err.response?.data?.error || 'Xatolik yuz berdi');
+      setError(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setSaving(false);
     }
@@ -108,24 +109,24 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
     <div className="pt-modal-overlay" onClick={onClose}>
       <form className="pt-modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit} style={{ maxWidth: 700 }}>
         <div className="pt-modal-header">
-          <h3>Yangi tovar qabuli</h3>
+          <h3>{T('Yangi tovar qabuli')}</h3>
           <button type="button" className="pt-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
 
         {/* Yetkazib beruvchi */}
         <label className="pt-field pt-field-full" style={{ marginBottom: 10 }}>
-          <span>Yetkazib beruvchi</span>
+          <span>{T('Yetkazib beruvchi')}</span>
           {showNewSupplier ? (
             <div style={{ display: 'flex', gap: 6 }}>
-              <input value={newSupplierName} onChange={(e) => setNewSupplierName(e.target.value)} placeholder="Nomi" style={{ flex: 1 }} />
-              <button type="button" className="pt-btn-primary" onClick={handleCreateSupplier}>Qo'shish</button>
-              <button type="button" className="pt-btn-secondary" onClick={() => setShowNewSupplier(false)}>Bekor</button>
+              <input value={newSupplierName} onChange={(e) => setNewSupplierName(e.target.value)} placeholder={T('Nomi')} style={{ flex: 1 }} />
+              <button type="button" className="pt-btn-primary" onClick={handleCreateSupplier}>{T('Qo\'shish')}</button>
+              <button type="button" className="pt-btn-secondary" onClick={() => setShowNewSupplier(false)}>{T('Bekor')}</button>
             </div>
           ) : (
             <select value={supplierId} onChange={(e) => e.target.value === '__new__' ? setShowNewSupplier(true) : setSupplierId(e.target.value)}>
-              <option value="">Tanlang</option>
+              <option value="">{T('Tanlang')}</option>
               {suppliers.map((s) => <option key={s._id} value={s._id}>{s.name}</option>)}
-              <option value="__new__">+ Yangi yetkazib beruvchi</option>
+              <option value="__new__">{T('+ Yangi yetkazib beruvchi')}</option>
             </select>
           )}
         </label>
@@ -133,10 +134,10 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
         {/* Mahsulot qo'shish tugmalari */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
           <button type="button" className="pt-btn-secondary" onClick={addRow}>
-            <Plus size={14} /> Qator qo'shish
+            <Plus size={14} /> {T('Qator qo\'shish')}
           </button>
           <button type="button" className="pt-btn-secondary" onClick={() => setShowImageRecognize(true)}>
-            <Camera size={14} /> Rasm orqali qo'shish
+            <Camera size={14} /> {T('Rasm orqali qo\'shish')}
           </button>
         </div>
 
@@ -145,7 +146,7 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
           <Search size={16} style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
           <input
             type="text"
-            placeholder="Mahsulotni qo'lda qidiring..."
+            placeholder={T('Mahsulotni qo\'lda qidiring...')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ paddingLeft: 30, width: '100%' }}
@@ -161,7 +162,7 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
                 onChange={(e) => updateRow(idx, 'productId', e.target.value)}
                 style={{ flex: 2 }}
               >
-                <option value="">Mahsulot tanlang</option>
+                <option value="">{T('Mahsulot tanlang')}</option>
                 {filteredProducts.map((p) => (
                   <option key={p._id} value={p._id}>{p.name}</option>
                 ))}
@@ -169,7 +170,7 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
               <input
                 type="number"
                 min="1"
-                placeholder="Miqdor"
+                placeholder={T('Miqdor')}
                 value={item.quantity}
                 onChange={(e) => updateRow(idx, 'quantity', e.target.value)}
                 style={{ flex: 1 }}
@@ -177,7 +178,7 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
               <input
                 type="number"
                 min="0"
-                placeholder="Narxi"
+                placeholder={T('Narxi')}
                 value={item.unitCost}
                 onChange={(e) => updateRow(idx, 'unitCost', e.target.value)}
                 style={{ flex: 1 }}
@@ -194,9 +195,9 @@ function CreatePOModal({ onClose, onSaved, businessId, warehouseId }) {
         {error && <div className="pt-error">{error}</div>}
 
         <div className="pt-modal-actions">
-          <button type="button" onClick={onClose} className="pt-btn-secondary">Bekor qilish</button>
+          <button type="button" onClick={onClose} className="pt-btn-secondary">{T('Bekor qilish')}</button>
           <button type="submit" disabled={saving} className="pt-btn-primary">
-            {saving ? 'Yaratilmoqda...' : 'Hujjat yaratish'}
+            {saving ? T('Yaratilmoqda...') : T('Hujjat yaratish')}
           </button>
         </div>
 
@@ -236,44 +237,44 @@ export default function PurchaseOrdersView() {
   useEffect(() => { load(); }, [load]);
 
   const handleReceive = async (po) => {
-    if (!confirm('Tovar qabul qilinganini tasdiqlaysizmi? Ombor qoldig\'i oshadi.')) return;
+    if (!confirm(T('Tovar qabul qilinganini tasdiqlaysizmi? Ombor qoldig\'i oshadi.'))) return;
     try {
       await receivePurchaseOrder(activeBusiness._id, po._id);
       load();
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     }
   };
 
   const handlePay = async (po) => {
-    const amount = prompt('To\'lov summasi:');
+    const amount = prompt(T('To\'lov summasi:'));
     if (!amount || Number(amount) <= 0) return;
     try {
       await payPurchaseOrder(activeBusiness._id, po._id, Number(amount));
       load();
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     }
   };
 
   return (
     <>
       <div className="pt-toolbar">
-        <span className="pt-muted">Jami: {orders.length} ta hujjat</span>
+        <span className="pt-muted">{T('Jami:')} {orders.length} {T('ta hujjat')}</span>
         <RoleGate roles={['admin', 'warehouse_worker']}>
-          <button className="pt-btn-primary" onClick={() => setShowCreate(true)}><Plus size={16} /> Yangi kirim</button>
+          <button className="pt-btn-primary" onClick={() => setShowCreate(true)}><Plus size={16} /> {T('Yangi kirim')}</button>
         </RoleGate>
       </div>
 
       {loading ? (
-        <div className="pt-empty">Yuklanmoqda...</div>
+        <div className="pt-empty">{T('Yuklanmoqda...')}</div>
       ) : orders.length === 0 ? (
-        <div className="pt-empty">Hali tovar qabuli hujjatlari yo'q</div>
+        <div className="pt-empty">{T('Hali tovar qabuli hujjatlari yo\'q')}</div>
       ) : (
         <div className="pt-table-wrap">
           <table className="pt-table">
             <thead>
-              <tr><th>Yetkazib beruvchi</th><th>Summa</th><th>To'langan</th><th>Holati</th><th></th></tr>
+              <tr><th>{T('Yetkazib beruvchi')}</th><th>{T('Summa')}</th><th>{T('To\'langan')}</th><th>{T('Holati')}</th><th></th></tr>
             </thead>
             <tbody>
               {orders.map((po) => (
@@ -281,15 +282,15 @@ export default function PurchaseOrdersView() {
                   <td>{po.supplierId?.name || '—'}</td>
                   <td>{po.totalCost?.toLocaleString()}</td>
                   <td className="pt-muted">{po.paidAmount?.toLocaleString()}</td>
-                  <td>{po.status === 'pending' ? 'Kutilmoqda' : po.status === 'received' ? 'Qabul qilindi' : 'Bekor qilingan'}</td>
+                  <td>{po.status === 'pending' ? T('Kutilmoqda') : po.status === 'received' ? T('Qabul qilindi') : T('Bekor qilingan')}</td>
                   <td>
                     <RoleGate roles={['admin', 'warehouse_worker']}>
                       <div className="pt-row-actions">
                         {po.status === 'pending' && (
-                          <button className="pt-icon-btn" onClick={() => handleReceive(po)} title="Qabul qilish"><Check size={14} /></button>
+                          <button className="pt-icon-btn" onClick={() => handleReceive(po)} title={T('Qabul qilish')}><Check size={14} /></button>
                         )}
                         {po.paidAmount < po.totalCost && (
-                          <button className="pt-icon-btn" onClick={() => handlePay(po)} title="To'lov"><CreditCard size={14} /></button>
+                          <button className="pt-icon-btn" onClick={() => handlePay(po)} title={T('To\'lov')}><CreditCard size={14} /></button>
                         )}
                       </div>
                     </RoleGate>

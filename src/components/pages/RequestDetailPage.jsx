@@ -5,14 +5,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft, Clock, MapPin, Star, Phone, MessageCircle, Navigation,
   Loader2, CheckCircle2, FileText, Camera, X,
 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import toast from 'react-hot-toast';
 
 import RequestMap from '../common/RequestMap';
-import RatingModal from '../common/RatingModal';
 import { getSocket } from '../lib/socket';
 import {
   getServiceRequestById,
@@ -21,48 +21,45 @@ import {
   updateRequestStatus,
   requestPriceChange,
   respondPriceChange,
+  declineServiceRequest,
 } from '../services/serviceRequests';
 import { uploadFile } from '../services/upload';
 import { getImageUrl } from '../utils/imageUrl';
 import { getRouteLinks, openRoute } from '../utils/routeLinks';
 import { safeGoBack } from '../utils/navigation.js';
+import { serviceLabel, formatSum, currentLocale, whenLabel, formatVisit } from '../utils/i18nHelpers';
 
 import '../../styles/requestTracker.css';
 import '../../styles/requestDetail.css';
 
 const POLL_MS = 10000;
 
-const STEPS = [
-  { key: 'accepted', label: 'Tanlandi' },
-  { key: 'on_way', label: 'Yo‘lda' },
-  { key: 'arrived', label: 'Yetib keldi' },
-  { key: 'completed', label: 'Tugadi' },
-];
+const STEPS = [{ key: 'accepted' }, { key: 'on_way' }, { key: 'arrived' }, { key: 'completed' }];
 // in_progress ham "Yetib keldi" qadamida ko'rinadi
 const STEP_OF = { in_progress: 'arrived' };
 
 // Usta bosadigan keyingi qadam. "Ishni tugatdim" so'rovni yopmaydi —
 // mijoz tasdiqlagandan keyin "Tugadi" bo'ladi.
 const PROVIDER_NEXT = {
-  accepted: { next: 'on_way', label: 'Yo‘lga chiqdim' },
-  on_way: { next: 'arrived', label: 'Yetib keldim' },
-  arrived: { next: 'completed', label: 'Ishni tugatdim' },
-  in_progress: { next: 'completed', label: 'Ishni tugatdim' },
+  accepted: { next: 'on_way', label: 'leftHome' },
+  on_way: { next: 'arrived', label: 'arrived' },
+  arrived: { next: 'completed', label: 'finished' },
+  in_progress: { next: 'completed', label: 'finished' },
 };
 
-const CLIENT_TITLES = {
-  open: 'Takliflar',
-  accepted: 'Usta tanlandi',
-  on_way: 'Usta yo‘lda',
-  arrived: 'Usta yetib keldi',
-  in_progress: 'Usta ishlayapti',
-  completed: 'Ish yakunlandi',
-  cancelled: 'So‘rov bekor qilindi',
-};
+const CLIENT_TITLES = ['open', 'accepted', 'on_way', 'arrived', 'in_progress', 'completed', 'cancelled'];
 
 const ARRIVAL_CHOICES = [15, 30, 45, 60];
 
-const price = (v) => Number(v || 0).toLocaleString('uz-UZ');
+function defaultVisit(when) {
+  const d = new Date();
+  if (when === 'tomorrow') { d.setDate(d.getDate() + 1); d.setHours(10, 0, 0, 0); }
+  else { d.setHours(d.getHours() + 1, 0, 0, 0); }
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+const price = formatSum;
 
 function Avatar({ name, image, size = 44 }) {
   const [broken, setBroken] = useState(false);
@@ -77,7 +74,8 @@ function Avatar({ name, image, size = 44 }) {
 }
 
 function Rating({ provider }) {
-  if (!provider?.ratingsCount) return <span className="rt-rating rt-rating--new">yangi</span>;
+  const { t } = useTranslation();
+  if (!provider?.ratingsCount) return <span className="rt-rating rt-rating--new">{t('requestDetail.newPro', 'Yangi usta')}</span>;
   return (
     <span className="rt-rating">
       <Star size={12} /> {Number(provider.averageRating).toFixed(1)}
@@ -87,13 +85,14 @@ function Rating({ provider }) {
 }
 
 function ProviderStats({ provider }) {
+  const { t } = useTranslation();
   const done = provider?.completedJobs || 0;
   const cancelled = provider?.cancelledJobs || 0;
   if (!done && !cancelled) return null;
   return (
     <span className="rd-stats">
-      {done > 0 && <span>{done} ta ish bajargan</span>}
-      {cancelled > 0 && <span className="rd-stats__warn">{cancelled} marta bekor qilgan</span>}
+      {done > 0 && <span>{t('requestDetail.jobsDone', '{{count}} ta ish bajargan', { count: done })}</span>}
+      {cancelled > 0 && <span className="rd-stats__warn">{t('requestDetail.jobsCancelled', '{{count}} marta bekor qilgan', { count: cancelled })}</span>}
     </span>
   );
 }
@@ -101,13 +100,14 @@ function ProviderStats({ provider }) {
 const MAX_PHOTOS = 3;
 
 function Stepper({ status }) {
+  const { t } = useTranslation();
   const current = STEPS.findIndex((s) => s.key === (STEP_OF[status] || status));
   return (
     <ol className="rd-steps">
       {STEPS.map((step, i) => (
         <li key={step.key} className={i < current ? 'is-done' : i === current ? 'is-current' : ''}>
           <span className="rd-steps__dot" />
-          <span className="rd-steps__label">{step.label}</span>
+          <span className="rd-steps__label">{t(`requestDetail.step.${step.key}`)}</span>
         </li>
       ))}
     </ol>
@@ -115,15 +115,16 @@ function Stepper({ status }) {
 }
 
 function RouteButtons({ location }) {
+  const { t } = useTranslation();
   const links = getRouteLinks(location?.lat, location?.lng);
   if (!links.length) return null;
   return (
     <div className="rd-route">
-      <span className="rd-route__title"><Navigation size={14} /> Yo‘lni ochish</span>
+      <span className="rd-route__title"><Navigation size={14} /> {t('requestDetail.route', 'Yo‘lni ochish')}</span>
       <div className="rd-route__list">
         {links.map((link) => (
           <button key={link.key} type="button" className="rd-chip" onClick={() => openRoute(link)}>
-            {link.label}
+            {t(`requestDetail.routeApp.${link.key}`, link.label)}
           </button>
         ))}
       </div>
@@ -134,18 +135,19 @@ function RouteButtons({ location }) {
 export default function RequestDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  const [ratingOpen, setRatingOpen] = useState(false);
 
   // Usta taklif formasi
   const [offerPrice, setOfferPrice] = useState('');
   const [offerMinutes, setOfferMinutes] = useState(30);
   const [offerMessage, setOfferMessage] = useState('');
+  const [offerVisit, setOfferVisit] = useState('');
 
   // Usta: joyida narxni o'zgartirish va ish rasmlari
   const [priceFormOpen, setPriceFormOpen] = useState(false);
@@ -160,11 +162,11 @@ export default function RequestDetailPage() {
       setRequest(res.data);
       setError('');
     } catch (err) {
-      setError(err.response?.data?.error || 'So‘rovni yuklab bo‘lmadi');
+      setError(err.response?.data?.error || t('requestDetail.loadError', 'So‘rovni yuklab bo‘lmadi'));
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, t]);
 
   useEffect(() => {
     const first = setTimeout(load, 0);
@@ -192,6 +194,12 @@ export default function RequestDetailPage() {
   const isProvider = request?.viewer === 'provider';
   const status = request?.status;
 
+  // Yakunlangan ish uchun alohida "Ish bajarildi" sahifasi
+  useEffect(() => {
+    if (status !== 'completed') return;
+    navigate(`${isProvider ? '/provider-requests' : '/requests'}/${id}/done`, { replace: true });
+  }, [status, isProvider, id, navigate]);
+
   const offers = useMemo(
     () => (request?.offers || []).filter((o) => o.status !== 'declined').sort((a, b) => a.price - b.price),
     [request]
@@ -208,7 +216,7 @@ export default function RequestDetailPage() {
       if (okMessage) toast.success(okMessage);
       await load();
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Amalni bajarib bo‘lmadi');
+      toast.error(err.response?.data?.error || t('requestDetail.actionError', 'Amalni bajarib bo‘lmadi'));
     } finally {
       setBusy(false);
     }
@@ -223,23 +231,37 @@ export default function RequestDetailPage() {
       for (const file of files) urls.push(await uploadFile(file));
       setPhotos((prev) => [...prev, ...urls].slice(0, MAX_PHOTOS));
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Rasmni yuklab bo‘lmadi');
+      toast.error(err.response?.data?.error || t('requestDetail.photoError', 'Rasmni yuklab bo‘lmadi'));
     } finally {
       setUploading(false);
     }
   };
 
-  const finishWork = () =>
+  const finishWork = () => {
+    const question = photos.length
+      ? t('requestDetail.finishConfirm', 'Ishni tugatdingizmi? Mijozga tasdiqlash uchun yuboriladi.')
+      : t('requestDetail.finishConfirmNoPhoto', 'Ishni tugatdingizmi? Bajarilgan ish rasmini qo‘shsangiz, mijoz tezroq tasdiqlaydi.');
+    if (!window.confirm(question)) return;
     run(
       () => updateRequestStatus(id, 'completed', '', { photos }),
-      'Mijozga tasdiqlash uchun yuborildi'
+      t('requestDetail.sentForConfirm', 'Mijozga tasdiqlash uchun yuborildi')
     );
+  };
+
+  const declineRequest = () => {
+    const reason = window.prompt(t('requestDetail.declinePrompt', 'Nega qabul qila olmaysiz? (ixtiyoriy, mijoz ko‘radi)'), '');
+    if (reason === null) return;
+    run(async () => {
+      await declineServiceRequest(id, reason);
+      navigate('/provider-requests', { replace: true });
+    }, t('requestDetail.declined', 'Mijozga xabar berildi'));
+  };
 
   const submitPriceChange = (e) => {
     e.preventDefault();
     const value = Number(String(newPrice).replace(/\s/g, ''));
     if (!value || value <= 0) {
-      toast.error('Yangi narxni kiriting');
+      toast.error(t('requestDetail.enterNewPrice', 'Yangi narxni kiriting'));
       return;
     }
     run(async () => {
@@ -247,25 +269,36 @@ export default function RequestDetailPage() {
       setPriceFormOpen(false);
       setNewPrice('');
       setPriceReason('');
-    }, 'Yangi narx mijozga yuborildi');
+    }, t('requestDetail.newPriceSent', 'Yangi narx mijozga yuborildi'));
   };
 
   const cancelRequest = () => {
-    if (!window.confirm('So‘rovni bekor qilasizmi?')) return;
-    const reason = isProvider ? 'Usta bekor qildi' : 'Mijoz bekor qildi';
-    run(() => updateRequestStatus(id, 'cancelled', reason), 'So‘rov bekor qilindi');
+    if (!window.confirm(t('requestDetail.cancelConfirm', 'So‘rovni bekor qilasizmi?'))) return;
+    const reason = isProvider ? t('requestDetail.cancelByPro', 'Usta bekor qildi') : t('tracker.cancelReason', 'Mijoz bekor qildi');
+    run(() => updateRequestStatus(id, 'cancelled', reason), t('requestDetail.cancelled', 'So‘rov bekor qilindi'));
   };
 
   const sendOffer = (e) => {
     e.preventDefault();
     const value = Number(String(offerPrice).replace(/\s/g, ''));
     if (!value || value <= 0) {
-      toast.error('Narxni kiriting');
+      toast.error(t('requestDetail.enterPrice', 'Narxni kiriting'));
+      return;
+    }
+    const scheduled = request?.when && request.when !== 'now';
+    const visit = scheduled ? (offerVisit || defaultVisit(request.when)) : '';
+    if (scheduled && new Date(visit) < new Date()) {
+      toast.error(t('requestDetail.visitPast', 'Kelish vaqti o‘tib ketgan — keyinroq vaqtni tanlang'));
       return;
     }
     run(
-      () => sendServiceRequestOffer(id, { price: value, arrivalMinutes: offerMinutes, message: offerMessage }),
-      'Taklif yuborildi'
+      () => sendServiceRequestOffer(id, {
+        price: value,
+        arrivalMinutes: offerMinutes,
+        message: offerMessage,
+        ...(visit ? { visitAt: new Date(visit).toISOString() } : {}),
+      }),
+      t('requestDetail.offerSent', 'Taklif yuborildi')
     );
   };
 
@@ -275,8 +308,8 @@ export default function RequestDetailPage() {
   if (error || !request) {
     return (
       <div className="rd-page rd-center">
-        <p className="rt-closed-text">{error || 'So‘rov topilmadi'}</p>
-        <button type="button" className="rt-btn rt-btn--ghost" onClick={() => safeGoBack(navigate)}>Orqaga</button>
+        <p className="rt-closed-text">{error || t('requestDetail.notFound', 'So‘rov topilmadi')}</p>
+        <button type="button" className="rt-btn rt-btn--ghost" onClick={() => safeGoBack(navigate)}>{t('common.back', 'Orqaga')}</button>
       </div>
     );
   }
@@ -294,31 +327,38 @@ export default function RequestDetailPage() {
     && (!isProvider || isMine);
   const accProvider = acceptedOffer?.provider || {};
   const client = request.client || {};
-  const clientName = client.fullName || client.full_name || 'Mijoz';
+  const clientName = client.fullName || client.full_name || t('requestDone.client', 'Mijoz');
 
-  let title = CLIENT_TITLES[status] || 'So‘rov';
+  let title = CLIENT_TITLES.includes(status) ? t(`requestDetail.title.${status}`) : t('requestDetail.title.request', 'So‘rov');
   if (isProvider) {
-    if (status === 'open') title = myOffer ? 'Taklifingiz yuborildi' : 'Taklif bering';
-    else if (myOffer && !isMine) title = 'Mijoz boshqa ustani tanladi';
-    else if (awaitingConfirm) title = 'Mijoz tasdiqlashi kutilmoqda';
+    if (status === 'open') title = myOffer ? t('providerRequests.status.offerSent') : t('requestDetail.title.makeOffer', 'Taklif bering');
+    else if (myOffer && !isMine) title = t('requestDetail.title.otherChosen', 'Mijoz boshqa ustani tanladi');
+    else if (awaitingConfirm) title = t('requestDetail.title.awaitingClient', 'Mijoz tasdiqlashi kutilmoqda');
+    else if (isMine && status === 'accepted') title = t('requestDetail.title.proChosen', 'Sizni tanlashdi — yo‘lga chiqing');
+    else if (isMine && status === 'on_way') title = t('requestDetail.title.proOnWay', 'Manzilga ketyapsiz');
+    else if (isMine && ['arrived', 'in_progress'].includes(status)) title = t('requestDetail.title.proAtWork', 'Ishni bajaring');
+  } else if (status === 'open' && request.isDirect && offers.length === 0) {
+    title = t('requestDetail.title.directWaiting', 'Usta javobini kutyapmiz');
+  } else if (status === 'cancelled' && request.declinedAt) {
+    title = t('requestDetail.title.declined', 'Usta qabul qila olmadi');
   } else if (awaitingConfirm) {
-    title = 'Ish bajarildimi?';
+    title = t('requestDetail.title.confirm', 'Ish bajarildimi?');
   }
   // Xarita faqat ustaga kerak (manzilga borish uchun); mijoz o'z manzilini biladi
   const showMap = isProvider && !['completed', 'cancelled'].includes(status);
 
   return (
-    <div className="rd-page">
+    <div className={`rd-page ${showMap ? '' : 'rd-page--nomap'}`}>
       {showMap ? (
         <div className="rd-map">
           <RequestMap lat={request.location?.lat} lng={request.location?.lng} height={150} />
-          <button type="button" className="rd-back" onClick={() => safeGoBack(navigate)} aria-label="Orqaga">
+          <button type="button" className="rd-back" onClick={() => safeGoBack(navigate)} aria-label={t('common.back', 'Orqaga')}>
             <ArrowLeft size={20} />
           </button>
         </div>
       ) : (
         <div className="rd-topbar">
-          <button type="button" className="rd-back rd-back--static" onClick={() => safeGoBack(navigate)} aria-label="Orqaga">
+          <button type="button" className="rd-back rd-back--static" onClick={() => safeGoBack(navigate)} aria-label={t('common.back', 'Orqaga')}>
             <ArrowLeft size={20} />
           </button>
         </div>
@@ -327,7 +367,7 @@ export default function RequestDetailPage() {
       <div className={`rt-panel rd-panel ${showMap ? '' : 'rt-panel--plain'}`}>
         <div className="rt-status">
           <span className="rt-status__eyebrow">
-            {request.category} · #{String(request._id).slice(-6)}
+            {serviceLabel(request.category)} · #{String(request._id).slice(-6)}
           </span>
           <h1 className="rt-status__title">{title}</h1>
           {showStepper && <Stepper status={status} />}
@@ -338,7 +378,9 @@ export default function RequestDetailPage() {
           {!isProvider && status === 'open' && (
             offers.length === 0 ? (
               <ul className="rt-facts">
-                <li><Clock size={16} /><span>Ustalar javobini kutyapmiz. Taklif kelishi bilan shu yerda ko‘rinadi.</span></li>
+                <li><Clock size={16} /><span>{request.isDirect
+                  ? t('requestDetail.waitingDirect', 'So‘rov faqat shu ustaga yuborildi. Narx taklif qilishi bilan shu yerda ko‘rinadi.')
+                  : t('requestDetail.waiting', 'Ustalar javobini kutyapmiz. Taklif kelishi bilan shu yerda ko‘rinadi.')}</span></li>
               </ul>
             ) : (
               <ul className="rt-list" role="radiogroup">
@@ -353,15 +395,26 @@ export default function RequestDetailPage() {
                     >
                       <Avatar name={offer.provider?.name} image={offer.provider?.image} size={42} />
                       <span className="rt-row__who">
-                        <strong>{offer.provider?.name || 'Usta'}</strong>
+                        <strong>{offer.provider?.name || t('activeOrder.pro', 'Usta')}</strong>
                         <span className="rt-row__meta">
                           <Rating provider={offer.provider} />
-                          <span>· {offer.arrivalMinutes || 30} daq</span>
+                          <span>· {offer.visitAt ? formatVisit(offer.visitAt) : `${offer.arrivalMinutes || 30} ${t('common.min', 'daq')}`}</span>
                         </span>
                         <ProviderStats provider={offer.provider} />
-                        {offer.message && <span className="rt-row__msg">{offer.message}</span>}
+                        {offer.message && <span className="rt-row__msg rt-row__msg--full">{offer.message}</span>}
+                        {offer.provider?._id && (
+                          <span
+                            role="link"
+                            tabIndex={0}
+                            className="rd-inline-link"
+                            onClick={(e) => { e.stopPropagation(); navigate(`/service-provider/${offer.provider._id}`); }}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); navigate(`/service-provider/${offer.provider._id}`); } }}
+                          >
+                            {t('requestDetail.viewProfile', 'Profil va sharhlarni ko‘rish')}
+                          </span>
+                        )}
                       </span>
-                      <span className="rt-row__price">{price(offer.price)}<small>so‘m</small></span>
+                      <span className="rt-row__price">{price(offer.price)}<small>{t('common.sum', 'so‘m')}</small></span>
                     </button>
                   </li>
                 ))}
@@ -372,13 +425,13 @@ export default function RequestDetailPage() {
           {/* ===== MIJOZ: usta joyida yangi narx taklif qildi ===== */}
           {!isProvider && pricePending && (
             <div className="rd-confirm">
-              <span className="rd-confirm__label">Usta narxni o‘zgartirmoqchi</span>
+              <span className="rd-confirm__label">{t('requestDetail.priceChangeLabel', 'Usta narxni o‘zgartirmoqchi')}</span>
               <div className="rd-price-change">
                 <s>{price(request.priceChange.oldPrice)}</s>
                 <span>→</span>
-                <strong>{price(request.priceChange.newPrice)} so‘m</strong>
+                <strong>{price(request.priceChange.newPrice)} {t('common.sum', 'so‘m')}</strong>
               </div>
-              <p>Sabab: {request.priceChange.reason}</p>
+              <p>{t('requestDetail.reason', 'Sabab: {{reason}}', { reason: request.priceChange.reason })}</p>
             </div>
           )}
 
@@ -386,20 +439,19 @@ export default function RequestDetailPage() {
           {!isProvider && awaitingConfirm && (
             <div className="rd-confirm">
               <p>
-                Usta ishni tugatganini bildirdi. Hammasi joyidami? Tasdiqlaganingizdan keyin
-                buyurtma yopiladi va ustani baholashingiz mumkin.
+                {t('requestDetail.confirmText', 'Usta ishni tugatganini bildirdi. Hammasi joyidami? Tasdiqlaganingizdan keyin buyurtma yopiladi va ustani baholashingiz mumkin.')}
               </p>
               {request.completionPhotos?.length > 0 && (
                 <div className="rd-photos">
                   {request.completionPhotos.map((url) => (
                     <a key={url} href={getImageUrl(url)} target="_blank" rel="noopener noreferrer">
-                      <img src={getImageUrl(url)} alt="Bajarilgan ish" />
+                      <img src={getImageUrl(url)} alt={t('requestDone.photoAlt', 'Bajarilgan ish rasmi')} />
                     </a>
                   ))}
                 </div>
               )}
               <p className="rd-confirm__note">
-                24 soat ichida javob bermasangiz, ish avtomatik bajarildi deb yopiladi.
+                {t('requestDetail.autoConfirm', '24 soat ichida javob bermasangiz, ish avtomatik bajarildi deb yopiladi.')}
               </p>
             </div>
           )}
@@ -407,7 +459,7 @@ export default function RequestDetailPage() {
           {/* ===== USTA: mijoz javobini kutish ===== */}
           {isMine && awaitingConfirm && (
             <ul className="rt-facts">
-              <li><Clock size={16} /><span>Mijoz ish bajarilganini tasdiqlashi bilan buyurtma yopiladi.</span></li>
+              <li><Clock size={16} /><span>{t('requestDetail.proWaiting', 'Mijoz ish bajarilganini tasdiqlashi bilan buyurtma yopiladi.')}</span></li>
             </ul>
           )}
 
@@ -416,20 +468,20 @@ export default function RequestDetailPage() {
             <div className="rt-master">
               <Avatar name={accProvider.name} image={accProvider.image} size={48} />
               <span className="rt-row__who">
-                <strong>{accProvider.name || 'Usta'}</strong>
+                <strong>{accProvider.name || t('activeOrder.pro', 'Usta')}</strong>
                 <span className="rt-row__meta">
                   <Rating provider={accProvider} />
-                  <span>· {price(acceptedOffer.price)} so‘m</span>
+                  <span>· {price(acceptedOffer.price)} {t('common.sum', 'so‘m')}</span>
                 </span>
                 <ProviderStats provider={accProvider} />
               </span>
               {!['completed', 'cancelled'].includes(status) && (
                 <span className="rt-master__actions">
                   {accProvider.phone && (
-                    <a className="rt-round" href={`tel:${accProvider.phone}`} aria-label="Qo‘ng‘iroq"><Phone size={18} /></a>
+                    <a className="rt-round" href={`tel:${accProvider.phone}`} aria-label={t('common.call', 'Qo‘ng‘iroq qilish')}><Phone size={18} /></a>
                   )}
                   {accProvider.userId && (
-                    <button type="button" className="rt-round" aria-label="Yozish" onClick={() => navigate(`/chat?userId=${accProvider.userId}`)}>
+                    <button type="button" className="rt-round" aria-label={t('requestDetail.write', 'Yozish')} onClick={() => navigate(`/chat?userId=${accProvider.userId}`)}>
                       <MessageCircle size={18} />
                     </button>
                   )}
@@ -442,19 +494,31 @@ export default function RequestDetailPage() {
           {isProvider && request.canOffer && (
             <form className="rd-offer-form" id="rd-offer-form" onSubmit={sendOffer}>
               <label className="rd-field">
-                <span>Narxingiz (so‘m)</span>
+                <span>{t('requestDetail.yourPrice', 'Narxingiz (so‘m)')}</span>
                 <input
                   type="number"
                   inputMode="numeric"
                   min="1"
-                  placeholder="Masalan: 150000"
+                  placeholder={t('requestDetail.pricePh', 'Masalan: 150000')}
                   value={offerPrice}
                   onChange={(e) => setOfferPrice(e.target.value)}
                   required
                 />
               </label>
+              {request.when && request.when !== 'now' ? (
+                <label className="rd-field">
+                  <span>{t('requestDetail.visitQ', 'Mijoz “{{when}}” dedi — qachon borasiz?', { when: whenLabel(request.when) })}</span>
+                  <input
+                    type="datetime-local"
+                    value={offerVisit || defaultVisit(request.when)}
+                    min={defaultVisit('now').slice(0, 11) + '00:00'}
+                    onChange={(e) => setOfferVisit(e.target.value)}
+                    required
+                  />
+                </label>
+              ) : (
               <div className="rd-field">
-                <span>Qancha vaqtda yetib borasiz?</span>
+                <span>{t('requestDetail.arrivalQ', 'Qancha vaqtda yetib borasiz?')}</span>
                 <div className="rd-route__list">
                   {ARRIVAL_CHOICES.map((m) => (
                     <button
@@ -463,16 +527,17 @@ export default function RequestDetailPage() {
                       className={`rd-chip ${offerMinutes === m ? 'is-active' : ''}`}
                       onClick={() => setOfferMinutes(m)}
                     >
-                      {m} daq
+                      {m} {t('common.min', 'daq')}
                     </button>
                   ))}
                 </div>
               </div>
+              )}
               <label className="rd-field">
-                <span>Mijozga izoh (ixtiyoriy)</span>
+                <span>{t('requestDetail.noteLabel', 'Mijozga izoh (ixtiyoriy)')}</span>
                 <textarea
                   rows={2}
-                  placeholder="Masalan: materiallar bilan, kafolat 3 oy"
+                  placeholder={t('requestDetail.notePh', 'Masalan: materiallar bilan, kafolat 3 oy')}
                   value={offerMessage}
                   onChange={(e) => setOfferMessage(e.target.value)}
                 />
@@ -484,15 +549,13 @@ export default function RequestDetailPage() {
           {isProvider && myOffer && (
             <div className="rt-row" role="presentation">
               <span className="rt-row__who">
-                <strong>Sizning taklifingiz</strong>
+                <strong>{t('requestDetail.yourOffer', 'Sizning taklifingiz')}</strong>
                 <span className="rt-row__meta">
-                  ~{myOffer.arrivalMinutes} daq
-                  {myOffer.status === 'pending' && ' · javob kutilmoqda'}
-                  {myOffer.status === 'accepted' && ' · qabul qilindi'}
-                  {myOffer.status === 'declined' && ' · tanlanmadi'}
+                  {myOffer.visitAt ? formatVisit(myOffer.visitAt) : `~${myOffer.arrivalMinutes} ${t('common.min', 'daq')}`}
+                  {['pending', 'accepted', 'declined'].includes(myOffer.status) && ` · ${t(`requestDetail.offerStatus.${myOffer.status}`)}`}
                 </span>
               </span>
-              <span className="rt-row__price">{price(myOffer.price)}<small>so‘m</small></span>
+              <span className="rt-row__price">{price(myOffer.price)}<small>{t('common.sum', 'so‘m')}</small></span>
             </div>
           )}
 
@@ -503,14 +566,14 @@ export default function RequestDetailPage() {
                 <Avatar name={clientName} image={client.avatar_url} size={48} />
                 <span className="rt-row__who">
                   <strong>{clientName}</strong>
-                  <span className="rt-row__meta">Mijoz</span>
+                  <span className="rt-row__meta">{t('requestDone.client', 'Mijoz')}</span>
                 </span>
                 <span className="rt-master__actions">
                   {client.phone && (
-                    <a className="rt-round" href={`tel:${client.phone}`} aria-label="Qo‘ng‘iroq"><Phone size={18} /></a>
+                    <a className="rt-round" href={`tel:${client.phone}`} aria-label={t('common.call', 'Qo‘ng‘iroq qilish')}><Phone size={18} /></a>
                   )}
                   {client._id && (
-                    <button type="button" className="rt-round" aria-label="Yozish" onClick={() => navigate(`/chat?userId=${client._id}`)}>
+                    <button type="button" className="rt-round" aria-label={t('requestDetail.write', 'Yozish')} onClick={() => navigate(`/chat?userId=${client._id}`)}>
                       <MessageCircle size={18} />
                     </button>
                   )}
@@ -525,7 +588,7 @@ export default function RequestDetailPage() {
               <li>
                 <Clock size={16} />
                 <span>
-                  Yangi narx ({price(request.priceChange.newPrice)} so‘m) mijozga yuborildi. Javobini kutyapmiz.
+                  {t('requestDetail.newPriceWaiting', 'Yangi narx ({{price}} so‘m) mijozga yuborildi. Javobini kutyapmiz.', { price: price(request.priceChange.newPrice) })}
                 </span>
               </li>
             </ul>
@@ -535,7 +598,7 @@ export default function RequestDetailPage() {
             priceFormOpen ? (
               <form className="rd-offer-form rd-box" id="rd-price-form" onSubmit={submitPriceChange}>
                 <label className="rd-field">
-                  <span>Yangi narx (hozir {price(myOffer?.price)} so‘m)</span>
+                  <span>{t('requestDetail.newPriceLabel', 'Yangi narx (hozir {{price}} so‘m)', { price: price(myOffer?.price) })}</span>
                   <input
                     type="number"
                     inputMode="numeric"
@@ -546,10 +609,10 @@ export default function RequestDetailPage() {
                   />
                 </label>
                 <label className="rd-field">
-                  <span>Nega o‘zgardi? (mijoz ko‘radi)</span>
+                  <span>{t('requestDetail.whyChanged', 'Nega o‘zgardi? (mijoz ko‘radi)')}</span>
                   <textarea
                     rows={2}
-                    placeholder="Masalan: quvur ham almashtirilishi kerak ekan"
+                    placeholder={t('requestDetail.whyPh', 'Masalan: quvur ham almashtirilishi kerak ekan')}
                     value={priceReason}
                     onChange={(e) => setPriceReason(e.target.value)}
                     required
@@ -557,16 +620,16 @@ export default function RequestDetailPage() {
                 </label>
                 <div className="rd-form-actions">
                   <button type="button" className="rt-btn rt-btn--text" onClick={() => setPriceFormOpen(false)}>
-                    Bekor
+                    {t('requestDetail.cancelShort', 'Bekor')}
                   </button>
                   <button type="submit" className="rt-btn rt-btn--ghost" disabled={busy}>
-                    Mijozga yuborish
+                    {t('requestDetail.sendToClient', 'Mijozga yuborish')}
                   </button>
                 </div>
               </form>
             ) : (
               <button type="button" className="rd-link-btn" onClick={() => setPriceFormOpen(true)}>
-                Narx o‘zgardimi? Yangi narx taklif qilish
+                {t('requestDetail.proposePrice', 'Narx o‘zgardimi? Yangi narx taklif qilish')}
               </button>
             )
           )}
@@ -574,7 +637,7 @@ export default function RequestDetailPage() {
           {atWork && (
             <div className="rd-box">
               <span className="rd-field__title">
-                <Camera size={14} /> Bajarilgan ish rasmi (ixtiyoriy, {MAX_PHOTOS} tagacha)
+                <Camera size={14} /> {t('requestDetail.photosLabel', 'Bajarilgan ish rasmi (ixtiyoriy, {{count}} tagacha)', { count: MAX_PHOTOS })}
               </span>
               <div className="rd-photos">
                 {photos.map((url) => (
@@ -582,7 +645,7 @@ export default function RequestDetailPage() {
                     <img src={getImageUrl(url)} alt="" />
                     <button
                       type="button"
-                      aria-label="O‘chirish"
+                      aria-label={t('common.delete', 'O‘chirish')}
                       onClick={() => setPhotos((prev) => prev.filter((u) => u !== url))}
                     >
                       <X size={12} />
@@ -609,27 +672,30 @@ export default function RequestDetailPage() {
 
           {/* ===== Umumiy ma'lumot ===== */}
           <ul className="rt-facts rd-facts">
+            {request.when && request.when !== 'now' && (
+              <li><Clock size={16} /><span>{t('requestDetail.whenNeeded', 'Kerak: {{when}}', { when: whenLabel(request.when) })}</span></li>
+            )}
             {request.description && <li><FileText size={16} /><span>{request.description}</span></li>}
             {request.location?.address && <li><MapPin size={16} /><span>{request.location.address}</span></li>}
             <li>
               <Clock size={16} />
-              <span>{new Date(request.createdAt).toLocaleString('uz-UZ', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+              <span>{new Date(request.createdAt).toLocaleString(currentLocale(), { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
             </li>
           </ul>
 
           {['accepted', 'declined'].includes(request.priceChange?.status) && (
             <p className="rt-closed-text">
               {request.priceChange.status === 'accepted'
-                ? `Narx kelishildi: ${price(request.priceChange.newPrice)} so‘m`
-                : `Yangi narx rad etildi, narx o‘zgarmadi: ${price(request.priceChange.oldPrice)} so‘m`}
+                ? t('requestDetail.priceAgreed', 'Narx kelishildi: {{price}} so‘m', { price: price(request.priceChange.newPrice) })
+                : t('requestDetail.priceRejected', 'Yangi narx rad etildi, narx o‘zgarmadi: {{price}} so‘m', { price: price(request.priceChange.oldPrice) })}
             </p>
           )}
 
           {status === 'cancelled' && request.cancelReason && (
-            <p className="rt-closed-text">Sabab: {request.cancelReason}</p>
+            <p className="rt-closed-text">{t('requestDetail.reason', 'Sabab: {{reason}}', { reason: request.cancelReason })}</p>
           )}
           {status === 'completed' && request.review && (
-            <p className="rd-review"><CheckCircle2 size={16} /> Baholangan: {request.review.rating} / 5</p>
+            <p className="rd-review"><CheckCircle2 size={16} /> {t('requestDetail.rated', 'Baholangan: {{rating}} / 5', { rating: request.review.rating })}</p>
           )}
         </div>
 
@@ -640,17 +706,29 @@ export default function RequestDetailPage() {
               type="button"
               className="rt-btn rt-btn--primary"
               disabled={busy}
-              onClick={() => run(() => acceptServiceRequestOffer(id, selectedOffer._id), 'Usta tanlandi')}
+              onClick={() => run(() => acceptServiceRequestOffer(id, selectedOffer._id), t('requestDetail.proChosen', 'Usta tanlandi'))}
             >
               {busy ? <Loader2 size={18} className="rt-spin" /> : null}
-              Tanlash · {price(selectedOffer.price)} so‘m
+              {t('incomingOffer.choose', 'Tanlash · {{price}} so‘m', { price: price(selectedOffer.price) })}
             </button>
           )}
 
           {isProvider && request.canOffer && (
             <button type="submit" form="rd-offer-form" className="rt-btn rt-btn--primary" disabled={busy}>
               {busy ? <Loader2 size={18} className="rt-spin" /> : null}
-              Taklif yuborish
+              {t('requestDetail.sendOffer', 'Taklif yuborish')}
+            </button>
+          )}
+
+          {isProvider && request.canOffer && request.isDirect && (
+            <button type="button" className="rt-btn rt-btn--text" onClick={declineRequest} disabled={busy}>
+              {t('requestDetail.declineBtn', 'Qabul qila olmayman')}
+            </button>
+          )}
+
+          {!isProvider && status === 'cancelled' && request.declinedAt && (
+            <button type="button" className="rt-btn rt-btn--primary" onClick={() => navigate(`/request?category=${encodeURIComponent(request.category)}`)}>
+              {t('requestDetail.findOther', 'Boshqa usta topish')}
             </button>
           )}
 
@@ -666,7 +744,7 @@ export default function RequestDetailPage() {
               }
             >
               {busy ? <Loader2 size={18} className="rt-spin" /> : null}
-              {providerNext.label}
+              {t(`requestDetail.next.${providerNext.label}`)}
             </button>
           )}
 
@@ -676,17 +754,17 @@ export default function RequestDetailPage() {
                 type="button"
                 className="rt-btn rt-btn--primary"
                 disabled={busy}
-                onClick={() => run(() => respondPriceChange(id, true), 'Yangi narx qabul qilindi')}
+                onClick={() => run(() => respondPriceChange(id, true), t('requestDetail.priceAccepted', 'Yangi narx qabul qilindi'))}
               >
-                Roziman · {price(request.priceChange.newPrice)} so‘m
+                {t('requestDetail.agree', 'Roziman · {{price}} so‘m', { price: price(request.priceChange.newPrice) })}
               </button>
               <button
                 type="button"
                 className="rt-btn rt-btn--text"
                 disabled={busy}
-                onClick={() => run(() => respondPriceChange(id, false), 'Narx o‘zgarmadi')}
+                onClick={() => run(() => respondPriceChange(id, false), t('requestDetail.priceKept', 'Narx o‘zgarmadi'))}
               >
-                Rad etaman, eski narx qolsin
+                {t('requestDetail.decline', 'Rad etaman, eski narx qolsin')}
               </button>
             </>
           )}
@@ -697,10 +775,13 @@ export default function RequestDetailPage() {
                 type="button"
                 className="rt-btn rt-btn--primary"
                 disabled={busy}
-                onClick={() => run(() => updateRequestStatus(id, 'completed'), 'Rahmat! Buyurtma yopildi')}
+                onClick={() => run(async () => {
+                  await updateRequestStatus(id, 'completed');
+                  navigate(`/requests/${id}/done`, { replace: true });
+                })}
               >
                 {busy ? <Loader2 size={18} className="rt-spin" /> : <CheckCircle2 size={18} />}
-                Ha, ish bajarildi
+                {t('requestDetail.yesDone', 'Ha, ish bajarildi')}
               </button>
               {accProvider.userId && (
                 <button
@@ -708,32 +789,26 @@ export default function RequestDetailPage() {
                   className="rt-btn rt-btn--text"
                   onClick={() => navigate(`/chat?userId=${accProvider.userId}`)}
                 >
-                  Muammo bor — ustaga yozish
+                  {t('requestDetail.problem', 'Muammo bor — ustaga yozish')}
                 </button>
               )}
             </>
           )}
 
           {!isProvider && status === 'completed' && !request.review && (
-            <button type="button" className="rt-btn rt-btn--primary" onClick={() => setRatingOpen(true)}>
-              Ustani baholash
+            <button type="button" className="rt-btn rt-btn--primary" onClick={() => navigate(`/requests/${id}/done`)}>
+              {t('requestDetail.rate', 'Ustani baholash')}
             </button>
           )}
 
           {canCancel && (
             <button type="button" className="rt-btn rt-btn--text" onClick={cancelRequest} disabled={busy}>
-              So‘rovni bekor qilish
+              {t('requestDetail.cancelRequest', 'So‘rovni bekor qilish')}
             </button>
           )}
         </footer>
       </div>
 
-      <RatingModal
-        isOpen={ratingOpen}
-        request={request}
-        onClose={() => setRatingOpen(false)}
-        onSubmitted={() => { setRatingOpen(false); load(); }}
-      />
     </div>
   );
 }

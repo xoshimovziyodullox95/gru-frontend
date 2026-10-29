@@ -14,6 +14,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Sparkles, SpellCheck, Wand2, Combine, Check } from 'lucide-react';
 import api from '../services/api';
 
+import { T } from '../utils/T';
 export default function AIEnhancedTextarea({ value, onChange, placeholder, rows = 4, name, disabled }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,7 @@ export default function AIEnhancedTextarea({ value, onChange, placeholder, rows 
 
   const handleEnhance = async (mode) => {
     if (!value || !value.trim()) {
-      alert("Avval matn kiriting");
+      alert(T('Avval matn kiriting'));
       return;
     }
     setMenuOpen(false);
@@ -57,7 +58,7 @@ export default function AIEnhancedTextarea({ value, onChange, placeholder, rows 
           className={`aet-trigger ${menuOpen ? 'open' : ''}`}
           onClick={() => setMenuOpen(!menuOpen)}
           disabled={disabled || loading}
-          title="AI bilan yaxshilash"
+          title={T('AI bilan yaxshilash')}
         >
           <Sparkles size={15} />
           <span>AI</span>
@@ -65,13 +66,13 @@ export default function AIEnhancedTextarea({ value, onChange, placeholder, rows 
 
         <div className={`aet-menu ${menuOpen ? 'aet-menu-open' : ''}`}>
           <button type="button" onClick={() => handleEnhance('fix')}>
-            <SpellCheck size={14} /> Imloni tuzatish
+            <SpellCheck size={14} /> {T('Imloni tuzatish')}
           </button>
           <button type="button" onClick={() => handleEnhance('expand')}>
-            <Wand2 size={14} /> Batafsilroq qilish
+            <Wand2 size={14} /> {T('Batafsilroq qilish')}
           </button>
           <button type="button" onClick={() => handleEnhance('both')}>
-            <Combine size={14} /> Ikkalasini ham
+            <Combine size={14} /> {T('Ikkalasini ham')}
           </button>
         </div>
       </div>
@@ -97,7 +98,7 @@ export default function AIEnhancedTextarea({ value, onChange, placeholder, rows 
                 <span className="aet-orb aet-orb-2" />
                 <span className="aet-orb aet-orb-3" />
               </div>
-              <span className="aet-loading-text">AI matningizni yaxshilamoqda...</span>
+              <span className="aet-loading-text">{T('AI matningizni yaxshilamoqda...')}</span>
             </div>
           </div>
         )}

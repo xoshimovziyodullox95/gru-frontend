@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getEquipmentById, updateEquipment, uploadEquipmentMedia } from '../services/equipment';
-import { getLevel1, getLevel2 } from '../services/categories';
+import { useProductCategories } from '../utils/productCategories';
 import { Upload, X } from 'lucide-react';
 import '../../styles/forms.css';
 
+import { T } from '../utils/T';
 export default function EditEquipmentForm() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -15,8 +16,8 @@ export default function EditEquipmentForm() {
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [level1List, setLevel1List] = useState([]);
-  const [level2List, setLevel2List] = useState([]);
+  // Marketplace tovar kategoriyalari; ichki bo'limlar tanlangan kategoriyadan
+  const { categories } = useProductCategories();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -25,6 +26,8 @@ export default function EditEquipmentForm() {
     level1: '',
     category: '',
     condition: 'new',
+    saleMode: 'store',
+    stockQuantity: '1',
     phone: '',
     supplier: ''
   });
@@ -32,11 +35,7 @@ export default function EditEquipmentForm() {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
-    Promise.all([
-      getLevel1(),
-      getEquipmentById(id)
-    ]).then(([level1Res, eqRes]) => {
-      setLevel1List(level1Res.data);
+    getEquipmentById(id).then((eqRes) => {
       const data = eqRes.data;
       setFormData({
         title: data.title || '',
@@ -46,30 +45,25 @@ export default function EditEquipmentForm() {
         level1: data.level1 || '',
         category: data.category || '',
         condition: data.condition || 'new',
+        saleMode: data.saleMode || 'store',
+        stockQuantity: String(data.stockQuantity ?? 1),
         phone: data.phone || '',
         supplier: data.supplier || ''
       });
-      if (data.level1) {
-        getLevel2(data.level1).then(res => setLevel2List(res.data));
-      }
       setLoading(false);
     }).catch(err => {
       console.error(err);
-      alert('MaКјlumot yuklashda xatolik');
+      alert(T('Maʼlumot yuklashda xatolik'));
       safeGoBack(navigate);
     });
   }, [id]);
 
-  useEffect(() => {
-    if (formData.level1) {
-      getLevel2(formData.level1).then(res => setLevel2List(res.data)).catch(console.error);
-    } else {
-      setLevel2List([]);
-    }
-  }, [formData.level1]);
+  const subs = categories.find((c) => c.id === formData.level1)?.subs || [];
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // Kategoriya almashsa, eski ichki bo'lim endi mos emas
+    setFormData({ ...formData, [name]: value, ...(name === 'level1' ? { category: '' } : {}) });
   };
 
   const handleFileChange = (e) => {
@@ -90,7 +84,7 @@ export default function EditEquipmentForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      alert('Iltimos, avval tizimga kiring');
+      alert(T('Iltimos, avval tizimga kiring'));
       navigate('/login');
       return;
     }
@@ -107,7 +101,7 @@ export default function EditEquipmentForm() {
           setUploadProgress(percent);
         });
       }
-      alert('Texnika muvaffaqiyatli yangilandi!');
+      alert(T('Texnika muvaffaqiyatli yangilandi!'));
       navigate(`/equipment/${id}`);
     } catch (err) {
       console.error(err);
@@ -117,16 +111,33 @@ export default function EditEquipmentForm() {
     }
   };
 
-  if (loading) return <div className="loading-spinner">Yuklanmoqda...</div>;
+  if (loading) return <div className="loading-spinner">{T('Yuklanmoqda...')}</div>;
 
   return (
     <div className="add-equipment-form-container">
       <form onSubmit={handleSubmit} className="add-equipment-form">
-        <h2>Texnikani tahrirlash</h2>
+        <h2>{T('Texnikani tahrirlash')}</h2>
         
         <div className="form-group">
           <label>Nomi *</label>
           <input type="text" name="title" value={formData.title} onChange={handleChange} required />
+        </div>
+        {formData.saleMode === 'store' && (
+          <div className="form-group">
+            <label>{T('Soni (dona)')}</label>
+            <input type="number" name="stockQuantity" inputMode="numeric" min="1" value={formData.stockQuantity} onChange={handleChange} required />
+          </div>
+        )}
+
+        <div className="form-group">
+          <label>{T('Sotuv turi')}</label>
+          <select name="saleMode" value={formData.saleMode} onChange={handleChange}>
+            <option value="classified">{T('Oddiy e’lon')}</option>
+            <option value="store">{T('Do‘kon mahsuloti')}</option>
+          </select>
+          <small>{formData.saleMode === 'store'
+            ? T('Xaridor savatga qo‘shib buyurtma beradi; narx va qoldiq ko‘rinadi.')
+            : T('Narx e’londa ko‘rinadi. Xaridor sotuvchi bilan chat yoki telefon orqali kelishadi.')}</small>
         </div>
         
         <div className="form-group">
@@ -136,17 +147,17 @@ export default function EditEquipmentForm() {
         
         <div className="form-row">
           <div className="form-group">
-            <label>Yo‘nalish (level1) *</label>
-            <select name="level1" value={formData.level1} onChange={handleChange} required>
-              <option value="">Tanlang</option>
-              {level1List.map(l1 => <option key={l1.key} value={l1.key}>{l1.name || l1.key}</option>)}
+            <label>{T('Kategoriya *')}</label>
+            <select name="level1" value={categories.some((c) => c.id === formData.level1) ? formData.level1 : ''} onChange={handleChange} required>
+              <option value="">{T('Tanlang')}</option>
+              {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label>Kategoriya (level2) *</label>
-            <select name="category" value={formData.category} onChange={handleChange} required disabled={!formData.level1}>
-              <option value="">Tanlang</option>
-              {level2List.map(l2 => <option key={l2.key || l2.level2} value={l2.key || l2.level2}>{l2.name || l2.level2}</option>)}
+            <label>{T('Ichki bo‘lim *')}</label>
+            <select name="category" value={subs.some((sub) => sub.id === formData.category) ? formData.category : ''} onChange={handleChange} required disabled={!subs.length}>
+              <option value="">{T('Tanlang')}</option>
+              {subs.map((sub) => <option key={sub.id} value={sub.id}>{sub.name}</option>)}
             </select>
           </div>
         </div>
@@ -171,40 +182,40 @@ export default function EditEquipmentForm() {
                 className="currency-select"
               >
                 <option value="USD">USD ($)</option>
-                <option value="UZS">UZS (so'm)</option>
+                <option value="UZS">{T('UZS (so\'m)')}</option>
               </select>
             </div>
           </div>
           <div className="form-group">
-            <label>Holati</label>
+            <label>{T('Holati')}</label>
             <select name="condition" value={formData.condition} onChange={handleChange}>
-              <option value="new">Yangi</option>
-              <option value="used">Ishlatilgan</option>
+              <option value="new">{T('Yangi')}</option>
+              <option value="used">{T('Ishlatilgan')}</option>
             </select>
           </div>
         </div>
         
         <div className="form-group">
-          <label>Telefon raqam *</label>
+          <label>{T('Telefon raqam *')}</label>
           <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
         </div>
         
         <div className="form-group">
-          <label>Yetkazib beruvchi (ixtiyoriy)</label>
+          <label>{T('Yetkazib beruvchi (ixtiyoriy)')}</label>
           <input type="text" name="supplier" value={formData.supplier} onChange={handleChange} />
         </div>
         
         <div className="form-group">
-          <label>Rasmlar va videolar</label>
+          <label>{T('Rasmlar va videolar')}</label>
           <div className="media-upload-area">
             <label className="upload-btn">
-              <Upload size={20} /> Fayl yuklash
+              <Upload size={20} /> {T('Fayl yuklash')}
               <input type="file" multiple accept="image/*,video/*" onChange={handleFileChange} style={{ display: 'none' }} />
             </label>
             <div className="media-previews">
               {mediaFiles.map((mf, idx) => (
                 <div key={idx} className="media-preview">
-                  {mf.type === 'image' ? <img src={mf.preview} alt="preview" /> : <video src={mf.preview} controls />}
+                  {mf.type === 'image' ? <img src={mf.preview} alt="" /> : <video src={mf.preview} controls />}
                   <button type="button" onClick={() => removeMedia(idx)} className="remove-media"><X size={16} /></button>
                 </div>
               ))}
@@ -217,7 +228,7 @@ export default function EditEquipmentForm() {
         )}
         
         <button type="submit" disabled={submitting} className="submit-btn">
-          {submitting ? 'Yangilanmoqda...' : 'Saqlash'}
+          {submitting ? T('Yangilanmoqda...') : T('Saqlash')}
         </button>
       </form>
     </div>

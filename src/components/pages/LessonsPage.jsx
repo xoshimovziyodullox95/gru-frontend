@@ -7,6 +7,7 @@ import { Play, Lock, Crown, ArrowLeft, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import '../../styles/lessons.css';
 
+import { T } from '../utils/T';
 export default function LessonsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -17,17 +18,17 @@ export default function LessonsPage() {
 
   // Hozircha videolar yo‘q – placeholder
   const lessons = [
-    { id: 1, title: 'Biznes reja tuzish', duration: '12:30', comingSoon: true },
-    { id: 2, title: 'SMM strategiyasi', duration: '18:45', comingSoon: true },
-    { id: 3, title: 'Moliya boshqaruvi', duration: '22:10', comingSoon: true },
-    { id: 4, title: 'Xodimlar bilan ishlash', duration: '15:20', comingSoon: true },
-    { id: 5, title: 'Marketing asoslari', duration: '20:00', comingSoon: true },
-    { id: 6, title: 'Biznesni kengaytirish', duration: '25:30', comingSoon: true },
+    { id: 1, title: T('Biznes reja tuzish'), duration: '12:30', comingSoon: true },
+    { id: 2, title: T('SMM strategiyasi'), duration: '18:45', comingSoon: true },
+    { id: 3, title: T('Moliya boshqaruvi'), duration: '22:10', comingSoon: true },
+    { id: 4, title: T('Xodimlar bilan ishlash'), duration: '15:20', comingSoon: true },
+    { id: 5, title: T('Marketing asoslari'), duration: '20:00', comingSoon: true },
+    { id: 6, title: T('Biznesni kengaytirish'), duration: '25:30', comingSoon: true },
   ];
 
   const handleVideoClick = (lesson) => {
     if (lesson.comingSoon) {
-      toast.info('рџ“љ Bu darslik tez orada qo‘shiladi!', { duration: 3000 });
+      toast.info(T('📚 Bu darslik tez orada qo‘shiladi!'), { duration: 3000 });
       return;
     }
     if (isPremium) {
@@ -43,18 +44,18 @@ export default function LessonsPage() {
     <div className="lessons-page">
       <div className="lessons-header">
         <button className="lessons-back-btn" onClick={() => safeGoBack(navigate)}>
-          <ArrowLeft size={20} /> Orqaga
+          <ArrowLeft size={20} /> {T('Orqaga')}
         </button>
-        <h1>рџ“љ Video darsliklar</h1>
-        <p className="lessons-sub">Biznesingizni rivojlantirish uchun eng yaxshi treninglar</p>
+        <h1>{T('📚 Video darsliklar')}</h1>
+        <p className="lessons-sub">{T('Biznesingizni rivojlantirish uchun eng yaxshi treninglar')}</p>
       </div>
 
-      {/* рџ”Ґ TEZ ORADA BANNER */}
+      {/* 🔥 TEZ ORADA BANNER */}
       <div className="lessons-coming-banner">
         <Clock size={24} />
         <div>
-          <h3>Tez orada!</h3>
-          <p>Biz yangi video darsliklar ustida ishlayapmiz. Kuzatib turing!</p>
+          <h3>{T('Tez orada!')}</h3>
+          <p>{T('Biz yangi video darsliklar ustida ishlayapmiz. Kuzatib turing!')}</p>
         </div>
       </div>
 
@@ -70,7 +71,7 @@ export default function LessonsPage() {
                 <Play size={24} fill="#fff" color="#fff" />
               </div>
               {lesson.comingSoon && (
-                <div className="lesson-badge">Tez orada</div>
+                <div className="lesson-badge">{T('Tez orada')}</div>
               )}
             </div>
             <div className="lesson-info">
@@ -81,22 +82,21 @@ export default function LessonsPage() {
         ))}
       </div>
 
-      {/* рџ”Ґ PREMIUM MODAL */}
+      {/* 🔥 PREMIUM MODAL */}
       {showPremiumModal && (
         <div className="premium-modal-overlay" onClick={() => setShowPremiumModal(false)}>
           <div className="premium-modal" onClick={e => e.stopPropagation()}>
-            <div className="premium-modal-icon">рџ”’</div>
-            <h3>Premium aКјzolik kerak</h3>
+            <div className="premium-modal-icon">🔒</div>
+            <h3>{T('Premium aʼzolik kerak')}</h3>
             <p>
-              Video darsliklarni ko‘rish uchun <strong>Premium</strong> aКјzo bo‘lishingiz kerak.
-              Premium aКјzolik sizga barcha darsliklar, narxlar va qo‘shimcha imkoniyatlarni ochadi.
+              {T('Video darsliklarni ko‘rish uchun')} <strong>{T('Premium')}</strong> {T('aʼzo bo‘lishingiz kerak. Premium aʼzolik sizga barcha darsliklar, narxlar va qo‘shimcha imkoniyatlarni ochadi.')}
             </p>
             <div className="premium-modal-actions">
               <button className="premium-modal-btn" onClick={() => navigate('/premium')}>
-                <Crown size={16} /> Premium bo‘lish
+                <Crown size={16} /> {T('Premium bo‘lish')}
               </button>
               <button className="premium-modal-btn secondary" onClick={() => setShowPremiumModal(false)}>
-                Bekor qilish
+                {T('Bekor qilish')}
               </button>
             </div>
           </div>

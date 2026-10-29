@@ -8,6 +8,7 @@ import { LOCKED_CATEGORIES } from '../utils/lockedCategories';
 import SearchOverlay from '../common/SearchOverlay';
 import '../../styles/category-grid.css';
 
+import { T } from '../utils/T';
 const imageMap = {
   // ==================== AGRO (20 ta) ====================
   "Issiqxona": "/images/categories/level2/issiqxona.jpg",
@@ -338,7 +339,7 @@ export default function CategoryPage() {
                     <div className="cat-lock-icon-wrap">
                       <Lock size={28} />
                     </div>
-                    <span className="cat-lock-text">Tez kunda</span>
+                    <span className="cat-lock-text">{T('Tez kunda')}</span>
                   </div>
                 )}
               </>

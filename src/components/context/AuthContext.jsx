@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { markAccountCreated } from '../../hooks/useGuestMode';
+import { unregisterPush } from '../services/push';
 
 const AuthContext = createContext();
 
@@ -34,6 +35,8 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
+      // Token hali amal qilayotganda — bu qurilmaga keyingi foydalanuvchi uchun push bormasin
+      await unregisterPush().catch(() => {});
       await supabase.auth.signOut();
       setUser(null);
       // Savat qurilmada saqlanadi — keyingi foydalanuvchiga o'tib qolmasin

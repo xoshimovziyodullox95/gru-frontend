@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Link } from 'react-router-dom';
 import { Mail, Send } from 'lucide-react';
+import AuthBackButton from '../common/AuthBackButton';
 import '../../styles/auth.css';
 
+import { T } from '../utils/T';
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -22,15 +24,16 @@ export default function ForgotPasswordPage() {
     if (error) {
       setError(error.message);
     } else {
-      setMessage('Parolni tiklash linki emailingizga yuborildi. Iltimos, pochtangizni tekshiring.');
+      setMessage(T('Parolni tiklash linki emailingizga yuborildi. Iltimos, pochtangizni tekshiring.'));
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
+        <AuthBackButton />
         <h1 className="auth-title">ZUMO</h1>
-        <p className="auth-subtitle">Parolni tiklash</p>
+        <p className="auth-subtitle">{T('Parolni tiklash')}</p>
 
         <form onSubmit={handleReset}>
           {error && <div className="error-message">{error}</div>}
@@ -42,19 +45,19 @@ export default function ForgotPasswordPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email manzilingiz"
+              placeholder={T('Email manzilingiz')}
               className="auth-input"
               required
             />
           </div>
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Yuborilmoqda...' : <><Send size={18} /> Yuborish</>}
+            {loading ? T('Yuborilmoqda...') : <><Send size={18} /> {T('Yuborish')}</>}
           </button>
         </form>
 
         <p className="signup-link">
-          <Link to="/login">Kirish sahifasiga qaytish</Link>
+          <Link to="/login" replace>{T('Kirish sahifasiga qaytish')}</Link>
         </p>
       </div>
     </div>

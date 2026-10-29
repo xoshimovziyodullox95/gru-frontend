@@ -7,10 +7,11 @@ import { getReceivedOrders, updateOrderStatus, rejectOrder } from '../services/o
 import '../../styles/myOrders.css';
 import { formatPrice } from '../utils/formatPrice';
 
+import { T } from '../utils/T';
 const STATUS_FLOW = {
-  yangi: { next: 'qabul_qilindi', label: 'Qabul qilish' },
-  qabul_qilindi: { next: 'yetkazilmoqda', label: 'Yetkazishni boshlash' },
-  yetkazilmoqda: { next: 'yetkazildi', label: "Yetkazildi deb belgilash" },
+  yangi: { next: 'qabul_qilindi', label: T('Qabul qilish') },
+  qabul_qilindi: { next: 'yetkazilmoqda', label: T('Yetkazishni boshlash') },
+  yetkazilmoqda: { next: 'yetkazildi', label: T('Yetkazildi deb belgilash') },
   yetkazildi: { next: null, label: null },
   rad_etildi: { next: null, label: null },
   bekor_qilindi: { next: null, label: null },
@@ -67,21 +68,21 @@ export default function ReceivedOrdersPage() {
       const updatedOrder = res.data?.order || res.data;
       setOrders((prev) => prev.map((o) => (o._id === order._id ? updatedOrder : o)));
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setUpdatingId(null);
     }
   };
 
   const handleReject = async (order) => {
-    const reason = window.prompt('Rad etish sababi (xaridorga ko‘rinadi):', 'Tovar qolmagan');
+    const reason = window.prompt(T('Rad etish sababi (xaridorga ko‘rinadi):'), T('Tovar qolmagan'));
     if (reason === null) return;
     setUpdatingId(order._id);
     try {
       const res = await rejectOrder(order._id, reason);
       setOrders((prev) => prev.map((o) => (o._id === order._id ? res.data.order : o)));
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setUpdatingId(null);
     }
@@ -89,7 +90,7 @@ export default function ReceivedOrdersPage() {
 
   const confirmDelivery = async () => {
     if (!deliveryValue || Number(deliveryValue) <= 0) {
-      alert('Muddatni kiriting');
+      alert(T('Muddatni kiriting'));
       return;
     }
     const order = deliveryModal.order;
@@ -97,7 +98,7 @@ export default function ReceivedOrdersPage() {
     await doAdvance(order, 'qabul_qilindi', { value: Number(deliveryValue), unit: deliveryUnit });
   };
 
-  if (loading) return <div className="StatusScreen">Yuklanmoqda...</div>;
+  if (loading) return <div className="StatusScreen">{T('Yuklanmoqda...')}</div>;
 
   const active = orders.filter((o) => !CLOSED_STATUSES.includes(o.status));
   const archived = orders.filter((o) => CLOSED_STATUSES.includes(o.status));
@@ -118,7 +119,7 @@ export default function ReceivedOrdersPage() {
 
           <div className="mo-buyer-row">
             <img src={o.buyerId?.avatar_url || '/images/zumo-placeholder.svg'} alt="" className="mo-buyer-avatar" />
-            <span className="mo-item-seller">{o.buyerId?.fullName || o.buyerId?.full_name || 'Mijoz'}</span>
+            <span className="mo-item-seller">{o.buyerId?.fullName || o.buyerId?.full_name || T('Mijoz')}</span>
           </div>
 
           {/* TUMAN */}
@@ -128,13 +129,13 @@ export default function ReceivedOrdersPage() {
 
           {/* SKLAD HOLATI */}
           {o.stockCheck?.inStock === false && (
-            <span className="mo-stock-warning">Ogohlantirish: skladda yetarli emas (bor: {o.stockCheck.available})</span>
+            <span className="mo-stock-warning">{T('Ogohlantirish: skladda yetarli emas (bor:')} {o.stockCheck.available})</span>
           )}
 
           {/* YETKAZISH MUDDATI */}
           {o.deliveryEstimate?.value && (
             <span className="mo-delivery-estimate">
-              <Clock size={12} /> {o.deliveryEstimate.value} {o.deliveryEstimate.unit === 'soat' ? 'soatda' : 'kunda'} yetkaziladi
+              <Clock size={12} /> {o.deliveryEstimate.value} {o.deliveryEstimate.unit === 'soat' ? 'soatda' : 'kunda'} {T('yetkaziladi')}
             </span>
           )}
 
@@ -144,12 +145,12 @@ export default function ReceivedOrdersPage() {
               target="_blank" rel="noopener noreferrer"
               className="mo-location-link"
             >
-              <MapPin size={13} /> {o.buyerLocation.address || "Xaritada ko'rish"}
+              <MapPin size={13} /> {o.buyerLocation.address || T('Xaritada ko\'rish')}
             </a>
           )}
 
-          {!archived && <span className="mo-current-status">Holat: {STATUS_LABELS[o.status]}</span>}
-          {o.closeReason && <span className="mo-close-reason">Sabab: {o.closeReason}</span>}
+          {!archived && <span className="mo-current-status">{T('Holat:')} {STATUS_LABELS[o.status]}</span>}
+          {o.closeReason && <span className="mo-close-reason">{T('Sabab:')} {o.closeReason}</span>}
         </div>
 
         {!archived ? (
@@ -158,7 +159,7 @@ export default function ReceivedOrdersPage() {
               className="mo-chat-btn"
               onClick={() => navigate(`/chat?userId=${o.buyerId?._id}`)}
             >
-              <MessageCircle size={14} /> Chat
+              <MessageCircle size={14} /> {T('Chat')}
             </button>
             {flow?.next && (
               <button className="mo-advance-btn" disabled={updatingId === o._id} onClick={() => handleAdvance(o)}>
@@ -167,7 +168,7 @@ export default function ReceivedOrdersPage() {
             )}
             {o.status === 'yangi' && (
               <button className="mo-reject-btn" disabled={updatingId === o._id} onClick={() => handleReject(o)}>
-                Rad etish
+                {T('Rad etish')}
               </button>
             )}
           </div>
@@ -183,19 +184,19 @@ export default function ReceivedOrdersPage() {
   return (
     <div className="mo-page">
       <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
-        <ArrowLeft size={16} /> Orqaga
+        <ArrowLeft size={16} /> {T('Orqaga')}
       </button>
-      <h1 className="mo-title">Kelgan buyurtmalar ({active.length})</h1>
+      <h1 className="mo-title">{T('Kelgan buyurtmalar ({{count}})', { count: active.length })}</h1>
 
       {active.length === 0 ? (
-        <div className="mo-empty">Hozircha yangi buyurtma yo'q</div>
+        <div className="mo-empty">{T('Hozircha yangi buyurtma yo\'q')}</div>
       ) : (
         <div className="mo-list">{active.map((o) => renderOrderCard(o, false))}</div>
       )}
 
       {archived.length > 0 && (
         <>
-          <h3 className="mo-archive-title">Arxiv ({archived.length})</h3>
+          <h3 className="mo-archive-title">{T('Arxiv ({{count}})', { count: archived.length })}</h3>
           <div className="mo-list">{archived.map((o) => renderOrderCard(o, true))}</div>
         </>
       )}
@@ -205,25 +206,25 @@ export default function ReceivedOrdersPage() {
         <div className="mo-modal-overlay" onClick={() => setDeliveryModal(null)}>
           <div className="mo-modal" onClick={(e) => e.stopPropagation()}>
             <div className="mo-modal-header">
-              <h3><Clock size={18} /> Yetkazish muddatini tanlang</h3>
+              <h3><Clock size={18} /> {T('Yetkazish muddatini tanlang')}</h3>
               <button onClick={() => setDeliveryModal(null)}><X size={18} /></button>
             </div>
-            <p className="mo-modal-desc">"{deliveryModal.order.title}" buyurtmasini necha kun/soatda yetkazasiz?</p>
+            <p className="mo-modal-desc">"{deliveryModal.order.title}{T('" buyurtmasini necha kun/soatda yetkazasiz?')}</p>
             <div className="mo-modal-form">
               <input
                 type="number"
                 min="1"
-                placeholder="Son"
+                placeholder={T('Son')}
                 value={deliveryValue}
                 onChange={(e) => setDeliveryValue(e.target.value)}
                 autoFocus
               />
               <select value={deliveryUnit} onChange={(e) => setDeliveryUnit(e.target.value)}>
-                <option value="kun">kun</option>
-                <option value="soat">soat</option>
+                <option value="kun">{T('kun')}</option>
+                <option value="soat">{T('soat')}</option>
               </select>
             </div>
-            <button className="mo-modal-confirm" onClick={confirmDelivery}>Tasdiqlash va qabul qilish</button>
+            <button className="mo-modal-confirm" onClick={confirmDelivery}>{T('Tasdiqlash va qabul qilish')}</button>
           </div>
         </div>
       )}

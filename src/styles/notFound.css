@@ -45,5 +45,5 @@
 .nf-btn--primary {
   background: var(--cyan);
   border-color: var(--cyan);
-  color: #0A1628;
+  color: var(--on-accent);
 }

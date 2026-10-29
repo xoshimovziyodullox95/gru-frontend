@@ -1,9 +1,10 @@
+import { T } from './T';
 // src/utils/foodCategories.js
 // Global "Mahsulot" katalogi — Marketplace > Tovarlar > Mahsulot bo'limi uchun
 
 export const CATEGORY_CATALOGS = {
   sabzavotVaMevalar: {
-    label: "Sabzavot va mevalar",
+    label: T('Sabzavot va mevalar'),
     image: '/images/logo/cat-sabzavot-meva.jpg',
     items: {
       sabzavotlar: "Sabzavotlar",
@@ -13,7 +14,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   qahvaVaTayyorOvqat: {
-    label: "Tayyor ovqat",
+    label: T('Tayyor ovqat'),
     image: '/images/logo/cat-qahva-tayyor.jpg',
     items: {
       qahvaVaChoy: "Qahva va choy",
@@ -22,7 +23,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   sutMahsulotlari: {
-    label: "Sut mahsulotlari",
+    label: T('Sut mahsulotlari'),
     image: '/images/logo/cat-sut.jpg',
     items: {
       sut: "Sut",
@@ -33,7 +34,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   goshtParrandaVaBaliq: {
-    label: "Go'sht mahsulotlari",
+    label: T('Go\'sht mahsulotlari'),
     image: '/images/logo/cat-gosht.jpg',
     items: {
       molGoshti: "Mol go'shti",
@@ -44,7 +45,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   suvVaIchimliklar: {
-    label: "Suv va ichimliklar",
+    label: T('Suv va ichimliklar'),
     image: '/images/logo/cat-ichimlik.jpg',
     items: {
       suv: "Suv",
@@ -55,7 +56,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   shirinliklarVaDesertlar: {
-    label: "Shirinliklar va desertlar",
+    label: T('Shirinliklar va desertlar'),
     image: '/images/logo/cat-shirinlik.jpg',
     items: {
       shokolad: "Shokolad",
@@ -65,7 +66,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   bakaleya: {
-    label: "Bakaleya",
+    label: T('Bakaleya'),
     image: '/images/logo/cat-bakaleya.jpg',
     items: {
       yormalar: "Yormalar",
@@ -76,7 +77,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   novvoyxona: {
-    label: "Non mahsulotlari",
+    label: T('Non mahsulotlari'),
     image: '/images/logo/cat-non.jpg',
     items: {
       non: "Non",
@@ -85,7 +86,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   muzlatilganMahsulotlar: {
-    label: "Muzlatilgan mahsulotlar",
+    label: T('Muzlatilgan mahsulotlar'),
     image: '/images/logo/cat-muzlatilgan.jpg',
     items: {
       muzlatilganSabzavotMeva: "Muzlatilgan sabzavot/meva",
@@ -94,7 +95,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   bolalarVaOnalarUchun: {
-    label: "Bolalar va onalar uchun",
+    label: T('Bolalar va onalar uchun'),
     image: '/images/logo/cat-bolalar.jpg',
     items: {
       bolalarTaomi: "Bolalar taomi",
@@ -102,7 +103,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   uyHayvonlariUchun: {
-    label: "Uy hayvonlari uchun",
+    label: T('Uy hayvonlari uchun'),
     image: '/images/logo/cat-uyhayvon.jpg',
     items: {
       itOvqati: "It ovqati",
@@ -110,7 +111,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   gozallikVaGigiyena: {
-    label: "Go'zallik va gigiyena",
+    label: T('Go\'zallik va gigiyena'),
     image: '/images/logo/cat-gozallik.jpg',
     items: {
       kosmetika: "Kosmetika",
@@ -118,7 +119,7 @@ export const CATEGORY_CATALOGS = {
     },
   },
   uyUchunTovarlar: {
-    label: "Uy uchun tovarlar",
+    label: T('Uy uchun tovarlar'),
     image: '/images/logo/cat-uytovar.jpg',
     items: {
       maishiyKimyo: "Maishiy kimyo",

@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, Wallet, Receipt, ChevronRight } from 'lucide-
 import { getMyBusinesses, getPnL, getExpenses } from '../services/business';
 import '../../styles/businessSummaryWidget.css';
 
+import { T } from '../utils/T';
 export default function BusinessSummaryWidget() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -52,22 +53,22 @@ export default function BusinessSummaryWidget() {
   return (
     <div className="bsw-card" onClick={() => navigate('/business')}>
       <div className="bsw-header">
-        <span className="bsw-title">{data.businessName} — moliyaviy ko'rsatkichlar</span>
+        <span className="bsw-title">{data.businessName} {T('— moliyaviy ko\'rsatkichlar')}</span>
         <ChevronRight size={16} />
       </div>
       <div className="bsw-stats">
         <div className="bsw-stat">
           <TrendingUp size={16} className="bsw-icon-green" />
           <div>
-            <span className="bsw-stat-value">{data.revenue.toLocaleString()} so'm</span>
-            <span className="bsw-stat-label">Sotuvlar</span>
+            <span className="bsw-stat-value">{data.revenue.toLocaleString()} {T('so\'m')}</span>
+            <span className="bsw-stat-label">{T('Sotuvlar')}</span>
           </div>
         </div>
         <div className="bsw-stat">
           <Receipt size={16} className="bsw-icon-amber" />
           <div>
-            <span className="bsw-stat-value">{data.expenses.toLocaleString()} so'm</span>
-            <span className="bsw-stat-label">Xarajatlar</span>
+            <span className="bsw-stat-value">{data.expenses.toLocaleString()} {T('so\'m')}</span>
+            <span className="bsw-stat-label">{T('Xarajatlar')}</span>
           </div>
         </div>
         <div className="bsw-stat">
@@ -78,9 +79,9 @@ export default function BusinessSummaryWidget() {
           )}
           <div>
             <span className={`bsw-stat-value ${data.profit >= 0 ? 'bsw-positive' : 'bsw-negative'}`}>
-              {data.profit.toLocaleString()} so'm
+              {data.profit.toLocaleString()} {T('so\'m')}
             </span>
-            <span className="bsw-stat-label">Sof foyda</span>
+            <span className="bsw-stat-label">{T('Sof foyda')}</span>
           </div>
         </div>
       </div>

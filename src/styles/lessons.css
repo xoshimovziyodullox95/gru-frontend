@@ -104,13 +104,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0,0,0,0.6);
+  background: rgba(var(--surface-rgb), 0.6);
   border-radius: 50%;
   padding: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255,255,255,0.2);
+  border: 2px solid rgba(var(--text-rgb), 0.2);
   transition: all 0.3s;
 }
 .lesson-card:not(.coming-soon):hover .lesson-play-icon {
@@ -148,7 +148,7 @@
 .premium-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(var(--surface-rgb), 0.7);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;

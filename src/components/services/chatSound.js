@@ -23,10 +23,24 @@ export function unlockAudio() {
 }
 
 export function isChatMuted() {
-  return localStorage.getItem('chat_muted') === '1';
+  try {
+    return localStorage.getItem('chat_muted') === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function setChatMuted(muted) {
+  try {
+    localStorage.setItem('chat_muted', muted ? '1' : '0');
+  } catch {
+    // saqlab bo'lmasa ham ilova ishlayveradi
+  }
 }
 
 export function playDing() {
+  // Sozlamalardagi "Ovozli signal" o'chirilgan bo'lsa hech qayerda chalinmaydi
+  if (isChatMuted()) return;
   try {
     const c = getCtx();
     if (!c) return;

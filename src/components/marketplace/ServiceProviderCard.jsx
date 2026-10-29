@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Building2, ArrowUpRight } from 'lucide-react';
 
+import { T } from '../utils/T';
 export default function ServiceProviderCard({
   id,
   name,
@@ -39,8 +40,8 @@ export default function ServiceProviderCard({
         {description && <p className="uc-desc bsc-chip-desc">{description}</p>}
 
         <div className="bsc-chip-footer">
-          <span className="bsc-chip-details-label">{price_range || 'Narx individual'}</span>
-          <span className="bsc-chip-arrow-btn" aria-label="Batafsil">
+          <span className="bsc-chip-details-label">{price_range || T('Narx individual')}</span>
+          <span className="bsc-chip-arrow-btn" aria-label={T('Batafsil')}>
             <ArrowUpRight size={18} />
           </span>
         </div>

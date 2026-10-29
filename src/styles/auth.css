@@ -77,8 +77,8 @@
 /* Active holat */
 .role-option.active {
   border-color: var(--cyan);
-  background: rgba(0, 212, 255, 0.06);
-  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.08);
+  background: rgba(var(--cyan-rgb), 0.06);
+  box-shadow: 0 0 0 4px rgba(var(--cyan-rgb), 0.08);
 }
 .role-option.active svg {
   color: var(--cyan);
@@ -93,8 +93,8 @@
 
 /* Hover */
 .role-option:hover:not(.active) {
-  border-color: rgba(0, 212, 255, 0.3);
-  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(var(--cyan-rgb), 0.3);
+  background: rgba(var(--text-rgb), 0.02);
 }
 
 /* Responsive – kichik ekranda ustun bo‘lib qoladi */
@@ -167,7 +167,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--text-rgb), 0.04);
   border: 1px solid var(--border);
   border-radius: 2.5rem;
   padding: 0.75rem;
@@ -237,7 +237,7 @@
   color: var(--text);
   font-size: 0.9rem;
   transition: all 0.2s;
-  box-shadow: inset 0 1px 2px var(--shadow), 0 1px 1px rgba(255, 255, 255, 0.02);
+  box-shadow: inset 0 1px 2px var(--shadow), 0 1px 1px rgba(var(--text-rgb), 0.02);
 }
 
 .auth-input:focus {
@@ -371,3 +371,30 @@
     font-size: 1.8rem;
   }
 }
+/* Orqaga tugmasi (AuthBackButton) */
+.auth-back-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  z-index: 2;
+}
+.auth-back-btn:active { transform: scale(0.94); }
+
+/* Apple tugmasi — Apple qoidasiga ko'ra qora fon, oq yozuv */
+.apple-btn {
+  margin-top: 10px;
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+.apple-btn:hover { background: #1a1a1a; }

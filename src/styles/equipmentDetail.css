@@ -46,13 +46,13 @@
 .equipment-gallery-main {
   border-radius: 16px;
   overflow: hidden;
-  background: #0a0a0a;
+  background: var(--bg);
   aspect-ratio: 16 / 9;
 
 }
 
 .cart-add-block {
-  background: rgba(255,255,255,0.05);
+  background: rgba(var(--text-rgb), 0.05);
   border-radius: 12px;
   padding: 16px;
   margin-top: 12px;
@@ -87,11 +87,11 @@
 .qty-input {
   width: 60px;
   text-align: center;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(var(--text-rgb), 0.05);
+  border: 1px solid rgba(var(--text-rgb), 0.1);
   border-radius: 6px;
   padding: 6px 0;
-  color: #fff;
+  color: var(--text);
   font-size: 16px;
   font-weight: 600;
 }
@@ -174,7 +174,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px;
-  background: var(--bg-secondary, #1e1e1e);
+  background: var(--bg-secondary, var(--surface));
   border-radius: 16px;
   padding: 16px;
 }
@@ -184,31 +184,31 @@
   flex-direction: column;
   gap: 4px;
   padding: 8px 12px;
-  background: var(--bg-primary, #0a0a0a);
+  background: var(--bg-primary, var(--bg));
   border-radius: 10px;
 }
 
 .spec-label {
   font-size: 0.75rem;
-  color: var(--text-secondary, #aaa);
+  color: var(--textMuted);
 }
 
 .spec-value {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary, #fff);
+  color: var(--text);
 }
 
 .supplier-name {
   font-size: 15px;
   font-weight: 500;
-  color: var(--text-primary, #fff);
+  color: var(--text);
   margin: 4px 0;
 }
 
 .supplier-contact {
   font-size: 14px;
-  color: var(--text-secondary, #aaa);
+  color: var(--textMuted);
 }
 
 @media (max-width: 600px) {
@@ -513,7 +513,7 @@
 .doc-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.88);
+  background: rgba(var(--surface-rgb), 0.88);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -550,8 +550,8 @@
   gap: 8px;
 }
 .doc-modal-close {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(var(--text-rgb), 0.07);
+  border: 1px solid rgba(var(--text-rgb), 0.12);
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -743,3 +743,4 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+.eq-classified-note, .eq-negotiable-note { display: block; margin: 8px 0 0; color: var(--textMuted); font-size: .82rem; line-height: 1.45; }

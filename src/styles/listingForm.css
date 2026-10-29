@@ -1,0 +1,332 @@
+/* ============================================================
+   LISTING FORM — e'lon qo'shish (tovar, joy) va tur tanlash
+   Ranglar tokenlardan: qorong'i va yorug' rejimda ishlaydi
+   ============================================================ */
+
+.lf-page {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px 16px calc(120px + env(safe-area-inset-bottom));
+  color: var(--text);
+}
+.lf-page *, .lf-page *::before, .lf-page *::after { box-sizing: border-box; }
+
+.lf-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.lf-head h1 { margin: 0; font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+.lf-head p { margin: 2px 0 0; font-size: 0.85rem; color: var(--textMuted); }
+.lf-back {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(var(--text-rgb), 0.06);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ---------- Bo'limlar ---------- */
+.lf-section {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid rgba(var(--text-rgb), 0.06);
+}
+.lf-section__title { margin: 0 0 12px; font-size: 1rem; font-weight: 800; }
+.lf-section > * + * { margin-top: 14px; }
+.lf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lf-row--price { grid-template-columns: 1fr auto; align-items: end; }
+
+/* ---------- Maydon ---------- */
+.lf-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.lf-field__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--textSoft);
+}
+.lf-field__label small { font-weight: 600; color: var(--textMuted); }
+.lf-field input,
+.lf-field textarea,
+.lf-field select {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1.5px solid rgba(var(--text-rgb), 0.1);
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.15s ease;
+}
+.lf-field textarea { resize: vertical; line-height: 1.5; }
+.lf-field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--textMuted) 50%), linear-gradient(135deg, var(--textMuted) 50%, transparent 50%); background-position: calc(100% - 20px) 21px, calc(100% - 15px) 21px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px; }
+.lf-field input:focus,
+.lf-field textarea:focus,
+.lf-field select:focus { outline: none; border-color: var(--cyan); }
+.lf-field input::placeholder,
+.lf-field textarea::placeholder { color: var(--textMuted); opacity: 0.75; }
+.lf-field.has-error input,
+.lf-field.has-error textarea,
+.lf-field.has-error select { border-color: var(--danger); }
+.lf-field__hint { font-size: 0.78rem; line-height: 1.4; color: var(--textMuted); }
+.lf-field__error { font-size: 0.78rem; font-weight: 600; color: var(--danger); }
+
+.lf-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--textSoft);
+  cursor: pointer;
+}
+.lf-check input { width: 18px; height: 18px; accent-color: var(--cyan); }
+
+/* ---------- Segment ---------- */
+.lf-seg {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--bg);
+}
+.lf-seg button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  color: var(--textMuted);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lf-seg button.is-on { background: var(--cyan); color: var(--on-accent); }
+
+/* ---------- Kategoriya kartochkalari ---------- */
+.lf-cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.lf-cat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 60px;
+  padding: 10px 12px;
+  border: 1.5px solid rgba(var(--text-rgb), 0.08);
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.lf-cat__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(var(--cyan-rgb), 0.12);
+  color: var(--cyan);
+}
+.lf-cat span:last-child { font-size: 0.9rem; font-weight: 700; line-height: 1.25; }
+.lf-cat.is-on { border-color: var(--cyan); background: rgba(var(--cyan-rgb), 0.08); }
+
+/* ---------- Rasmlar ---------- */
+.lf-photos__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.lf-photo {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--bg);
+}
+.lf-photo img, .lf-photo video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lf-photo.is-cover { outline: 2px solid var(--cyan); outline-offset: -2px; }
+.lf-photo__badge {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--cyan);
+  color: var(--on-accent);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.lf-photo__remove, .lf-photo__cover {
+  position: absolute;
+  top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+}
+.lf-photo__remove { right: 6px; }
+.lf-photo__cover { left: 6px; }
+.lf-photo--add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1.5px dashed rgba(var(--cyan-rgb), 0.5);
+  color: var(--cyan);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.lf-photos.has-error .lf-photo--add { border-color: var(--danger); color: var(--danger); }
+.lf-photos > p { margin: 8px 0 0; }
+
+/* ---------- Pastki tugma ---------- */
+.lf-submit { margin-top: 18px; }
+.lf-submit button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 54px;
+  border: none;
+  border-radius: 16px;
+  background: var(--cyan);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(var(--cyan-rgb), 0.3);
+}
+.lf-submit button:disabled { opacity: 0.6; cursor: not-allowed; }
+.lf-progress { height: 4px; margin-top: 8px; border-radius: 4px; background: rgba(var(--text-rgb), 0.08); overflow: hidden; }
+.lf-progress span { display: block; height: 100%; background: var(--cyan); transition: width 0.2s ease; }
+.lf-spin { animation: lf-rotate 0.9s linear infinite; }
+@keyframes lf-rotate { to { transform: rotate(360deg); } }
+
+/* ---------- Tur tanlash sahifasi ---------- */
+.lf-types { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.lf-type {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px;
+  border: 1.5px solid rgba(var(--text-rgb), 0.07);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+.lf-type:hover { border-color: rgba(var(--cyan-rgb), 0.45); }
+.lf-type:active { transform: scale(0.99); }
+.lf-type__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(var(--cyan-rgb), 0.12);
+  color: var(--cyan);
+}
+.lf-type__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.lf-type__text strong { font-size: 1.05rem; font-weight: 800; }
+.lf-type__text span { font-size: 0.84rem; line-height: 1.4; color: var(--textMuted); }
+.lf-type__chev { flex-shrink: 0; color: var(--textMuted); }
+.lf-tip {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(var(--cyan-rgb), 0.08);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--textSoft);
+}
+.lf-tip svg { flex-shrink: 0; color: var(--cyan); margin-top: 2px; }
+
+@media (max-width: 380px) {
+  .lf-row { grid-template-columns: 1fr; }
+  .lf-row--price { grid-template-columns: 1fr; }
+  .lf-cats { grid-template-columns: 1fr; }
+}
+
+/* 12 ta tovar kategoriyasi — bir xil plitkalar: ikonka tepada, nom pastda (Uzum uslubi) */
+.lf-cats--grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.lf-cats--grid .lf-cat {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 6px;
+  min-height: 92px;
+  padding: 12px 6px 10px;
+  border-radius: 14px;
+  text-align: center;
+}
+.lf-cats--grid .lf-cat__icon { width: 36px; height: 36px; border-radius: 11px; }
+.lf-cats--grid .lf-cat span:last-child {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.74rem;
+  font-weight: 650;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.lf-cats--grid .lf-cat.is-on { box-shadow: 0 0 0 1px var(--cyan) inset; }
+.lf-cats--grid .lf-cat.is-on .lf-cat__icon { background: var(--cyan); color: var(--on-accent, #04121f); }
+@media (min-width: 640px) {
+  .lf-cats--grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 340px) {
+  .lf-cats--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Ichki bo'lim — chiplar */
+.lf-subs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+@media (min-width: 640px) { .lf-subs { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.lf-sub {
+  min-height: 40px;
+  padding: 6px 10px;
+  border-radius: 12px !important;
+  border: 1.5px solid rgba(var(--text-rgb), 0.1);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+.lf-sub.is-on { border-color: var(--cyan); background: rgba(var(--cyan-rgb), 0.12); color: var(--cyan); font-weight: 700; }

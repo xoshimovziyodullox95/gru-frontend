@@ -1,12 +1,10 @@
-/* premium.css */
+/* premium.css — fonda video, shisha tarif kartalari */
 .premium-page {
   position: relative;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
+  background: #010515;
 }
 
 .premium-bg-video {
@@ -15,8 +13,6 @@
   left: 50%;
   min-width: 100%;
   min-height: 100%;
-  width: auto;
-  height: auto;
   transform: translate(-50%, -50%);
   object-fit: cover;
   z-index: 0;
@@ -26,407 +22,253 @@
 .premium-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at center 30%,
-    rgba(1, 10, 40, 0.4) 0%,
-    rgba(1, 5, 21, 0.8) 60%,
-    #010515 100%
-  );
   z-index: 1;
+  background: radial-gradient(circle at center 30%, rgba(1, 10, 40, 0.4) 0%, rgba(1, 5, 21, 0.82) 60%, #010515 100%);
 }
 
-/* ===== BEPUL vs PREMIUM TAQQOSLASH ===== */
-.premium-comparison {
-  margin-top: 2.5rem;
-  background: rgba(10, 17, 40, 0.6);
-  backdrop-filter: blur(12px);
-  border-radius: 1.5rem;
-  padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-.comparison-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 1rem;
-}
-.comparison-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-.comparison-row {
+.premium-back {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 3;
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 0.5rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-.comparison-row.header {
-  font-weight: 600;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
   color: #fff;
-  background: rgba(0, 212, 255, 0.06);
-  border-bottom: 2px solid var(--cyan);
-}
-.comparison-row .comp-free {
-  color: #6b7280;
-}
-.comparison-row .comp-premium {
-  color: var(--cyan);
-  font-weight: 500;
-}
-@media (max-width: 600px) {
-  .comparison-row {
-    grid-template-columns: 1fr;
-    gap: 0.1rem;
-    padding: 0.5rem;
-  }
-  .comparison-row .comp-free,
-  .comparison-row .comp-premium {
-    font-size: 0.8rem;
-  }
+  background: rgba(10, 17, 40, 0.6);
+  cursor: pointer;
 }
 
 .premium-content {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 /* ===== HEADER ===== */
 .premium-header {
-  text-align: center;
   margin-bottom: 2rem;
+  text-align: center;
 }
-.premium-header .premium-header-icon {
-  margin-bottom: 0.5rem;
-  filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.3));
+.premium-header-icon {
+  display: block;
+  margin: 0 auto 0.5rem;
+  filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.35));
 }
 .premium-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
+  margin: 0 0 0.35rem;
+  font-size: 2.3rem;
+  font-weight: 800;
   color: #fff;
 }
 .premium-header p {
-  font-size: 1.1rem;
+  margin: 0;
+  font-size: 1.05rem;
   color: #a0c8e8;
 }
-
-/* ===== TOGGLE ===== */
-.premium-toggle {
-  display: flex;
+.premium-active {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-.premium-toggle span {
-  font-weight: 500;
-  color: #6b7280;
-  transition: color 0.2s;
-}
-.premium-toggle span.active {
-  color: #fff;
-}
-.premium-toggle .discount {
-  color: #22c55e;
-  font-size: 0.7rem;
+  gap: 6px;
+  margin-top: 0.9rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  color: #4ade80;
   background: rgba(34, 197, 94, 0.15);
-  padding: 0.1rem 0.5rem;
-  border-radius: 0.5rem;
-}
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 26px;
-}
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 26px;
-  transition: 0.3s;
-}
-.slider::before {
-  content: '';
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background: #fff;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-.toggle-switch input:checked + .slider {
-  background: var(--cyan);
-}
-.toggle-switch input:checked + .slider::before {
-  transform: translateX(24px);
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 /* ===== PLANS ===== */
 .premium-plans {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
-/* Karta: bitta joyda to'liq ta'riflangan (ilgari 2 marta takrorlanib,
-   bir-birini bosib ketgan edi) */
 .plan-card {
-  background: rgba(10, 17, 40, 0.7);
-  backdrop-filter: blur(16px);
-  border-radius: 1.5rem;
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --tone: #90caf9;
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  border: 1.5px solid color-mix(in srgb, var(--tone) 28%, transparent);
+  border-radius: 1.5rem;
+  background: rgba(10, 17, 40, 0.72);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0, 50, 150, 0.1);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.plan-card--blue { --tone: #4b9eff; }
+.plan-card--gold {
+  --tone: #ffd24a;
+  border-color: color-mix(in srgb, var(--tone) 60%, transparent);
+  box-shadow: 0 10px 40px rgba(255, 210, 74, 0.12);
 }
 .plan-card:hover {
-  transform: translateY(-8px);
-  border-color: #4B9EFF !important;
-  box-shadow: 0 16px 48px rgba(0, 50, 150, 0.15), 0 0 20px rgba(75, 158, 255, 0.08);
+  transform: translateY(-6px);
+  border-color: var(--tone);
 }
-.plan-card:hover .plan-header {
-  background: rgba(75, 158, 255, 0.05) !important;
-}
-.plan-card.popular {
-  border-color: #4B9EFF;
-}
-.plan-card .popular-badge {
+
+.popular-badge {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: #4B9EFF;
-  color: #fff;
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 0.15rem 0.8rem;
+  top: 0.85rem;
+  right: 0.85rem;
+  padding: 0.2rem 0.7rem;
   border-radius: 2rem;
+  color: #1a1300;
+  background: var(--tone);
+  font-size: 0.66rem;
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
+
 .plan-header {
-  padding: 1.5rem 1.5rem 1rem;
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 1.6rem 1.5rem 1.2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tone) 10%, transparent), transparent);
+}
+.plan-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 14%, transparent);
 }
 .plan-header h2 {
-  margin: 0.5rem 0 0.25rem;
-  font-size: 1.25rem;
+  margin: 0.7rem 0 0.4rem;
+  font-size: 1.2rem;
+  font-weight: 700;
   color: #fff;
+}
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 .plan-price .price {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 800;
+  line-height: 1.1;
   color: #fff;
+  letter-spacing: -0.01em;
 }
 .plan-price .period {
   font-size: 0.85rem;
   color: #8ab0d0;
 }
 .plan-for {
-  font-size: 0.8rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
+  min-height: 1.2em;
+  margin: 0.4rem 0 0;
+  font-size: 0.82rem;
+  color: #8ab0d0;
 }
+.plan-card--gold .plan-for { color: #4ade80; font-weight: 700; }
 
+/* Imkoniyatlar: belgi | nom | qiymat — hamma kartada bir xil ustunlar */
 .plan-features {
-  list-style: none;
-  padding: 1.5rem;
-  margin: 0;
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 1rem 1.25rem 1.25rem;
+  list-style: none;
 }
 .feature-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
   align-items: center;
   gap: 0.6rem;
-  font-size: 0.9rem;
-  color: #c0dff5;
-  padding: 0.25rem 0.3rem;
-  border-radius: 0.4rem;
-  transition: background 0.2s;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+  font-size: 0.88rem;
+  color: #d6ebfa;
 }
-.feature-item .feature-label {
-  flex: 1;
+.feature-item:last-child { border-bottom: 0; }
+.feature-check {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #04121f;
+  background: var(--tone);
 }
-.feature-item .feature-value {
+.feature-value {
   font-size: 0.8rem;
+  font-weight: 600;
   color: #8ab0d0;
-  opacity: 0.8;
+  text-align: right;
 }
-.feature-item.disabled {
-  opacity: 0.55;
-  text-decoration: line-through;
-  text-decoration-color: #ff6b6b;
-  text-decoration-thickness: 1.5px;
-}
-.feature-item.disabled .feature-value {
-  color: #6b7280;
-}
-.feature-item:hover {
-  background: rgba(75, 158, 255, 0.04);
-}
+.feature-item.disabled { color: #6b7a90; }
+.feature-item.disabled .feature-check { color: #8a97ab; background: rgba(255, 255, 255, 0.08); }
+.feature-item.disabled .feature-value { color: #5c6a80; }
 
 .plan-btn {
-  margin: 0 1.5rem 1.5rem;
-  padding: 0.7rem;
-  border: none;
+  height: 48px;
+  margin: 0 1.25rem 1.4rem;
+  border: 0;
   border-radius: 2rem;
+  color: #04121f;
+  background: var(--tone);
+  font: inherit;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  transition: filter 0.2s, transform 0.2s;
 }
-.plan-btn .btn-text {
-  transition: all 0.3s;
+.plan-card--free .plan-btn {
+  color: #90caf9;
+  background: transparent;
+  border: 1.5px solid color-mix(in srgb, var(--tone) 55%, transparent);
 }
-.plan-btn .btn-line {
-  position: absolute;
-  bottom: 30%;
-  left: 10%;
-  width: 0;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.6);
-  transition: width 0.4s ease;
-}
-.plan-btn:hover .btn-line {
-  width: 80%;
-}
-.plan-btn:hover .btn-text {
-  text-decoration: line-through;
-  opacity: 0.6;
-}
-.plan-btn:hover {
-  filter: brightness(1.1);
-  transform: scale(1.02);
-}
-.plan-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.plan-card--gold .plan-btn { background: linear-gradient(135deg, #ffe58f, #ffc928); }
+.plan-btn:hover { filter: brightness(1.08); }
+.plan-btn:active { transform: scale(0.98); }
+.plan-btn:disabled { opacity: 0.55; cursor: default; }
 
-/* ===== TRUST NOTE (yangi) ===== */
 .premium-trust {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  margin: 0;
   color: #8ab0d0;
   font-size: 0.85rem;
-  margin-bottom: 2rem;
+  text-align: center;
 }
 
-/* ===== COMPARISON ===== */
-.comparison-section {
-  margin-top: 2rem;
-  background: rgba(10, 17, 40, 0.6);
-  backdrop-filter: blur(12px);
-  border-radius: 1.5rem;
-  padding: 2rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-.comparison-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-.comparison-header h2 {
-  color: #fff;
-  font-size: 1.3rem;
-  margin: 0;
-}
-.comparison-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-.comparison-row {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-.comparison-row.header {
-  font-weight: 600;
-  color: #fff;
-  background: rgba(0, 212, 255, 0.06);
-  border-bottom: 2px solid var(--cyan);
-}
-.comparison-row .comp-free {
-  color: #6b7280;
-}
-.comparison-row .comp-premium {
-  color: var(--cyan);
-  font-weight: 500;
-}
-
-/* ===== RESPONSIVE (bitta yagona joyda, ilgari 768px va 600px
-   bloklari deyarli bir xil bo'lib, zid ketgan edi) ===== */
-@media (max-width: 768px) {
-  .premium-header h1 {
-    font-size: 2rem;
-  }
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
   .premium-plans {
     grid-template-columns: 1fr;
-    max-width: 400px;
-    margin: 0 auto 2rem;
+    max-width: 440px;
+    margin: 0 auto 1.75rem;
   }
-  .feature-item {
-    font-size: 0.8rem;
-  }
+  /* Telefonda eng foydali tarif birinchi ko'rinadi */
+  .plan-card--gold { order: -1; }
 }
 
 @media (max-width: 600px) {
-  .premium-page {
-    padding: 1.5rem 1rem;
-  }
-  .comparison-row {
-    grid-template-columns: 1fr;
-    gap: 0.1rem;
-    padding: 0.5rem;
-  }
-  .comparison-row .comp-free,
-  .comparison-row .comp-premium {
-    font-size: 0.8rem;
-  }
-  .premium-trust {
-    font-size: 0.78rem;
-    text-align: center;
-  }
+  .premium-page { padding: 4rem 1rem calc(1.5rem + env(safe-area-inset-bottom)); }
+  .premium-header h1 { font-size: 1.8rem; }
+  .premium-header p { font-size: 0.95rem; }
+  .premium-trust { font-size: 0.78rem; }
 }

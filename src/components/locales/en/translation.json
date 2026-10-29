@@ -57,7 +57,13 @@
     "next": "Next",
     "untitled": "Listing",
     "scrollTop": "Back to top",
-    "share": "Share"
+    "share": "Share",
+    "sum": "UZS",
+    "min": "min",
+    "new": "new",
+    "call": "Call",
+    "service": "Service",
+    "kmAway": "{{km}} km away"
   },
   "home": {
     "heroPhrases": [
@@ -106,7 +112,13 @@
       "businessTitle": "Own a business?",
       "businessSubtitle": "Grow it"
     },
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "ctaRequest": "Need a pro?",
+    "ctaRequestSub": "Send a request",
+    "ctaMarketplaceSub": "Products & places",
+    "ctaBank": "Bank products",
+    "ctaBankSub": "Financial services",
+    "ctaBusinessSub": "Pick and start"
   },
   "categories": {
     "Agro": "Agriculture",
@@ -123,15 +135,15 @@
       "title": "Bank xizmatlari",
       "individual": "Jismoniy shaxs",
       "legal": "Yuridik shaxs",
-      "empty": "Bu bo'limda hozircha xizmat yo'q",
+      "empty": "No services in this section yet",
       "scrollTop": "Yuqoriga",
       "categories": {
         "credit": "Kreditlar",
         "cards": "Kartalar",
         "deposits": "Depozitlar",
         "pko": "Naqd pul / PKO",
-        "moneyTransfers": "Pul o‘tkazmalari",
-        "qrPayment": "QR to‘lovlar"
+        "moneyTransfers": "Money transfers",
+        "qrPayment": "QR payments"
       }
     },
     "types": {
@@ -206,7 +218,7 @@
       "thankYou": "Thank you! ✓"
     },
     "copyright": {
-      "text": "© {year} ZUMO Corporation — All rights reserved",
+      "text": "© {{year}} ZUMO Corporation — All rights reserved",
       "madeWith": "Made with love in Uzbekistan"
     }
   },
@@ -397,11 +409,11 @@
   },
   "profile": {
     "loading": "Loading...",
-    "error": "Profile not found",
+    "error": "Something went wrong",
     "back": "Back",
     "edit": "Edit",
     "save": "Save",
-    "cancelPremium": "Cancel premium",
+    "cancelPremium": "Cancel",
     "cancelling": "Cancelling...",
     "becomePremium": "Become premium",
     "premiumBadge": "Premium member",
@@ -410,15 +422,15 @@
     "roleBusiness": "Business owner",
     "listingLimit": "{current}/{max} listings",
     "unlimited": "∞",
-    "subscribe": "Subscribe",
+    "subscribe": "Follow",
     "unsubscribe": "Unsubscribe",
-    "subscribers": "Subscribers",
-    "subscriptions": "Subscriptions",
+    "subscribers": "Followers",
+    "subscriptions": "Following",
     "videos": "Videos",
     "emptyListings": "No listings yet",
     "tabs": {
-      "locations": "Locations",
-      "equipment": "Equipment",
+      "locations": "Places",
+      "equipment": "Products",
       "services": "Services",
       "videos": "Videos"
     },
@@ -426,15 +438,22 @@
       "edit": "Edit",
       "delete": "Delete",
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "branches": "My branches",
+      "receivedOrders": "Incoming orders",
+      "broadcast": "Send a promo",
+      "erp": "ZUMO Business",
+      "erpHint": "Stock, purchases, POS",
+      "stats": "Analytics"
     },
     "businessDashboard": {
-      "title": "Biznes statistikasi",
-      "locations": "Joylar",
-      "equipment": "Texnikalar",
-      "services": "Xizmatlar",
-      "views": "Ko'rishlar",
-      "details": "Batafsil statistika"
+      "title": "Business dashboard",
+      "locations": "Places",
+      "equipment": "Products",
+      "services": "Services",
+      "views": "Views",
+      "details": "Details",
+      "subtitle": "How your listings perform"
     },
     "bioPlaceholder": "Hi! I manage my listings on ZUMO.",
     "avatarUpload": "Upload avatar",
@@ -467,7 +486,69 @@
     },
     "roleCompany": "Company",
     "roleSeller": "Seller",
-    "becomeProvider": "Become a provider"
+    "becomeProvider": "Work as a pro",
+    "provider": {
+      "title": "Pro dashboard",
+      "new": "New",
+      "reviews": "Reviews",
+      "address": "Address",
+      "rating": "Rating",
+      "requests": "Incoming requests",
+      "history": "Job history",
+      "myService": "My service"
+    },
+    "avatarOnlyImage": "Only images can be uploaded",
+    "avatarUpdated": "Photo updated",
+    "avatarError": "Couldn’t upload the photo",
+    "nameRequired": "Enter your name",
+    "saved": "Profile saved",
+    "deleteConfirm": "Delete this listing?",
+    "deleted": "Deleted",
+    "deleteError": "Couldn’t delete",
+    "cancelPremiumConfirm": "Cancel your Premium membership?",
+    "premiumCancelled": "Premium cancelled",
+    "unsubscribed": "Unfollowed",
+    "subscribed": "You’re following",
+    "retry": "Try again",
+    "noName": "No name yet",
+    "role": {
+      "provider": "Pro",
+      "business": "Business",
+      "company": "Company",
+      "seller": "Seller"
+    },
+    "addListing": "Post a listing",
+    "myProfile": "My profile",
+    "title": "Profile",
+    "share": "Share",
+    "changePhoto": "Change photo",
+    "addBio": "Add a short bio",
+    "listings": "Listings",
+    "editProfile": "Edit profile",
+    "following": "Following",
+    "message": "Message",
+    "premiumActive": "Premium is active",
+    "premiumUntil": "until {{date}}",
+    "getPremium": "Get Premium",
+    "premiumPitch": "Verified badge, top listings, more customers",
+    "client": {
+      "title": "Need a pro?",
+      "text": "Send a request — pros will send you offers",
+      "call": "Call a pro",
+      "myRequests": "My requests"
+    },
+    "emptyVideos": "No videos yet",
+    "cancel": "Cancel",
+    "fields": {
+      "name": "Full name",
+      "namePlaceholder": "e.g. Akmal Karimov",
+      "phone": "Phone",
+      "bio": "About you",
+      "bioPlaceholder": "What you do, your experience, working hours..."
+    },
+    "noSubscribers": "No followers yet",
+    "noSubscriptions": "You’re not following anyone yet",
+    "unfollow": "Unfollow"
   },
   "settings": {
     "title": "Settings",
@@ -662,7 +743,8 @@
     "badgeVerified": "Verified",
     "priceNotAvailable": "Price not available",
     "details": "Details",
-    "noImage": "placeholder"
+    "noImage": "placeholder",
+    "addToCart": "Add to cart"
   },
   "addListingChoice": {
     "title": "Add new listing",
@@ -748,7 +830,8 @@
       "loginRequired": "Please log in first",
       "titleMinLength": "Title must be at least 5 characters",
       "descriptionMinLength": "Description must be at least 20 characters",
-      "submitError": "Error: {error}"
+      "submitError": "Error: {error}",
+      "unknownType": "Unknown listing type"
     }
   },
   "addLocation": {
@@ -780,7 +863,9 @@
       "address": "Address",
       "addressPlaceholder": "Auto-fills when selected on map",
       "addressLabel": "Address *",
-      "media": "Photos and videos"
+      "media": "Photos and videos",
+      "region": "Region",
+      "regionPlaceholder": "Select a region"
     },
     "sections": {
       "locationDetails": "About the location",
@@ -994,7 +1079,8 @@
     "direction": "Direction",
     "serviceTags": "Service types",
     "clear": "Clear filters",
-    "bankServices": "Bank services"
+    "bankServices": "Bank services",
+    "category": "Category"
   },
   "servicesSlugs": {
     "credit": "credit",
@@ -1105,8 +1191,6 @@
     "orderDetails": " {{quantity}} pcs",
     "newNotification": "sent you a new notification"
   },
-  "addLocation.fields.region": "Region",
-  "addLocation.fields.regionPlaceholder": "Select",
   "catalogs": {
     "dokonlar": {
       "label": "Stores",
@@ -1598,7 +1682,6 @@
   "level3": {
     "Issiqxona qurish va boshqarish": "Greenhouse construction and management",
     "Mevali bog'lar": "Fruit orchards",
-    "Chorvachilikai": "Livestock complex",
     "Parrandachilik fermasi": "Poultry farm",
     "Baliq yetishtirish": "Fish farming",
     "Asal ishlab chiqarish": "Honey production",
@@ -1749,7 +1832,8 @@
     "Avtomatik ishlaydigan mashinalar xizmati": "Automated machinery services",
     "Onlayn psixologik yordam xizmati": "Online psychological support",
     "Birgalikda ishlash uchun ijaraga olinadigan xona": "Coworking space",
-    "Online psixolog": "Online psychologist"
+    "Online psixolog": "Online psychologist",
+    "Chorvachilik kompleksi": "Livestock complex"
   },
   "addService": {
     "errors": {
@@ -1782,7 +1866,8 @@
       "phonePlaceholder": "+998 90 123 45 67",
       "email": "Email",
       "emailPlaceholder": "email@example.com",
-      "media": "Photos and videos"
+      "media": "Photos and videos",
+      "uploadBtn": "Upload files"
     },
     "sectionTitle": "Additional information",
     "tagsLabel": "Quick service tags (optional, multiple allowed)",
@@ -1879,7 +1964,9 @@
       "pricePlaceholder": "e.g. 100,000 – 300,000 UZS",
       "email": "Email",
       "website": "Website",
-      "media": "Photos and videos"
+      "media": "Photos and videos",
+      "area": "Where do you work?",
+      "areaPlaceholder": "E.g.: Tashkent, Chilanzar and Yunusabad"
     },
     "companyStaffNote": "You can add staff after the company is created.",
     "review": {
@@ -1949,5 +2036,447 @@
       "title": "150+ business directions",
       "text": "Pick your direction and find the places, equipment and services you need in one place. Coming soon."
     }
+  },
+  "qr": {
+    "copied": "Link copied",
+    "copyError": "Couldn’t copy",
+    "hint": "Point a camera at the QR code to open the profile",
+    "copy": "Copy",
+    "share": "Share"
+  },
+  "settingsPage": {
+    "notif": {
+      "messages": "Messages",
+      "orders": "Orders & services",
+      "comments": "Comments",
+      "likes": "Likes",
+      "ads": "Promos from pages you follow"
+    },
+    "notifHint": {
+      "messages": "New chat messages",
+      "orders": "Status, offers, pro on the way",
+      "comments": "Comments on your listings"
+    },
+    "role": {
+      "user": "Personal account",
+      "business": "Business account",
+      "company": "Company",
+      "bank_employee": "Bank staff",
+      "admin": "Administrator"
+    },
+    "loadError": "Couldn’t load settings",
+    "saveError": "Couldn’t save, check your connection",
+    "pushOn": "Push notifications are on",
+    "pushAllow": "Allow it in your browser settings",
+    "idCopied": "ID copied",
+    "copyError": "Couldn’t copy",
+    "loggedOutAll": "Signed out on all devices",
+    "logoutError": "Couldn’t sign out, try again",
+    "deleted": "Your account was deleted",
+    "deleteError": "Couldn’t delete the account",
+    "pushDeniedHint": "Allow ZUMO in your browser settings",
+    "pushDefaultHint": "Get alerts even when the app is closed",
+    "pushUnsupported": "Unavailable",
+    "pushUnsupportedHint": "This browser doesn’t support push notifications",
+    "pushGranted": "On",
+    "pushDenied": "Blocked",
+    "premiumActive": "Active",
+    "premiumOff": "Not active",
+    "noName": "No name yet",
+    "until": "until {{date}}",
+    "joined": "Joined {{date}}",
+    "editProfile": "Edit profile",
+    "editProfileHint": "Name, phone, photo, bio",
+    "myQr": "My QR code",
+    "myQrHint": "Share your profile quickly",
+    "premium": "Premium",
+    "accountId": "Account ID",
+    "myOrders": "My orders",
+    "myRequests": "My service requests",
+    "receivedOrders": "Incoming orders",
+    "receivedOrdersHint": "People who want to buy your item",
+    "saved": "Saved",
+    "push": "Push notifications",
+    "sound": "Sound",
+    "soundHint": "For new messages and alerts",
+    "guide": "ZUMO walkthrough",
+    "guideHint": "A quick tour of the app",
+    "ai": "ZUMO AI assistant",
+    "aiHint": "Ask anything",
+    "logoutAll": "Sign out everywhere",
+    "logoutAllHint": "If your phone is lost or someone else signed in",
+    "deleteAccount": "Delete account",
+    "group": {
+      "account": "Account",
+      "activity": "My activity",
+      "notifications": "Notifications",
+      "app": "App",
+      "help": "Help",
+      "security": "Security"
+    },
+    "notifNote": "Turned-off types won’t send push to your phone. They still appear in the in-app list.",
+    "back": "Back",
+    "title": "Settings",
+    "copy": "Copy",
+    "enable": "Turn on",
+    "theme": "Theme",
+    "themeDark": "Dark",
+    "themeLight": "Light",
+    "themeSystem": "System",
+    "language": "Language",
+    "logout": "Sign out",
+    "logoutAllText": "All sessions on phones, tablets and computers will be closed. You’ll need to confirm your phone number to sign in again.",
+    "logoutAllBtn": "Sign out everywhere",
+    "deleteText": "Your listings, services, cart, follows and notifications will be permanently deleted. This can’t be undone.",
+    "deleteActive": "If you have active orders or service requests, finish them first.",
+    "deleteConfirmLabel": "Type O‘CHIRISH to confirm",
+    "deleteBtn": "Delete account permanently",
+    "guestTitle": "Welcome to ZUMO",
+    "guestText": "Sign in to order, post listings and send messages. You can already change the theme and language.",
+    "guestLogin": "Sign in",
+    "guestRegister": "Sign up"
+  },
+  "svc": {
+    "dir": {
+      "maishiy-va-uy-xizmatlari": "Home services",
+      "tozalash-va-sanitariya": "Cleaning & sanitation",
+      "qurilish-va-tamirlash": "Construction & repair",
+      "talim-va-psixologiya": "Education & psychology",
+      "oila-va-parvarish": "Family & care",
+      "transport-va-maxsus-texnika": "Transport & machinery",
+      "biznes-huquq-va-it": "Business, legal & IT",
+      "gozallik-moda-va-tadbirlar": "Beauty, fashion & events",
+      "boshqa-xizmatlar": "Other services"
+    },
+    "cat": {
+      "konditsioner": "AC technician",
+      "bir-soatga-usta": "Handyman by the hour",
+      "santexnik": "Plumber",
+      "elektrik": "Electrician",
+      "maishiy-texnika": "Appliance repair",
+      "lift-ustasi": "Elevator technician",
+      "qulf-ustasi": "Locksmith",
+      "mebel-montaj-va-tamirlash": "Furniture assembly & repair",
+      "akvarium-xizmatlari": "Aquarium services",
+      "ventilyatsiya": "Ventilation",
+      "elektronika": "Electronics repair",
+      "tozalash-klining": "Cleaning",
+      "ximchistka": "Dry cleaning",
+      "gilam-tozalash": "Carpet cleaning",
+      "gilam-va-fasad-tozalash": "Carpet and facade cleaning",
+      "dezinfeksiya": "Disinfection",
+      "chiqindilarni-olib-tashlash": "Waste removal",
+      "tamirlash-remont": "Renovation",
+      "qurilish-ishlari": "Construction work",
+      "molyarchi": "Painter",
+      "kunlik-ishchi-mardikor": "Day labourer",
+      "repetitorlar": "Tutors",
+      "tillar-va-repetitorlik": "Language tutors",
+      "psixolog": "Psychologist",
+      "murabbiylar-va-kouchlar": "Coaches & trainers",
+      "enaga": "Nanny",
+      "veterinar": "Vet",
+      "yuk-tashish": "Moving & delivery",
+      "qishloq-xojaligi-texnikasi": "Farm machinery",
+      "maxsus-texnika": "Heavy machinery",
+      "avto-xizmat": "Car service",
+      "it-xizmatlari": "IT services",
+      "marketing": "Marketing",
+      "advokat": "Lawyer",
+      "buxgalter": "Accountant",
+      "advokat-va-buxgalter": "Lawyer and accountant",
+      "notarius": "Notary",
+      "rieltorlik-xizmatlari": "Real estate agent",
+      "tarjimon": "Translator",
+      "poligrafiya": "Printing",
+      "shou-biznes": "Show business",
+      "bazm-xizmatlari": "Party services",
+      "gozallik-ustalari": "Beauty pros",
+      "tikuvchilik": "Tailoring",
+      "modellar": "Models",
+      "dizayn": "Design",
+      "bogdorchilik": "Gardening",
+      "landshaft-dizayni": "Landscape design",
+      "muhandis": "Engineer",
+      "turizm": "Tourism",
+      "yetkazib-berish": "Delivery",
+      "uyda-ishlash": "Work from home"
+    }
+  },
+  "time": {
+    "now": "just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} h ago",
+    "daysAgo": "{{count}} d ago"
+  },
+  "requestDone": {
+    "rating": {
+      "1": "Bad",
+      "2": "Poor",
+      "3": "Okay",
+      "4": "Good",
+      "5": "Excellent"
+    },
+    "tag": {
+      "fast": "Arrived fast",
+      "quality": "Quality work",
+      "polite": "Polite",
+      "clean": "Clean and tidy",
+      "fairPrice": "Price as agreed",
+      "late": "Was late",
+      "lowQuality": "Low quality",
+      "priceUp": "Price went up",
+      "rude": "Rude",
+      "unfinished": "Left unfinished"
+    },
+    "minutes": "{{count}} min",
+    "hoursMinutes": "{{h}} h {{m}} min",
+    "hours": "{{count}} h",
+    "stars": "{{count}} stars",
+    "loadError": "Couldn’t load the details",
+    "sendError": "Couldn’t send the rating",
+    "client": "Client",
+    "provider": "Pro",
+    "close": "Close",
+    "titleProvider": "Job finished",
+    "title": "Job done",
+    "service": "Service",
+    "address": "Address",
+    "duration": "Duration",
+    "initialPrice": "Original price",
+    "sum": "UZS",
+    "earned": "Earned",
+    "total": "Total",
+    "priceAgreed": "Price agreed on site: {{reason}}",
+    "photos": "Completed work",
+    "photoAlt": "Photo of the completed work",
+    "clientRating": "Client’s rating",
+    "thanks": "Thanks for your rating",
+    "notRated": "The client hasn’t rated yet. You’ll be notified when they do.",
+    "rateTitle": "Rate {{name}}",
+    "rateHint": "Your rating helps others pick the right pro",
+    "likedPh": "What did you like? (optional)",
+    "dislikedPh": "What went wrong? (optional)",
+    "send": "Send rating",
+    "pickStars": "Pick a rating",
+    "again": "Book another pro",
+    "newRequests": "New requests",
+    "home": "Home"
+  },
+  "activeOrder": {
+    "status": {
+      "open": "Finding a pro",
+      "accepted": "Pro assigned",
+      "on_way": "Pro on the way",
+      "arrived": "Pro has arrived",
+      "in_progress": "Work in progress"
+    },
+    "sentTo": "Sent to {{count}} pros",
+    "arrivesIn": "{{name}} · in {{min}} min",
+    "pro": "Pro",
+    "goToAddress": "Head to the address",
+    "onWay": "On the way",
+    "startWork": "Start the job",
+    "hide": "Hide",
+    "incoming": "You have {{count}} new order(s)",
+    "offersIn": "{{count}} offer(s) received",
+    "sentToPro": "Request sent to the pro",
+    "directWaiting": "A client ordered from you directly — reply",
+    "replyIncoming": "Send your price",
+    "chooseOffer": "Review and choose a pro",
+    "waitingPro": "Waiting for the pro to reply"
+  },
+  "incomingOffer": {
+    "eyebrow": "New offer",
+    "choose": "Choose · {{price}} UZS",
+    "all": "See all offers"
+  },
+  "incomingRequest": {
+    "eyebrow": "New request",
+    "offer": "Send an offer",
+    "skip": "Skip"
+  },
+  "tracker": {
+    "acceptError": "Couldn’t choose this pro",
+    "cancelConfirm": "Cancel the request? Pros won’t see it anymore.",
+    "cancelReason": "Cancelled by the client",
+    "cancelError": "Couldn’t cancel",
+    "title": {
+      "searching": "Finding a pro",
+      "offers": "Choose a pro",
+      "accepted": "Pro on the way",
+      "completed": "Job finished",
+      "closed": "Request closed",
+      "sentToPro": "Request sent to the pro"
+    },
+    "sentCount": "Sent to {{count}} nearby pros",
+    "sent": "Sent to nearby pros",
+    "window": "Offers accepted for {{count}} more min",
+    "offersCount": "{{count}} offers",
+    "left": "{{time}} left",
+    "cheapest": "cheapest",
+    "fastest": "fastest",
+    "eta": "min to arrival",
+    "message": "Message the pro",
+    "thanks": "Thanks for using ZUMO.",
+    "expired": "The request was cancelled or expired. Send a new one if you still need help.",
+    "cancel": "Cancel request",
+    "details": "Order details",
+    "newRequest": "New request",
+    "waitingPro": "The pro’s price will appear here",
+    "windowHours": "Offers accepted for {{count}} hours"
+  },
+  "providerRequests": {
+    "tab": {
+      "open": "New",
+      "active": "Active",
+      "closed": "Finished"
+    },
+    "status": {
+      "waitingOffer": "New",
+      "offerSent": "Offer sent",
+      "otherChosen": "Another pro was chosen",
+      "awaitingClient": "Waiting for the client to confirm",
+      "accepted": "You were chosen — head out",
+      "on_way": "On your way",
+      "arrived": "On site",
+      "in_progress": "In progress",
+      "completed": "Done",
+      "cancelled": "Cancelled"
+    },
+    "loadError": "Couldn’t load requests",
+    "title": "Requests",
+    "refresh": "Refresh",
+    "empty": {
+      "open": "No new requests yet. We’ll notify you when one arrives.",
+      "active": "No active jobs.",
+      "closed": "Finished jobs will show up here."
+    },
+    "direct": "Personal",
+    "makeOffer": "Send your price"
+  },
+  "requestDetail": {
+    "step": {
+      "accepted": "Chosen",
+      "on_way": "On the way",
+      "arrived": "Arrived",
+      "completed": "Done"
+    },
+    "next": {
+      "leftHome": "I’m on my way",
+      "arrived": "I’ve arrived",
+      "finished": "Job finished"
+    },
+    "title": {
+      "open": "Offers",
+      "accepted": "Pro chosen",
+      "on_way": "Pro on the way",
+      "arrived": "Pro has arrived",
+      "in_progress": "Pro is working",
+      "completed": "Job finished",
+      "cancelled": "Request cancelled",
+      "request": "Request",
+      "makeOffer": "Make an offer",
+      "otherChosen": "The client chose another pro",
+      "awaitingClient": "Waiting for the client to confirm",
+      "confirm": "Is the job done?",
+      "proChosen": "You were chosen — head out",
+      "proOnWay": "On your way to the address",
+      "proAtWork": "Do the job",
+      "directWaiting": "Waiting for the pro",
+      "declined": "The pro could not take it"
+    },
+    "jobsDone": "{{count}} jobs done",
+    "jobsCancelled": "Cancelled {{count}} times",
+    "route": "Get directions",
+    "routeApp": {
+      "yandex-navi": "Yandex Navigator",
+      "yandex-maps": "Yandex Maps",
+      "google": "Google Maps"
+    },
+    "loadError": "Couldn’t load the request",
+    "actionError": "Couldn’t complete the action",
+    "photoError": "Couldn’t upload the photo",
+    "sentForConfirm": "Sent to the client to confirm",
+    "enterNewPrice": "Enter the new price",
+    "newPriceSent": "New price sent to the client",
+    "cancelConfirm": "Cancel this request?",
+    "cancelByPro": "Cancelled by the pro",
+    "cancelled": "Request cancelled",
+    "enterPrice": "Enter a price",
+    "offerSent": "Offer sent",
+    "notFound": "Request not found",
+    "waiting": "Waiting for pros to respond. Offers will show up here.",
+    "priceChangeLabel": "The pro wants to change the price",
+    "reason": "Reason: {{reason}}",
+    "confirmText": "The pro says the job is done. Is everything OK? Once you confirm, the order closes and you can rate the pro.",
+    "autoConfirm": "If you don’t respond within 24 hours, the job is marked done automatically.",
+    "proWaiting": "The order closes as soon as the client confirms.",
+    "write": "Message",
+    "yourPrice": "Your price (UZS)",
+    "pricePh": "e.g. 150000",
+    "arrivalQ": "How soon can you arrive?",
+    "noteLabel": "Note to the client (optional)",
+    "notePh": "e.g. materials included, 3-month warranty",
+    "yourOffer": "Your offer",
+    "offerStatus": {
+      "pending": "awaiting reply",
+      "accepted": "accepted",
+      "declined": "not chosen"
+    },
+    "newPriceWaiting": "New price ({{price}} UZS) sent to the client. Waiting for a reply.",
+    "newPriceLabel": "New price (now {{price}} UZS)",
+    "whyChanged": "Why did it change? (the client will see this)",
+    "whyPh": "e.g. the pipe needs replacing too",
+    "cancelShort": "Cancel",
+    "sendToClient": "Send to client",
+    "proposePrice": "Price changed? Propose a new one",
+    "photosLabel": "Photos of the work (optional, up to {{count}})",
+    "priceAgreed": "Price agreed: {{price}} UZS",
+    "priceRejected": "New price declined, it stays {{price}} UZS",
+    "rated": "Rated {{rating}} / 5",
+    "proChosen": "Pro chosen",
+    "sendOffer": "Send offer",
+    "priceAccepted": "New price accepted",
+    "agree": "Accept · {{price}} UZS",
+    "priceKept": "Price unchanged",
+    "decline": "Decline, keep the old price",
+    "yesDone": "Yes, the job is done",
+    "problem": "There’s a problem — message the pro",
+    "rate": "Rate the pro",
+    "cancelRequest": "Cancel request",
+    "newPro": "New pro",
+    "finishConfirm": "Finished the job? It will be sent to the client for confirmation.",
+    "finishConfirmNoPhoto": "Finished the job? Adding a photo of the work helps the client confirm faster.",
+    "declinePrompt": "Why can’t you take it? (optional, the client will see)",
+    "declined": "The client has been notified",
+    "visitPast": "That time has passed — pick a later time",
+    "waitingDirect": "Sent only to this pro. Their price will appear here.",
+    "viewProfile": "View profile and reviews",
+    "visitQ": "The client said “{{when}}” — when will you come?",
+    "whenNeeded": "Needed: {{when}}",
+    "declineBtn": "I can’t take it",
+    "findOther": "Find another pro"
+  },
+  "bank": {
+    "title": "Bank xizmatlari",
+    "individual": "Jismoniy shaxs",
+    "legal": "Yuridik shaxs",
+    "empty": "No services in this section yet",
+    "scrollTop": "Yuqoriga",
+    "categories": {
+      "credit": "Kreditlar",
+      "cards": "Kartalar",
+      "deposits": "Depozitlar",
+      "pko": "Naqd pul / PKO",
+      "moneyTransfers": "Money transfers",
+      "qrPayment": "QR payments"
+    }
+  },
+  "requestWhen": {
+    "now": "Now",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "week": "This week"
   }
 }

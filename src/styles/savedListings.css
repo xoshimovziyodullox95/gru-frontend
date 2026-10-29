@@ -1,8 +1,8 @@
 .saved-listings {
   min-height: 100vh;
   padding: clamp(22px, 5vw, 48px) max(18px, calc((100vw - 1180px) / 2));
-  color: var(--text, #f5fbff);
-  background: var(--bg, #041326);
+  color: var(--text);
+  background: var(--bg, var(--surface));
 }
 
 .saved-listings__header {
@@ -18,7 +18,7 @@
   flex: 0 0 42px;
   height: 42px;
   color: inherit;
-  background: var(--card, #071c32);
+  background: var(--card, var(--surface));
   border: 1px solid var(--border, rgba(0, 207, 255, .18));
   border-radius: 50%;
   cursor: pointer;
@@ -27,7 +27,7 @@
 .saved-listings__header > div { flex: 1; }
 .saved-listings__eyebrow { color: #00cfff; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
 .saved-listings__header h1 { margin: 3px 0 0; font-size: clamp(22px, 4vw, 30px); }
-.saved-listings__count { color: #8ca9bd; font-size: 14px; }
+.saved-listings__count { color: var(--textMuted); font-size: 14px; }
 
 .saved-listings__grid {
   display: grid;
@@ -37,7 +37,7 @@
 
 .saved-listing-card {
   overflow: hidden;
-  background: var(--card, #071c32);
+  background: var(--card, var(--surface));
   border: 1px solid var(--border, rgba(0, 207, 255, .16));
   border-radius: 16px;
 }
@@ -49,7 +49,7 @@
   aspect-ratio: 4 / 3;
   padding: 0;
   overflow: hidden;
-  background: #0b2239;
+  background: var(--surface);
   border: 0;
   cursor: pointer;
 }
@@ -60,9 +60,9 @@
   left: 10px;
   bottom: 10px;
   padding: 5px 9px;
-  color: white;
-  background: rgba(4, 19, 38, .78);
-  border: 1px solid rgba(255, 255, 255, .12);
+  color: var(--text);
+  background: rgba(var(--surface-rgb), .78);
+  border: 1px solid rgba(var(--text-rgb), .12);
   border-radius: 20px;
   font-size: 11px;
 }
@@ -110,14 +110,14 @@
   margin: clamp(55px, 12vh, 110px) auto;
   padding: 30px 22px;
   text-align: center;
-  background: var(--card, #071c32);
+  background: var(--card, var(--surface));
   border: 1px solid var(--border, rgba(0, 207, 255, .16));
   border-radius: 22px;
 }
 
 .saved-listings__empty-icon { display: grid; place-items: center; width: 58px; height: 58px; color: #ff7890; background: rgba(255, 73, 93, .1); border-radius: 18px; }
 .saved-listings__empty h2 { margin: 18px 0 8px; font-size: 19px; }
-.saved-listings__empty p { margin: 0; color: var(--text-muted, #8ca9bd); font-size: 14px; line-height: 1.6; }
+.saved-listings__empty p { margin: 0; color: var(--textMuted); font-size: 14px; line-height: 1.6; }
 .saved-listings__empty button { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; padding: 11px 16px; color: #031a2a; background: #22c9ed; border: 0; border-radius: 11px; font-weight: 750; cursor: pointer; }
 
 @media (max-width: 600px) {

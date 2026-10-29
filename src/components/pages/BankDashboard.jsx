@@ -6,11 +6,12 @@ import { Inbox, Bell, Activity, LogOut, Landmark, Clock, MessageCircle, Check, X
 import { getBankApplications, updateBankApplicationStatus } from '../services/orders';
 import '../../styles/bankDashboard.css';
 
+import { T } from '../utils/T';
 const STATUS_LABELS = {
-  new: { label: "Yangi", color: 'cyan' },
-  in_progress: { label: 'Jarayonda', color: 'blue' },
-  approved: { label: 'Tasdiqlandi', color: 'solid' },
-  rejected: { label: 'Rad etildi', color: 'muted' },
+  new: { label: T('Yangi'), color: 'cyan' },
+  in_progress: { label: T('Jarayonda'), color: 'blue' },
+  approved: { label: T('Tasdiqlandi'), color: 'solid' },
+  rejected: { label: T('Rad etildi'), color: 'muted' },
 };
 
 export default function BankDashboard() {
@@ -44,7 +45,7 @@ export default function BankDashboard() {
   const updateStatus = async (id, status) => {
     let note;
     if (status === 'rejected') {
-      note = window.prompt('Rad etish sababi (mijozga ko‘rinadi):', '');
+      note = window.prompt(T('Rad etish sababi (mijozga ko‘rinadi):'), '');
       if (note === null) return;
     }
     setUpdatingId(id);
@@ -52,7 +53,7 @@ export default function BankDashboard() {
       const res = await updateBankApplicationStatus(id, status, note);
       setApplications((prev) => prev.map((a) => (a._id === id ? res.data.application : a)));
     } catch (err) {
-      alert(err.response?.data?.error || 'Holatni o‘zgartirib bo‘lmadi');
+      alert(err.response?.data?.error || T('Holatni o‘zgartirib bo‘lmadi'));
     } finally {
       setUpdatingId(null);
     }
@@ -67,11 +68,11 @@ export default function BankDashboard() {
     <div className="bd-page">
       <header className="bd-header">
         <div>
-          <h1>Bank xodimi paneli</h1>
-          <p className="bd-welcome">Xush kelibsiz, {user?.user_metadata?.full_name || user?.email}</p>
+          <h1>{T('Bank xodimi paneli')}</h1>
+          <p className="bd-welcome">{T('Xush kelibsiz,')} {user?.user_metadata?.full_name || user?.email}</p>
         </div>
         <button className="bd-logout-btn" onClick={signOut}>
-          <LogOut size={16} /> Chiqish
+          <LogOut size={16} /> {T('Chiqish')}
         </button>
       </header>
 
@@ -80,30 +81,30 @@ export default function BankDashboard() {
           <Inbox size={20} />
           <div>
             <span className="bd-stat-value">{newCount}</span>
-            <span className="bd-stat-label">Yangi arizalar</span>
+            <span className="bd-stat-label">{T('Yangi arizalar')}</span>
           </div>
         </div>
         <div className="bd-stat-card">
           <Activity size={20} />
           <div>
             <span className="bd-stat-value">{inProgressCount}</span>
-            <span className="bd-stat-label">Jarayondagi arizalar</span>
+            <span className="bd-stat-label">{T('Jarayondagi arizalar')}</span>
           </div>
         </div>
         <div className="bd-stat-card">
           <Bell size={20} />
           <div>
             <span className="bd-stat-value">{todayCount}</span>
-            <span className="bd-stat-label">Bugungi faollik</span>
+            <span className="bd-stat-label">{T('Bugungi faollik')}</span>
           </div>
         </div>
       </div>
 
       <section className="bd-section">
         <div className="bd-section-head">
-          <h2>Arizalar</h2>
+          <h2>{T('Arizalar')}</h2>
           <div className="bd-filters">
-            {[['all', 'Hammasi'], ['new', 'Yangi'], ['in_progress', 'Jarayonda'], ['approved', 'Tasdiqlangan'], ['rejected', 'Rad etilgan']].map(([key, label]) => (
+            {[['all', T('Hammasi')], ['new', T('Yangi')], ['in_progress', T('Jarayonda')], ['approved', T('Tasdiqlangan')], ['rejected', T('Rad etilgan')]].map(([key, label]) => (
               <button
                 key={key}
                 type="button"
@@ -116,11 +117,11 @@ export default function BankDashboard() {
           </div>
         </div>
         {loading ? (
-          <p className="bd-empty">Yuklanmoqda...</p>
+          <p className="bd-empty">{T('Yuklanmoqda...')}</p>
         ) : visible.length === 0 ? (
           <div className="bd-empty">
             <Inbox size={40} />
-            <p>Hozircha arizalar yo'q</p>
+            <p>{T('Hozircha arizalar yo\'q')}</p>
           </div>
         ) : (
           <div className="bd-applications-list">
@@ -135,7 +136,7 @@ export default function BankDashboard() {
                   </div>
                   <div className="bd-app-info">
                     <p className="bd-app-title">
-                      <strong>{client.fullName || client.full_name || 'Mijoz'}</strong> ariza berdi:{' '}
+                      <strong>{client.fullName || client.full_name || T('Mijoz')}</strong> ariza berdi:{' '}
                       <span className="bd-app-service">{app.serviceName}</span>
                     </p>
                     <div className="bd-app-meta">
@@ -146,9 +147,9 @@ export default function BankDashboard() {
                       )}
                     </div>
                     {app.comment && <p className="bd-app-comment">“{app.comment}”</p>}
-                    {app.staffNote && <p className="bd-app-note">Izoh: {app.staffNote}</p>}
+                    {app.staffNote && <p className="bd-app-note">{T('Izoh:')} {app.staffNote}</p>}
                     {app.handledBy && (
-                      <p className="bd-app-handled">Ko‘rib chiqdi: {app.handledBy.fullName || app.handledBy.full_name}</p>
+                      <p className="bd-app-handled">{T('Ko‘rib chiqdi:')} {app.handledBy.fullName || app.handledBy.full_name}</p>
                     )}
 
                     <div className="bd-app-actions" onClick={(e) => e.stopPropagation()}>
@@ -172,7 +173,7 @@ export default function BankDashboard() {
                           onClick={() => updateStatus(app._id, 'in_progress')}
                         >
                           {updatingId === app._id ? <Loader2 size={13} className="bd-spin" /> : null}
-                          Jarayonga olish
+                          {T('Jarayonga olish')}
                         </button>
                       )}
                       {status === 'new' && (
@@ -182,7 +183,7 @@ export default function BankDashboard() {
                           disabled={updatingId === app._id}
                           onClick={() => updateStatus(app._id, 'rejected')}
                         >
-                          <X size={13} /> Rad etish
+                          <X size={13} /> {T('Rad etish')}
                         </button>
                       )}
                       {status === 'in_progress' && (
@@ -193,7 +194,7 @@ export default function BankDashboard() {
                             disabled={updatingId === app._id}
                             onClick={() => updateStatus(app._id, 'approved')}
                           >
-                            <Check size={13} /> Tasdiqlash
+                            <Check size={13} /> {T('Tasdiqlash')}
                           </button>
                           <button
                             type="button"
@@ -201,7 +202,7 @@ export default function BankDashboard() {
                             disabled={updatingId === app._id}
                             onClick={() => updateStatus(app._id, 'rejected')}
                           >
-                            <X size={13} /> Rad etish
+                            <X size={13} /> {T('Rad etish')}
                           </button>
                         </>
                       )}

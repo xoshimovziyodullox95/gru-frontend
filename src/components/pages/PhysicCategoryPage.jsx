@@ -3,15 +3,16 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock } from 'lucide-react';
 import '../../styles/physicPage.css';
 
+import { T } from '../utils/T';
 const physicCategories = [
-  { key: 'otkazmalar', name: "To'lovlar va o'tkazmalar", emoji: '💸', desc: "Pul o'tkazmalari, plastik kartalar, mobil to'lovlar" },
-  { key: 'moliya', name: 'Bank va moliya xizmatlari', emoji: '🏦', desc: "Kredit, depozit, investitsiya va moliyaviy maslahat" },
-  { key: 'kochmasmulk', name: "Ko'chmas mulk va ta'mirlash", emoji: '🏗️', desc: "Uy-joy sotib olish, ijaraga berish, ta'mirlash xizmatlari" },
-  { key: 'talim', name: "Ta'lim va kurslar", emoji: '🎓', desc: "Kurslar, o'quv markazlari, online ta'lim" },
-  { key: 'shaxsiyxizmat', name: 'Shaxsiy xizmatlar', emoji: '🔧', desc: "Usta, tozalash, go'zallik xizmatlari" },
-  { key: 'ish', name: 'Ish va frilans', emoji: '💼', desc: "Ish topish, frilans loyihalar, masofaviy ish" },
-  { key: 'sugurta', name: "Sug'urta xizmatlari", emoji: '🛡️', desc: "Hayot, mulk, avtomobil sug'urtasi" },
-  { key: 'ikkilamchi', name: "Ikkilamchi bozor", emoji: '♻️', desc: "Foydalanilgan tovarlar, antikvariat, komissiya do'konlari" },
+  { key: 'otkazmalar', name: T('To\'lovlar va o\'tkazmalar'), emoji: '💸', desc: T('Pul o\'tkazmalari, plastik kartalar, mobil to\'lovlar') },
+  { key: 'moliya', name: T('Bank va moliya xizmatlari'), emoji: '🏦', desc: T('Kredit, depozit, investitsiya va moliyaviy maslahat') },
+  { key: 'kochmasmulk', name: T('Ko\'chmas mulk va ta\'mirlash'), emoji: '🏗️', desc: T('Uy-joy sotib olish, ijaraga berish, ta\'mirlash xizmatlari') },
+  { key: 'talim', name: T('Ta\'lim va kurslar'), emoji: '🎓', desc: T('Kurslar, o\'quv markazlari, online ta\'lim') },
+  { key: 'shaxsiyxizmat', name: T('Shaxsiy xizmatlar'), emoji: '🔧', desc: T('Usta, tozalash, go\'zallik xizmatlari') },
+  { key: 'ish', name: T('Ish va frilans'), emoji: '💼', desc: T('Ish topish, frilans loyihalar, masofaviy ish') },
+  { key: 'sugurta', name: T('Sug\'urta xizmatlari'), emoji: '🛡️', desc: T('Hayot, mulk, avtomobil sug\'urtasi') },
+  { key: 'ikkilamchi', name: T('Ikkilamchi bozor'), emoji: '♻️', desc: T('Foydalanilgan tovarlar, antikvariat, komissiya do\'konlari') },
 ];
 
 const COLOR_PALETTE = [
@@ -43,7 +44,7 @@ export default function PhysicCategoryPage() {
   const [colorFrom, colorTo] = COLOR_PALETTE[Math.max(idx, 0) % COLOR_PALETTE.length];
 
   if (!category) {
-    return <div className="physic-not-found">Kategoriya topilmadi</div>;
+    return <div className="physic-not-found">{T('Kategoriya topilmadi')}</div>;
   }
 
   return (
@@ -88,8 +89,8 @@ export default function PhysicCategoryPage() {
         <div className="physic-category-placeholder">
           <div className="physic-category-coming">
             <Clock size={48} />
-            <h2>Tez orada</h2>
-            <p>Bu yo'nalish hozircha ishlab chiqilmoqda</p>
+            <h2>{T('Tez orada')}</h2>
+            <p>{T('Bu yo\'nalish hozircha ishlab chiqilmoqda')}</p>
           </div>
         </div>
 
@@ -97,11 +98,11 @@ export default function PhysicCategoryPage() {
         <div className="physic-actions">
           <Link to="/physic" className="physic-btn physic-btn-back">
             <ArrowLeft size={18} />
-            <span>Orqaga</span>
+            <span>{T('Orqaga')}</span>
           </Link>
-          <button className="physic-btn physic-btn-coming" onClick={() => alert('Tez orada!')}>
+          <button className="physic-btn physic-btn-coming" onClick={() => alert(T('Tez orada!'))}>
             <Clock size={18} />
-            <span>Tez kunda</span>
+            <span>{T('Tez kunda')}</span>
           </button>
         </div>
       </div>

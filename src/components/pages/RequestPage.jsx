@@ -5,38 +5,24 @@
    ============================================================ */
 
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import { ArrowLeft, Check, ChevronRight, X } from 'lucide-react';
 
 import LocationMapPicker from '../forms/LocationMapPicker';
-import RequestTrackerModal from '../client/RequestTrackerModal';  // вњ… YANGI
-import { getServiceTaxonomy } from '../services/serviceProviders';
+import RequestTrackerModal from '../client/RequestTrackerModal';  // ✅ YANGI
+import { getServiceTaxonomy, getServiceProviderById } from '../services/serviceProviders';
 import { createServiceRequest } from '../services/serviceRequests';
+import { getUserProfile } from '../services/user';
+import { getServiceTaxonomyLabel } from '../utils/serviceTaxonomyLabels';
 
 import '../../styles/request.css';
 
+import { T } from '../utils/T';
 /* ============================================================
    CONSTANTS
    ============================================================ */
-
-const formatSlug = (slug = '') =>
-  String(slug)
-    .replace(/[-_]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/^./, (c) => c.toUpperCase());
-
-const WHEN_OPTIONS = ['Hozir', 'Bugun', 'Ertaga', 'Shu hafta'];
-
-const QUICK_PHRASES = [
-  'Ishlamay qoldi',
-  'Suv oqyapti',
-  "Yangi o'rnatish kerak",
-  'Narxini bilmoqchiman',
-];
-
-const TITLES = ['Nima kerak?', 'Nima buzildi?', 'Usta qayerga borsin?'];
 
 /* ============================================================
    PAGE
@@ -44,25 +30,44 @@ const TITLES = ['Nima kerak?', 'Nima buzildi?', 'Usta qayerga borsin?'];
 
 export default function RequestPage({ defaultCategory = '' }) {
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  // /request?category=santexnik — AI yordamchi yoki usta kartasidan kelganda xizmat turi tanlangan bo'ladi
+  const [searchParams] = useSearchParams();
+  const initialCategory = defaultCategory || searchParams.get('category') || '';
+  // /request?provider=ID — usta sahifasidagi "Buyurtma berish": so'rov faqat shu ustaga boradi
+  const targetProviderId = searchParams.get('provider') || '';
+  const [targetProvider, setTargetProvider] = useState(null);
 
   /* ============ STATE ============ */
 
   const [step, setStep] = useState(1);
   const [taxonomy, setTaxonomy] = useState({});
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState(defaultCategory);
+  const [category, setCategory] = useState(initialCategory);
   const [activeDir, setActiveDir] = useState('all');
   const [search, setSearch] = useState('');
   const [description, setDescription] = useState('');
-  const [when, setWhen] = useState('');
+  const [when, setWhen] = useState('now');
+  // Usta tanlangach siz bilan bog'lanishi uchun (profildan to'ldiriladi)
+  const [phone, setPhone] = useState(() => {
+    try { return localStorage.getItem('zumo_contact_phone') || ''; } catch { return ''; }
+  });
   const [manualAddress, setManualAddress] = useState('');
   const [location, setLocation] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  /* вњ… YANGI — modal uchun state */
+  /* ✅ YANGI — modal uchun state */
   const [trackerOpen, setTrackerOpen] = useState(false);
   const [createdRequest, setCreatedRequest] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getUserProfile()
+      .then((res) => { if (mounted && res.data?.phone) setPhone((prev) => prev || res.data.phone); })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, []);
 
   /* ============ LOAD TAXONOMY ============ */
 
@@ -77,7 +82,7 @@ export default function RequestPage({ defaultCategory = '' }) {
       })
       .catch(() => {
         if (mounted) {
-          setError("Xizmat turlarini yuklab bo'lmadi. Sahifani yangilang.");
+          setError(T('Xizmat turlarini yuklab bo\'lmadi. Sahifani yangilang.'));
         }
       })
       .finally(() => {
@@ -88,6 +93,24 @@ export default function RequestPage({ defaultCategory = '' }) {
       mounted = false;
     };
   }, []);
+
+  // To'g'ridan-to'g'ri buyurtma: ustaning xizmat turi avtomatik, 1-qadam o'tkazib yuboriladi
+  useEffect(() => {
+    if (!targetProviderId) return undefined;
+    let mounted = true;
+    getServiceProviderById(targetProviderId)
+      .then((res) => {
+        const p = res.data?.provider || res.data;
+        if (!mounted || !p?.service_category) return;
+        setTargetProvider({ id: p._id, name: p.company ? `${p.name} · ${p.company}` : p.name });
+        setCategory(p.service_category);
+        setStep((st) => (st === 1 ? 2 : st));
+      })
+      .catch(() => {
+        if (mounted) setError(T('Usta topilmadi. Xizmat turini o‘zingiz tanlang.'));
+      });
+    return () => { mounted = false; };
+  }, [targetProviderId]);
 
   /* ============ DERIVED ============ */
 
@@ -105,11 +128,11 @@ export default function RequestPage({ defaultCategory = '' }) {
         items.map((slug) => ({
           slug,
           direction,
-          label: formatSlug(slug),
-          directionLabel: formatSlug(direction),
+          label: getServiceTaxonomyLabel(slug, i18n.language),
+          directionLabel: getServiceTaxonomyLabel(direction, i18n.language),
         }))
       ),
-    [directions]
+    [directions, i18n.language]
   );
 
   const visible = useMemo(() => {
@@ -128,6 +151,17 @@ export default function RequestPage({ defaultCategory = '' }) {
   }, [flat, search, activeDir]);
 
   const selected = flat.find((c) => c.slug === category) || null;
+  const whenOptions = [
+    { key: 'now', label: T('Hozir') },
+    { key: 'today', label: T('Bugun') },
+    { key: 'tomorrow', label: T('Ertaga') },
+    { key: 'week', label: T('Shu hafta') },
+  ];
+  const whenText = whenOptions.find((w) => w.key === when)?.label || '';
+  const phoneDigits = phone.replace(/\D/g, '');
+  const phoneOk = phoneDigits.length >= 9;
+  const quickPhrases = [T('Ishlamay qoldi'), T('Suv oqyapti'), T('Yangi o\'rnatish kerak'), T('Narxini bilmoqchiman')];
+  const stepTitles = [T('Nima kerak?'), T('Nima qilish kerak?'), T('Usta qayerga borsin?')];
   const descLen = description.trim().length;
   const hasAddress = Boolean(location?.address || manualAddress.trim());
 
@@ -142,7 +176,7 @@ export default function RequestPage({ defaultCategory = '' }) {
 
   const goBack = () => {
     setError('');
-    if (step > 1) setStep(step - 1);
+    if (step > 1 && !(targetProvider && step === 2)) setStep(step - 1);
     else safeGoBack(navigate);
   };
 
@@ -163,24 +197,29 @@ export default function RequestPage({ defaultCategory = '' }) {
 
   const handleMapSelect = (loc) => {
     setLocation(loc);
-    if (loc?.address) setManualAddress(loc.address);
+    // New map point invalidates any previous address until reverse geocoding resolves.
+    setManualAddress(loc?.address || '');
   };
 
   /* ============ SUBMIT ============ */
 
   const handleSubmit = async () => {
     if (!category) {
-      setError('Xizmat turini tanlang');
+      setError(T('Xizmat turini tanlang'));
       setStep(1);
       return;
     }
     if (descLen < 10) {
-      setError('Muammoni kamida 10 ta belgi bilan yozing');
+      setError(T('Muammoni kamida 10 ta belgi bilan yozing'));
       setStep(2);
       return;
     }
     if (!hasAddress) {
-      setError('Manzilni yozing yoki xaritadan belgilang');
+      setError(T('Manzilni yozing yoki xaritadan belgilang'));
+      return;
+    }
+    if (!phoneOk) {
+      setError(T('Telefon raqamingizni yozing — usta siz bilan bog‘lanadi'));
       return;
     }
 
@@ -189,13 +228,12 @@ export default function RequestPage({ defaultCategory = '' }) {
 
     try {
       const finalAddress = location?.address || manualAddress.trim();
-      const text = when
-        ? `[${when}] ${description.trim()}`
-        : description.trim();
-
       const res = await createServiceRequest({
+        ...(targetProvider ? { targetProviderId: targetProvider.id } : {}),
         category,
-        description: text,
+        description: description.trim(),
+        when,
+        contactPhone: phone.trim(),
         location: {
           address: finalAddress,
           lat: location?.lat ?? null,
@@ -203,19 +241,23 @@ export default function RequestPage({ defaultCategory = '' }) {
         },
       });
 
+      try { localStorage.setItem('zumo_contact_phone', phone.trim()); } catch { /* xotira yopiq */ }
+
       toast.success(
-        `So'rov yuborildi. ${res.data?.notifiedCount || 0} ta ustaga xabar ketdi`
+        targetProvider
+          ? T('Buyurtma ustaga yuborildi')
+          : T('So\'rov yuborildi. {{v}} ta ustaga xabar ketdi', { v: res.data?.notifiedCount || 0 })
       );
 
-      /* вњ… MODAL OCHISH (navigate o'rniga) */
+      /* ✅ MODAL OCHISH (navigate o'rniga) */
       setCreatedRequest(res.data.request);
       setTrackerOpen(true);
     } catch (err) {
       setError(
         err.response?.data?.error ||
-          "Xatolik yuz berdi. Qayta urinib ko'ring."
+          T('Xatolik yuz berdi. Qayta urinib ko\'ring.')
       );
-      toast.error("So'rov yuborilmadi");
+      toast.error(T('So\'rov yuborilmadi'));
     } finally {
       setSubmitting(false);
     }
@@ -248,7 +290,7 @@ export default function RequestPage({ defaultCategory = '' }) {
           type="button"
           className="rq-back"
           onClick={goBack}
-          aria-label="Orqaga"
+          aria-label={T('Orqaga')}
         >
           <ArrowLeft size={22} />
         </button>
@@ -263,7 +305,13 @@ export default function RequestPage({ defaultCategory = '' }) {
       {/* ============ MAIN ============ */}
 
       <main className="rq-main">
-        <h1 className="rq-title">{TITLES[step - 1]}</h1>
+        <h1 className="rq-title">{stepTitles[step - 1]}</h1>
+        {targetProvider && (
+          <p className="rq-target">
+            {T('Buyurtma: {{name}}', { name: targetProvider.name })}
+            <span>{T('So‘rov faqat shu ustaga yuboriladi')}</span>
+          </p>
+        )}
 
         {/* ============ STEP 1: KATEGORIYA ============ */}
 
@@ -276,16 +324,16 @@ export default function RequestPage({ defaultCategory = '' }) {
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Qidiring: kran, rozetka, konditsioner"
+                    placeholder={T('Qidiring: kran, rozetka, konditsioner')}
                     autoComplete="off"
-                    aria-label="Qidirish"
+                    aria-label={T('Qidirish')}
                   />
 
                   {search && (
                     <button
                       type="button"
                       onClick={() => setSearch('')}
-                      aria-label="Tozalash"
+                      aria-label={T('Tozalash')}
                     >
                       <X size={18} />
                     </button>
@@ -295,8 +343,8 @@ export default function RequestPage({ defaultCategory = '' }) {
                 {!search && (
                   <div className="rq-tabs" role="tablist">
                     {[
-                      ['all', 'Hammasi'],
-                      ...directions.map(([d]) => [d, formatSlug(d)]),
+                      ['all', T('Hammasi')],
+                      ...directions.map(([d]) => [d, getServiceTaxonomyLabel(d, i18n.language)]),
                     ].map(([key, label]) => (
                       <button
                         key={key}
@@ -324,13 +372,13 @@ export default function RequestPage({ defaultCategory = '' }) {
 
             {!loading && flat.length === 0 && !error && (
               <p className="rq-note">
-                Xizmat turlari topilmadi. Sahifani yangilang.
+                {T('Xizmat turlari topilmadi. Sahifani yangilang.')}
               </p>
             )}
 
             {!loading && flat.length > 0 && visible.length === 0 && (
               <p className="rq-note">
-                В«{search}В» topilmadi. Boshqa so'z bilan qidirib ko'ring.
+                {T('«{{search}}» topilmadi. Boshqa so‘z bilan qidirib ko‘ring.', { search })}
               </p>
             )}
 
@@ -372,36 +420,36 @@ export default function RequestPage({ defaultCategory = '' }) {
 
         {step === 2 && (
           <section>
-            {selected && (
+            {selected && !targetProvider && (
               <p className="rq-chosen">
                 <span>
-                  {selected.directionLabel} В· <strong>{selected.label}</strong>
+                  {selected.directionLabel} · <strong>{selected.label}</strong>
                 </span>
                 <button type="button" onClick={() => setStep(1)}>
-                  O'zgartirish
+                  {T('O\'zgartirish')}
                 </button>
               </p>
             )}
 
             <fieldset className="rq-group">
-              <legend>Qachon kerak?</legend>
+              <legend>{T('Qachon kerak?')}</legend>
               <div className="rq-seg">
-                {WHEN_OPTIONS.map((w) => (
+                {whenOptions.map((w) => (
                   <button
-                    key={w}
+                    key={w.key}
                     type="button"
-                    className={when === w ? 'is-on' : ''}
-                    aria-pressed={when === w}
-                    onClick={() => setWhen(when === w ? '' : w)}
+                    className={when === w.key ? 'is-on' : ''}
+                    aria-pressed={when === w.key}
+                    onClick={() => setWhen(w.key)}
                   >
-                    {w}
+                    {w.label}
                   </button>
                 ))}
               </div>
             </fieldset>
 
             <label className="rq-group">
-              <span className="rq-legend">Muammoni yozing</span>
+              <span className="rq-legend">{T('Muammo yoki ishni yozing')}</span>
 
               <textarea
                 className="rq-field rq-textarea"
@@ -409,18 +457,18 @@ export default function RequestPage({ defaultCategory = '' }) {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={6}
                 maxLength={3000}
-                placeholder="Masalan: oshxonadagi kran tagidan suv oqyapti, ikki kundan beri."
+                placeholder={T('Masalan: oshxonadagi kran tagidan suv oqyapti, ikki kundan beri.')}
               />
 
               <span className={`rq-count ${descLen >= 10 ? 'is-ok' : ''}`}>
                 {descLen >= 10
-                  ? 'Yetarli'
-                  : `Yana ${10 - descLen} ta belgi kerak`}
+                  ? T('Yetarli')
+                  : T('Yana {{v}} ta belgi kerak', { v: 10 - descLen })}
               </span>
             </label>
 
             <div className="rq-quick">
-              {QUICK_PHRASES.map((p) => (
+              {quickPhrases.map((p) => (
                 <button key={p} type="button" onClick={() => addPhrase(p)}>
                   + {p}
                 </button>
@@ -442,18 +490,18 @@ export default function RequestPage({ defaultCategory = '' }) {
             </div>
 
             <p className="rq-hint">
-              Xaritada aniq joyni bosing yoki manzilni pastga yozing.
+              {T('Xaritada aniq joyni bosing yoki manzilni pastga yozing.')}
             </p>
 
             <label className="rq-group">
-              <span className="rq-legend">Manzil</span>
+              <span className="rq-legend">{T('Manzil')}</span>
 
               <input
                 type="text"
                 className="rq-field"
                 value={manualAddress}
                 maxLength={200}
-                placeholder="Tuman, mahalla, ko'cha, uy raqami"
+                placeholder={T('Tuman, mahalla, ko\'cha, uy raqami')}
                 onChange={(e) => {
                   setManualAddress(e.target.value);
 
@@ -464,11 +512,25 @@ export default function RequestPage({ defaultCategory = '' }) {
               />
             </label>
 
+            <label className="rq-group">
+              <span className="rq-legend">{T('Telefon raqamingiz')}</span>
+              <input
+                type="tel"
+                inputMode="tel"
+                className="rq-field"
+                value={phone}
+                maxLength={20}
+                placeholder="+998 90 123 45 67"
+                onChange={(e) => setPhone(e.target.value)}
+              />
+              <span className="rq-count">{T('Faqat siz tanlagan ustaga ko‘rinadi')}</span>
+            </label>
+
             {selected && (
               <div className="rq-summary">
                 <div>
                   <strong>{selected.label}</strong>
-                  {when && <em>{when}</em>}
+                  {whenText && <em>{whenText}</em>}
                 </div>
                 <p>{description.trim()}</p>
               </div>
@@ -498,7 +560,7 @@ export default function RequestPage({ defaultCategory = '' }) {
               disabled={!canNext}
               onClick={goNext}
             >
-              Davom etish
+              {T('Davom etish')}
             </button>
           ) : (
             <button
@@ -507,14 +569,14 @@ export default function RequestPage({ defaultCategory = '' }) {
               disabled={!canNext}
               onClick={handleSubmit}
             >
-              {submitting ? 'Yuborilmoqda...' : 'Ustalarga yuborish'}
+              {submitting ? T('Yuborilmoqda...') : targetProvider ? T('Ustaga yuborish') : T('Ustalarga yuborish')}
             </button>
           )}
         </div>
       </footer>
 
       {/* ============================================================
-         вњ… REQUEST TRACKER MODAL
+         ✅ REQUEST TRACKER MODAL
          Zakaz bergandan keyin ochiladi
          ============================================================ */}
 

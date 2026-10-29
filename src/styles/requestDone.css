@@ -1,0 +1,284 @@
+/* ============================================================
+   REQUEST DONE — ish yakunlangan sahifa (mijoz va usta)
+   Brend: to'q ko'k, och ko'k urg'u, oq matn
+   ============================================================ */
+
+body:has(.rdn-page) { padding-top: 0 !important; }
+
+.rdn-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(var(--cyan-rgb), 0.16), transparent 60%),
+    var(--bg);
+}
+.rdn-page *, .rdn-page *::before, .rdn-page *::after { box-sizing: border-box; }
+.rdn-center { align-items: center; justify-content: center; }
+
+.rdn-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(var(--text-rgb), 0.08);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.rdn-wrap {
+  flex: 1;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 40px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------- Muvaffaqiyat belgisi ---------- */
+.rdn-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px 0 4px;
+}
+.rdn-hero h1 {
+  margin: 16px 0 4px;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.rdn-hero p { margin: 0; color: var(--textMuted); font-size: 0.9rem; }
+
+.rdn-check { width: 88px; height: 88px; }
+.rdn-check__ring {
+  fill: rgba(var(--cyan-rgb), 0.1);
+  stroke: var(--cyan);
+  stroke-width: 3;
+  stroke-dasharray: 227;
+  stroke-dashoffset: 227;
+  animation: rdn-draw 0.7s ease-out forwards;
+}
+.rdn-check__tick {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: rdn-draw 0.4s 0.55s ease-out forwards;
+}
+
+/* ---------- Kvitansiya ---------- */
+.rdn-receipt {
+  position: relative;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid rgba(var(--text-rgb), 0.06);
+  animation: rdn-rise 0.45s 0.25s ease-out both;
+}
+
+.rdn-person { display: flex; align-items: center; gap: 12px; }
+.rdn-person strong { display: block; font-size: 1.05rem; }
+.rdn-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--textMuted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rdn-avatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--card);
+}
+.rdn-avatar--letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.rdn-rows { margin: 16px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.rdn-rows > div { display: flex; justify-content: space-between; gap: 16px; font-size: 0.88rem; }
+.rdn-rows dt {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--textMuted);
+}
+.rdn-rows dt svg { color: var(--cyan); }
+.rdn-rows dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.rdn-strike { text-decoration: line-through; color: var(--textMuted); }
+
+/* Kvitansiya "yirtiq" chizig'i */
+.rdn-total {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 2px dashed rgba(var(--text-rgb), 0.12);
+}
+.rdn-total::before,
+.rdn-total::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg);
+}
+.rdn-total::before { left: -29px; }
+.rdn-total::after { right: -29px; }
+.rdn-total span { color: var(--textMuted); font-size: 0.9rem; }
+.rdn-total strong { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; }
+.rdn-total small { font-size: 0.9rem; font-weight: 600; color: var(--textMuted); }
+
+.rdn-hint { margin: 8px 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--textMuted); }
+
+/* ---------- Bloklar ---------- */
+.rdn-block {
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--surface);
+  animation: rdn-rise 0.45s 0.4s ease-out both;
+}
+.rdn-block h2 { margin: 0; font-size: 1.05rem; font-weight: 800; }
+
+.rdn-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.rdn-photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; display: block; }
+
+/* ---------- Baholash ---------- */
+.rdn-rate { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.rdn-rate .rdn-hint { margin-top: 4px; }
+
+.rdn-stars { display: flex; gap: 6px; margin-top: 16px; }
+.rdn-review .rdn-stars { margin-top: 10px; }
+.rdn-stars button {
+  padding: 2px;
+  border: none;
+  background: none;
+  color: rgba(var(--text-rgb), 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+.rdn-stars button:not(:disabled):hover { transform: scale(1.12); }
+.rdn-stars button:not(:disabled):active { transform: scale(0.92); }
+.rdn-stars button.is-on { color: var(--cyan); }
+.rdn-stars button.is-on svg { fill: var(--cyan); }
+.rdn-stars.is-readonly button { cursor: default; }
+
+.rdn-rate__label {
+  min-height: 1.4em;
+  margin-top: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cyan);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.rdn-rate__label.is-visible { opacity: 1; }
+
+.rdn-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.rdn-tag {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--text-rgb), 0.14);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.rdn-tag.is-on { background: var(--cyan); border-color: var(--cyan); color: var(--on-accent); }
+
+.rdn-comment {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid transparent;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+  resize: vertical;
+}
+.rdn-comment:focus { outline: none; border-color: var(--cyan); }
+
+.rdn-review p:not(.rdn-hint) { margin: 10px 0 0; font-size: 0.92rem; line-height: 1.5; }
+
+/* ---------- Tugmalar ---------- */
+.rdn-foot {
+  /* Oddiy oqimda: baholash maydoni va izoh tugmalar ostida qolib ketmasin */
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 70%, rgba(var(--bg-rgb), 0));
+}
+.rdn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 54px;
+  border-radius: 16px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+.rdn-btn:active { transform: scale(0.985); }
+.rdn-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.rdn-btn--primary { border: none; background: var(--cyan); color: var(--on-accent); }
+.rdn-btn--ghost { border: none; background: rgba(var(--text-rgb), 0.06); color: var(--text); }
+
+.rdn-spin { animation: rdn-rotate 0.9s linear infinite; }
+
+@keyframes rdn-draw { to { stroke-dashoffset: 0; } }
+@keyframes rdn-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes rdn-rotate { to { transform: rotate(360deg); } }
+
+@media (max-width: 360px) {
+  .rdn-stars button svg { width: 34px; height: 34px; }
+  .rdn-total strong { font-size: 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rdn-check__ring, .rdn-check__tick { animation: none; stroke-dashoffset: 0; }
+  .rdn-receipt, .rdn-block { animation: none; }
+}

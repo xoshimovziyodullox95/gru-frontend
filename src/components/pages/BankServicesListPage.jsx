@@ -7,13 +7,14 @@ import { safeGoBack } from '../utils/navigation.js';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/marketplace.css';
 
+import { T } from '../utils/T';
 const SUBCATEGORY_TABS = [
-  { slug: null, label: 'Barchasi' },
-  { slug: 'credit', label: 'Kredit' },
-  { slug: 'qr_payment', label: 'QR to\'lov' },
+  { slug: null, label: T('Barchasi') },
+  { slug: 'credit', label: T('Kredit') },
+  { slug: 'qr_payment', label: T('QR to\'lov') },
   { slug: 'pko', label: 'PKO' },
-  { slug: 'cards', label: 'Kartalar' },
-  { slug: 'deposits', label: 'Depozitlar' },
+  { slug: 'cards', label: T('Kartalar') },
+  { slug: 'deposits', label: T('Depozitlar') },
   { slug: 'money_transfers', label: 'Pul o\'tkazmalari' },
 ];
 

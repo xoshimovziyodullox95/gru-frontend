@@ -5,6 +5,7 @@ import RoleGate from '../../shared/RoleGate';
 import { getStock, adjustStock, getProductByBarcode } from '../../../services/business';
 import BarcodeScannerModal from '../../../common/Barcodescannermodal.jsx';
 
+import { T } from '../../../utils/T';
 function AdjustModal({ product, onClose, onSaved, businessId, warehouseId }) {
   const [quantity, setQuantity] = useState('');
   const [direction, setDirection] = useState('increase');
@@ -15,7 +16,7 @@ function AdjustModal({ product, onClose, onSaved, businessId, warehouseId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!quantity || Number(quantity) <= 0) {
-      setError('Musbat son kiriting');
+      setError(T('Musbat son kiriting'));
       return;
     }
     setSaving(true);
@@ -26,7 +27,7 @@ function AdjustModal({ product, onClose, onSaved, businessId, warehouseId }) {
       });
       onSaved();
     } catch (err) {
-      setError(err.response?.data?.error || 'Xatolik yuz berdi');
+      setError(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setSaving(false);
     }
@@ -36,36 +37,36 @@ function AdjustModal({ product, onClose, onSaved, businessId, warehouseId }) {
     <div className="pt-modal-overlay" onClick={onClose}>
       <form className="pt-modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit} style={{ maxWidth: 360 }}>
         <div className="pt-modal-header">
-          <h3>Qoldiqni tuzatish</h3>
+          <h3>{T('Qoldiqni tuzatish')}</h3>
           <button type="button" className="pt-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
         <p style={{ color: 'var(--textMuted)', fontSize: '0.85rem', marginBottom: 12 }}>
-          {product.productId.name} — joriy qoldiq: <strong>{product.quantity}</strong> {product.productId.unit}
+          {product.productId.name} {T('— joriy qoldiq:')} <strong>{product.quantity}</strong> {product.productId.unit}
         </p>
 
         <div className="pt-form-grid">
           <label className="pt-field pt-field-full">
-            <span>Yo'nalish</span>
+            <span>{T('Yo\'nalish')}</span>
             <select value={direction} onChange={(e) => setDirection(e.target.value)}>
               <option value="increase">Oshirish (+)</option>
               <option value="decrease">Kamaytirish (-)</option>
             </select>
           </label>
           <label className="pt-field pt-field-full">
-            <span>Miqdor</span>
+            <span>{T('Miqdor')}</span>
             <input type="number" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="0" autoFocus />
           </label>
           <label className="pt-field pt-field-full">
-            <span>Izoh (ixtiyoriy)</span>
-            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Masalan: brak, yo'qotish" />
+            <span>{T('Izoh (ixtiyoriy)')}</span>
+            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder={T('Masalan: brak, yo\'qotish')} />
           </label>
         </div>
 
         {error && <div className="pt-error">{error}</div>}
 
         <div className="pt-modal-actions">
-          <button type="button" onClick={onClose} className="pt-btn-secondary">Bekor qilish</button>
-          <button type="submit" disabled={saving} className="pt-btn-primary">{saving ? 'Saqlanmoqda...' : 'Tasdiqlash'}</button>
+          <button type="button" onClick={onClose} className="pt-btn-secondary">{T('Bekor qilish')}</button>
+          <button type="submit" disabled={saving} className="pt-btn-primary">{saving ? T('Saqlanmoqda...') : T('Tasdiqlash')}</button>
         </div>
       </form>
     </div>
@@ -143,14 +144,14 @@ export default function StockView() {
     }
   };
 
-  if (!activeWarehouse) return <div className="pt-empty">Ombor tanlanmagan</div>;
+  if (!activeWarehouse) return <div className="pt-empty">{T('Ombor tanlanmagan')}</div>;
 
   return (
     <>
       {/* 🔥 SKANER PANELI */}
       <div className="pt-field pt-field-full" style={{ marginBottom: 14 }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <ScanLine size={15} /> Mahsulotni skanerlab tezkor tuzatish
+          <ScanLine size={15} /> {T('Mahsulotni skanerlab tezkor tuzatish')}
         </span>
         <div style={{ display: 'flex', gap: 6 }}>
           <input
@@ -159,12 +160,12 @@ export default function StockView() {
             value={barcodeInput}
             onChange={(e) => setBarcodeInput(e.target.value)}
             onKeyDown={handleBarcodeKeyDown}
-            placeholder="Kursor shu yerda turganda, skanerni tovar ustiga tuting..."
+            placeholder={T('Kursor shu yerda turganda, skanerni tovar ustiga tuting...')}
             style={{ flex: 1, fontFamily: 'monospace', fontSize: '1rem' }}
             autoComplete="off"
           />
           <button type="button" className="pt-btn-secondary" onClick={() => setShowScanner(true)}>
-            <Camera size={16} /> Kamera bilan
+            <Camera size={16} /> {T('Kamera bilan')}
           </button>
         </div>
         {scanStatus && (
@@ -175,17 +176,17 @@ export default function StockView() {
       </div>
 
       {loading ? (
-        <div className="pt-empty">Yuklanmoqda...</div>
+        <div className="pt-empty">{T('Yuklanmoqda...')}</div>
       ) : stock.length === 0 ? (
-        <div className="pt-empty">Bu omborda hali mahsulot yo'q. Avval "Kirim" orqali tovar qabul qiling.</div>
+        <div className="pt-empty">{T('Bu omborda hali mahsulot yo\'q. Avval "Kirim" orqali tovar qabul qiling.')}</div>
       ) : (
         <div className="pt-table-wrap">
           <table className="pt-table">
             <thead>
               <tr>
-                <th>Mahsulot</th>
-                <th>Qoldiq</th>
-                <th>Birlik</th>
+                <th>{T('Mahsulot')}</th>
+                <th>{T('Qoldiq')}</th>
+                <th>{T('Birlik')}</th>
                 <th></th>
               </tr>
             </thead>

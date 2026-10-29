@@ -10,12 +10,12 @@
 
 .add-listing-card,
 .add-listing-form {
-  background: rgba(8, 16, 35, 0.85);
+  background: rgba(var(--surface-rgb), 0.85);
   backdrop-filter: blur(16px);
   border-radius: 2rem;
   padding: 2.2rem 2.5rem;
   border: 1px solid rgba(0, 150, 255, 0.2);
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 48px rgba(var(--surface-rgb), 0.5);
   position: relative;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   animation: cardIn 0.35s ease;
@@ -29,7 +29,7 @@
 .add-listing-card:hover,
 .add-listing-form:hover {
   border-color: rgba(0, 229, 255, 0.4);
-  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 32px 64px rgba(var(--surface-rgb), 0.6);
 }
 .form-group .price-currency-row {
   display: flex;
@@ -54,7 +54,7 @@
   align-items: center;
   gap: 0.4rem;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(var(--text-rgb), 0.08);
   color: var(--textMuted);
   padding: 0.4rem 1rem;
   border-radius: 2rem;
@@ -271,9 +271,9 @@
 }
 
 .back-btn-top:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(var(--text-rgb), 0.04);
+  color: var(--text);
+  border-color: rgba(var(--text-rgb), 0.2);
   transform: translateX(-2px);
 }
 
@@ -302,9 +302,9 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.35);
+  background: rgba(var(--text-rgb), 0.05);
+  border: 2px solid rgba(var(--text-rgb), 0.1);
+  color: var(--textMuted);
   font-weight: 700;
   font-size: 14px;
   transition: all 0.3s ease;
@@ -319,11 +319,11 @@
 .step-dot.completed {
   background: #00e5ff;
   border-color: #00e5ff;
-  color: #0a1628;
+  color: var(--on-accent);
 }
 .step-label {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--textMuted);
   font-weight: 600;
   white-space: nowrap;
   transition: color 0.3s ease;
@@ -334,7 +334,7 @@
 .step-line {
   width: 48px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--text-rgb), 0.08);
   margin-top: 17px;
   transition: background 0.3s ease;
 }
@@ -376,7 +376,7 @@
   align-items: center;
   gap: 0.4rem;
   font-weight: 600;
-  color: #b0d0ea;
+  color: var(--textMuted);
   font-size: 0.85rem;
   margin-bottom: 0.3rem;
 }
@@ -388,16 +388,16 @@
 .form-group textarea {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(2, 8, 23, 0.7);
+  background: rgba(var(--surface-rgb), 0.7);
   border: 1px solid rgba(0, 130, 255, 0.25);
   border-radius: 0.75rem;
-  color: #fff;
+  color: var(--text);
   font-size: 0.95rem;
   transition: all 0.25s;
 }
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--textMuted);
 }
 .form-group input:focus,
 .form-group select:focus,
@@ -434,9 +434,9 @@
   gap: 0.45rem;
   padding: 1.3rem 0.8rem;
   border-radius: 1.4rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 2px solid rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(var(--text-rgb), 0.02);
+  border: 2px solid rgba(var(--text-rgb), 0.06);
+  color: var(--textMuted);
   cursor: pointer;
   transition: all 0.25s ease;
 }
@@ -447,8 +447,8 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.4);
+  background: rgba(var(--text-rgb), 0.04);
+  color: var(--textMuted);
   transition: all 0.25s ease;
 }
 .type-btn-title {
@@ -458,7 +458,7 @@
 }
 .type-btn-desc {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--textMuted);
   font-weight: 500;
   text-align: center;
   line-height: 1.3;
@@ -474,11 +474,11 @@
   box-shadow: 0 0 20px rgba(0, 229, 255, 0.35);
 }
 .type-buttons button.active .type-btn-desc {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--textMuted);
 }
 .type-buttons button:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(var(--text-rgb), 0.04);
+  border-color: rgba(var(--text-rgb), 0.15);
   transform: translateY(-2px);
 }
 
@@ -496,16 +496,16 @@
   gap: 0.4rem;
   padding: 0.9rem 0.4rem;
   border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 2px solid rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.5);
+  background: rgba(var(--text-rgb), 0.02);
+  border: 2px solid rgba(var(--text-rgb), 0.05);
+  color: var(--textMuted);
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.8rem;
   font-weight: 500;
 }
 .product-type-btn svg {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--textMuted);
   transition: color 0.2s ease;
 }
 .product-type-btn.active {
@@ -517,7 +517,7 @@
   color: #00e5ff;
 }
 .product-type-btn:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--text-rgb), 0.04);
   transform: translateY(-2px);
 }
 
@@ -562,7 +562,7 @@
   height: 100px;
   border-radius: 0.75rem;
   overflow: hidden;
-  background: #0a1128;
+  background: var(--surface);
   border: 1px solid rgba(0, 150, 255, 0.2);
 }
 .media-preview img,
@@ -575,7 +575,7 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(var(--surface-rgb), 0.7);
   border: none;
   border-radius: 50%;
   width: 22px;
@@ -584,7 +584,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #fff;
+  color: var(--text);
   transition: background 0.2s;
 }
 .remove-media:hover {
@@ -594,7 +594,7 @@
 /* ===== Progress ===== */
 .progress-bar {
   height: 5px;
-  background: #1a2a3a;
+  background: var(--surface);
   border-radius: 4px;
   margin: 1rem 0;
   overflow: hidden;
@@ -616,9 +616,9 @@
   flex: 1;
   padding: 0.7rem;
   border-radius: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(var(--text-rgb), 0.1);
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--textMuted);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -628,8 +628,8 @@
   gap: 0.4rem;
 }
 .back-step-btn:hover {
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  background: rgba(var(--text-rgb), 0.04);
+  color: var(--text);
 }
 .next-step-btn {
   flex: 2;

@@ -2,6 +2,7 @@
    PUSH SERVICE — Universal
    ============================================================ */
 
+import { Capacitor } from '@capacitor/core';
 import api from './api';
 
 /* ============================================================
@@ -29,15 +30,8 @@ function urlBase64ToUint8Array(base64String) {
    ============================================================ */
 
 function detectPlatform() {
-  /*
-   * Kelajakda React Native qo'shganda:
-   *   import { Platform } from 'react-native';
-   *   if (Platform.OS === 'ios') return 'ios';
-   *   if (Platform.OS === 'android') return 'android';
-   *
-   * Hozircha faqat web.
-   */
-  return 'web';
+  // Ilova ichida (Capacitor) — 'ios' | 'android', brauzerda — 'web'
+  return Capacitor.isNativePlatform() ? Capacitor.getPlatform() : 'web';
 }
 
 /* ============================================================
@@ -103,28 +97,52 @@ async function registerWebPush() {
 }
 
 /* ============================================================
-   REGISTER — MOBILE (kelajakda)
+   REGISTER — MOBILE (Firebase Cloud Messaging, Android va iOS)
    ============================================================ */
 
-async function registerMobilePush() {
-  /*
-   * ⚠️ Hozircha o'chirilgan.
-   * React Native qo'shganda bu funksiyani to'ldirasiz:
-   *
-   * import messaging from '@react-native-firebase/messaging';
-   *
-   * 1. Ruxsat so'rash
-   * 2. FCM tokenni olish: await messaging().getToken()
-   * 3. Backend'ga yuborish:
-   *    await api.post('/push/subscribe', {
-   *      platform: Platform.OS,  // 'ios' | 'android'
-   *      fcmToken: token,
-   *      deviceName: DeviceInfo.getModel(),
-   *    });
-   */
+let mobileToken = null;
+let mobileListenersAdded = false;
 
-  console.warn('Mobile push hali qo\'shilmagan');
-  return false;
+// Bildirishnoma bosilganda ilova ichida kerakli sahifani ochadi (BrowserRouter popstate'ni tinglaydi)
+function openFromPush(url) {
+  if (!url || !url.startsWith('/')) return;
+  window.history.pushState({}, '', url);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+}
+
+async function registerMobilePush(platform) {
+  try {
+    const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
+
+    let { receive } = await FirebaseMessaging.checkPermissions();
+    if (receive === 'prompt' || receive === 'prompt-with-rationale') {
+      ({ receive } = await FirebaseMessaging.requestPermissions());
+    }
+    if (receive !== 'granted') return false;
+
+    if (!mobileListenersAdded) {
+      mobileListenersAdded = true;
+      await FirebaseMessaging.addListener('tokenReceived', ({ token }) => {
+        if (token && token !== mobileToken) {
+          mobileToken = token;
+          api.post('/push/subscribe', { platform, fcmToken: token }).catch(() => {});
+        }
+      });
+      await FirebaseMessaging.addListener('notificationActionPerformed', ({ notification }) => {
+        openFromPush(notification?.data?.url);
+      });
+    }
+
+    const { token } = await FirebaseMessaging.getToken();
+    if (!token) return false;
+    mobileToken = token;
+    await api.post('/push/subscribe', { platform, fcmToken: token });
+    return true;
+  } catch (err) {
+    // Firebase sozlanmagan bo'lsa (google-services.json yo'q) — ilova ishlashda davom etadi
+    console.warn('Mobile push registratsiya xatosi:', err?.message || err);
+    return false;
+  }
 }
 
 /* ============================================================
@@ -138,7 +156,7 @@ export const registerPush = async () => {
     return registerWebPush();
   }
 
-  return registerMobilePush();
+  return registerMobilePush(platform);
 };
 
 /* ============================================================
@@ -147,6 +165,14 @@ export const registerPush = async () => {
 
 export const unregisterPush = async () => {
   try {
+    if (detectPlatform() !== 'web') {
+      if (mobileToken) await api.post('/push/unsubscribe', { fcmToken: mobileToken });
+      const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
+      await FirebaseMessaging.deleteToken().catch(() => {});
+      mobileToken = null;
+      return true;
+    }
+
     if ('serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.ready;
       const subscription =

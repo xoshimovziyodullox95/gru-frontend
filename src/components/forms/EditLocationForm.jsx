@@ -8,6 +8,7 @@ import { getLevel1, getLevel2 } from '../services/categories';
 import { Upload, X } from 'lucide-react';
 import '../../styles/forms.css';
 
+import { T } from '../utils/T';
 export default function EditLocationForm() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ export default function EditLocationForm() {
       setLoading(false);
     }).catch(err => {
       console.error(err);
-      alert('MaКјlumot yuklashda xatolik');
+      alert(T('Maʼlumot yuklashda xatolik'));
       safeGoBack(navigate);
     });
   }, [id]);
@@ -94,7 +95,7 @@ export default function EditLocationForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      alert('Iltimos, avval tizimga kiring');
+      alert(T('Iltimos, avval tizimga kiring'));
       navigate('/login');
       return;
     }
@@ -111,7 +112,7 @@ export default function EditLocationForm() {
           setUploadProgress(percent);
         });
       }
-      alert('Joy muvaffaqiyatli yangilandi!');
+      alert(T('Joy muvaffaqiyatli yangilandi!'));
       navigate(`/location/${id}`);
     } catch (err) {
       console.error(err);
@@ -121,12 +122,12 @@ export default function EditLocationForm() {
     }
   };
 
-  if (loading) return <div className="loading-spinner">Yuklanmoqda...</div>;
+  if (loading) return <div className="loading-spinner">{T('Yuklanmoqda...')}</div>;
 
   return (
     <div className="add-location-form-container">
       <form onSubmit={handleSubmit} className="add-location-form">
-        <h2>Joyni tahrirlash</h2>
+        <h2>{T('Joyni tahrirlash')}</h2>
         
         <div className="form-group">
           <label>Nomi *</label>
@@ -145,16 +146,16 @@ export default function EditLocationForm() {
         
         <div className="form-row">
           <div className="form-group">
-            <label>Yo‘nalish (level1) *</label>
+            <label>{T('Yo‘nalish (level1) *')}</label>
             <select name="level1" value={formData.level1} onChange={handleChange} required>
-              <option value="">Tanlang</option>
+              <option value="">{T('Tanlang')}</option>
               {level1List.map(l1 => <option key={l1.key} value={l1.key}>{l1.name || l1.key}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label>Kategoriya (level2) *</label>
+            <label>{T('Kategoriya (level2) *')}</label>
             <select name="level2" value={formData.level2} onChange={handleChange} required disabled={!formData.level1}>
-              <option value="">Tanlang</option>
+              <option value="">{T('Tanlang')}</option>
               {level2List.map(l2 => <option key={l2.key || l2.level2} value={l2.key || l2.level2}>{l2.name || l2.level2}</option>)}
             </select>
           </div>
@@ -162,11 +163,11 @@ export default function EditLocationForm() {
         
         <div className="form-row">
           <div className="form-group">
-            <label>Maydoni (kv.m)</label>
+            <label>{T('Maydoni (kv.m)')}</label>
             <input type="number" name="sqm" value={formData.sqm} onChange={handleChange} />
           </div>
           <div className="form-group">
-            <label>Narx oralig‘i</label>
+            <label>{T('Narx oralig‘i')}</label>
             <div className="price-currency-row">
               <input
                 type="text"
@@ -182,38 +183,38 @@ export default function EditLocationForm() {
                 className="currency-select"
               >
                 <option value="USD">USD ($)</option>
-                <option value="UZS">UZS (so'm)</option>
+                <option value="UZS">{T('UZS (so\'m)')}</option>
               </select>
             </div>
           </div>
         </div>
         
         <div className="form-group">
-          <label>Raqobat haqida</label>
+          <label>{T('Raqobat haqida')}</label>
           <textarea name="competitors_info" rows="2" value={formData.competitors_info} onChange={handleChange}></textarea>
         </div>
         
         <div className="form-group">
-          <label>UVP (Asosiy ustunlik)</label>
+          <label>{T('UVP (Asosiy ustunlik)')}</label>
           <textarea name="uvp" rows="2" value={formData.uvp} onChange={handleChange}></textarea>
         </div>
         
         <div className="form-group">
-          <label>Tavsif</label>
+          <label>{T('Tavsif')}</label>
           <textarea name="description" rows="3" value={formData.description} onChange={handleChange}></textarea>
         </div>
         
         <div className="form-group">
-          <label>Rasmlar va videolar</label>
+          <label>{T('Rasmlar va videolar')}</label>
           <div className="media-upload-area">
             <label className="upload-btn">
-              <Upload size={20} /> Fayl yuklash
+              <Upload size={20} /> {T('Fayl yuklash')}
               <input type="file" multiple accept="image/*,video/*" onChange={handleFileChange} style={{ display: 'none' }} />
             </label>
             <div className="media-previews">
               {mediaFiles.map((mf, idx) => (
                 <div key={idx} className="media-preview">
-                  {mf.type === 'image' ? <img src={mf.preview} alt="preview" /> : <video src={mf.preview} controls />}
+                  {mf.type === 'image' ? <img src={mf.preview} alt="" /> : <video src={mf.preview} controls />}
                   <button type="button" onClick={() => removeMedia(idx)} className="remove-media"><X size={16} /></button>
                 </div>
               ))}
@@ -226,7 +227,7 @@ export default function EditLocationForm() {
         )}
         
         <button type="submit" disabled={submitting} className="submit-btn">
-          {submitting ? 'Yangilanmoqda...' : 'Saqlash'}
+          {submitting ? T('Yangilanmoqda...') : T('Saqlash')}
         </button>
       </form>
     </div>

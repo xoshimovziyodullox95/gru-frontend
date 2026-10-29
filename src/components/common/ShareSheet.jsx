@@ -14,6 +14,7 @@ import { getConversations, sendMessage } from '../services/chat';
 import toast from 'react-hot-toast';
 import '../../styles/share-sheet.css';
 
+import { T } from '../utils/T';
 const AVATAR_PLACEHOLDER = '/images/zumo-placeholder.svg';
 
 function toIdStr(v) {
@@ -62,7 +63,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
       })
       .catch((err) => {
         console.error('ShareSheet load xato:', err);
-        toast.error("Foydalanuvchilarni yuklab bo'lmadi");
+        toast.error(T('Foydalanuvchilarni yuklab bo\'lmadi'));
       })
       .finally(() => setLoading(false));
   }, [isOpen, user]);
@@ -96,10 +97,10 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
     try {
       await navigator.clipboard.writeText(buildUrl());
       setCopied(true);
-      toast.success('Havola nusxalandi');
+      toast.success(T('Havola nusxalandi'));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error('Nusxalashda xatolik');
+      toast.error(T('Nusxalashda xatolik'));
     }
   };
 
@@ -107,7 +108,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: shareItem.title || (isListing ? 'E’lon' : 'Video'),
+          title: shareItem.title || (isListing ? T('E’lon') : T('Video')),
           url: buildUrl(),
         });
       } catch (err) {
@@ -124,12 +125,12 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
     try {
       await sendMessage({ to: targetId, message: buildMessage() });
       toast.success(
-        `${targetUser.fullName || 'Foydalanuvchi'}ga yuborildi`
+        T('{{v}}ga yuborildi', { v: targetUser.fullName || 'Foydalanuvchi' })
       );
       onClose();
     } catch (err) {
       console.error('Send xato:', err);
-      toast.error('Yuborilmadi');
+      toast.error(T('Yuborilmadi'));
     } finally {
       setSending(null);
     }
@@ -145,13 +146,13 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
         <header className="share-header">
           <div className="share-header__title">
             <Share2 size={18} strokeWidth={2.4} />
-            <h2>Ulashish</h2>
+            <h2>{T('Ulashish')}</h2>
           </div>
           <button
             type="button"
             className="share-close"
             onClick={onClose}
-            aria-label="Yopish"
+            aria-label={T('Yopish')}
           >
             <X size={18} strokeWidth={2.6} />
           </button>
@@ -175,7 +176,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
             )}
           </div>
           <div className="share-preview__info">
-            <strong>{shareItem.title || (isListing ? 'E’lon' : 'Video')}</strong>
+            <strong>{shareItem.title || (isListing ? T('E’lon') : T('Video'))}</strong>
             <small>{buildUrl()}</small>
           </div>
         </div>
@@ -211,7 +212,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
                   <span className="share-person__name">
                     {(u.fullName || u.email || '').split(' ')[0]}
                   </span>
-                  <span className="share-person__sub">Yuborish</span>
+                  <span className="share-person__sub">{T('Yuborish')}</span>
                 </button>
               );
             })}
@@ -223,7 +224,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
           <Search size={16} strokeWidth={2.4} />
           <input
             type="text"
-            placeholder="Qidirish..."
+            placeholder={T('Qidirish...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -232,7 +233,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
               type="button"
               className="share-search__clear"
               onClick={() => setSearch('')}
-              aria-label="Tozalash"
+              aria-label={T('Tozalash')}
             >
               <X size={14} strokeWidth={2.6} />
             </button>
@@ -244,13 +245,13 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
           {loading ? (
             <div className="share-loading">
               <Loader2 size={24} className="spin" />
-              <span>Yuklanmoqda...</span>
+              <span>{T('Yuklanmoqda...')}</span>
             </div>
           ) : filteredUsers.length === 0 ? (
             <div className="share-empty">
               <Search size={28} strokeWidth={1.8} />
               <span>
-                {search ? 'Topilmadi' : "Suhbatlar yo'q"}
+                {search ? T('Topilmadi') : T('Suhbatlar yo\'q')}
               </span>
             </div>
           ) : (
@@ -307,7 +308,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
                 <LinkIcon size={20} strokeWidth={2.2} />
               )}
             </span>
-            <span>{copied ? 'Nusxa' : 'Havola'}</span>
+            <span>{copied ? T('Nusxa') : T('Havola')}</span>
           </button>
 
           <button
@@ -316,13 +317,13 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
             onClick={() => {
               const text = `${shareItem.title || (isListing ? 'E’lon' : 'Video')}\n${buildUrl()}`;
               navigator.clipboard.writeText(text);
-              toast.success('Matn nusxalandi');
+              toast.success(T('Matn nusxalandi'));
             }}
           >
             <span className="share-app__icon">
               <Copy size={20} strokeWidth={2.2} />
             </span>
-            <span>Matn</span>
+            <span>{T('Matn')}</span>
           </button>
 
           <button
@@ -333,7 +334,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
             <span className="share-app__icon">
               <Share2 size={20} strokeWidth={2.2} />
             </span>
-            <span>Boshqa</span>
+            <span>{T('Boshqa')}</span>
           </button>
 
           <button
@@ -341,13 +342,13 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
             className="share-app"
             onClick={() => {
               navigator.clipboard.writeText(buildUrl());
-              toast.success('Story uchun nusxalandi');
+              toast.success(T('Story uchun nusxalandi'));
             }}
           >
             <span className="share-app__icon">
               <Camera size={20} strokeWidth={2.2} />
             </span>
-            <span>Story</span>
+            <span>{T('Story')}</span>
           </button>
 
           <button
@@ -355,13 +356,13 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
             className="share-app"
             onClick={() => {
               navigator.clipboard.writeText(buildUrl());
-              toast.success('Telegram uchun nusxalandi');
+              toast.success(T('Telegram uchun nusxalandi'));
             }}
           >
             <span className="share-app__icon">
               <Send size={20} strokeWidth={2.2} />
             </span>
-            <span>Telegram</span>
+            <span>{T('Telegram')}</span>
           </button>
 
           <button
@@ -369,7 +370,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
             className="share-app"
             onClick={() => {
               navigator.clipboard.writeText(buildUrl());
-              toast.success('WhatsApp uchun nusxalandi');
+              toast.success(T('WhatsApp uchun nusxalandi'));
             }}
           >
             <span className="share-app__icon">
@@ -383,13 +384,13 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
             className="share-app"
             onClick={() => {
               navigator.clipboard.writeText(buildUrl());
-              toast.success('Video uchun nusxalandi');
+              toast.success(T('Video uchun nusxalandi'));
             }}
           >
             <span className="share-app__icon">
               <Video size={20} strokeWidth={2.2} />
             </span>
-            <span>Video</span>
+            <span>{T('Video')}</span>
           </button>
         </div>
       </div>

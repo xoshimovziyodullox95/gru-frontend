@@ -57,7 +57,13 @@
     "next": "Keyingilari",
     "untitled": "E’lon",
     "scrollTop": "Tepaga qaytish",
-    "share": "Do‘stga yuborish"
+    "share": "Do‘stga yuborish",
+    "sum": "so‘m",
+    "min": "daq",
+    "new": "yangi",
+    "call": "Qo‘ng‘iroq qilish",
+    "service": "Xizmat",
+    "kmAway": "{{km}} km uzoqlikda"
   },
   "home": {
     "heroPhrases": [
@@ -106,7 +112,13 @@
       "businessTitle": "Biznesingiz bormi?",
       "businessSubtitle": "Uni rivojlantiring"
     },
-    "seeMore": "Yana ko‘rish"
+    "seeMore": "Yana ko‘rish",
+    "ctaRequest": "Usta kerakmi?",
+    "ctaRequestSub": "Xizmat so‘rovi yuborish",
+    "ctaMarketplaceSub": "Tovar va joylar",
+    "ctaBank": "Bank mahsulotlari",
+    "ctaBankSub": "Moliyaviy xizmatlar",
+    "ctaBusinessSub": "Tanlang va boshlang"
   },
   "categories": {
     "Agro": "Qishloq xo‘jaligi",
@@ -138,6 +150,21 @@
     },
     "services": {
       "catsTitle": "Xizmat yo‘nalishlari"
+    },
+    "bank": {
+      "title": "Bank xizmatlari",
+      "individual": "Jismoniy shaxs",
+      "legal": "Yuridik shaxs",
+      "empty": "Bu bo'limda hozircha xizmat yo'q",
+      "scrollTop": "Yuqoriga",
+      "categories": {
+        "credit": "Kreditlar",
+        "cards": "Kartalar",
+        "deposits": "Depozitlar",
+        "pko": "Naqd pul / PKO",
+        "moneyTransfers": "Pul o‘tkazmalari",
+        "qrPayment": "QR to‘lovlar"
+      }
     }
   },
   "marketplaceReels": {
@@ -191,7 +218,7 @@
       "thankYou": "Rahmat! ✓"
     },
     "copyright": {
-      "text": "© {year} ZUMO Corporation — Barcha huquqlar himoyalangan",
+      "text": "© {{year}} ZUMO Corporation — Barcha huquqlar himoyalangan",
       "madeWith": "Sevgi bilan O‘zbekistonda yaratilgan"
     }
   },
@@ -382,11 +409,11 @@
   },
   "profile": {
     "loading": "Yuklanmoqda...",
-    "error": "Profil topilmadi",
+    "error": "Xatolik yuz berdi",
     "back": "Orqaga",
     "edit": "Tahrirlash",
     "save": "Saqlash",
-    "cancelPremium": "Premiumni bekor qilish",
+    "cancelPremium": "Bekor qilish",
     "cancelling": "Bekor qilinmoqda...",
     "becomePremium": "Premium bo'lish",
     "premiumBadge": "Premium a'zo",
@@ -395,12 +422,12 @@
     "roleBusiness": "Biznes egasi",
     "listingLimit": "{current}/{max} e'lon",
     "unlimited": "∞",
-    "subscribe": "Obuna bo'lish",
+    "subscribe": "Obuna bo‘lish",
     "unsubscribe": "Obunani bekor qilish",
     "subscribers": "Obunachilar",
     "subscriptions": "Obunalar",
     "videos": "Videolar",
-    "emptyListings": "Hozircha e'lonlar mavjud emas",
+    "emptyListings": "Hozircha e’lonlar yo‘q",
     "tabs": {
       "locations": "Joylar",
       "equipment": "Tovarlar",
@@ -409,17 +436,24 @@
     },
     "actions": {
       "edit": "Tahrirlash",
-      "delete": "O'chirish",
+      "delete": "O‘chirish",
       "save": "Saqlash",
-      "cancel": "Bekor qilish"
+      "cancel": "Bekor qilish",
+      "branches": "Filiallarim",
+      "receivedOrders": "Kelgan buyurtmalar",
+      "broadcast": "Reklama tarqatish",
+      "erp": "ZUMO Business",
+      "erpHint": "Ombor, kirim, kassa",
+      "stats": "Statistika"
     },
     "businessDashboard": {
-      "title": "Business statistics",
-      "locations": "Locations",
-      "equipment": "Equipment",
-      "services": "Services",
-      "views": "Views",
-      "details": "More details"
+      "title": "Biznes paneli",
+      "locations": "Joylar",
+      "equipment": "Tovarlar",
+      "services": "Xizmatlar",
+      "views": "Ko‘rishlar",
+      "details": "Batafsil",
+      "subtitle": "E’lonlaringiz natijalari"
     },
     "bioPlaceholder": "Salom! Men ZUMO da o'z e'lonlarimni boshqaraman.",
     "avatarUpload": "Avatar yuklash",
@@ -452,7 +486,69 @@
     },
     "roleCompany": "Kompaniya",
     "roleSeller": "Sotuvchi",
-    "becomeProvider": "Xizmat ko‘rsatuvchi bo‘lish"
+    "becomeProvider": "Usta bo‘lib ishlash",
+    "provider": {
+      "title": "Usta paneli",
+      "new": "Yangi",
+      "reviews": "Sharhlar",
+      "address": "Manzil",
+      "rating": "Reyting",
+      "requests": "Kelgan so‘rovlar",
+      "history": "Ish tarixi",
+      "myService": "Mening xizmatim"
+    },
+    "avatarOnlyImage": "Faqat rasm yuklash mumkin",
+    "avatarUpdated": "Rasm yangilandi",
+    "avatarError": "Rasmni yuklab bo‘lmadi",
+    "nameRequired": "Ismingizni kiriting",
+    "saved": "Profil saqlandi",
+    "deleteConfirm": "Haqiqatan ham o‘chirmoqchimisiz?",
+    "deleted": "O‘chirildi",
+    "deleteError": "O‘chirib bo‘lmadi",
+    "cancelPremiumConfirm": "Premium a’zolikni bekor qilmoqchimisiz?",
+    "premiumCancelled": "Premium bekor qilindi",
+    "unsubscribed": "Obuna bekor qilindi",
+    "subscribed": "Obuna bo‘ldingiz",
+    "retry": "Qayta urinish",
+    "noName": "Ism kiritilmagan",
+    "role": {
+      "provider": "Usta",
+      "business": "Biznes",
+      "company": "Kompaniya",
+      "seller": "Sotuvchi"
+    },
+    "addListing": "E’lon joylash",
+    "myProfile": "Mening profilim",
+    "title": "Profil",
+    "share": "Ulashish",
+    "changePhoto": "Rasmni o‘zgartirish",
+    "addBio": "O‘zingiz haqingizda qisqacha yozing",
+    "listings": "E’lonlar",
+    "editProfile": "Profilni tahrirlash",
+    "following": "Obuna bo‘lingan",
+    "message": "Xabar yozish",
+    "premiumActive": "Premium faol",
+    "premiumUntil": "{{date}} gacha",
+    "getPremium": "Premium oling",
+    "premiumPitch": "Tasdiq belgisi, e’lonlar yuqorida, ko‘proq mijoz",
+    "client": {
+      "title": "Usta kerakmi?",
+      "text": "So‘rov yuboring — ustalar o‘zi taklif beradi",
+      "call": "Usta chaqirish",
+      "myRequests": "So‘rovlarim"
+    },
+    "emptyVideos": "Hozircha videolar yo‘q",
+    "cancel": "Bekor qilish",
+    "fields": {
+      "name": "Ism va familiya",
+      "namePlaceholder": "Masalan: Akmal Karimov",
+      "phone": "Telefon",
+      "bio": "O‘zingiz haqingizda",
+      "bioPlaceholder": "Nima bilan shug‘ullanasiz, tajribangiz, ish vaqtingiz..."
+    },
+    "noSubscribers": "Hozircha obunachilar yo‘q",
+    "noSubscriptions": "Hozircha hech kimga obuna bo‘lmagansiz",
+    "unfollow": "Bekor qilish"
   },
   "settings": {
     "title": "Sozlamalar",
@@ -647,7 +743,8 @@
     "badgeVerified": "Tasdiqlangan",
     "priceNotAvailable": "Narxi mavjud emas",
     "details": "Batafsil",
-    "noImage": "placeholder"
+    "noImage": "placeholder",
+    "addToCart": "Savatga"
   },
   "addListingChoice": {
     "title": "Yangi e’lon qo‘shish",
@@ -733,7 +830,8 @@
       "loginRequired": "Iltimos, avval tizimga kiring",
       "titleMinLength": "Nomi kamida 5 belgidan iborat bo‘lishi kerak",
       "descriptionMinLength": "Tavsif kamida 20 belgidan iborat bo‘lishi kerak",
-      "submitError": "Xatolik yuz berdi: {error}"
+      "submitError": "Xatolik yuz berdi: {error}",
+      "unknownType": "Noma’lum e’lon turi"
     }
   },
   "addLocation": {
@@ -765,7 +863,9 @@
       "address": "Manzil matni",
       "addressPlaceholder": "Xaritadan tanlanganda avtomatik to'ladi",
       "addressLabel": "Manzil *",
-      "media": "Rasmlar va videolar"
+      "media": "Rasmlar va videolar",
+      "region": "Viloyat",
+      "regionPlaceholder": "Viloyatni tanlang"
     },
     "sections": {
       "locationDetails": "Joy haqida",
@@ -1019,7 +1119,8 @@
     "direction": "Yo'nalish",
     "serviceTags": "Xizmat turlari",
     "clear": "Filtrlarni olib tashlash",
-    "bankServices": "Bank xizmatlari"
+    "bankServices": "Bank xizmatlari",
+    "category": "Kategoriya"
   },
   "servicesSlugs": {
     "credit": "kredit",
@@ -1130,8 +1231,6 @@
     "orderDetails": " {{quantity}} ta",
     "newNotification": "sizga yangi bildirishnoma yubordi"
   },
-  "addLocation.fields.region": "Viloyat",
-  "addLocation.fields.regionPlaceholder": "Tanlang",
   "catalogs": {
     "dokonlar": {
       "label": "Do'konlar",
@@ -1880,7 +1979,9 @@
       "pricePlaceholder": "Masalan: 100 000 – 300 000 so‘m",
       "email": "Email",
       "website": "Veb-sayt",
-      "media": "Rasm va videolar"
+      "media": "Rasm va videolar",
+      "area": "Qaysi hududda ishlaysiz?",
+      "areaPlaceholder": "Masalan: Toshkent, Chilonzor va Yunusobod"
     },
     "companyStaffNote": "Firma yaratilgandan keyin xodimlarni qo‘shishingiz mumkin.",
     "review": {
@@ -1950,5 +2051,432 @@
       "title": "150+ biznes yo‘nalishi",
       "text": "Yo‘nalishingizni tanlang — kerakli joy, uskuna va xizmatlarni bitta joyda topasiz. Tez orada ishga tushadi."
     }
+  },
+  "qr": {
+    "copied": "Havola nusxalandi",
+    "copyError": "Nusxalab bo‘lmadi",
+    "hint": "Kamerani QR kodga qarating — profil ochiladi",
+    "copy": "Nusxalash",
+    "share": "Ulashish"
+  },
+  "settingsPage": {
+    "notif": {
+      "messages": "Xabarlar",
+      "orders": "Buyurtma va xizmatlar",
+      "comments": "Izohlar",
+      "likes": "Layklar",
+      "ads": "Obunalardan reklama"
+    },
+    "notifHint": {
+      "messages": "Chatdagi yangi xabarlar",
+      "orders": "Holat, takliflar, usta yo‘lda",
+      "comments": "E’lonlaringizga yozilgan izohlar"
+    },
+    "role": {
+      "user": "Shaxsiy hisob",
+      "business": "Biznes hisob",
+      "company": "Kompaniya",
+      "bank_employee": "Bank xodimi",
+      "admin": "Administrator"
+    },
+    "loadError": "Sozlamalarni yuklab bo‘lmadi",
+    "saveError": "Saqlab bo‘lmadi, internetni tekshiring",
+    "pushOn": "Push-bildirishnomalar yoqildi",
+    "pushAllow": "Brauzer sozlamalaridan ruxsat bering",
+    "idCopied": "ID nusxalandi",
+    "copyError": "Nusxalab bo‘lmadi",
+    "loggedOutAll": "Barcha qurilmalardan chiqildi",
+    "logoutError": "Chiqib bo‘lmadi, qayta urinib ko‘ring",
+    "deleted": "Hisobingiz o‘chirildi",
+    "deleteError": "Hisobni o‘chirib bo‘lmadi",
+    "pushDeniedHint": "Brauzer sozlamalarida ZUMO uchun ruxsat bering",
+    "pushDefaultHint": "Ilova yopiq bo‘lsa ham xabar keladi",
+    "pushUnsupported": "Mavjud emas",
+    "pushUnsupportedHint": "Bu brauzer push-bildirishnomani qo‘llamaydi",
+    "pushGranted": "Yoqilgan",
+    "pushDenied": "Bloklangan",
+    "premiumActive": "Faol",
+    "premiumOff": "Ulanmagan",
+    "noName": "Ism kiritilmagan",
+    "until": "{{date}} gacha",
+    "joined": "Ro‘yxatdan o‘tgan: {{date}}",
+    "editProfile": "Profilni tahrirlash",
+    "editProfileHint": "Ism, telefon, rasm, bio",
+    "myQr": "Mening QR kodim",
+    "myQrHint": "Profilingizni tez ulashish",
+    "premium": "Premium",
+    "accountId": "Hisob ID",
+    "myOrders": "Buyurtmalarim",
+    "myRequests": "Xizmat so‘rovlarim",
+    "receivedOrders": "Kelgan buyurtmalar",
+    "receivedOrdersHint": "Tovaringizni sotib olmoqchi bo‘lganlar",
+    "saved": "Saqlanganlar",
+    "push": "Push-bildirishnomalar",
+    "sound": "Ovozli signal",
+    "soundHint": "Xabar va bildirishnoma kelganda",
+    "guide": "ZUMO bilan tanishuv",
+    "guideHint": "Ilova imkoniyatlari qisqacha",
+    "ai": "ZUMO AI yordamchi",
+    "aiHint": "Savolingizni yozing",
+    "logoutAll": "Barcha qurilmalardan chiqish",
+    "logoutAllHint": "Telefon yo‘qolsa yoki begona kirgan bo‘lsa",
+    "deleteAccount": "Hisobni o‘chirish",
+    "group": {
+      "account": "Hisob",
+      "activity": "Faoliyatim",
+      "notifications": "Bildirishnomalar",
+      "app": "Ilova",
+      "help": "Yordam",
+      "security": "Xavfsizlik"
+    },
+    "notifNote": "O‘chirilgan turlar bo‘yicha telefoningizga push ham kelmaydi. Ilova ichidagi ro‘yxatda esa saqlanib qoladi.",
+    "back": "Orqaga",
+    "title": "Sozlamalar",
+    "copy": "Nusxa",
+    "enable": "Yoqish",
+    "theme": "Mavzu",
+    "themeDark": "Qorong‘i",
+    "themeLight": "Yorug‘",
+    "themeSystem": "Tizim",
+    "language": "Til",
+    "logout": "Chiqish",
+    "logoutAllText": "Telefon, planshet va kompyuterlardagi barcha kirishlar yopiladi. Qayta kirish uchun telefon raqamingiz orqali tasdiqlash kerak bo‘ladi.",
+    "logoutAllBtn": "Hammasidan chiqish",
+    "deleteText": "E’lonlaringiz, xizmatlaringiz, savat, obunalar va bildirishnomalar butunlay o‘chiriladi. Buni qaytarib bo‘lmaydi.",
+    "deleteActive": "Faol buyurtma yoki xizmat so‘rovi bo‘lsa, avval ularni yakunlang.",
+    "deleteConfirmLabel": "Tasdiqlash uchun O‘CHIRISH deb yozing",
+    "deleteBtn": "Hisobni butunlay o‘chirish",
+    "guestTitle": "ZUMO’ga xush kelibsiz",
+    "guestText": "Buyurtma berish, e’lon joylash va xabar yozish uchun hisobingizga kiring. Mavzu va tilni hozir ham sozlashingiz mumkin.",
+    "guestLogin": "Kirish",
+    "guestRegister": "Ro‘yxatdan o‘tish"
+  },
+  "svc": {
+    "dir": {
+      "maishiy-va-uy-xizmatlari": "Maishiy va uy xizmatlari",
+      "tozalash-va-sanitariya": "Tozalash va sanitariya",
+      "qurilish-va-tamirlash": "Qurilish va ta’mirlash",
+      "talim-va-psixologiya": "Ta’lim va psixologiya",
+      "oila-va-parvarish": "Oila va parvarish",
+      "transport-va-maxsus-texnika": "Transport va maxsus texnika",
+      "biznes-huquq-va-it": "Biznes, huquq va IT",
+      "gozallik-moda-va-tadbirlar": "Go‘zallik, moda va tadbirlar",
+      "boshqa-xizmatlar": "Boshqa xizmatlar"
+    },
+    "cat": {
+      "konditsioner": "Konditsioner ustasi",
+      "bir-soatga-usta": "Bir soatga usta",
+      "santexnik": "Santexnik",
+      "elektrik": "Elektrik",
+      "maishiy-texnika": "Maishiy texnika ta’miri",
+      "lift-ustasi": "Lift ustasi",
+      "qulf-ustasi": "Qulf ustasi",
+      "mebel-montaj-va-tamirlash": "Mebel yig‘ish va ta’mirlash",
+      "akvarium-xizmatlari": "Akvarium xizmatlari",
+      "ventilyatsiya": "Ventilyatsiya",
+      "elektronika": "Elektronika ta’miri",
+      "tozalash-klining": "Tozalash (klining)",
+      "ximchistka": "Kimyoviy tozalash",
+      "gilam-tozalash": "Gilam yuvish",
+      "gilam-va-fasad-tozalash": "Gilam va fasad tozalash",
+      "dezinfeksiya": "Dezinfeksiya",
+      "chiqindilarni-olib-tashlash": "Chiqindi olib ketish",
+      "tamirlash-remont": "Ta’mirlash (remont)",
+      "qurilish-ishlari": "Qurilish ishlari",
+      "molyarchi": "Bo‘yoqchi (malyar)",
+      "kunlik-ishchi-mardikor": "Kunlik ishchi (mardikor)",
+      "repetitorlar": "Repetitorlar",
+      "tillar-va-repetitorlik": "Til o‘qituvchilari",
+      "psixolog": "Psixolog",
+      "murabbiylar-va-kouchlar": "Murabbiy va kouchlar",
+      "enaga": "Enaga",
+      "veterinar": "Veterinar",
+      "yuk-tashish": "Yuk tashish",
+      "qishloq-xojaligi-texnikasi": "Qishloq xo‘jaligi texnikasi",
+      "maxsus-texnika": "Maxsus texnika",
+      "avto-xizmat": "Avto xizmat",
+      "it-xizmatlari": "IT xizmatlari",
+      "marketing": "Marketing",
+      "advokat": "Advokat",
+      "buxgalter": "Buxgalter",
+      "advokat-va-buxgalter": "Advokat va buxgalter",
+      "notarius": "Notarius",
+      "rieltorlik-xizmatlari": "Rieltor xizmatlari",
+      "tarjimon": "Tarjimon",
+      "poligrafiya": "Poligrafiya",
+      "shou-biznes": "Shou-biznes",
+      "bazm-xizmatlari": "Bazm xizmatlari",
+      "gozallik-ustalari": "Go‘zallik ustalari",
+      "tikuvchilik": "Tikuvchilik",
+      "modellar": "Modellar",
+      "dizayn": "Dizayn",
+      "bogdorchilik": "Bog‘dorchilik",
+      "landshaft-dizayni": "Landshaft dizayni",
+      "muhandis": "Muhandis",
+      "turizm": "Turizm",
+      "yetkazib-berish": "Yetkazib berish",
+      "uyda-ishlash": "Uydan ishlash"
+    }
+  },
+  "time": {
+    "now": "hozir",
+    "minutesAgo": "{{count}} daqiqa oldin",
+    "hoursAgo": "{{count}} soat oldin",
+    "daysAgo": "{{count}} kun oldin"
+  },
+  "requestDone": {
+    "rating": {
+      "1": "Yomon",
+      "2": "Qoniqarsiz",
+      "3": "O‘rtacha",
+      "4": "Yaxshi",
+      "5": "A’lo"
+    },
+    "tag": {
+      "fast": "Tez keldi",
+      "quality": "Sifatli ish",
+      "polite": "Muloyim",
+      "clean": "Toza ishladi",
+      "fairPrice": "Narx kelishilgandek",
+      "late": "Kechikdi",
+      "lowQuality": "Ish sifati past",
+      "priceUp": "Narx oshdi",
+      "rude": "Muomala yoqmadi",
+      "unfinished": "Ish chala qoldi"
+    },
+    "minutes": "{{count}} daqiqa",
+    "hoursMinutes": "{{h}} soat {{m}} daqiqa",
+    "hours": "{{count}} soat",
+    "stars": "{{count}} yulduz",
+    "loadError": "Ma’lumotni yuklab bo‘lmadi",
+    "sendError": "Bahoni yuborib bo‘lmadi",
+    "client": "Mijoz",
+    "provider": "Usta",
+    "close": "Yopish",
+    "titleProvider": "Ish yakunlandi",
+    "title": "Ish bajarildi",
+    "service": "Xizmat",
+    "address": "Manzil",
+    "duration": "Ish davomiyligi",
+    "initialPrice": "Dastlabki narx",
+    "sum": "so‘m",
+    "earned": "Ishlab topildi",
+    "total": "Jami to‘lov",
+    "priceAgreed": "Narx ish joyida kelishilgan: {{reason}}",
+    "photos": "Bajarilgan ish",
+    "photoAlt": "Bajarilgan ish rasmi",
+    "clientRating": "Mijoz bahosi",
+    "thanks": "Bahoingiz uchun rahmat",
+    "notRated": "Mijoz hali baholamadi. Baholaganda bildirishnoma keladi.",
+    "rateTitle": "Baholang: {{name}}",
+    "rateHint": "Bahoingiz boshqa mijozlarga to‘g‘ri usta tanlashda yordam beradi",
+    "likedPh": "Nima yoqdi? (ixtiyoriy)",
+    "dislikedPh": "Nima yoqmadi? (ixtiyoriy)",
+    "send": "Bahoni yuborish",
+    "pickStars": "Yulduzni tanlang",
+    "again": "Yana usta chaqirish",
+    "newRequests": "Yangi so‘rovlar",
+    "home": "Bosh sahifa"
+  },
+  "activeOrder": {
+    "status": {
+      "open": "Usta qidirilmoqda",
+      "accepted": "Usta tayinlandi",
+      "on_way": "Usta yo‘lda",
+      "arrived": "Usta yetib keldi",
+      "in_progress": "Ish bajarilmoqda"
+    },
+    "sentTo": "{{count}} ta ustaga yuborildi",
+    "arrivesIn": "{{name}} · {{min}} daqiqada",
+    "pro": "Usta",
+    "goToAddress": "Manzilga yo‘l oling",
+    "onWay": "Yo‘lda",
+    "startWork": "Ishni boshlang",
+    "hide": "Yashirish",
+    "incoming": "Sizga {{count}} ta yangi buyurtma",
+    "offersIn": "{{count}} ta taklif keldi",
+    "sentToPro": "So‘rov ustaga yuborildi",
+    "directWaiting": "Mijoz sizga shaxsan buyurtma berdi — javob bering",
+    "replyIncoming": "Narx taklif qiling",
+    "chooseOffer": "Ko‘rib chiqing va ustani tanlang",
+    "waitingPro": "Usta javobini kutyapmiz"
+  },
+  "incomingOffer": {
+    "eyebrow": "Yangi taklif",
+    "choose": "Tanlash · {{price}} so‘m",
+    "all": "Barcha takliflarni ko‘rish"
+  },
+  "incomingRequest": {
+    "eyebrow": "Yangi so‘rov",
+    "offer": "Taklif berish",
+    "skip": "O‘tkazib yuborish"
+  },
+  "tracker": {
+    "acceptError": "Ustani tanlab bo‘lmadi",
+    "cancelConfirm": "So‘rovni bekor qilasizmi? Ustalar endi uni ko‘rmaydi.",
+    "cancelReason": "Mijoz bekor qildi",
+    "cancelError": "Bekor qilib bo‘lmadi",
+    "title": {
+      "searching": "Usta qidirilmoqda",
+      "offers": "Ustani tanlang",
+      "accepted": "Usta yo‘lda",
+      "completed": "Ish yakunlandi",
+      "closed": "So‘rov yopildi",
+      "sentToPro": "So‘rov ustaga yuborildi"
+    },
+    "sentCount": "{{count}} ta yaqin ustaga yuborildi",
+    "sent": "Yaqin ustalarga yuborildi",
+    "window": "Takliflar {{count}} daqiqa davomida qabul qilinadi",
+    "offersCount": "{{count}} ta taklif",
+    "left": "yana {{time}}",
+    "cheapest": "arzon",
+    "fastest": "tez",
+    "eta": "daqiqada yetib keladi",
+    "message": "Ustaga yozish",
+    "thanks": "Xizmatdan foydalanganingiz uchun rahmat.",
+    "expired": "So‘rov bekor qilingan yoki muddati tugagan. Kerak bo‘lsa, yangi so‘rov yuboring.",
+    "cancel": "So‘rovni bekor qilish",
+    "details": "Buyurtma tafsilotlari",
+    "newRequest": "Yangi so‘rov",
+    "waitingPro": "Usta narx taklif qilishi bilan shu yerda ko‘rinadi",
+    "windowHours": "Takliflar {{count}} soat davomida qabul qilinadi"
+  },
+  "providerRequests": {
+    "tab": {
+      "open": "Yangi",
+      "active": "Faol ishlar",
+      "closed": "Tugagan"
+    },
+    "status": {
+      "waitingOffer": "Yangi",
+      "offerSent": "Taklifingiz yuborildi",
+      "otherChosen": "Boshqa usta tanlandi",
+      "awaitingClient": "Mijoz tasdig‘i kutilmoqda",
+      "accepted": "Sizni tanlashdi — yo‘lga chiqing",
+      "on_way": "Yo‘ldasiz",
+      "arrived": "Manzildasiz",
+      "in_progress": "Ish jarayonida",
+      "completed": "Bajarildi",
+      "cancelled": "Bekor qilindi"
+    },
+    "loadError": "So‘rovlarni yuklab bo‘lmadi",
+    "title": "So‘rovlar",
+    "refresh": "Yangilash",
+    "empty": {
+      "open": "Hozircha yangi so‘rov yo‘q. Kelganda bildirishnoma keladi.",
+      "active": "Faol ishingiz yo‘q.",
+      "closed": "Tugagan ishlar shu yerda ko‘rinadi."
+    },
+    "direct": "Sizga shaxsan",
+    "makeOffer": "Narx taklif qiling"
+  },
+  "requestDetail": {
+    "step": {
+      "accepted": "Tanlandi",
+      "on_way": "Yo‘lda",
+      "arrived": "Yetib keldi",
+      "completed": "Tugadi"
+    },
+    "next": {
+      "leftHome": "Yo‘lga chiqdim",
+      "arrived": "Yetib keldim",
+      "finished": "Ishni tugatdim"
+    },
+    "title": {
+      "open": "Takliflar",
+      "accepted": "Usta tanlandi",
+      "on_way": "Usta yo‘lda",
+      "arrived": "Usta yetib keldi",
+      "in_progress": "Usta ishlayapti",
+      "completed": "Ish yakunlandi",
+      "cancelled": "So‘rov bekor qilindi",
+      "request": "So‘rov",
+      "makeOffer": "Taklif bering",
+      "otherChosen": "Mijoz boshqa ustani tanladi",
+      "awaitingClient": "Mijoz tasdiqlashi kutilmoqda",
+      "confirm": "Ish bajarildimi?",
+      "proChosen": "Sizni tanlashdi — yo‘lga chiqing",
+      "proOnWay": "Manzilga ketyapsiz",
+      "proAtWork": "Ishni bajaring",
+      "directWaiting": "Usta javobini kutyapmiz",
+      "declined": "Usta qabul qila olmadi"
+    },
+    "jobsDone": "{{count}} ta ish bajargan",
+    "jobsCancelled": "{{count}} marta bekor qilgan",
+    "route": "Yo‘lni ochish",
+    "routeApp": {
+      "yandex-navi": "Yandex Navigator",
+      "yandex-maps": "Yandex Xaritalar",
+      "google": "Google Maps"
+    },
+    "loadError": "So‘rovni yuklab bo‘lmadi",
+    "actionError": "Amalni bajarib bo‘lmadi",
+    "photoError": "Rasmni yuklab bo‘lmadi",
+    "sentForConfirm": "Mijozga tasdiqlash uchun yuborildi",
+    "enterNewPrice": "Yangi narxni kiriting",
+    "newPriceSent": "Yangi narx mijozga yuborildi",
+    "cancelConfirm": "So‘rovni bekor qilasizmi?",
+    "cancelByPro": "Usta bekor qildi",
+    "cancelled": "So‘rov bekor qilindi",
+    "enterPrice": "Narxni kiriting",
+    "offerSent": "Taklif yuborildi",
+    "notFound": "So‘rov topilmadi",
+    "waiting": "Ustalar javobini kutyapmiz. Taklif kelishi bilan shu yerda ko‘rinadi.",
+    "priceChangeLabel": "Usta narxni o‘zgartirmoqchi",
+    "reason": "Sabab: {{reason}}",
+    "confirmText": "Usta ishni tugatganini bildirdi. Hammasi joyidami? Tasdiqlaganingizdan keyin buyurtma yopiladi va ustani baholashingiz mumkin.",
+    "autoConfirm": "24 soat ichida javob bermasangiz, ish avtomatik bajarildi deb yopiladi.",
+    "proWaiting": "Mijoz ish bajarilganini tasdiqlashi bilan buyurtma yopiladi.",
+    "write": "Yozish",
+    "yourPrice": "Narxingiz (so‘m)",
+    "pricePh": "Masalan: 150000",
+    "arrivalQ": "Qancha vaqtda yetib borasiz?",
+    "noteLabel": "Mijozga izoh (ixtiyoriy)",
+    "notePh": "Masalan: materiallar bilan, kafolat 3 oy",
+    "yourOffer": "Sizning taklifingiz",
+    "offerStatus": {
+      "pending": "javob kutilmoqda",
+      "accepted": "qabul qilindi",
+      "declined": "tanlanmadi"
+    },
+    "newPriceWaiting": "Yangi narx ({{price}} so‘m) mijozga yuborildi. Javobini kutyapmiz.",
+    "newPriceLabel": "Yangi narx (hozir {{price}} so‘m)",
+    "whyChanged": "Nega o‘zgardi? (mijoz ko‘radi)",
+    "whyPh": "Masalan: quvur ham almashtirilishi kerak ekan",
+    "cancelShort": "Bekor",
+    "sendToClient": "Mijozga yuborish",
+    "proposePrice": "Narx o‘zgardimi? Yangi narx taklif qilish",
+    "photosLabel": "Bajarilgan ish rasmi (ixtiyoriy, {{count}} tagacha)",
+    "priceAgreed": "Narx kelishildi: {{price}} so‘m",
+    "priceRejected": "Yangi narx rad etildi, narx o‘zgarmadi: {{price}} so‘m",
+    "rated": "Baholangan: {{rating}} / 5",
+    "proChosen": "Usta tanlandi",
+    "sendOffer": "Taklif yuborish",
+    "priceAccepted": "Yangi narx qabul qilindi",
+    "agree": "Roziman · {{price}} so‘m",
+    "priceKept": "Narx o‘zgarmadi",
+    "decline": "Rad etaman, eski narx qolsin",
+    "yesDone": "Ha, ish bajarildi",
+    "problem": "Muammo bor — ustaga yozish",
+    "rate": "Ustani baholash",
+    "cancelRequest": "So‘rovni bekor qilish",
+    "newPro": "Yangi usta",
+    "finishConfirm": "Ishni tugatdingizmi? Mijozga tasdiqlash uchun yuboriladi.",
+    "finishConfirmNoPhoto": "Ishni tugatdingizmi? Bajarilgan ish rasmini qo‘shsangiz, mijoz tezroq tasdiqlaydi.",
+    "declinePrompt": "Nega qabul qila olmaysiz? (ixtiyoriy, mijoz ko‘radi)",
+    "declined": "Mijozga xabar berildi",
+    "visitPast": "Kelish vaqti o‘tib ketgan — keyinroq vaqtni tanlang",
+    "waitingDirect": "So‘rov faqat shu ustaga yuborildi. Narx taklif qilishi bilan shu yerda ko‘rinadi.",
+    "viewProfile": "Profil va sharhlarni ko‘rish",
+    "visitQ": "Mijoz “{{when}}” dedi — qachon borasiz?",
+    "whenNeeded": "Kerak: {{when}}",
+    "declineBtn": "Qabul qila olmayman",
+    "findOther": "Boshqa usta topish"
+  },
+  "requestWhen": {
+    "now": "Hozir",
+    "today": "Bugun",
+    "tomorrow": "Ertaga",
+    "week": "Shu hafta"
   }
 }

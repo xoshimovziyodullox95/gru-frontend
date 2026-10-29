@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useBusiness } from '../../context/BusinessContext';
 import { getDebtors, getCreditors } from '../../../services/business';
 
+import { T } from '../../../utils/T';
 export default function DebtorsCreditorsView() {
   const { activeBusiness } = useBusiness();
   const [debtors, setDebtors] = useState([]);
@@ -15,18 +16,18 @@ export default function DebtorsCreditorsView() {
       .finally(() => setLoading(false));
   }, [activeBusiness]);
 
-  if (loading) return <div className="pt-empty">Yuklanmoqda...</div>;
+  if (loading) return <div className="pt-empty">{T('Yuklanmoqda...')}</div>;
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
       <div>
-        <h4 style={{ marginBottom: 10 }}>Qarzdor mijozlar (nasiya)</h4>
+        <h4 style={{ marginBottom: 10 }}>{T('Qarzdor mijozlar (nasiya)')}</h4>
         {debtors.length === 0 ? (
-          <div className="pt-empty">Qarzdorlar yo'q</div>
+          <div className="pt-empty">{T('Qarzdorlar yo\'q')}</div>
         ) : (
           <div className="pt-table-wrap">
             <table className="pt-table">
-              <thead><tr><th>Mijoz</th><th>Qarz</th></tr></thead>
+              <thead><tr><th>{T('Mijoz')}</th><th>{T('Qarz')}</th></tr></thead>
               <tbody>
                 {debtors.map((d) => (
                   <tr key={d._id}>
@@ -41,13 +42,13 @@ export default function DebtorsCreditorsView() {
       </div>
 
       <div>
-        <h4 style={{ marginBottom: 10 }}>Yetkazib beruvchilarga qarz</h4>
+        <h4 style={{ marginBottom: 10 }}>{T('Yetkazib beruvchilarga qarz')}</h4>
         {creditors.length === 0 ? (
-          <div className="pt-empty">Qarzlar yo'q</div>
+          <div className="pt-empty">{T('Qarzlar yo\'q')}</div>
         ) : (
           <div className="pt-table-wrap">
             <table className="pt-table">
-              <thead><tr><th>Yetkazib beruvchi</th><th>Qarz</th></tr></thead>
+              <thead><tr><th>{T('Yetkazib beruvchi')}</th><th>{T('Qarz')}</th></tr></thead>
               <tbody>
                 {creditors.map((c) => (
                   <tr key={c._id}>

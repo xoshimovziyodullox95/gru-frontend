@@ -26,9 +26,12 @@ export function getRouteLinks(lat, lng) {
   ];
 }
 
-// Ilova sxemasini sinab ko'radi; sahifa yashirinmasa (ilova ochilmagan) — sayt versiyasi
+// Navigator ilovalari faqat telefonda bo'ladi; kompyuterda sxema xato beradi
+const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// Telefonda ilova sxemasini sinab ko'radi; sahifa yashirinmasa (ilova ochilmagan) — sayt versiyasi
 export function openRoute(link) {
-  if (!link.app) {
+  if (!link.app || !isMobile()) {
     window.open(link.web, '_blank', 'noopener');
     return;
   }

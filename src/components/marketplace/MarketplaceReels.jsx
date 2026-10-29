@@ -46,6 +46,7 @@ import ShareSheet from '../common/ShareSheet';   // ✅ YANGI
 
 import '../../styles/reels.css';
 
+import { T } from '../utils/T';
 /* ============================================================
    CONSTANTS
    ============================================================ */
@@ -72,7 +73,7 @@ function isTranslationKey(value) {
 
 function getReelTypeLabel(reel, t) {
   const itemType = reel?.itemType || 'video';
-  const fallback = REEL_TYPE_NAMES[itemType] || 'Video';
+  const fallback = REEL_TYPE_NAMES[itemType] || T('Video');
   const currentLabel = reel?.typeLabel;
 
   if (
@@ -108,7 +109,7 @@ function getCurrentUserName(user) {
     user?.full_name ||
     user?.user_metadata?.full_name ||
     user?.email ||
-    'Foydalanuvchi'
+    T('Foydalanuvchi')
   );
 }
 
@@ -221,7 +222,8 @@ function ReelThumb({ reel, onOpen, isPriority, t }) {
       ) : showLocalVideo ? (
         <video
           ref={videoRef}
-          src={getImageUrl(reel.videoUrl)}
+          // Muqova bo'lmasa — birinchi (ko'pincha qora) kadr emas, 0.5-soniyadagi kadr ko'rinsin
+          src={`${getImageUrl(reel.videoUrl)}${reel?.thumbnailUrl ? '' : '#t=0.5'}`}
           poster={
             reel?.thumbnailUrl ? getImageUrl(reel.thumbnailUrl) : undefined
           }
@@ -385,7 +387,7 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
         type="button"
         className="reel-player-sound"
         onClick={handleMuteClick}
-        aria-label={isMuted ? 'Ovozni yoqish' : "Ovozni o'chirish"}
+        aria-label={isMuted ? T('Ovozni yoqish') : "Ovozni o'chirish"}
       >
         {isMuted ? <VolumeX size={19} /> : <Volume2 size={19} />}
       </button>
@@ -407,7 +409,7 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
           type="button"
           className="reel-player-paused"
           onClick={togglePlayback}
-          aria-label="Videoni davom ettirish"
+          aria-label={T('Videoni davom ettirish')}
         >
           <Play size={33} fill="currentColor" />
         </button>
@@ -427,7 +429,7 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
           step="0.01"
           value={Math.min(currentTime, duration || 0)}
           onChange={handleSeek}
-          aria-label="Video davomiyligi"
+          aria-label={T('Video davomiyligi')}
           style={{ '--reel-progress': `${progress}%` }}
         />
       </div>
@@ -697,7 +699,7 @@ function ReelViewer({
             event.stopPropagation();
             onNavigateIndex(-1);
           }}
-          aria-label="Oldingi video"
+          aria-label={T('Oldingi video')}
         >
           <ChevronUp size={24} />
         </button>
@@ -711,7 +713,7 @@ function ReelViewer({
             event.stopPropagation();
             onNavigateIndex(1);
           }}
-          aria-label="Keyingi video"
+          aria-label={T('Keyingi video')}
         >
           <ChevronDown size={24} />
         </button>
@@ -748,7 +750,7 @@ function ReelViewer({
               alt=""
               onError={handleAvatarError}
             />
-            <span>{reel.userName || 'Foydalanuvchi'}</span>
+            <span>{reel.userName || T('Foydalanuvchi')}</span>
           </button>
 
           <button
@@ -853,7 +855,7 @@ function ReelViewer({
             type="button"
             className="reel-comments-handle"
             onClick={toggleComments}
-            aria-label="Izohlarni yopish"
+            aria-label={T('Izohlarni yopish')}
           />
 
           <header className="reel-comments-header">
@@ -866,7 +868,7 @@ function ReelViewer({
             <button
               type="button"
               onClick={toggleComments}
-              aria-label="Izohlarni yopish"
+              aria-label={T('Izohlarni yopish')}
             >
               <X size={19} />
             </button>
@@ -893,7 +895,7 @@ function ReelViewer({
                       />
                       <div className="reel-comment__body">
                         <strong>
-                          {comment.userName || 'Foydalanuvchi'}
+                          {comment.userName || T('Foydalanuvchi')}
                         </strong>
                         <p>{comment.text}</p>
                       </div>
@@ -906,7 +908,7 @@ function ReelViewer({
                           );
                           setReplyText('');
                         }}
-                        aria-label="Javob berish"
+                        aria-label={T('Javob berish')}
                       >
                         <Reply size={14} />
                       </button>
@@ -928,7 +930,7 @@ function ReelViewer({
                         />
                         <div className="reel-comment__body">
                           <strong>
-                            {reply.userName || 'Foydalanuvchi'}
+                            {reply.userName || T('Foydalanuvchi')}
                           </strong>
                           <p>{reply.text}</p>
                         </div>
@@ -956,7 +958,7 @@ function ReelViewer({
                         <button
                           type="submit"
                           disabled={!replyText.trim() || commentSending}
-                          aria-label="Javob yuborish"
+                          aria-label={T('Javob yuborish')}
                         >
                           <Send size={14} />
                         </button>
@@ -982,7 +984,7 @@ function ReelViewer({
             <button
               type="submit"
               disabled={!commentText.trim() || commentSending}
-              aria-label="Izoh yuborish"
+              aria-label={T('Izoh yuborish')}
             >
               <Send size={17} />
             </button>

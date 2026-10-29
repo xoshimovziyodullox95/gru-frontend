@@ -4,23 +4,18 @@
    pastda so'rov tafsilotlari. 30 soniyadan keyin o'zi yopiladi.
    ============================================================ */
 
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { X, Clock, Navigation, MapPin } from 'lucide-react';
 
-import RequestMap from '../common/RequestMap';
+// Xarita (Leaflet) og'ir — faqat oyna ochilganda yuklanadi
+const RequestMap = lazy(() => import('../common/RequestMap'));
+import { serviceLabel, timeAgo } from '../utils/i18nHelpers';
 import '../../styles/requestTracker.css';
 
 const AUTO_CLOSE_MS = 30000;
 
-function timeAgo(date) {
-  if (!date) return 'hozir';
-  const diff = Math.floor((Date.now() - new Date(date)) / 60000);
-  if (diff < 1) return 'hozir';
-  if (diff < 60) return `${diff} daqiqa oldin`;
-  if (diff < 1440) return `${Math.floor(diff / 60)} soat oldin`;
-  return `${Math.floor(diff / 1440)} kun oldin`;
-}
 
 export default function IncomingRequestModal({
   isOpen,
@@ -30,6 +25,7 @@ export default function IncomingRequestModal({
   onView,
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -56,8 +52,10 @@ export default function IncomingRequestModal({
     <div className="rt-overlay" onClick={onClose}>
       <div className="rt-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
         <div className="rt-map">
-          <RequestMap lat={location?.lat} lng={location?.lng} height={140} />
-          <button type="button" className="rt-map__close" onClick={onClose} aria-label="Yopish">
+          <Suspense fallback={<div style={{ height: 140 }} />}>
+            <RequestMap lat={location?.lat} lng={location?.lng} height={140} />
+          </Suspense>
+          <button type="button" className="rt-map__close" onClick={onClose} aria-label={t('common.close', 'Yopish')}>
             <X size={20} />
           </button>
         </div>
@@ -66,8 +64,8 @@ export default function IncomingRequestModal({
           <span className="rt-grabber" aria-hidden="true" />
 
           <div className="rt-status">
-            <span className="rt-status__eyebrow">Yangi so‘rov</span>
-            <h2 className="rt-status__title">{category || 'Xizmat'}</h2>
+            <span className="rt-status__eyebrow">{t('incomingRequest.eyebrow', 'Yangi so‘rov')}</span>
+            <h2 className="rt-status__title">{serviceLabel(category)}</h2>
             {/* Oyna avtomatik yopilishigacha qolgan vaqt */}
             <div className="rt-line rt-line--drain" style={{ animationDuration: `${AUTO_CLOSE_MS}ms` }}>
               <span style={{ animationDuration: `${AUTO_CLOSE_MS}ms` }} />
@@ -82,7 +80,7 @@ export default function IncomingRequestModal({
                 <li><MapPin size={16} /><span>{location.address}</span></li>
               )}
               {typeof distanceKm === 'number' && (
-                <li><Navigation size={16} /><span>{distanceKm.toFixed(1)} km uzoqlikda</span></li>
+                <li><Navigation size={16} /><span>{t('common.kmAway', '{{km}} km uzoqlikda', { km: distanceKm.toFixed(1) })}</span></li>
               )}
               <li><Clock size={16} /><span>{timeAgo(createdAt)}</span></li>
             </ul>
@@ -90,10 +88,10 @@ export default function IncomingRequestModal({
 
           <footer className="rt-foot">
             <button type="button" className="rt-btn rt-btn--primary" onClick={handleView}>
-              Taklif berish
+              {t('incomingRequest.offer', 'Taklif berish')}
             </button>
             <button type="button" className="rt-btn rt-btn--text" onClick={handleReject}>
-              O‘tkazib yuborish
+              {t('incomingRequest.skip', 'O‘tkazib yuborish')}
             </button>
           </footer>
         </div>

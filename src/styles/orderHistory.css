@@ -8,7 +8,7 @@
   margin: 0 auto;
   padding: 20px 16px 60px;
   min-height: 100vh;
-  background: var(--bg, #041326);
+  background: var(--bg, var(--surface));
 }
 
 .oh-header {
@@ -22,9 +22,9 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(13, 38, 71, 0.8);
+  background: rgba(var(--surface-rgb), 0.8);
   border: 1px solid rgba(100, 181, 246, 0.2);
-  color: #ffffff;
+  color: var(--text);
   display: grid;
   place-items: center;
   text-decoration: none;
@@ -40,14 +40,14 @@
   margin: 0;
   font-size: 22px;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text);
   letter-spacing: -0.02em;
 }
 
 .oh-header p {
   margin: 2px 0 0;
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--textMuted);
 }
 
 /* Tabs */
@@ -58,7 +58,7 @@
   gap: 6px;
   padding: 4px;
   margin-bottom: 16px;
-  background: rgba(13, 38, 71, 0.6);
+  background: rgba(var(--surface-rgb), 0.6);
   border-radius: 12px;
 }
 
@@ -70,7 +70,7 @@
   padding: 10px 12px;
   border: none;
   border-radius: 9px;
-  color: #94a3b8;
+  color: var(--textMuted);
   background: transparent;
   font-family: inherit;
   font-size: 13px;
@@ -93,15 +93,15 @@
   gap: 8px;
   margin-bottom: 16px;
   padding: 0 4px;
-  color: #94a3b8;
+  color: var(--textMuted);
 }
 
 .oh-filter__select {
   padding: 8px 14px;
   border: 1px solid rgba(100, 181, 246, 0.2);
   border-radius: 10px;
-  background: rgba(13, 38, 71, 0.6);
-  color: #ffffff;
+  background: rgba(var(--surface-rgb), 0.6);
+  color: var(--text);
   font-family: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -118,7 +118,7 @@
 
 .oh-card {
   padding: 16px;
-  background: rgba(13, 38, 71, 0.5);
+  background: rgba(var(--surface-rgb), 0.5);
   border: 1px solid rgba(100, 181, 246, 0.15);
   border-radius: 16px;
 }
@@ -156,7 +156,7 @@
 }
 
 .oh-card__category {
-  color: #ffffff;
+  color: var(--text);
   font-size: 14px;
   font-weight: 800;
 }
@@ -169,7 +169,7 @@
   gap: 10px;
   padding: 10px 12px;
   margin-bottom: 10px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(var(--text-rgb), 0.03);
   border-radius: 10px;
 }
 
@@ -195,7 +195,7 @@
 }
 
 .oh-card__other-info small {
-  color: #94a3b8;
+  color: var(--textMuted);
   font-size: 10.5px;
   font-weight: 600;
   text-transform: uppercase;
@@ -203,7 +203,7 @@
 }
 
 .oh-card__other-info strong {
-  color: #ffffff;
+  color: var(--text);
   font-size: 13.5px;
   font-weight: 700;
 }
@@ -219,14 +219,14 @@
 }
 
 .oh-card__price small {
-  color: #94a3b8;
+  color: var(--textMuted);
   font-size: 9.5px;
   font-weight: 500;
 }
 
 .oh-card__desc {
   margin: 0 0 8px;
-  color: #cbd5e1;
+  color: var(--textMuted);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -236,7 +236,7 @@
   align-items: center;
   gap: 5px;
   margin: 0 0 10px;
-  color: #94a3b8;
+  color: var(--textMuted);
   font-size: 12px;
 }
 
@@ -270,7 +270,7 @@
 
 .oh-card__review p {
   margin: 0;
-  color: #cbd5e1;
+  color: var(--textMuted);
   font-size: 12.5px;
   font-style: italic;
   line-height: 1.5;
@@ -319,7 +319,7 @@
 
 .oh-empty h3 {
   margin: 0 0 4px;
-  color: #94a3b8;
+  color: var(--textMuted);
   font-size: 15px;
   font-weight: 700;
 }
@@ -336,9 +336,9 @@
   height: 140px;
   border-radius: 16px;
   background: linear-gradient(90deg,
-    rgba(13, 38, 71, 0.5) 0%,
+    rgba(var(--surface-rgb), 0.5) 0%,
     rgba(33, 150, 243, 0.1) 50%,
-    rgba(13, 38, 71, 0.5) 100%);
+    rgba(var(--surface-rgb), 0.5) 100%);
   background-size: 200% 100%;
   animation: ohShimmer 1.5s infinite;
 }

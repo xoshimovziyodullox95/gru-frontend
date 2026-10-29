@@ -7,12 +7,13 @@ import { getBankServices } from '../services/bankServices';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/marketplaceHub.css';
 
+import { T } from '../utils/T';
 const subCategoryMap = {
-  credit: { key: 'credit', icon: CreditCard, label: 'Kreditlar' },
-  cards: { key: 'cards', icon: CreditCard, label: 'Kartalar' },
-  deposits: { key: 'deposits', icon: Vault, label: 'Depozitlar' }, // Safe o'rniga Vault  pko: { key: 'pko', icon: Wallet, label: 'Naqd pul / PKO' },
+  credit: { key: 'credit', icon: CreditCard, label: T('Kreditlar') },
+  cards: { key: 'cards', icon: CreditCard, label: T('Kartalar') },
+  deposits: { key: 'deposits', icon: Vault, label: T('Depozitlar') }, // Safe o'rniga Vault  pko: { key: 'pko', icon: Wallet, label: 'Naqd pul / PKO' },
   money_transfers: { key: 'moneyTransfers', icon: Send, label: "Pul o'tkazmalari" },
-  qr_payment: { key: 'qrPayment', icon: QrCode, label: 'QR to‘lovlar' },
+  qr_payment: { key: 'qrPayment', icon: QrCode, label: T('QR to‘lovlar') },
 };
 
 const order = ['credit', 'cards', 'deposits', 'pko', 'money_transfers', 'qr_payment'];
@@ -49,7 +50,7 @@ export default function MarketplaceBank() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (loading) return <div className="mph-loading">Yuklanmoqda...</div>;
+  if (loading) return <div className="mph-loading">{T('Yuklanmoqda...')}</div>;
 
   const displayedItems = items.filter(s => (s.customerType || 'individual') === customerType);
 
@@ -80,29 +81,29 @@ export default function MarketplaceBank() {
   return (
     <div className="mph-page" ref={pageRef}>
       <button className="mph-back" onClick={handleBack}>
-        <ArrowLeft size={18} /> Orqaga
+        <ArrowLeft size={18} /> {T('Orqaga')}
       </button>
-      <h2 className="mph-subtitle">Bank xizmatlari</h2>
+      <h2 className="mph-subtitle">{T('Bank xizmatlari')}</h2>
 
       <div className="mph-customer-tabs">
         <button
           className={customerType === 'individual' ? 'active' : ''}
           onClick={() => setCustomerType('individual')}
         >
-          <User size={16} /> Jismoniy shaxs
+          <User size={16} /> {T('Jismoniy shaxs')}
         </button>
         <button
           className={customerType === 'legal' ? 'active' : ''}
           onClick={() => setCustomerType('legal')}
         >
-          <Building2 size={16} /> Yuridik shaxs
+          <Building2 size={16} /> {T('Yuridik shaxs')}
         </button>
       </div>
 
       {sortedKeys.length > 0 && (
         <div className="mph-bank-category-grid">
           {sortedKeys.map(key => {
-            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark, label: 'Boshqa' };
+            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark, label: T('Boshqa') };
             const Icon = meta.icon;
             return (
               <button
@@ -119,12 +120,12 @@ export default function MarketplaceBank() {
       )}
 
       {sortedKeys.length === 0 ? (
-        <div className="mph-loading">Bu bo'limda hozircha xizmat yo'q</div>
+        <div className="mph-loading">{T('Bu bo\'limda hozircha xizmat yo\'q')}</div>
       ) : (
         <div className="mph-bank-groups">
           {sortedKeys.map(key => {
             const groupItems = grouped[key];
-            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark, label: 'Boshqa' };
+            const meta = subCategoryMap[key] || { key: 'other', icon: Landmark, label: T('Boshqa') };
             const Icon = meta.icon;
             return (
               <div
@@ -156,9 +157,9 @@ export default function MarketplaceBank() {
       )}
 
       {showScrollTop && (
-        <button className="mph-scroll-top-btn" onClick={scrollToTop} aria-label="Yuqoriga">
+        <button className="mph-scroll-top-btn" onClick={scrollToTop} aria-label={T('Yuqoriga')}>
           <ArrowUp size={22} />
-          <span>Yuqoriga</span>
+          <span>{T('Yuqoriga')}</span>
         </button>
       )}
     </div>

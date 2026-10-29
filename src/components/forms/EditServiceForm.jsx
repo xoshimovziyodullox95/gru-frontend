@@ -8,6 +8,7 @@ import { getLevel1, getLevel2 } from '../services/categories';
 import { Upload, X } from 'lucide-react';
 import '../../styles/forms.css';
 
+import { T } from '../utils/T';
 export default function EditServiceForm() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ export default function EditServiceForm() {
       setLoading(false);
     }).catch(err => {
       console.error(err);
-      alert('MaКјlumot yuklashda xatolik');
+      alert(T('Maʼlumot yuklashda xatolik'));
       safeGoBack(navigate);
     });
   }, [id]);
@@ -92,7 +93,7 @@ export default function EditServiceForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
-      alert('Iltimos, avval tizimga kiring');
+      alert(T('Iltimos, avval tizimga kiring'));
       navigate('/login');
       return;
     }
@@ -109,7 +110,7 @@ export default function EditServiceForm() {
           setUploadProgress(percent);
         });
       }
-      alert('Xizmat muvaffaqiyatli yangilandi!');
+      alert(T('Xizmat muvaffaqiyatli yangilandi!'));
       navigate(`/services/${formData.service_category}`);
     } catch (err) {
       console.error(err);
@@ -119,15 +120,15 @@ export default function EditServiceForm() {
     }
   };
 
-  if (loading) return <div className="loading-spinner">Yuklanmoqda...</div>;
+  if (loading) return <div className="loading-spinner">{T('Yuklanmoqda...')}</div>;
 
   return (
     <div className="add-service-form-container">
       <form onSubmit={handleSubmit} className="add-service-form">
-        <h2>Xizmatni tahrirlash</h2>
+        <h2>{T('Xizmatni tahrirlash')}</h2>
         
         <div className="form-group">
-          <label>Xizmat nomi *</label>
+          <label>{T('Xizmat nomi *')}</label>
           <input type="text" name="name" value={formData.name} onChange={handleChange} required />
         </div>
         
@@ -138,16 +139,16 @@ export default function EditServiceForm() {
         
         <div className="form-row">
           <div className="form-group">
-            <label>Yo‘nalish (level1) *</label>
+            <label>{T('Yo‘nalish (level1) *')}</label>
             <select name="level1" value={formData.level1} onChange={handleChange} required>
-              <option value="">Tanlang</option>
+              <option value="">{T('Tanlang')}</option>
               {level1List.map(l1 => <option key={l1.key} value={l1.key}>{l1.name || l1.key}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label>Kategoriya (level2) *</label>
+            <label>{T('Kategoriya (level2) *')}</label>
             <select name="service_category" value={formData.service_category} onChange={handleChange} required disabled={!formData.level1}>
-              <option value="">Tanlang</option>
+              <option value="">{T('Tanlang')}</option>
               {level2List.map(l2 => <option key={l2.key || l2.level2} value={l2.key || l2.level2}>{l2.name || l2.level2}</option>)}
             </select>
           </div>
@@ -155,23 +156,23 @@ export default function EditServiceForm() {
         
         <div className="form-row">
           <div className="form-group">
-            <label>Kompaniya nomi (ixtiyoriy)</label>
+            <label>{T('Kompaniya nomi (ixtiyoriy)')}</label>
             <input type="text" name="company" value={formData.company} onChange={handleChange} />
           </div>
           <div className="form-group">
-            <label>Narx oralig‘i *</label>
+            <label>{T('Narx oralig‘i *')}</label>
             <input type="text" name="price_range" value={formData.price_range} onChange={handleChange} placeholder="masalan: 500 USD/oy" required />
           </div>
         </div>
         
         <div className="form-group">
-          <label>Telefon raqam *</label>
+          <label>{T('Telefon raqam *')}</label>
           <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
         </div>
         
         <div className="form-row">
           <div className="form-group">
-            <label>Email</label>
+            <label>{T('Email')}</label>
             <input type="email" name="email" value={formData.email} onChange={handleChange} />
           </div>
           <div className="form-group">
@@ -181,16 +182,16 @@ export default function EditServiceForm() {
         </div>
         
         <div className="form-group">
-          <label>Rasmlar va videolar</label>
+          <label>{T('Rasmlar va videolar')}</label>
           <div className="media-upload-area">
             <label className="upload-btn">
-              <Upload size={20} /> Fayl yuklash
+              <Upload size={20} /> {T('Fayl yuklash')}
               <input type="file" multiple accept="image/*,video/*" onChange={handleFileChange} style={{ display: 'none' }} />
             </label>
             <div className="media-previews">
               {mediaFiles.map((mf, idx) => (
                 <div key={idx} className="media-preview">
-                  {mf.type === 'image' ? <img src={mf.preview} alt="preview" /> : <video src={mf.preview} controls />}
+                  {mf.type === 'image' ? <img src={mf.preview} alt="" /> : <video src={mf.preview} controls />}
                   <button type="button" onClick={() => removeMedia(idx)} className="remove-media"><X size={16} /></button>
                 </div>
               ))}
@@ -203,7 +204,7 @@ export default function EditServiceForm() {
         )}
         
         <button type="submit" disabled={submitting} className="submit-btn">
-          {submitting ? 'Yangilanmoqda...' : 'Saqlash'}
+          {submitting ? T('Yangilanmoqda...') : T('Saqlash')}
         </button>
       </form>
     </div>

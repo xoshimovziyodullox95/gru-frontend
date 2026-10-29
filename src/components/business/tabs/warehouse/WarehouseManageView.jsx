@@ -4,6 +4,7 @@ import { useBusiness } from '../../context/BusinessContext';
 import RoleGate from '../../shared/RoleGate';
 import { createWarehouse } from '../../../services/business';
 
+import { T } from '../../../utils/T';
 export default function WarehouseManageView() {
   const { activeBusiness, warehouses, activeWarehouse, setActiveWarehouse, refreshBusinesses, selectBusiness, myRole } = useBusiness();
   const [showForm, setShowForm] = useState(false);
@@ -21,7 +22,7 @@ export default function WarehouseManageView() {
       setShowForm(false);
       setName(''); setAddress('');
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setSaving(false);
     }
@@ -31,7 +32,7 @@ export default function WarehouseManageView() {
     <div>
       <div className="pt-table-wrap" style={{ marginBottom: 16 }}>
         <table className="pt-table">
-          <thead><tr><th>Nomi</th><th>Manzil</th><th></th></tr></thead>
+          <thead><tr><th>{T('Nomi')}</th><th>{T('Manzil')}</th><th></th></tr></thead>
           <tbody>
             {warehouses.map((w) => (
               <tr key={w._id} style={{ background: activeWarehouse?._id === w._id ? 'rgba(0,229,255,0.06)' : 'transparent' }}>
@@ -39,7 +40,7 @@ export default function WarehouseManageView() {
                 <td className="pt-muted">{w.address || '—'}</td>
                 <td>
                   {activeWarehouse?._id !== w._id && (
-                    <button className="pt-btn-secondary" onClick={() => setActiveWarehouse(w)}>Tanlash</button>
+                    <button className="pt-btn-secondary" onClick={() => setActiveWarehouse(w)}>{T('Tanlash')}</button>
                   )}
                 </td>
               </tr>
@@ -51,12 +52,12 @@ export default function WarehouseManageView() {
       <RoleGate roles={['admin']}>
         {showForm ? (
           <form onSubmit={handleCreate} style={{ display: 'flex', gap: 8, maxWidth: 460 }}>
-            <input placeholder="Ombor nomi" value={name} onChange={(e) => setName(e.target.value)} style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }} />
-            <input placeholder="Manzil" value={address} onChange={(e) => setAddress(e.target.value)} style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }} />
-            <button type="submit" disabled={saving} className="pt-btn-primary">{saving ? '...' : 'Qo\'shish'}</button>
+            <input placeholder={T('Ombor nomi')} value={name} onChange={(e) => setName(e.target.value)} style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }} />
+            <input placeholder={T('Manzil')} value={address} onChange={(e) => setAddress(e.target.value)} style={{ flex: 1, padding: '8px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)' }} />
+            <button type="submit" disabled={saving} className="pt-btn-primary">{saving ? '...' : T('Qo\'shish')}</button>
           </form>
         ) : (
-          <button className="pt-btn-secondary" onClick={() => setShowForm(true)}><Plus size={14} /> Yangi ombor</button>
+          <button className="pt-btn-secondary" onClick={() => setShowForm(true)}><Plus size={14} /> {T('Yangi ombor')}</button>
         )}
       </RoleGate>
     </div>

@@ -1,7 +1,7 @@
 .bcs-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(var(--surface-rgb), 0.75);
   z-index: 3000;
   display: flex;
   align-items: center;
@@ -42,7 +42,7 @@
   width: 100%;
   border-radius: 1rem;
   overflow: hidden;
-  background: #000;
+  background: var(--bg);
   min-height: 220px;
 }
 

@@ -1,4 +1,5 @@
-const BACKEND_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '');
+// Backend manzili (…/api siz) — rasm, video va chat fayllari shu yerdan olinadi
+export const BACKEND_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '');
 
 export function getImageUrl(path) {
   if (!path) return '/images/zumo-placeholder.svg';

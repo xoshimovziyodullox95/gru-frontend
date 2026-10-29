@@ -3,7 +3,6 @@
   display: block;
   text-decoration: none;
   background: var(--card);
-  backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: 1.25rem;
   overflow: hidden;
@@ -15,7 +14,7 @@
   position: relative;
 }
 .uc-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-3px);
   border-color: var(--cyan);
   box-shadow: 0 16px 40px var(--shadow);
 }
@@ -25,7 +24,7 @@
 /* ===== Rasm ===== */
 .uc-image-wrap {
   position: relative;
-  padding-top: 62%;
+  padding-top: 80%;
   overflow: hidden;
   background: var(--bg);
 }
@@ -84,10 +83,10 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(var(--surface-rgb), 0.45);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #fff;
+  border: 1px solid rgba(var(--text-rgb), 0.15);
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,26 +135,35 @@
   color: #60b4ff;
 }
 
-/* Matn qismi */
+/* Matn qismi — narx, nom, bitta amal (Uzum uslubi) */
 .uc-body {
-  padding: 1rem 1.1rem 1.15rem;
+  padding: 0.7rem 0.8rem 0.8rem;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
+}
+.uc-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text);
+  letter-spacing: -0.01em;
 }
 .uc-title {
-  font-size: 1.02rem;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--textMuted);
   margin: 0;
   line-height: 1.3;
-  min-height: 2.6rem;
+  min-height: 2.25em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  overflow-wrap: anywhere;
 }
+.uc-sale-hint { align-self: flex-start; font-size: .7rem; font-weight: 600; color: var(--textMuted); }
 .uc-desc {
   font-size: 0.8rem;
   color: var(--textMuted);
@@ -181,91 +189,63 @@
 }
 .uc-meta-item svg { color: var(--cyan); flex-shrink: 0; }
 
-.uc-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  padding-top: 0.4rem;
-  border-top: 1px solid var(--border);
-  margin-top: auto;
-}
-.uc-footer-left {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
 .uc-rating {
   font-size: 0.8rem;
   font-weight: 700;
   color: #fbbf24;
 }
-.uc-price {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--cyan);
-}
 
-.uc-date {
+/* Pastdagi yagona amal: savatga / stepper / batafsil — hamma kartada bir xil balandlik */
+.uc-action {
+  margin-top: auto;
+  padding-top: 0.35rem;
+}
+.uc-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.7rem;
-  color: var(--textMuted);
-}
-
-.uc-btn {
-  margin-top: 0.3rem;
-  padding: 0.5rem 1rem;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 38px;
+  padding: 0 0.8rem;
   border: none;
-  border-radius: 2rem;
-  background: linear-gradient(95deg, #0055b3, var(--cyan));
-  color: #ffffff;
-  font-weight: 600;
+  border-radius: 12px;
+  background: var(--cyan);
+  color: #04121f;
+  font: inherit;
+  font-weight: 700;
   font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.25s;
-  width: 100%;
+  transition: filter 0.2s, transform 0.2s;
 }
-.uc-btn:hover {
-  box-shadow: 0 4px 16px var(--shadow);
-  transform: scale(1.015);
-}
-
-/* Equipment uchun savat qatori */
-.uc-cart-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.3rem;
-}
-.uc-cart-row .uc-btn--secondary {
-  flex: 1;
-  margin-top: 0;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-.uc-cart-row .uc-btn--secondary:hover {
-  border-color: var(--cyan);
+.uc-btn:hover { filter: brightness(1.08); }
+.uc-btn:active { transform: scale(0.97); }
+.uc-btn--ghost {
+  background: color-mix(in srgb, var(--cyan) 12%, transparent);
   color: var(--cyan);
-  box-shadow: none;
-  transform: none;
 }
+.uc-action .cart-stepper,
+.uc-action .cart-toggle-btn {
+  width: 100%;
+  height: 38px;
+  justify-content: space-between;
+  border-radius: 12px;
+}
+.uc-action .cart-toggle-btn { justify-content: center; }
 
 /* Grid */
 .uc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.1rem;
 }
 
 @media (max-width: 600px) {
-  .uc-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.9rem; }
-  .uc-title { font-size: 0.92rem; }
-  .uc-body { padding: 0.8rem 0.9rem 1rem; }
-  .uc-cart-row { flex-wrap: wrap; }
+  .uc-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.7rem; }
+  .uc-card { border-radius: 1rem; }
+  .uc-body { padding: 0.6rem 0.65rem 0.7rem; }
+  .uc-price { font-size: 0.98rem; }
+  .uc-title { font-size: 0.8rem; }
 }
 
 /* ===== BankServiceCard - logo bloki (uc-image-wrap o'rnini bosadi) ===== */
@@ -274,7 +254,7 @@
 .bsc-chip-card {
   position: relative;
   padding: 1.2rem 1.2rem 1.3rem;
-  background: linear-gradient(150deg, #0c1f3d 0%, #0a1730 55%, #071022 100%);
+  background: var(--bg);
   border: 1px solid rgba(0, 229, 255, 0.15);
   overflow: hidden;
 }
@@ -318,7 +298,7 @@
 .bsc-chip-icon span {
   display: block;
   height: 1.5px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(var(--surface-rgb), 0.35);
   border-radius: 1px;
 }
 
@@ -327,8 +307,8 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(var(--text-rgb), 0.06);
+  border: 1px solid rgba(var(--text-rgb), 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -362,10 +342,10 @@
   gap: 0.5rem;
 }
 .bsc-chip-title {
-  color: #fff;
+  color: var(--text);
 }
 .bsc-chip-desc {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--textMuted);
 }
 
 .bsc-chip-footer {
@@ -374,7 +354,7 @@
   justify-content: space-between;
   margin-top: auto;
   padding-top: 0.8rem;
-  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  border-top: 1px dashed rgba(var(--text-rgb), 0.12);
 }
 .bsc-chip-commission {
   display: flex;
@@ -383,7 +363,7 @@
 }
 .bsc-chip-commission-label {
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--textMuted);
 }
 .bsc-chip-commission-value {
   font-size: 1rem;

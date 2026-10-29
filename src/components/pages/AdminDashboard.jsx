@@ -1,317 +1,396 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
-  Users, MapPin, Package, FileText, Shield,
-  Search, Trash2, Crown, Loader2, LogOut
+  ArrowLeft, Users, Package, Wrench, Shield, LayoutDashboard, Search, Trash2,
+  Loader2, Crown, UserPlus, ShoppingBag, MapPin, Video, Wallet, RefreshCw,
 } from 'lucide-react';
-import { getUsers, deleteUser, getStatistics, getAuditLogs, updateUserRole } from '../services/admin';
-import { getLocations } from '../services/locations';
-import { getEquipment } from '../services/equipment';
-import '../../styles/adminDashboard.css';
+import {
+  getOverview, getUsers, deleteUser, updateUserRole, getListings, deleteListing,
+  getAdminRequests, getAuditLogs,
+} from '../services/admin';
+import { getImageUrl } from '../utils/imageUrl';
 import { formatPrice } from '../utils/formatPrice';
+import { serviceLabel } from '../utils/i18nHelpers';
+import { T } from '../utils/T';
+import '../../styles/adminDashboard.css';
 
 const ROLE_OPTIONS = [
-  { value: 'user', label: 'Oddiy foydalanuvchi' },
-  { value: 'business', label: "Do'konchi" },
-  { value: 'company', label: 'Yetkazib beruvchi' },
-  { value: 'bank_employee', label: 'Bank xodimi' },
-  { value: 'admin', label: 'Administrator' },
+  { value: 'user', label: T('Oddiy foydalanuvchi') },
+  { value: 'business', label: T('Do\'konchi') },
+  { value: 'company', label: T('Yetkazib beruvchi') },
+  { value: 'bank_employee', label: T('Bank xodimi') },
+  { value: 'admin', label: T('Administrator') },
 ];
 
-export default function AdminDashboard() {
-  const { user, isAdmin, signOut } = useAuth();
-  const { t } = useTranslation();
-  const navigate = useNavigate();
+const TABS = [
+  { key: 'overview', icon: LayoutDashboard, label: T('Umumiy') },
+  { key: 'users', icon: Users, label: T('Foydalanuvchilar') },
+  { key: 'listings', icon: Package, label: T('E\'lonlar') },
+  { key: 'requests', icon: Wrench, label: T('So\'rovlar') },
+  { key: 'logs', icon: Shield, label: T('Jurnal') },
+];
 
-  const [stats, setStats] = useState(null);
-  const [users, setUsers] = useState([]);
-  const [logs, setLogs] = useState([]);
-  const [locations, setLocations] = useState([]);
-  const [equipmentList, setEquipmentList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [updatingId, setUpdatingId] = useState(null);
-  const [activeTab, setActiveTab] = useState('users');
+const LISTING_TYPES = [
+  { key: 'equipment', label: T('Tovarlar') },
+  { key: 'provider', label: T('Ustalar') },
+  { key: 'location', label: T('Joylar') },
+  { key: 'post', label: T('Videolar') },
+];
 
-  // Barcha ma'lumotlarni yuklash
+const REQUEST_STATUS = {
+  open: T('Ochiq'),
+  accepted: T('Qabul qilindi'),
+  on_way: T('Yo\'lda'),
+  arrived: T('Yetib keldi'),
+  in_progress: T('Bajarilmoqda'),
+  completed: T('Bajarildi'),
+  cancelled: T('Bekor qilindi'),
+  expired: T('Muddati o\'tdi'),
+};
+
+const ORDER_STATUS = {
+  yangi: T('Yangi'),
+  qabul_qilindi: T('Qabul qilindi'),
+  yetkazilmoqda: T('Yetkazilmoqda'),
+  yetkazildi: T('Yetkazildi'),
+  rad_etildi: T('Rad etildi'),
+  bekor_qilindi: T('Bekor qilindi'),
+};
+
+const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('uz-UZ', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '');
+const num = (n) => Number(n || 0).toLocaleString('ru-RU').replace(/,/g, ' ');
+
+function useDebounced(value, ms = 350) {
+  const [v, setV] = useState(value);
   useEffect(() => {
-    const loadAll = async () => {
-      try {
-        const [statsRes, usersRes, logsRes, locRes, eqRes] = await Promise.all([
-          getStatistics(),
-          getUsers(),
-          getAuditLogs(),
-          getLocations({ limit: 100 }),
-          getEquipment({ limit: 100 }),
-        ]);
-        setStats(statsRes.data);
-        setUsers(usersRes.data);
-        setLogs(logsRes.data);
-        setLocations(locRes.data);
-        setEquipmentList(eqRes.data);
-      } catch (err) {
-        console.error('Admin panel yuklash xatosi:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadAll();
-  }, []);
+    const id = setTimeout(() => setV(value), ms);
+    return () => clearTimeout(id);
+  }, [value, ms]);
+  return v;
+}
 
-  // Ruxsat tekshiruvi
-  if (!user) return <Navigate to="/login" replace />;
-  if (!isAdmin()) return <Navigate to="/" replace />;
+function Stat({ icon: Icon, value, label, tone }) {
+  return (
+    <div className={`ad-stat ${tone ? `ad-stat--${tone}` : ''}`}>
+      <Icon size={18} />
+      <strong>{value}</strong>
+      <span>{label}</span>
+    </div>
+  );
+}
 
-  // Chiqish
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/login');
-  };
-
-  // Rolni o'zgartirish
-  const handleRoleChange = async (userId, newRole) => {
-    setUpdatingId(userId);
-    try {
-      await updateUserRole(userId, newRole);
-      setUsers((prev) => prev.map((u) => (u._id === userId ? { ...u, role: newRole } : u)));
-    } catch (err) {
-      console.error('Rol yangilashda xatolik:', err);
-      alert('Rolni yangilab bo\'lmadi');
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
-  // Foydalanuvchini o'chirish
-  const handleDelete = async (userId, userEmail) => {
-    if (!window.confirm(`${userEmail} — bu foydalanuvchini butunlay o'chirmoqchimisiz? Bu amalni ortga qaytarib bo'lmaydi.`)) return;
-    try {
-      await deleteUser(userId);
-      setUsers((prev) => prev.filter((u) => u._id !== userId));
-    } catch (err) {
-      console.error('O\'chirishda xatolik:', err);
-      alert('Foydalanuvchini o\'chirib bo\'lmadi');
-    }
-  };
-
-  // Qidiruv filtri
-  const filteredUsers = users.filter((u) => {
-    const q = search.toLowerCase();
-    return (
-      !q ||
-      u.email?.toLowerCase().includes(q) ||
-      u.fullName?.toLowerCase().includes(q)
-    );
-  });
-
-  // Rol bo'yicha son
-  const getRoleCount = (roleKey) => {
-    const found = stats?.roleBreakdown?.find((r) => r._id === roleKey);
-    return found?.count || 0;
-  };
-
-  if (loading) {
-    return (
-      <div className="ad-loading">
-        <Loader2 size={32} className="ad-spin" />
-        <span>Yuklanmoqda...</span>
+function Breakdown({ title, data, labels }) {
+  const entries = Object.entries(data || {}).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) return null;
+  return (
+    <section className="ad-card">
+      <h3>{title}</h3>
+      <div className="ad-pills">
+        {entries.map(([k, n]) => (
+          <span key={k} className="ad-pill">{labels[k] || k}<b>{n}</b></span>
+        ))}
       </div>
-    );
-  }
+    </section>
+  );
+}
+
+function Empty({ loading, text }) {
+  return <div className="ad-empty">{loading ? <Loader2 size={22} className="ad-spin" /> : text}</div>;
+}
+
+export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const [tab, setTab] = useState('overview');
+  const [loading, setLoading] = useState(false);
+
+  const [overview, setOverview] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [listings, setListings] = useState([]);
+  const [listingType, setListingType] = useState('equipment');
+  const [requests, setRequests] = useState([]);
+  const [requestStatus, setRequestStatus] = useState('');
+  const [logs, setLogs] = useState([]);
+  const [search, setSearch] = useState('');
+  const [busyId, setBusyId] = useState(null);
+  const q = useDebounced(search);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      if (tab === 'overview') setOverview((await getOverview()).data);
+      else if (tab === 'users') setUsers((await getUsers({ q })).data || []);
+      else if (tab === 'listings') setListings((await getListings(listingType, { q })).data || []);
+      else if (tab === 'requests') setRequests((await getAdminRequests({ status: requestStatus || undefined })).data || []);
+      else if (tab === 'logs') setLogs((await getAuditLogs()).data || []);
+    } catch (err) {
+      toast.error(err.response?.data?.error || T('Yuklab bo\'lmadi'));
+    } finally {
+      setLoading(false);
+    }
+  }, [tab, q, listingType, requestStatus]);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- tab/filtr o'zgarganda ma'lumot yuklanadi
+  useEffect(() => { load(); }, [load]);
+
+  const changeTab = (key) => {
+    setTab(key);
+    setSearch('');
+  };
+
+  const handleRoleChange = async (u, role) => {
+    setBusyId(u._id);
+    try {
+      await updateUserRole(u._id, role);
+      setUsers((prev) => prev.map((x) => (x._id === u._id ? { ...x, role } : x)));
+      toast.success(T('Rol yangilandi'));
+    } catch (err) {
+      toast.error(err.response?.data?.error || T('Rolni yangilab bo\'lmadi'));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleDeleteUser = async (u) => {
+    if (!window.confirm(T('{{name}} — foydalanuvchi va uning e\'lonlari butunlay o\'chiriladi. Davom etasizmi?', { name: u.fullName || u.email }))) return;
+    setBusyId(u._id);
+    try {
+      await deleteUser(u._id);
+      setUsers((prev) => prev.filter((x) => x._id !== u._id));
+      toast.success(T('O\'chirildi'));
+    } catch (err) {
+      toast.error(err.response?.data?.error || T('O\'chirib bo\'lmadi'));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleDeleteListing = async (item) => {
+    const title = item.title || item.name || T('E\'lon');
+    if (!window.confirm(T('“{{title}}” o\'chirilsinmi? Buni qaytarib bo\'lmaydi.', { title }))) return;
+    setBusyId(item._id);
+    try {
+      await deleteListing(listingType, item._id);
+      setListings((prev) => prev.filter((x) => x._id !== item._id));
+      toast.success(T('O\'chirildi'));
+    } catch (err) {
+      toast.error(err.response?.data?.error || T('O\'chirib bo\'lmadi'));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const listingImage = (item) => {
+    const src = item.images?.[0] || item.image || item.thumbnail;
+    return src && !String(src).includes('default.jpg') ? getImageUrl(src) : '';
+  };
+
+  const listingMeta = (item) => {
+    if (listingType === 'equipment') return formatPrice(item.price, item.currency);
+    if (listingType === 'provider') return serviceLabel(item.service_category);
+    if (listingType === 'location') return item.address;
+    return item.description;
+  };
+
+  const listingLink = (item) => ({
+    equipment: `/equipment/${item._id}`,
+    provider: `/service-provider/${item._id}`,
+    location: `/location/${item._id}`,
+    post: `/posts/${item._id}`,
+  }[listingType]);
+
+  const o = overview;
 
   return (
     <div className="ad-page">
-      <div className="ad-header">
-        <h1><Crown size={24} /> ZUMO Admin</h1>
-        <div className="ad-header-right">
-          <p className="ad-welcome">Xush kelibsiz, {user.user_metadata?.full_name || user.email}</p>
-          <button className="ad-logout-btn" onClick={handleLogout}>
-            <LogOut size={18} />
-            <span>Chiqish</span>
+      <header className="ad-top">
+        <button type="button" className="ad-back" onClick={() => navigate(-1)} aria-label={T('Orqaga')}>
+          <ArrowLeft size={22} />
+        </button>
+        <h1>{T('Admin panel')}</h1>
+        <button type="button" className="ad-back" onClick={load} aria-label={T('Yangilash')} disabled={loading}>
+          <RefreshCw size={19} className={loading ? 'ad-spin' : ''} />
+        </button>
+      </header>
+
+      <nav className="ad-tabs" role="tablist">
+        {TABS.map(({ key, icon: Icon, label }) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={tab === key}
+            className={tab === key ? 'is-on' : ''}
+            onClick={() => changeTab(key)}
+          >
+            <Icon size={16} /> {label}
           </button>
-        </div>
-      </div>
-
-      {/* STATISTIKA KARTALARI (bosiladigan) */}
-      <div className="ad-stats-grid">
-        <div className="ad-stat-card">
-          <Users size={20} />
-          <div>
-            <span className="ad-stat-value">{stats?.totalUsers ?? 0}</span>
-            <span className="ad-stat-label">Jami foydalanuvchi</span>
-          </div>
-        </div>
-
-        <button className="ad-stat-card ad-stat-clickable" onClick={() => setActiveTab('locations')}>
-          <MapPin size={20} />
-          <div>
-            <span className="ad-stat-value">{stats?.totalLocations ?? 0}</span>
-            <span className="ad-stat-label">Lokatsiyalar</span>
-          </div>
-        </button>
-
-        <button className="ad-stat-card ad-stat-clickable" onClick={() => setActiveTab('equipment')}>
-          <Package size={20} />
-          <div>
-            <span className="ad-stat-value">{stats?.totalEquipment ?? 0}</span>
-            <span className="ad-stat-label">Tovarlar</span>
-          </div>
-        </button>
-
-        <div className="ad-stat-card">
-          <FileText size={20} />
-          <div>
-            <span className="ad-stat-value">{stats?.totalTurnkey ?? 0}</span>
-            <span className="ad-stat-label">Turnkey so'rovlari</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ROL TAQSIMOTI */}
-      <div className="ad-role-breakdown">
-        {ROLE_OPTIONS.map((r) => (
-          <span key={r.value} className="ad-role-pill">
-            {r.label}: <strong>{getRoleCount(r.value)}</strong>
-          </span>
         ))}
-      </div>
+      </nav>
 
-      {/* TABLAR */}
-      <div className="ad-tabs">
-        <button className={activeTab === 'users' ? 'active' : ''} onClick={() => setActiveTab('users')}>
-          <Users size={16} /> Foydalanuvchilar
-        </button>
-        <button className={activeTab === 'locations' ? 'active' : ''} onClick={() => setActiveTab('locations')}>
-          <MapPin size={16} /> Lokatsiyalar
-        </button>
-        <button className={activeTab === 'equipment' ? 'active' : ''} onClick={() => setActiveTab('equipment')}>
-          <Package size={16} /> Tovarlar
-        </button>
-        <button className={activeTab === 'logs' ? 'active' : ''} onClick={() => setActiveTab('logs')}>
-          <Shield size={16} /> Audit jurnali
-        </button>
-      </div>
+      <main className="ad-body">
+        {tab === 'overview' && (
+          !o ? <Empty loading={loading} text={T('Ma\'lumot yo\'q')} /> : (
+            <>
+              <div className="ad-stats">
+                <Stat icon={Users} value={num(o.users)} label={T('Foydalanuvchilar')} />
+                <Stat icon={UserPlus} value={`+${num(o.newUsers)}`} label={T('Shu hafta yangi')} tone="green" />
+                <Stat icon={Crown} value={num(o.premium)} label={T('Premium')} tone="gold" />
+                <Stat icon={Wallet} value={`${num(o.revenue)}`} label={T('Tushum, so\'m ({{n}} to\'lov)', { n: o.payments })} tone="gold" />
+                <Stat icon={Wrench} value={num(o.providers)} label={T('Ustalar')} />
+                <Stat icon={Wrench} value={num(o.requests)} label={T('Xizmat so\'rovlari')} />
+                <Stat icon={Package} value={num(o.equipment)} label={T('Tovarlar')} />
+                <Stat icon={ShoppingBag} value={num(o.orders)} label={T('Buyurtmalar')} />
+                <Stat icon={MapPin} value={num(o.locations)} label={T('Joylar')} />
+                <Stat icon={Video} value={num(o.posts)} label={T('Videolar')} />
+              </div>
+              <Breakdown title={T('Xizmat so\'rovlari holati')} data={o.requestsByStatus} labels={REQUEST_STATUS} />
+              <Breakdown title={T('Buyurtmalar holati')} data={o.ordersByStatus} labels={ORDER_STATUS} />
+              <Breakdown
+                title={T('Rollar')}
+                data={o.roles}
+                labels={Object.fromEntries(ROLE_OPTIONS.map((r) => [r.value, r.label]))}
+              />
+            </>
+          )
+        )}
 
-      {/* USERS TAB */}
-      {activeTab === 'users' && (
-        <div className="ad-section">
-          <div className="ad-search-wrap">
-            <Search size={16} />
+        {(tab === 'users' || tab === 'listings') && (
+          <div className="ad-search">
+            <Search size={17} />
             <input
-              type="text"
-              placeholder="Ism yoki email bo'yicha qidirish..."
+              type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              placeholder={tab === 'users' ? T('Ism, email yoki telefon') : T('Nomi bo\'yicha qidirish')}
             />
           </div>
-          <div className="ad-users-table">
-            <div className="ad-users-row ad-users-head">
-              <span>Foydalanuvchi</span>
-              <span>Email</span>
-              <span>Rol</span>
-              <span></span>
-            </div>
-            {filteredUsers.map((u) => (
-              <div key={u._id} className="ad-users-row">
-                <span className="ad-user-name">{u.fullName || '—'}</span>
-                <span className="ad-user-email">{u.email}</span>
-                <span>
-                  <select
-                    value={u.role}
-                    disabled={updatingId === u._id}
-                    onChange={(e) => handleRoleChange(u._id, e.target.value)}
-                    className="ad-role-select"
-                  >
-                    {ROLE_OPTIONS.map((r) => (
-                      <option key={r.value} value={r.value}>{r.label}</option>
-                    ))}
-                  </select>
-                </span>
-                <button className="ad-delete-btn" onClick={() => handleDelete(u._id, u.email)}>
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
-            {filteredUsers.length === 0 && <div className="ad-empty">Hech narsa topilmadi</div>}
-          </div>
-        </div>
-      )}
+        )}
 
-      {/* LOCATIONS TAB */}
-      {activeTab === 'locations' && (
-        <div className="ad-section">
-          <div className="ad-users-table">
-            <div className="ad-users-row ad-users-head">
-              <span>Nomi</span>
-              <span>Manzil</span>
-              <span>Yo'nalish</span>
-              <span></span>
-            </div>
-            {locations.map((loc) => (
-              <div key={loc._id} className="ad-users-row">
-                <span className="ad-user-name">{loc.title}</span>
-                <span className="ad-user-email">{loc.address}</span>
-                <span>{loc.level1}</span>
-                <button className="ad-delete-btn" onClick={() => alert('O\'chirish keyinroq qo\'shiladi')}>
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
-            {locations.length === 0 && <div className="ad-empty">Hozircha lokatsiya yo'q</div>}
-          </div>
-        </div>
-      )}
-
-      {/* EQUIPMENT / TOVARLAR TAB */}
-      {activeTab === 'equipment' && (
-        <div className="ad-section">
-          <div className="ad-users-table">
-            <div className="ad-users-row ad-users-head">
-              <span>Nomi</span>
-              <span>Narxi</span>
-              <span>Yo'nalish</span>
-              <span></span>
-            </div>
-            {equipmentList.map((eq) => (
-              <div key={eq._id} className="ad-users-row">
-                <span className="ad-user-name">{eq.title}</span>
-             
-<span className="ad-user-email">{formatPrice(eq.price, eq.currency)}</span>
-                <span>{eq.level1}</span>
-                <button className="ad-delete-btn" onClick={() => alert('O\'chirish keyinroq qo\'shiladi')}>
-                  <Trash2 size={15} />
-                </button>
-              </div>
-            ))}
-            {equipmentList.length === 0 && <div className="ad-empty">Hozircha tovar yo'q</div>}
-          </div>
-        </div>
-      )}
-
-      {/* LOGS TAB */}
-      {activeTab === 'logs' && (
-        <div className="ad-section">
-          <div className="ad-logs-list">
-            {logs.length === 0 ? (
-              <div className="ad-empty">Hozircha yozuv yo'q</div>
-            ) : (
-              logs.map((log) => (
-                <div key={log._id} className="ad-log-item">
-                  <span className="ad-log-action">{log.action}</span>
-                  <span className="ad-log-detail">
-                    {log.adminEmail} → {log.targetType} ({log.targetId})
+        {tab === 'users' && (
+          users.length === 0 ? <Empty loading={loading} text={T('Hech narsa topilmadi')} /> : (
+            <ul className="ad-list">
+              {users.map((u) => (
+                <li key={u._id} className="ad-item">
+                  <span className="ad-avatar">
+                    {u.avatar_url ? <img src={getImageUrl(u.avatar_url)} alt="" /> : (u.fullName || u.email || '?')[0].toUpperCase()}
                   </span>
-                  <span className="ad-log-time">
-                    {new Date(log.createdAt).toLocaleString()}
+                  <span className="ad-item__main">
+                    <strong>
+                      {u.fullName || '—'}
+                      {u.isPremium && <Crown size={13} className="ad-crown" />}
+                    </strong>
+                    <small>{u.email || u.phone || ''}</small>
+                    <small>{T('Qo\'shilgan:')} {fmtDate(u.createdAt)}</small>
                   </span>
-                </div>
-              ))
+                  <span className="ad-item__side">
+                    <select
+                      value={u.role}
+                      disabled={busyId === u._id}
+                      onChange={(e) => handleRoleChange(u, e.target.value)}
+                      aria-label={T('Rol')}
+                    >
+                      {ROLE_OPTIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                    </select>
+                    <button type="button" className="ad-del" onClick={() => handleDeleteUser(u)} disabled={busyId === u._id} aria-label={T('O\'chirish')}>
+                      <Trash2 size={16} />
+                    </button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        )}
+
+        {tab === 'listings' && (
+          <>
+            <div className="ad-chips">
+              {LISTING_TYPES.map((lt) => (
+                <button key={lt.key} type="button" className={listingType === lt.key ? 'is-on' : ''} onClick={() => setListingType(lt.key)}>
+                  {lt.label}
+                </button>
+              ))}
+            </div>
+            {listings.length === 0 ? <Empty loading={loading} text={T('Hech narsa topilmadi')} /> : (
+              <ul className="ad-list">
+                {listings.map((item) => {
+                  const img = listingImage(item);
+                  return (
+                    <li key={item._id} className="ad-item">
+                      <button type="button" className="ad-thumb" onClick={() => navigate(listingLink(item))}>
+                        {img ? <img src={img} alt="" /> : <Package size={20} />}
+                      </button>
+                      <span className="ad-item__main" onClick={() => navigate(listingLink(item))} role="link" tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && navigate(listingLink(item))}>
+                        <strong>{item.title || item.name || '—'}</strong>
+                        {listingMeta(item) && <small className="ad-clip">{listingMeta(item)}</small>}
+                        <small>{item.userId?.fullName || item.userId?.email || ''} · {fmtDate(item.createdAt)}</small>
+                      </span>
+                      <button type="button" className="ad-del" onClick={() => handleDeleteListing(item)} disabled={busyId === item._id} aria-label={T('O\'chirish')}>
+                        <Trash2 size={16} />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
-          </div>
-        </div>
-      )}
+          </>
+        )}
+
+        {tab === 'requests' && (
+          <>
+            <div className="ad-chips">
+              {[['', T('Hammasi')], ...Object.entries(REQUEST_STATUS)].map(([k, label]) => (
+                <button key={k || 'all'} type="button" className={requestStatus === k ? 'is-on' : ''} onClick={() => setRequestStatus(k)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            {requests.length === 0 ? <Empty loading={loading} text={T('Hech narsa topilmadi')} /> : (
+              <ul className="ad-list">
+                {requests.map((r) => {
+                  const accepted = (r.offers || []).find((x) => x.status === 'accepted');
+                  return (
+                    <li key={r._id} className="ad-item ad-item--col">
+                      <span className="ad-item__row">
+                        <strong>{serviceLabel(r.category)}</strong>
+                        <span className={`ad-status ad-status--${r.status}`}>{REQUEST_STATUS[r.status] || r.status}</span>
+                      </span>
+                      {r.description && <small className="ad-clip">{r.description}</small>}
+                      <small>
+                        {r.clientId?.fullName || r.clientId?.email || ''} · {fmtDate(r.createdAt)} · {T('{{n}} ta taklif', { n: (r.offers || []).length })}
+                        {accepted ? ` · ${num(accepted.price)} ${T('so\'m')}` : ''}
+                      </small>
+                      {r.location?.address && <small className="ad-clip">{r.location.address}</small>}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </>
+        )}
+
+        {tab === 'logs' && (
+          logs.length === 0 ? <Empty loading={loading} text={T('Hozircha yozuv yo\'q')} /> : (
+            <ul className="ad-list">
+              {logs.map((log) => (
+                <li key={log._id} className="ad-item ad-item--col">
+                  <span className="ad-item__row">
+                    <strong>{log.action}</strong>
+                    <small>{new Date(log.createdAt).toLocaleString('uz-UZ')}</small>
+                  </span>
+                  <small className="ad-clip">
+                    {log.adminEmail} → {log.targetType}
+                    {log.oldData?.title ? `: ${log.oldData.title}` : ''}
+                    {log.oldData?.newRole ? `: ${log.oldData.role} → ${log.oldData.newRole}` : ''}
+                    {log.oldData?.email ? `: ${log.oldData.email}` : ''}
+                  </small>
+                </li>
+              ))}
+            </ul>
+          )
+        )}
+      </main>
     </div>
   );
 }

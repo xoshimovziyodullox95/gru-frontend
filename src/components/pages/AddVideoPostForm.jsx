@@ -23,6 +23,7 @@ import {
 import { createVideoPost } from '../services/videos';
 import '../../styles/addVideoForm.css';
 
+import { T } from '../utils/T';
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
 const MAX_TITLE_LENGTH = 80;
 const MAX_DESCRIPTION_LENGTH = 500;
@@ -310,7 +311,7 @@ export default function AddVideoPostForm() {
 
         <div className="avf-page-heading">
           <span className="avf-eyebrow">
-            ZUMO Reels
+            {T('ZUMO Reels')}
           </span>
 
           <h1 className="avf-title">
@@ -383,7 +384,7 @@ export default function AddVideoPostForm() {
                 </span>
 
                 <span className="avf-upload-limit">
-                  MP4, WebM, MOV В· maksimum 100 MB
+                  {T('MP4, WebM, MOV · maksimum 100 MB')}
                 </span>
               </button>
             ) : (
@@ -410,7 +411,7 @@ export default function AddVideoPostForm() {
                       size={12}
                       fill="currentColor"
                     />
-                    Reels
+                    {T('Reels')}
                   </span>
 
                   <button
@@ -458,9 +459,9 @@ export default function AddVideoPostForm() {
                     )}
 
                     {videoMeta.duration > 0 &&
-                      ` В· ${formatDuration(
+                      T(' · {{v}}', { v: formatDuration(
                         videoMeta.duration
-                      )}`}
+                      ) })}
                   </span>
                 </div>
 

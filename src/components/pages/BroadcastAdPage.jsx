@@ -7,6 +7,7 @@ import api from '../services/api';
 import { getSubscribers } from '../services/user';
 import '../../styles/broadcastAd.css';
 
+import { T } from '../utils/T';
 export default function BroadcastAdPage() {
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
@@ -31,13 +32,13 @@ export default function BroadcastAdPage() {
     const selected = e.target.files?.[0];
     if (!selected) return;
     if (selected.size > 100 * 1024 * 1024) {
-      setError('Fayl hajmi 100 MB dan oshmasligi kerak');
+      setError(T('Fayl hajmi 100 MB dan oshmasligi kerak'));
       e.target.value = '';
       return;
     }
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime'];
     if (!allowed.includes(selected.type)) {
-      setError('JPG, PNG, WEBP, MP4, WEBM yoki MOV fayl tanlang');
+      setError(T('JPG, PNG, WEBP, MP4, WEBM yoki MOV fayl tanlang'));
       e.target.value = '';
       return;
     }
@@ -51,7 +52,7 @@ export default function BroadcastAdPage() {
 
   const handleSend = async () => {
     if (!file) {
-      setError("Avval rasm yoki video tanlang");
+      setError(T('Avval rasm yoki video tanlang'));
       return;
     }
     setSending(true);
@@ -81,31 +82,31 @@ export default function BroadcastAdPage() {
   return (
     <div className="ba-page">
       <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
-        <ArrowLeft size={16} /> Orqaga
+        <ArrowLeft size={16} /> {T('Orqaga')}
       </button>
 
       <div className="ba-header">
-        <h1><Send size={22} /> Reklama tarqatish</h1>
+        <h1><Send size={22} /> {T('Reklama tarqatish')}</h1>
         <p className="ba-subtitle">
-          Rasm yoki video reklama sizga obuna bo‘lgan mijozlarga yuboriladi
-          {audienceCount !== null ? ` · ${audienceCount} ta obunachi` : ''}.
+          {T('Rasm yoki video reklama sizga obuna bo‘lgan mijozlarga yuboriladi')}
+          {audienceCount !== null ? T(' · {{audienceCount}} ta obunachi', { audienceCount: audienceCount }) : ''}.
         </p>
       </div>
 
       {result ? (
         <div className="ba-success">
           <Users size={40} />
-          <h2>Yuborildi!</h2>
-          <p><strong>{result.sentTo}</strong> ta mijozga reklama yetkazildi</p>
-          <button className="ba-btn-primary" onClick={reset}>Yana bittasini yuborish</button>
+          <h2>{T('Yuborildi!')}</h2>
+          <p><strong>{result.sentTo}</strong> {T('ta mijozga reklama yetkazildi')}</p>
+          <button className="ba-btn-primary" onClick={reset}>{T('Yana bittasini yuborish')}</button>
         </div>
       ) : (
         <>
           {!preview ? (
             <div className="ba-upload-zone" onClick={() => fileInputRef.current?.click()}>
               <Upload size={36} />
-              <p>Banner rasmi yoki video yuklang</p>
-              <span className="ba-upload-hint">JPG, PNG, WEBP, MP4, WEBM, MOV — 100 MB gacha</span>
+              <p>{T('Banner rasmi yoki video yuklang')}</p>
+              <span className="ba-upload-hint">{T('JPG, PNG, WEBP, MP4, WEBM, MOV — 100 MB gacha')}</span>
             </div>
           ) : (
             <div className="ba-preview-zone">
@@ -113,7 +114,7 @@ export default function BroadcastAdPage() {
               {isVideo ? (
                 <video src={preview} controls className="ba-preview-media" />
               ) : (
-                <img src={preview} alt="Banner" className="ba-preview-media" />
+                <img src={preview} alt={T('Banner')} className="ba-preview-media" />
               )}
             </div>
           )}
@@ -129,17 +130,17 @@ export default function BroadcastAdPage() {
             <>
               <textarea
                 className="ba-caption-input"
-                placeholder="Reklama matni (ixtiyoriy)..."
+                placeholder={T('Reklama matni (ixtiyoriy)...')}
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 rows={3}
               />
 
               {error && <div className="pt-error">{error}</div>}
-              {audienceCount === 0 && <div className="pt-error">Hozircha obunachilaringiz yo‘q. Reklama yuborish uchun avval mijozlar sizga obuna bo‘lishi kerak.</div>}
+              {audienceCount === 0 && <div className="pt-error">{T('Hozircha obunachilaringiz yo‘q. Reklama yuborish uchun avval mijozlar sizga obuna bo‘lishi kerak.')}</div>}
 
               <button className="ba-send-btn" onClick={handleSend} disabled={sending || audienceCount === 0}>
-                {sending ? 'Yuborilmoqda...' : <><Send size={18} /> Obunachilarga yuborish</>}
+                {sending ? T('Yuborilmoqda...') : <><Send size={18} /> {T('Obunachilarga yuborish')}</>}
               </button>
             </>
           )}

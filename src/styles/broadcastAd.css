@@ -53,14 +53,14 @@
   width: 100%;
   max-height: 400px;
   object-fit: contain;
-  background: #000;
+  background: var(--bg);
   border-radius: 1.3rem;
 }
 .ba-remove-preview {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(var(--surface-rgb), 0.6);
   border: none;
   border-radius: 50%;
   width: 32px;
@@ -68,7 +68,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--text);
   cursor: pointer;
   z-index: 2;
 }

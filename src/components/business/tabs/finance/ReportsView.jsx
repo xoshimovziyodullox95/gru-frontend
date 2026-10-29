@@ -7,6 +7,7 @@ import {
 import { useBusiness } from '../../context/BusinessContext';
 import { getPnL, getCashflow, getTopProducts } from '../../../services/business';
 
+import { T } from '../../../utils/T';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend);
 
 export default function ReportsView() {
@@ -37,13 +38,13 @@ export default function ReportsView() {
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) return <div className="pt-empty">Yuklanmoqda...</div>;
+  if (loading) return <div className="pt-empty">{T('Yuklanmoqda...')}</div>;
 
   const chartData = {
     labels: cashflow.map((d) => new Date(d.date).toLocaleDateString('uz-UZ', { day: '2-digit', month: '2-digit' })),
     datasets: [
       {
-        label: 'Kirim',
+        label: T('Kirim'),
         data: cashflow.map((d) => d.cashIn),
         borderColor: '#00E5FF',
         backgroundColor: 'rgba(0,229,255,0.1)',
@@ -51,7 +52,7 @@ export default function ReportsView() {
         tension: 0.4,
       },
       {
-        label: 'Chiqim',
+        label: T('Chiqim'),
         data: cashflow.map((d) => d.cashOut),
         borderColor: '#ff5c5c',
         backgroundColor: 'rgba(255,92,92,0.08)',
@@ -75,17 +76,17 @@ export default function ReportsView() {
     <div>
       {/* ==================== P&L KARTOCHKALARI ==================== */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 24 }}>
-        <SummaryCard label="Sotuvlar" value={pnl?.totalRevenue} color="#00E5FF" />
-        <SummaryCard label="Tannarx" value={pnl?.totalCost} color="#ffaa00" />
-        <SummaryCard label="Yalpi foyda" value={pnl?.grossProfit} color="#00c864" />
-        <SummaryCard label="Xarajatlar" value={pnl?.totalExpenses} color="#ff5c5c" />
-        <SummaryCard label="Sof foyda" value={pnl?.netProfit} color={pnl?.netProfit >= 0 ? '#00c864' : '#ff5c5c'} bold />
+        <SummaryCard label={T('Sotuvlar')} value={pnl?.totalRevenue} color="#00E5FF" />
+        <SummaryCard label={T('Tannarx')} value={pnl?.totalCost} color="#ffaa00" />
+        <SummaryCard label={T('Yalpi foyda')} value={pnl?.grossProfit} color="#00c864" />
+        <SummaryCard label={T('Xarajatlar')} value={pnl?.totalExpenses} color="#ff5c5c" />
+        <SummaryCard label={T('Sof foyda')} value={pnl?.netProfit} color={pnl?.netProfit >= 0 ? '#00c864' : '#ff5c5c'} bold />
       </div>
 
       {/* ==================== CASH FLOW GRAFIGI ==================== */}
-      <h4 style={{ marginBottom: 10 }}>Pul oqimi (joriy oy)</h4>
+      <h4 style={{ marginBottom: 10 }}>{T('Pul oqimi (joriy oy)')}</h4>
       {cashflow.length === 0 ? (
-        <div className="pt-empty">Hali ma'lumot yo'q</div>
+        <div className="pt-empty">{T('Hali ma\'lumot yo\'q')}</div>
       ) : (
         <div style={{ height: 260, marginBottom: 24 }}>
           <Line data={chartData} options={chartOptions} />
@@ -93,13 +94,13 @@ export default function ReportsView() {
       )}
 
       {/* ==================== TOP MAHSULOTLAR ==================== */}
-      <h4 style={{ marginBottom: 10 }}>Eng ko'p sotilgan mahsulotlar</h4>
+      <h4 style={{ marginBottom: 10 }}>{T('Eng ko\'p sotilgan mahsulotlar')}</h4>
       {topProducts.length === 0 ? (
-        <div className="pt-empty">Hali sotuvlar yo'q</div>
+        <div className="pt-empty">{T('Hali sotuvlar yo\'q')}</div>
       ) : (
         <div className="pt-table-wrap">
           <table className="pt-table">
-            <thead><tr><th>Mahsulot</th><th>Sotilgan miqdor</th><th>Tushum</th></tr></thead>
+            <thead><tr><th>{T('Mahsulot')}</th><th>{T('Sotilgan miqdor')}</th><th>{T('Tushum')}</th></tr></thead>
             <tbody>
               {topProducts.map((tp) => (
                 <tr key={tp.productId}>

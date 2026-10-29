@@ -6,20 +6,21 @@ import { getMyOrders, cancelOrder, getMyBankApplications } from '../services/ord
 import '../../styles/myOrders.css';
 import { formatPrice } from '../utils/formatPrice';
 
+import { T } from '../utils/T';
 const STATUS_INFO = {
-  yangi: { label: 'Sotuvchi javobini kutmoqda', tone: 'wait', icon: Clock },
-  qabul_qilindi: { label: 'Qabul qilindi', tone: 'active', icon: Package },
-  yetkazilmoqda: { label: 'Yetkazilmoqda', tone: 'active', icon: Truck },
-  yetkazildi: { label: 'Yetkazildi', tone: 'done', icon: CheckCircle2 },
-  rad_etildi: { label: 'Sotuvchi rad etdi', tone: 'closed', icon: XCircle },
-  bekor_qilindi: { label: 'Bekor qilindi', tone: 'closed', icon: XCircle },
+  yangi: { label: T('Sotuvchi javobini kutmoqda'), tone: 'wait', icon: Clock },
+  qabul_qilindi: { label: T('Qabul qilindi'), tone: 'active', icon: Package },
+  yetkazilmoqda: { label: T('Yetkazilmoqda'), tone: 'active', icon: Truck },
+  yetkazildi: { label: T('Yetkazildi'), tone: 'done', icon: CheckCircle2 },
+  rad_etildi: { label: T('Sotuvchi rad etdi'), tone: 'closed', icon: XCircle },
+  bekor_qilindi: { label: T('Bekor qilindi'), tone: 'closed', icon: XCircle },
 };
 
 const BANK_STATUS_INFO = {
-  new: { label: 'Yuborildi', tone: 'wait', icon: Clock },
-  in_progress: { label: 'Ko‘rib chiqilmoqda', tone: 'active', icon: Loader2 },
-  approved: { label: 'Tasdiqlandi', tone: 'done', icon: CheckCircle2 },
-  rejected: { label: 'Rad etildi', tone: 'closed', icon: XCircle },
+  new: { label: T('Yuborildi'), tone: 'wait', icon: Clock },
+  in_progress: { label: T('Ko‘rib chiqilmoqda'), tone: 'active', icon: Loader2 },
+  approved: { label: T('Tasdiqlandi'), tone: 'done', icon: CheckCircle2 },
+  rejected: { label: T('Rad etildi'), tone: 'closed', icon: XCircle },
 };
 
 function StatusBadge({ info }) {
@@ -56,26 +57,26 @@ export default function MyOrdersPage() {
   }, []);
 
   const handleCancel = async (order) => {
-    if (!window.confirm(`"${order.title}" buyurtmasini bekor qilasizmi?`)) return;
+    if (!window.confirm(T('"{{title}}" buyurtmasini bekor qilasizmi?', { title: order.title }))) return;
     setCancellingId(order._id);
     try {
       const res = await cancelOrder(order._id);
       setOrders((prev) => prev.map((o) => (o._id === order._id ? res.data.order : o)));
     } catch (err) {
-      alert(err.response?.data?.error || 'Bekor qilib bo‘lmadi');
+      alert(err.response?.data?.error || T('Bekor qilib bo‘lmadi'));
     } finally {
       setCancellingId(null);
     }
   };
 
-  if (loading) return <div className="StatusScreen">Yuklanmoqda...</div>;
+  if (loading) return <div className="StatusScreen">{T('Yuklanmoqda...')}</div>;
 
   return (
     <div className="mo-page">
       <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
-        <ArrowLeft size={16} /> Orqaga
+        <ArrowLeft size={16} /> {T('Orqaga')}
       </button>
-      <h1 className="mo-title">Buyurtmalarim</h1>
+      <h1 className="mo-title">{T('Buyurtmalarim')}</h1>
 
       <div className="mo-tabs" role="tablist">
         <button
@@ -84,24 +85,27 @@ export default function MyOrdersPage() {
           className={`mo-tab ${tab === 'orders' ? 'active' : ''}`}
           onClick={() => setSearchParams({})}
         >
-          <Package size={15} /> Tovarlar ({orders.length})
+          <Package size={15} /> {T('Tovarlar ({{count}})', { count: orders.length })}
         </button>
-        <button
-          type="button"
-          role="tab"
-          className={`mo-tab ${tab === 'bank' ? 'active' : ''}`}
-          onClick={() => setSearchParams({ tab: 'bank' })}
-        >
-          <Landmark size={15} /> Bank arizalari ({applications.length})
-        </button>
+        {/* Bank bo'limi "Tez kunda" — tab faqat avval ariza bergan foydalanuvchiga ko'rinadi */}
+        {applications.length > 0 && (
+          <button
+            type="button"
+            role="tab"
+            className={`mo-tab ${tab === 'bank' ? 'active' : ''}`}
+            onClick={() => setSearchParams({ tab: 'bank' })}
+          >
+            <Landmark size={15} /> {T('Bank arizalari ({{count}})', { count: applications.length })}
+          </button>
+        )}
       </div>
 
       {tab === 'orders' && (
         orders.length === 0 ? (
           <div className="mo-empty">
-            Hozircha buyurtma yo‘q
+            {T('Hozircha buyurtma yo‘q')}
             <button type="button" className="mo-advance-btn" onClick={() => navigate('/marketplace')}>
-              Bozorga o‘tish
+              {T('Bozorga o‘tish')}
             </button>
           </div>
         ) : (
@@ -119,19 +123,19 @@ export default function MyOrdersPage() {
                   <div className="mo-item-info">
                     <span className="mo-item-title">{o.title}</span>
                     <span className="mo-item-meta">{o.quantity} ta &middot; {formatPrice(o.price, o.currency)}</span>
-                    <span className="mo-item-seller">{o.sellerId?.fullName || o.sellerId?.full_name || 'Sotuvchi'}</span>
+                    <span className="mo-item-seller">{o.sellerId?.fullName || o.sellerId?.full_name || T('Sotuvchi')}</span>
                     {o.deliveryEstimate?.value && o.status !== 'yetkazildi' && (
                       <span className="mo-delivery-estimate">
-                        <Clock size={12} /> {o.deliveryEstimate.value} {o.deliveryEstimate.unit === 'soat' ? 'soatda' : 'kunda'} yetkaziladi
+                        <Clock size={12} /> {o.deliveryEstimate.value} {o.deliveryEstimate.unit === 'soat' ? 'soatda' : 'kunda'} {T('yetkaziladi')}
                       </span>
                     )}
-                    {o.closeReason && <span className="mo-close-reason">Sabab: {o.closeReason}</span>}
+                    {o.closeReason && <span className="mo-close-reason">{T('Sabab:')} {o.closeReason}</span>}
                     <StatusBadge info={info} />
                   </div>
                   <div className="mo-item-actions-col">
                     {o.sellerId?._id && (
                       <button className="mo-chat-btn" onClick={() => navigate(`/chat?userId=${o.sellerId._id}`)}>
-                        <MessageCircle size={14} /> Chat
+                        <MessageCircle size={14} /> {T('Chat')}
                       </button>
                     )}
                     {o.status === 'yangi' && (
@@ -140,7 +144,7 @@ export default function MyOrdersPage() {
                         disabled={cancellingId === o._id}
                         onClick={() => handleCancel(o)}
                       >
-                        {cancellingId === o._id ? <Loader2 size={14} className="mo-spin" /> : 'Bekor qilish'}
+                        {cancellingId === o._id ? <Loader2 size={14} className="mo-spin" /> : T('Bekor qilish')}
                       </button>
                     )}
                   </div>
@@ -154,9 +158,9 @@ export default function MyOrdersPage() {
       {tab === 'bank' && (
         applications.length === 0 ? (
           <div className="mo-empty">
-            Hozircha bank arizasi yo‘q
+            {T('Hozircha bank arizasi yo‘q')}
             <button type="button" className="mo-advance-btn" onClick={() => navigate('/bank-services')}>
-              Bank xizmatlari
+              {T('Bank xizmatlari')}
             </button>
           </div>
         ) : (
@@ -170,7 +174,7 @@ export default function MyOrdersPage() {
                     <span className="mo-item-title">{a.serviceName}</span>
                     {a.provider && <span className="mo-item-seller">{a.provider}</span>}
                     <span className="mo-item-meta">{new Date(a.createdAt).toLocaleDateString('uz-UZ')}</span>
-                    {a.staffNote && <span className="mo-close-reason">Bank izohi: {a.staffNote}</span>}
+                    {a.staffNote && <span className="mo-close-reason">{T('Bank izohi:')} {a.staffNote}</span>}
                     <StatusBadge info={info} />
                   </div>
                 </div>

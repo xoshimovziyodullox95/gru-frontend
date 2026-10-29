@@ -8,30 +8,27 @@ import { useTranslation } from 'react-i18next';
 
 import {
   ArrowRight,
-  Boxes,
-  Briefcase,
+  ClipboardList,
+  MessageSquareText,
   Crown,
-  GraduationCap,
-  HeartPulse,
-  Lightbulb,
-  PartyPopper,
+  Search,
   ShoppingBag,
-  Sprout,
-  Store,
-  UtensilsCrossed,
+  Star,
   Wrench,
-  X,
   Zap,
 } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
-import CategoryCard from '../common/CategoryCard';
+import ProductCategoryGrid from '../common/ProductCategoryGrid';
 import MarketplaceReels from '../marketplace/MarketplaceReels';
 import ZumoQuickMenu from '../common/ZumoQuickMenu.jsx';
+import { RoleCarousel } from '../marketplace/MarketplaceHome.jsx';
+import '../../styles/marketplaceLayout.css';
+import UniversalBankLogo from '../common/UniversalBankLogo.jsx';
 import HomeListingCarousel from '../home/HomeListingCarousel.jsx';
 import { useFavorites } from '../hooks/useFavorites';
 
-import { getLevel1 } from '../services/categories';
+import { useProductCategories } from '../utils/productCategories';
 import { getPosts } from '../services/videos';
 import { getLocations } from '../services/locations';
 import { getEquipment } from '../services/equipment';
@@ -40,34 +37,16 @@ import { getRecentlyViewed } from '../utils/recentlyViewed.js';
 
 import '../../styles/home.css';
 
+import { T } from '../utils/T';
 /* ============================================================
    CONSTANTS
    ============================================================ */
 
-const CATEGORY_META = {
-  Agro: { icon: Sprout, colors: ['#2fd576', '#0a9a52'] },
-  'Restoran/Kafe': { icon: UtensilsCrossed, colors: ['#ff5c7a', '#e0264f'] },
-  Klinika: { icon: HeartPulse, colors: ['#4b8dff', '#2a4fe0'] },
-  Service: { icon: Wrench, colors: ['#22d3c5', '#0a8f8a'] },
-  "Ta'lim": { icon: GraduationCap, colors: ['#a78bfa', '#6d3fe0'] },
-  "Do'konlar": { icon: Store, colors: ['#ff8a2a', '#e8500a'] },
-  "Ko'ngilochar": { icon: PartyPopper, colors: ['#ff5fc4', '#c21fa0'] },
-  'Yangi biznes': { icon: Lightbulb, colors: ['#ffe14d', '#f5a300'] },
-};
-
-const FALLBACK_COLORS = [
-  ['#7c86ff', '#4a3fe0'],
-  ['#a3e635', '#5fa30f'],
-  ['#38bdf8', '#0369a1'],
-  ['#94a3b8', '#475569'],
-];
-
-const VISIBLE_CATEGORIES_COUNT = 8;
 
 const FALLBACK_HERO_PHRASES = [
-  'bilan oson',
-  'yangi imkoniyat',
-  'kelajak sari',
+  T('bilan oson'),
+  T('yangi imkoniyat'),
+  T('kelajak sari'),
 ];
 
 const REEL_SOURCES = [
@@ -121,13 +100,29 @@ function shareHomeRead(key, startRequest) {
   return request;
 }
 
+const HOW_STEPS = [
+  { icon: ClipboardList, title: 'Muammoni yozing', text: 'Nima kerakligini va manzilni kiriting — 1 daqiqa.' },
+  { icon: MessageSquareText, title: 'Ustalar narx aytadi', text: 'Yaqin ustalar taklif yuboradi, siz solishtirasiz.' },
+  { icon: Star, title: 'Tanlang va baholang', text: 'Ish tugagach tasdiqlaysiz va ustaga baho berasiz.' },
+];
+
+// Fon videosi reduced-motion yoki data-saving yoqilgan bo'lsa o'ynamaydi;
+// qolgan holatlarda kichik poster birinchi kadr sifatida darhol ko'rinadi.
+const HERO_POSTER = '/images/hero-poster.webp';
+function shouldPlayHeroVideo() {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  const connection = navigator.connection || {};
+  return !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    && !connection.saveData;
+}
+
 function normalizeHomeListings(content) {
   const getId = (item) => item?._id || item?.id;
   const locations = content.locations.map((item) => {
     const id = getId(item);
     if (!id) return null;
     return {
-      id: String(id), type: 'location', title: item.title || item.name || 'Joy',
+      id: String(id), type: 'location', title: item.title || item.name || T('Joy'),
       image: item.images?.[0] || item.image || item.imageUrl || '/images/placeholder.jpg',
       price: item.price_range || (item.price_per_month ? `${item.price_per_month} ${item.currency || "so'm"}/oy` : 'Narx so‘rov asosida'),
       link: `/location/${id}`, createdAt: item.createdAt || item.created_at,
@@ -140,23 +135,27 @@ function normalizeHomeListings(content) {
     const id = getId(item);
     if (!id) return null;
     return {
-      id: String(id), type: 'equipment', title: item.title || item.name || 'Tovar',
+      id: String(id), type: 'equipment', title: item.title || item.name || T('Tovar'),
       image: item.images?.[0] || item.image || item.imageUrl || '/images/placeholder-equipment.jpg',
       price: item.price ?? 'Narx so‘rov asosida', currency: item.currency,
       link: `/equipment/${id}`, createdAt: item.createdAt || item.created_at,
       isTop: Boolean(item.isTop || item.is_top), isVerified: Boolean(item.isVerified || item.is_verified),
       maxQuantity: item.stockQuantity,
+      saleMode: item.saleMode,
     };
   });
   const services = content.services.map((item) => {
     const id = getId(item);
     if (!id) return null;
     return {
-      id: String(id), type: 'service', title: item.name || item.title || 'Xizmat',
+      id: String(id), type: 'service', title: item.name || item.title || T('Xizmat'),
       image: item.image || item.images?.[0] || item.imageUrl || '/images/service-providers/default.jpg',
       price: item.price_range || item.price || 'Narx so‘rov asosida',
       link: `/service-provider/${id}`, createdAt: item.createdAt || item.created_at,
       isTop: Boolean(item.is_top), isVerified: Boolean(item.is_verified),
+      rating: Array.isArray(item.ratings) && item.ratings.length
+        ? item.ratings.reduce((sum, r) => sum + Number(r.value || 0), 0) / item.ratings.length
+        : Number(item.rating || item.averageRating) || 0,
     };
   });
   return [...locations, ...equipment, ...services]
@@ -230,7 +229,7 @@ function getOwnerName(owner) {
     owner?.full_name ||
     owner?.name ||
     owner?.email ||
-    'Foydalanuvchi'
+    T('Foydalanuvchi')
   );
 }
 
@@ -334,141 +333,6 @@ function buildReels(items, source, currentUserId, t) {
 }
 
 /* ============================================================
-   HOME ROLE BANNERS
-   ============================================================ */
-
-const PROVIDER_IMAGE = '/images/service-human.png';
-const SELLER_IMAGE = '/images/seler-human.png';
-const BUSINESS_IMAGE = '/images/biznes-human.png';
-
-function HomeRoleBanners({ t, navigate }) {
-  const [hiddenCards, setHiddenCards] = useState([]);
-  const [failedImages, setFailedImages] = useState([]);
-
-  const banners = useMemo(
-    () => [
-      {
-        id: 'provider',
-        image: PROVIDER_IMAGE,
-        icon: Wrench,
-        accent: '#ffb020',
-        title: t('home.providerBanner.providerTitle', 'Sizda hunar bormi?'),
-        subtitle: t(
-          'home.providerBanner.providerSubtitle',
-          'Mijozlar sizni topsin!'
-        ),
-        path: '/become-provider',
-      },
-      {
-        id: 'seller',
-        image: SELLER_IMAGE,
-        wide: true,
-        icon: Store,
-        accent: '#00cfff',
-        title: t('home.providerBanner.sellerTitle', 'Tovaringiz bormi?'),
-        subtitle: t('home.providerBanner.sellerSubtitle', 'Biz bilan soting'),
-        path: '/add-equipment',
-      },
-      {
-        id: 'business',
-        image: BUSINESS_IMAGE,
-        wide: true,
-        icon: Briefcase,
-        accent: '#22c995',
-        title: t('home.providerBanner.businessTitle', 'Biznesingiz bormi?'),
-        subtitle: t(
-          'home.providerBanner.businessSubtitle',
-          'Uni rivojlantiring'
-        ),
-        path: '/business',
-      },
-    ],
-    [t]
-  );
-
-  const visibleBanners = banners.filter((b) => !hiddenCards.includes(b.id));
-
-  if (!visibleBanners.length) return null;
-
-  const hideCard = (event, id) => {
-    event.stopPropagation();
-    setHiddenCards((current) => [...current, id]);
-  };
-
-  const onKeyDown = (event, path) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      navigate(path);
-    }
-  };
-
-  return (
-    <section className="role-banners">
-      <div className="role-banners__grid">
-        {visibleBanners.map((banner) => {
-          const Icon = banner.icon;
-          const hasImage =
-            Boolean(banner.image) && !failedImages.includes(banner.id);
-
-          return (
-            <article
-              key={banner.id}
-              className={`role-card role-card--${banner.id} ${
-                hasImage ? 'role-card--image' : 'role-card--icon'
-              } ${hasImage && banner.wide ? 'role-card--wide' : ''}`}
-              style={{ '--role-accent': banner.accent }}
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate(banner.path)}
-              onKeyDown={(event) => onKeyDown(event, banner.path)}
-            >
-              <button
-                type="button"
-                className="role-card__close"
-                onClick={(event) => hideCard(event, banner.id)}
-                aria-label={t('common.close', 'Yopish')}
-              >
-                <X size={13} />
-              </button>
-
-              {hasImage ? (
-                <img
-                  className="role-card__image"
-                  src={banner.image}
-                  alt=""
-                  loading="lazy"
-                  aria-hidden="true"
-                  onError={() =>
-                    setFailedImages((current) =>
-                      current.includes(banner.id)
-                        ? current
-                        : [...current, banner.id]
-                    )
-                  }
-                />
-              ) : (
-                <span className="role-card__icon" aria-hidden="true">
-                  <Icon size={26} strokeWidth={1.8} />
-                </span>
-              )}
-
-              <span className="role-card__content">
-                <strong>{banner.title}</strong>
-                <span>{banner.subtitle}</span>
-              </span>
-
-              <span className="role-card__arrow" aria-hidden="true">
-                <ArrowRight size={16} />
-              </span>
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-/* ============================================================
    HOME PAGE
    ============================================================ */
 
@@ -481,11 +345,14 @@ export default function HomePage() {
   const userId = user?.id || user?._id || null;
   const isPremium = Boolean(user?.isPremium || user?.user_metadata?.isPremium);
 
-  const [rawCategories, setRawCategories] = useState([]);
-  const [showAllCategories, setShowAllCategories] = useState(false);
+  // Marketplace tovar kategoriyalari (150+ biznes yo'nalishi emas)
+  const { categories } = useProductCategories();
 
   const [content, setContent] = useState(EMPTY_CONTENT);
   const [homeContentLoaded, setHomeContentLoaded] = useState(false);
+  const [heroQuery, setHeroQuery] = useState('');
+  const [playHeroVideo] = useState(shouldPlayHeroVideo);
+  const [heroVideoFailed, setHeroVideoFailed] = useState(false);
   const [nearbyPosition, setNearbyPosition] = useState(null);
   const [nearbyLoading, setNearbyLoading] = useState(false);
   const [nearbyError, setNearbyError] = useState('');
@@ -540,22 +407,6 @@ export default function HomePage() {
      DATA — kategoriyalar
      ========================================================== */
 
-  useEffect(() => {
-    let mounted = true;
-
-    shareHomeRead('categories:uz', getLevel1)
-      .then((response) => {
-        if (mounted) setRawCategories(getResponseArray(response));
-      })
-      .catch((error) => {
-        console.error('Kategoriyalar yuklanmadi:', error);
-        if (mounted) setRawCategories([]);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   /* ==========================================================
      DATA — marketplace + reels
@@ -603,33 +454,7 @@ export default function HomePage() {
      DERIVED
      ========================================================== */
 
-  const categories = useMemo(
-    () =>
-      rawCategories
-        .filter((item) => item?.key)
-        .map((item, index) => {
-          const meta =
-            CATEGORY_META[item.key] || {
-              icon: Boxes,
-              colors: FALLBACK_COLORS[index % FALLBACK_COLORS.length],
-            };
 
-          return {
-            key: item.key,
-            name: t(`categories.${item.key}`, {
-              defaultValue: item.name || item.key,
-            }),
-            icon: meta.icon,
-            colors: meta.colors,
-          };
-        }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [rawCategories, t, i18n.resolvedLanguage]
-  );
-
-  const visibleCategories = showAllCategories
-    ? categories
-    : categories.slice(0, VISIBLE_CATEGORIES_COUNT);
 
   const reels = useMemo(
     () =>
@@ -662,6 +487,13 @@ export default function HomePage() {
       .slice(0, 12)
       .map(({ item }) => item);
   }, [favorites, recentlyViewed, homeListings]);
+
+  // Eng yaxshi ustalar: tasdiqlangan/TOP oldinda, keyin reyting bo'yicha
+  const topProviders = useMemo(() => homeListings
+    .filter((item) => item.type === 'service')
+    .sort((a, b) => (Number(b.isVerified) + Number(b.isTop)) - (Number(a.isVerified) + Number(a.isTop))
+      || b.rating - a.rating)
+    .slice(0, 12), [homeListings]);
 
   const todayListings = useMemo(() => {
     const startOfToday = new Date();
@@ -728,17 +560,23 @@ export default function HomePage() {
       {/* ================= HERO ================= */}
 
       <section className="hero-section">
-        <video
-          className="hero-bg-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-        >
-          <source src="/videos/hero-background.mp4" type="video/mp4" />
-        </video>
+        {playHeroVideo && !heroVideoFailed ? (
+          <video
+            className="hero-bg-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={HERO_POSTER}
+            aria-hidden="true"
+            onError={() => setHeroVideoFailed(true)}
+          >
+            <source src="/videos/hero-background.mp4" type="video/mp4" />
+          </video>
+        ) : (
+          <img className="hero-bg-video" src={HERO_POSTER} alt="" aria-hidden="true" fetchPriority="high" />
+        )}
 
         <div className="hero-overlay" aria-hidden="true" />
 
@@ -752,6 +590,28 @@ export default function HomePage() {
               {heroPhrases[phraseIndex] || FALLBACK_HERO_PHRASES[0]}
             </h1>
           </div>
+
+          {/* Qidiruv — usta, tovar va joy bir joydan */}
+          <form
+            className="hero-search"
+            role="search"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const q = heroQuery.trim();
+              navigate(q ? `/marketplace/all?q=${encodeURIComponent(q)}` : '/marketplace/all');
+            }}
+          >
+            <Search size={18} aria-hidden="true" />
+            <input
+              type="search"
+              value={heroQuery}
+              maxLength={120}
+              onChange={(event) => setHeroQuery(event.target.value)}
+              placeholder={T('Usta, tovar yoki joy qidiring')}
+              aria-label={T('Qidirish')}
+            />
+            <button type="submit">{T('Qidirish')}</button>
+          </form>
 
           <div className="hero-cta-grid">
             <button
@@ -784,24 +644,6 @@ export default function HomePage() {
 
             <button
               type="button"
-              className="hero-cta-btn cta-bank"
-              onClick={() => navigate('/bank-services')}
-            >
-              <span className="hero-cta-btn__icon hero-cta-btn__icon--logo">
-                <img
-                  src="/images/logo/universalbank.jpg"
-                  alt=""
-                  className="hero-cta-btn__logo"
-                />
-              </span>
-              <span className="hero-cta-btn__text">
-                <strong>{t('home.ctaBank', 'Bank mahsulotlari')}</strong>
-                <small>{t('home.ctaBankSub', 'Moliyaviy xizmatlar')}</small>
-              </span>
-            </button>
-
-            <button
-              type="button"
               className="hero-cta-btn cta-digitalize"
               onClick={() => navigate('/business-directions')}
             >
@@ -809,8 +651,22 @@ export default function HomePage() {
                 <Zap size={20} strokeWidth={2} />
               </span>
               <span className="hero-cta-btn__text">
-                <strong>{t('home.ctaBusiness', "150+ biznes yo'nalish")}</strong>
-                <small>{t('home.ctaBusinessSub', 'Tanlang va boshlang')}</small>
+                <strong>{T('150+ biznes yo‘nalishi')}</strong>
+                <small>{T('Tez kunda')}</small>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="hero-cta-btn cta-bank"
+              onClick={() => navigate('/bank-services')}
+            >
+              <span className="hero-cta-btn__icon">
+                <UniversalBankLogo size={26} />
+              </span>
+              <span className="hero-cta-btn__text">
+                <strong>{T('Bank mahsulotlari')}</strong>
+                <small>{T('Tez kunda')}</small>
               </span>
             </button>
           </div>
@@ -832,72 +688,56 @@ export default function HomePage() {
             {t('home.categoriesTitle', 'Kategoriyalar')}
           </h2>
           <p className="cats-sub">
-            {t('home.categoriesSub', "Sizga kerakli yo'nalishni tanlang")}
+            {T('Nima qidiryapsiz? Bo‘limni tanlang')}
           </p>
+          <button type="button" className="cats-catalog-link" onClick={() => navigate('/catalog')}>
+            {T('Katalogni ochish')} <ArrowRight size={16} />
+          </button>
         </header>
 
-        <div className="cats-grid">
-          {visibleCategories.map((category, index) => (
-            <CategoryCard
-              key={category.key}
-              title={category.name}
-              icon={category.icon}
-              colors={category.colors}
-              linkTo={`/category/${encodeURIComponent(category.key)}`}
-              delay={index * 0.05}
-            />
-          ))}
-        </div>
-
-        {categories.length > VISIBLE_CATEGORIES_COUNT && (
-          <div className="cats-btn-wrap">
-            <button
-              type="button"
-              className="cats-show-btn"
-              aria-expanded={showAllCategories}
-              onClick={() => setShowAllCategories((value) => !value)}
-            >
-              {showAllCategories
-                ? `↑ ${t('home.showLess', "Kamroq ko'rsatish")}`
-                : `↓ ${t('home.showAll', "Barchasini ko'rsatish")} (${
-                    categories.length
-                  })`}
-            </button>
-          </div>
-        )}
+        <ProductCategoryGrid categories={categories} />
       </section>
 
       {homeContentLoaded && (
         <>
           <HomeListingCarousel
-            title="Bugun qo‘shilganlar"
-            subtitle="Yangi joylangan tovar, joy va xizmatlar"
+            title={T('Eng yaxshi ustalar')}
+            subtitle={T('Tasdiqlangan va yuqori baholangan ustalar')}
+            items={topProviders}
+            emptyTitle={T('Hozircha usta yo‘q')}
+            emptyText={T('Hunaringiz bo‘lsa, birinchi bo‘lib xizmatingizni joylang.')}
+            actionLabel={T('Barcha ustalar')}
+            actionTo="/marketplace/all?type=service"
+          />
+          <HomeListingCarousel
+            title={T('Bugun qo‘shilganlar')}
+            subtitle={T('Yangi joylangan tovar, joy va xizmatlar')}
             items={todayListings}
-            emptyTitle="Bugun yangi e’lon yo‘q"
-            emptyText="Yangi e’lonlar joylanishi bilan shu yerda paydo bo‘ladi."
-            actionLabel="Barcha e’lonlar"
+            emptyTitle={T('Bugun yangi e’lon yo‘q')}
+            emptyText={T('Yangi e’lonlar joylanishi bilan shu yerda paydo bo‘ladi.')}
+            actionLabel={T('Barcha e’lonlar')}
           />
           <HomeListingCarousel
-            title="Sizga mos"
+            title={T('Sizga mos')}
             subtitle={favorites.length || recentlyViewed.length
-              ? 'Ko‘rgan va saqlagan e’lonlaringizga yaqin takliflar'
-              : 'Yangi e’lonlardan boshlash uchun tavsiyalar'}
+              ? T('Ko‘rgan va saqlagan e’lonlaringizga yaqin takliflar')
+              : T('Yangi e’lonlardan boshlash uchun tavsiyalar')}
             items={recommendedListings}
-            emptyTitle="Tavsiya uchun e’lon yo‘q"
-            emptyText="Keyinroq qaytib ko‘ring yoki barcha e’lonlarni oching."
-            actionLabel="Barcha e’lonlar"
+            emptyTitle={T('Tavsiya uchun e’lon yo‘q')}
+            emptyText={T('Keyinroq qaytib ko‘ring yoki barcha e’lonlarni oching.')}
+            actionLabel={T('Barcha e’lonlar')}
           />
           <HomeListingCarousel
-            title="Yaqin atrofda"
+            title={T('Yaqin atrofda')}
             subtitle={nearbyPosition
-              ? 'Sizga 50 km gacha yaqin joylar masofa bo‘yicha saralandi'
-              : 'Joylashuvni ulasangiz, atrofingizdagi joylarni masofasi bilan topamiz'}
+              ? T('Sizga 50 km gacha yaqin joylar masofa bo‘yicha saralandi')
+              : T('Joylashuvni ulasangiz, atrofingizdagi joylarni masofasi bilan topamiz')}
             items={nearbyListings}
-            emptyTitle={nearbyPosition ? 'Yaqin joylar topilmadi' : 'Yaqin joylarni ko‘rmoqchimisiz?'}
+            emptyTitle={nearbyPosition ? T('Yaqin joylar topilmadi') : T('Yaqin joylarni ko‘rmoqchimisiz?')}
             emptyText={nearbyError || (nearbyPosition
-              ? 'Hozircha 50 km ichida koordinatasi bor e’lon topilmadi.'
-              : 'Joylashuv faqat siz ruxsat berganingizda aniqlanadi.')}
-            actionLabel={nearbyLoading ? 'Aniqlanmoqda…' : nearbyPosition ? 'Qayta aniqlash' : 'Joylashuvni ulash'}
+              ? T('Hozircha 50 km ichida koordinatasi bor e’lon topilmadi.')
+              : T('Joylashuv faqat siz ruxsat berganingizda aniqlanadi.'))}
+            actionLabel={nearbyLoading ? T('Aniqlanmoqda…') : nearbyPosition ? T('Qayta aniqlash') : T('Joylashuvni ulash')}
             actionKind="location"
             actionDisabled={nearbyLoading}
             onAction={requestNearbyLocation}
@@ -905,9 +745,29 @@ export default function HomePage() {
         </>
       )}
 
+      {/* ================= QANDAY ISHLAYDI ================= */}
+
+      <section className="home-how" aria-labelledby="home-how-title">
+        <h2 id="home-how-title">{T('Usta chaqirish qanday ishlaydi?')}</h2>
+        <ol className="home-how__steps">
+          {HOW_STEPS.map(({ icon: Icon, title, text }, index) => (
+            <li key={title}>
+              <span className="home-how__icon"><Icon size={20} /></span>
+              <span className="home-how__num">{index + 1}</span>
+              <strong>{T(title)}</strong>
+              <p>{T(text)}</p>
+            </li>
+          ))}
+        </ol>
+        <button type="button" className="home-how__cta" onClick={() => navigate('/request')}>
+          <Wrench size={17} /> {T('Usta chaqirish')}
+        </button>
+      </section>
+
       {/* ================= 3 TA ROL BANNERI ================= */}
 
-      <HomeRoleBanners t={t} navigate={navigate} />
+      {/* 3 ta katta banner o'rniga bitta aylanuvchi karusel (Bozor sahifasidagi bilan bir xil) */}
+      <div className="home-role-carousel"><RoleCarousel /></div>
 
       {/* ================= REELS ================= */}
 

@@ -4,20 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/image.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F0F6FC" />
     <title>ZUMO</title>
+    <script>
+      /* Mavzu React yuklanishidan oldin qo'yiladi (oq chaqnash bo'lmasin).
+         ThemeContext bilan bir xil qoida: dark | light | system, standart light (yorug'). */
+      (function () {
+        var mode = 'light';
+        try { mode = localStorage.getItem('theme') || 'light'; } catch (e) {}
+        var light = mode === 'light' ||
+          (mode === 'system' && window.matchMedia('(prefers-color-scheme: light)').matches);
+        if (!light) document.documentElement.classList.add('dark');
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-  (function() {
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = saved || (prefersDark ? 'dark' : 'light');
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    }
-  })();
-</script>
   </body>
 </html>

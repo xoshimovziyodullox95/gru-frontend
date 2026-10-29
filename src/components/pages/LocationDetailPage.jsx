@@ -1,4 +1,5 @@
 import { safeGoBack } from '../utils/navigation.js';
+import { listingChatUrl } from '../utils/listingChatUrl.js';
 import { recordRecentlyViewed } from '../utils/recentlyViewed.js';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock.js';
 import ShareSheet from '../common/ShareSheet.jsx';
@@ -8,32 +9,30 @@ import { useTranslation } from 'react-i18next';
 import { getLocationById, uploadLocationMedia } from '../services/locations';
 import { getEquipment } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
+import { useMyMongoId, sameId } from '../hooks/useMyMongoId';
 import { formatPrice } from '../utils/formatPrice';
 import { getImageUrl } from '../utils/imageUrl';
 
-import MortgageCalculator from '../common/MortgageCalculator';
 import {
   MapPin, Phone, ArrowLeft, ShieldCheck, Share2,
   Calendar, X,
-  Ruler, Eye, Building2, User,
+  Ruler, Eye, Building2,
   Hammer, Megaphone, Calculator, Monitor,
   ChevronDown, ChevronUp, ChevronLeft, ChevronRight, MessageCircle, Crown,
   Wifi, FileText, Navigation,
-  Layers, DoorOpen, Zap, Wind, Lightbulb, Footprints, Maximize2, Landmark,Utensils
+  Lightbulb, Landmark, Utensils
 } from 'lucide-react';
 import '../../styles/locationPage.css';
+import DetailGallery from '../detail/DetailGallery';
+import ClampText from '../detail/ClampText';
+import Avatar from '../detail/Avatar';
+import '../../styles/detailModern.css';
 import { getPosts } from '../services/videos';
 import Reels from '../marketplace/MarketplaceReels';
 import UniversalCard from './UniversalCard';
 import NearbySuppliers from '../common/Nearbysuppliers';
-import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
 
-function getNumericPrice(location) {
-  return parseFloat(String(location?.price_range || '').replace(/[^\d.]/g, '')) || 0;
-}
-function isMortgageEligible(location) {
-  return location?.currency === 'UZS' && getNumericPrice(location) >= 2000000000;
-}
+import { T } from '../utils/T';
 
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const closeRef = useRef(onClose);
@@ -75,16 +74,16 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
   return (
     <div className="ImageViewerOverlay">
-      <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
+      <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label={T('Yopish')}>
         <X size={22} />
       </button>
 
       {images.length > 1 && (
         <>
-          <button className="ImageViewerNav prev" onClick={goPrev} aria-label="Oldingi">
+          <button className="ImageViewerNav prev" onClick={goPrev} aria-label={T('Oldingi')}>
             <ChevronLeft size={26} />
           </button>
-          <button className="ImageViewerNav next" onClick={goNext} aria-label="Keyingi">
+          <button className="ImageViewerNav next" onClick={goNext} aria-label={T('Keyingi')}>
             <ChevronRight size={26} />
           </button>
         </>
@@ -131,39 +130,6 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
   );
 };
 
-const UserInfoCard = ({ user }) => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  if (!user) return null;
-
-  const avatarUrl = user.avatar_url || (user.user_metadata?.avatar_url) ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.email || 'U')}&background=00E5FF&color=fff&rounded=true&size=60`;
-
-  const handleProfileClick = () => {
-    const userId = user._id || user.id;
-    if (userId) navigate(`/profile/${userId}`);
-  };
-
-  return (
-    <div className="user-info-card">
-      <h3 className="ModuleHeading"><User size={18} /> {t('location.owner')}</h3>
-      <div className="user-info clickable" onClick={handleProfileClick}>
-        <img
-          src={avatarUrl}
-          alt={user.full_name || user.email}
-          className="user-avatar"
-          onError={(e) => { e.target.src = '/images/zumo-placeholder.svg'; }}
-        />
-        <div className="user-details">
-          <p><strong>{user.full_name || t('location.fullName')}</strong></p>
-          <p className="user-email">{user.email}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ========== YANGILANGAN ServiceButtons ==========
 const ServiceButtons = ({ level1 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -270,9 +236,10 @@ const EquipmentCarousel = ({ items, location }) => {
                   id={itemId}
                   type="equipment"
                   maxQuantity={maxQuantity}
-                  title={item.name || item.title || 'Nomsiz texnika'}
+                  saleMode={item.saleMode}
+                  title={item.name || item.title || T('Nomsiz texnika')}
                   image={item.images?.[0] ? getImageUrl(item.images[0]) : '/images/zumo-placeholder.svg'}
-                  price={formatPrice(item.price, item.currency) || 'Narxi mavjud emas'}
+                  price={formatPrice(item.price, item.currency) || T('Narxi mavjud emas')}
                   link={`/equipment/${itemId}`}
                   createdAt={location?.createdAt}
                   meta={[{ icon: MapPin, text: location?.address || t('location.address') }]}
@@ -334,36 +301,11 @@ const MapPreview = ({ address, nearby = [] }) => {
   );
 };
 
-const AnalyticsCard = ({ hourlyTraffic = [] }) => {
-  const { t } = useTranslation();
-  const maxTraffic = Math.max(...hourlyTraffic.map((h) => h.count), 1);
-
-  return (
-    <div className="AnalyticsCard">
-      <h3 className="ModuleHeading">
-        <Footprints size={18} /> {t('location.analyticsHourly')}
-      </h3>
-      {hourlyTraffic.length > 0 ? (
-        <div className="traffic-bars">
-          {hourlyTraffic.map((item, idx) => (
-            <div key={idx} className="traffic-bar-wrapper">
-              <div className="traffic-bar" style={{ height: `${(item.count / maxTraffic) * 100}%` }} />
-              <span className="traffic-label">{item.hour}</span>
-              <span className="traffic-value">{item.count}</span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <span className="empty">{t('location.noData')}</span>
-      )}
-    </div>
-  );
-};
-
 export default function LocationDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const myId = useMyMongoId();
   const { t } = useTranslation();
 
   const [location, setLocation] = useState(null);
@@ -379,15 +321,21 @@ export default function LocationDetailPage() {
   const [reels, setReels] = useState([]);
   const [reelsLoading, setReelsLoading] = useState(true);
 
-  const isOwner = location?.userId?._id === user?.id || user?.email === 'xoshimovabdullox95@gmail.com';
+  const isOwner = sameId(location?.userId?._id || location?.userId, myId) || user?.email === 'xoshimovabdullox95@gmail.com';
 
   const handleChat = () => {
     const targetId = location?.userId?._id || location?.userId;
     if (!targetId) {
-      alert("Bu e'lon egasi haqida ma'lumot yo'q");
+      alert(T('Bu e\'lon egasi haqida ma\'lumot yo\'q'));
       return;
     }
-    navigate(`/chat?userId=${targetId}`);
+    navigate(listingChatUrl(targetId, {
+      id: location?._id,
+      type: 'location',
+      title: location?.title,
+      thumbnail: location?.images?.[0] ? getImageUrl(location.images[0]) : '',
+      price: location?.price_range || location?.price_per_month || '',
+    }));
   };
 
   const handleMediaUpload = async (e) => {
@@ -398,12 +346,12 @@ export default function LocationDetailPage() {
     files.forEach((f) => formData.append('media', f));
     try {
       await uploadLocationMedia(location._id, formData);
-      alert('Rasm/video yuklandi!');
+      alert(T('Rasm/video yuklandi!'));
       const locRes = await getLocationById(id);
       setLocation(locRes.data);
     } catch (err) {
       console.error(err);
-      alert('Yuklashda xatolik');
+      alert(T('Yuklashda xatolik'));
     } finally {
       setUploading(false);
     }
@@ -424,7 +372,7 @@ export default function LocationDetailPage() {
         recordRecentlyViewed(user?._id || user?.id, {
           id: locRes.data._id || id,
           type: 'location',
-          title: locRes.data.title || locRes.data.name || 'E’lon',
+          title: locRes.data.title || locRes.data.name || T('E’lon'),
           image: locRes.data.images?.[0] || locRes.data.image || locRes.data.imageUrl || '',
           price: locRes.data.price_per_month ? `${locRes.data.price_per_month} ${locRes.data.currency || "so'm"}/oy` : (locRes.data.price_range || ''),
           currency: locRes.data.currency,
@@ -515,252 +463,212 @@ export default function LocationDetailPage() {
     ? location.images
     : [`/images/locations/${location?.title?.toLowerCase().replace(/\s+/g, '-') || 'default'}.jpg`];
 
-  const { details = {}, nearby = [], creativeReason = '', traffic = [] } = location;
-  const showMortgage = isMortgageEligible(location);
+  const { details = {}, nearby = [], creativeReason = '' } = location;
+
+  // "2000000000" → "2 000 000 000 so‘m"
+  const rawPrice = String(location.price_range || '').trim();
+  const priceNumber = /^\d+$/.test(rawPrice) ? Number(rawPrice).toLocaleString('ru-RU').replace(/\s/g, ' ') : rawPrice;
+  const priceText = rawPrice
+    ? `${priceNumber} ${location.currency === 'UZS' ? 'so‘m' : '$'}`
+    : T('Kelishiladi');
+  const owner = location.userId && typeof location.userId === 'object' ? location.userId : null;
+  const ownerName = owner?.fullName || owner?.full_name || owner?.companyName || '';
+  const facts = [
+    { label: t('location.detailArea'), value: details.sqm || location.sqm ? `${details.sqm || location.sqm} m²` : null },
+    { label: t('location.detailFloor'), value: details.floor },
+    { label: t('location.detailRooms'), value: details.rooms },
+    { label: t('location.detailPower'), value: details.power ? `${details.power} ta` : null },
+    { label: t('location.detailVentilation'), value: details.ventilation },
+  ].filter((f) => f.value);
 
   return (
-    <div className="LocationPageWrapper">
-      <div className="MainViewport">
-        <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
-          <ArrowLeft size={16} /> {t('location.back')}
-        </button>
+    <div className="dp-page">
+      <div className="dp-layout">
+        <main className="dp-main">
+          <DetailGallery
+            images={images}
+            title={location.title}
+            onBack={() => safeGoBack(navigate)}
+            onShare={user ? () => setShareOpen(true) : undefined}
+            onOpen={(i) => { setActiveImageIndex(i); setImageModalOpen(true); }}
+          />
 
-        <div className="image-gallery">
-          <div className="image-gallery-main-wrap" onClick={() => setImageModalOpen(true)}>
-            <img
-              src={getImageUrl(images[activeImageIndex]) || '/images/zumo-placeholder.svg'}
-              alt={location.title}
-              className="image-gallery-main"
-              loading="eager"
-              decoding="async"
-              onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
-            />
-            <div className="image-gallery-zoom-hint">
-              <Maximize2 size={14} /> {t('location.viewFull') || "Kattalashtirib ko'rish"}
+          {/* SARLAVHA, NARX, MANZIL */}
+          <section className="dp-card dp-head">
+            <h1 className="dp-title">{location.title}</h1>
+            <div className="dp-price">
+              <span>{T('Narxi')}</span>
+              <strong>{priceText}</strong>
             </div>
-          </div>
-          {images.length > 1 && (
-            <div className="image-gallery-thumbs">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`}
-                  onClick={() => setActiveImageIndex(idx)}
-                >
-                  <img
-                    src={getImageUrl(img) || '/images/zumo-placeholder.svg'}
-                    alt={`thumb-${idx}`}
-                    loading="lazy"
-                    onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
-                  />
+            {location.address && <div className="dp-contact-line"><MapPin size={15} /> {location.address}</div>}
+            <div className="dp-badges">
+              {location.sqm && <span className="dp-badge"><Ruler size={13} /> {location.sqm} {t('location.metaSqm')}</span>}
+              {location.foot_traffic && <span className="dp-badge"><Eye size={13} /> {location.foot_traffic} {t('location.metaFootTraffic')}</span>}
+            </div>
+          </section>
+
+          {/* TAVSIF VA PARAMETRLAR */}
+          <section className="dp-card">
+            <h2 className="dp-card__title"><FileText size={18} /> {T('Tavsif')}</h2>
+            <ClampText text={location.description || T('Biznes uchun ideal joylashuv va zamonaviy imkoniyatlar.')} />
+            {facts.length > 0 && (
+              <dl className="dp-facts">
+                {facts.map((f) => <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+              </dl>
+            )}
+            {location.competitors_info && (
+              <div className="dp-contact-line"><Building2 size={15} /> <span><strong>{t('location.competition')}</strong> {location.competitors_info}</span></div>
+            )}
+          </section>
+
+          {/* NEGA BU JOY */}
+          <section className="dp-card creative-reason">
+            <h2 className="dp-card__title"><Lightbulb size={18} /> {t('location.creativeReasonTitle')}</h2>
+            {creativeReason ? (
+              <p className="dp-text">{creativeReason}</p>
+            ) : (
+              <div className="premium-hint">
+                <p>{t('location.creativeReasonEmpty')}</p>
+                <Link to="/premium" className="premium-link">
+                  <Crown size={16} /> {t('location.creativeReasonPremium')}
+                </Link>
+              </div>
+            )}
+            {creativeReason && location.creativeReasonSource === 'admin' && (
+              <span className="admin-badge"><ShieldCheck size={12} /> {t('location.creativeReasonAdmin')}</span>
+            )}
+          </section>
+
+
+          {/* EGASI */}
+          {owner && (
+            <section className="dp-card dp-owner">
+              <Avatar className="dp-owner__avatar" src={owner.avatar_url} name={ownerName} />
+              <div className="dp-owner__text">
+                <span>{T('Joy egasi')}</span>
+                <strong>{ownerName || T('Foydalanuvchi')}</strong>
+              </div>
+              {owner._id && (
+                <button type="button" className="dp-chip-btn" onClick={() => navigate(`/profile/${owner._id}`)}>
+                  {T('Profil')} <ChevronRight size={15} />
                 </button>
-              ))}
-            </div>
+              )}
+            </section>
           )}
-        </div>
 
-        <div className="LayoutGrid">
-          <div className="InformationContent">
-            <div className="DetailsModule">
-              <h2 className="ModuleHeading">{location.title}</h2>
-              <p className="ModuleText">{location.description || 'Biznes uchun ideal joylashuv va zamonaviy imkoniyatlar.'}</p>
-              <div className="location-meta">
-                {location.sqm && <span className="meta-badge"><Ruler size={14} /> {location.sqm} {t('location.metaSqm')}</span>}
-                {location.foot_traffic && <span className="meta-badge"><Eye size={14} /> {location.foot_traffic} {t('location.metaFootTraffic')}</span>}
-              </div>
-              {location.competitors_info && (
-                <div className="info-row">
-                  <Building2 size={16} className="info-icon" />
-                  <strong>{t('location.competition')}</strong> {location.competitors_info}
-                </div>
-              )}
-
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <span className="detail-icon"><Ruler size={16} /></span>
-                  <div className="detail-text"><span className="detail-label">{t('location.detailArea')}</span><strong>{details.sqm || '—'} m²</strong></div>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-icon"><Layers size={16} /></span>
-                  <div className="detail-text"><span className="detail-label">{t('location.detailFloor')}</span><strong>{details.floor || '—'}</strong></div>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-icon"><DoorOpen size={16} /></span>
-                  <div className="detail-text"><span className="detail-label">{t('location.detailRooms')}</span><strong>{details.rooms || '—'}</strong></div>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-icon"><Zap size={16} /></span>
-                  <div className="detail-text"><span className="detail-label">{t('location.detailPower')}</span><strong>{details.power || '—'} ta</strong></div>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-icon"><Wind size={16} /></span>
-                  <div className="detail-text"><span className="detail-label">{t('location.detailVentilation')}</span><strong>{details.ventilation || '—'}</strong></div>
-                </div>
-              </div>
-
-              <div className="creative-reason">
-                <h4><Lightbulb size={16} /> {t('location.creativeReasonTitle')}</h4>
-                {creativeReason ? (
-                  <p>{creativeReason}</p>
-                ) : (
-                  <div className="premium-hint">
-                    <p>{t('location.creativeReasonEmpty')}</p>
-                    <Link to="/premium" className="premium-link">
-                      <Crown size={16} /> {t('location.creativeReasonPremium')}
-                    </Link>
-                  </div>
-                )}
-                {creativeReason && location.creativeReasonSource === 'admin' && (
-                  <span className="admin-badge"><ShieldCheck size={12} /> {t('location.creativeReasonAdmin')}</span>
-                )}
-              </div>
-
-              {showMortgage && (
-                <div className="mortgage-info-block">
-                  <h4><Landmark size={16} /> Universal Bank — Biznes Ipoteka</h4>
-                  <p>
-                    Bu lokatsiyani to'liq summasiz ham sotib olish mumkin — Universal Bank'ning
-                    "Biznes Ipoteka" xizmati orqali, shartnoma summasining <strong>75%</strong>igacha
-                    kredit, yillik <strong>24%</strong> stavkada, <strong>120 oygacha</strong> muddatga,
-                    <strong> 12 oygacha imtiyozli davr</strong> bilan taqdim etiladi. Aniq hisob-kitobni
-                    o'ng tarafdagi kalkulyatorda ko'rishingiz mumkin.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <CelebrityMotivationCard category={location.level1} />
-
-            {location.documents?.length > 0 && (
-              <div className="CertificatesModule">
-                <h3 className="ModuleHeading">{t('location.certificatesTitle')}</h3>
-                <div className="BadgeCloud">
-                  {location.documents.map((doc, idx) => (
-                    <a
-                      key={idx}
-                      href={doc.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="VerificationBadge"
-                    >
-                      <FileText size={14} /> {doc.name}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {location.userId && <UserInfoCard user={location.userId} />}
-
-            {/* ========== YANGI chaqiruv ========== */}
-            <ServiceButtons level1={location.level1} />
-            {/* ==================================== */}
-          </div>
-
-          <div className="ActionSidebar">
-            <div className="PriceIndicatorCard">
-              <span className="PriceTagLabel">{t('location.priceLabel')}</span>
-              <span className="PriceTagValue">
-                {location.price_range || '5 000 000'} {location.currency === 'UZS' ? "so'm" : '$'}
-              </span>
-              <button onClick={handleChat} className="add-to-cart-btn">
-                <MessageCircle size={16} /> {t('location.chatWithOwner', 'Joy egasi bilan bog‘lanish')}
-              </button>
-              {user && (
-                <button type="button" onClick={() => setShareOpen(true)} className="add-to-cart-btn location-share-btn">
-                  <Share2 size={16} /> {t('common.share', 'Do‘stga yuborish')}
-                </button>
-              )}
-            </div>
-
-            <div className="calculator-panel">
-              <h3>{t('location.calculatorTitle')}</h3>
-              {equipment.length > 0 && (
-                <button className="calc-add-all-btn" onClick={addAllEquipment}>
-                  {t('calculator.addAll')}
-                </button>
-              )}
-              <div className="calc-items-list">
-                {selectedItems.length === 0 ? (
-                  <div className="calc-empty">{t('location.calculatorEmpty')}</div>
-                ) : (
-                  selectedItems.map((item) => (
-                    <div key={item.id} className="calc-item">
-                      <span className="calc-item-name">{item.title}</span>
-                      <div className="calc-item-qty">
-                        <button onClick={() => decrementCalculatorItem(item.id)}>−</button>
-                        <span>{item.quantity}</span>
-                        <button onClick={() => addToCalculator(item)}>+</button>
-                      </div>
-                      <span className="calc-item-price">${(item.price * item.quantity).toLocaleString()}</span>
-                      <button className="calc-remove-btn" onClick={() => removeFromCalculator(item.id)}><X size={14} /></button>
-                    </div>
-                  ))
-                )}
-              </div>
-              <div className="calc-total">
-                <span className="calc-total-label">{t('location.calculatorTotal')}</span>
-                <span className="calc-total-value">
-                  ${selectedItems.reduce((sum, i) => sum + (i.price || 0) * i.quantity, 0).toLocaleString()}
-                </span>
-              </div>
-
-              <NearbySuppliers location={location} selectedItems={selectedItems} onAdd={addToCalculator} />
-            </div>
-
-            {showMortgage && (
-              <MortgageCalculator price={getNumericPrice(location)} />
-            )}
-
-            <MapPreview address={location.address} nearby={nearby} />
-
-            <AnalyticsCard hourlyTraffic={traffic} />
-
-            <div className="ContactSurface">
-              <h3 className="CardSmallTitle">{t('location.contactTitle')}</h3>
-              <div className="AddressLine"><MapPin size={15} /> {location.address}</div>
+          {/* ALOQA */}
+          {location.phone && (
+            <section className="dp-card">
+              <h2 className="dp-card__title"><Phone size={18} /> {t('location.contactTitle')}</h2>
               {!showPhone ? (
-                <button className="RevealPhoneBtn" onClick={() => setShowPhone(true)}>
+                <button className="dp-phone-btn" onClick={() => setShowPhone(true)}>
                   <Phone size={16} /> {t('location.showPhone')}
                 </button>
               ) : (
-                <a href={`tel:${location.phone}`} className="DirectPhoneLink">{location.phone}</a>
+                <a href={`tel:${location.phone}`} className="dp-phone-btn dp-phone-btn--open">{location.phone}</a>
+              )}
+            </section>
+          )}
+
+          <MapPreview address={location.address} nearby={nearby} />
+
+          {/* JIHOZLAR KALKULYATORI */}
+          <section className="dp-card calculator-panel">
+            <h2 className="dp-card__title">{t('location.calculatorTitle')}</h2>
+            {equipment.length > 0 && (
+              <button className="calc-add-all-btn" onClick={addAllEquipment}>
+                {t('calculator.addAll')}
+              </button>
+            )}
+            <div className="calc-items-list">
+              {selectedItems.length === 0 ? (
+                <div className="calc-empty">{t('location.calculatorEmpty')}</div>
+              ) : (
+                selectedItems.map((item) => (
+                  <div key={item.id} className="calc-item">
+                    <span className="calc-item-name">{item.title}</span>
+                    <div className="calc-item-qty">
+                      <button onClick={() => decrementCalculatorItem(item.id)}>−</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => addToCalculator(item)}>+</button>
+                    </div>
+                    <span className="calc-item-price">${(item.price * item.quantity).toLocaleString()}</span>
+                    <button className="calc-remove-btn" onClick={() => removeFromCalculator(item.id)}><X size={14} /></button>
+                  </div>
+                ))
               )}
             </div>
+            <div className="calc-total">
+              <span className="calc-total-label">{t('location.calculatorTotal')}</span>
+              <span className="calc-total-value">
+                ${selectedItems.reduce((sum, i) => sum + (i.price || 0) * i.quantity, 0).toLocaleString()}
+              </span>
+            </div>
+            <NearbySuppliers location={location} selectedItems={selectedItems} onAdd={addToCalculator} />
+          </section>
 
-            {isOwner && (
-              <div className="media-upload-section">
-                <label className="upload-btn">
-                  {uploading ? t('location.loading') : t('location.uploadMedia') || 'Rasm/video yuklash'}
-                  <input
-                    type="file"
-                    accept="image/*,video/*"
-                    multiple
-                    style={{ display: 'none' }}
-                    onChange={handleMediaUpload}
-                    disabled={uploading}
-                  />
-                </label>
-                {uploading && <span className="uploading-text">{t('location.loading')}</span>}
-              </div>
+          <EquipmentCarousel items={equipment} location={location} />
+
+          <ServiceButtons level1={location.level1} />
+
+          {isOwner && (
+            <div className="media-upload-section">
+              <label className="upload-btn">
+                {uploading ? t('location.loading') : t('location.uploadMedia') || T('Rasm/video yuklash')}
+                <input type="file" accept="image/*,video/*" multiple style={{ display: 'none' }} onChange={handleMediaUpload} disabled={uploading} />
+              </label>
+              {uploading && <span className="uploading-text">{t('location.loading')}</span>}
+            </div>
+          )}
+
+          {reels.length > 0 && !reelsLoading && (
+            <Reels
+              reels={reels}
+              currentUser={user}
+              variant="grid2"
+              priorityId={location._id}
+              onReelUpdate={(reelId, updates) => {
+                setReels((prev) => prev.map((r) => (r.id === reelId ? { ...r, ...updates } : r)));
+              }}
+            />
+          )}
+
+        </main>
+
+        {/* KOMPYUTERDA: O'NG USTUN */}
+        <aside className="dp-aside">
+          <div className="dp-card dp-aside__box">
+            <span className="dp-aside__label">{T('Narxi')}</span>
+            <strong className="dp-aside__price">{priceText}</strong>
+            {!isOwner && (
+              <button type="button" className="dp-btn dp-btn--primary" onClick={handleChat}>
+                <MessageCircle size={17} /> {t('location.chatWithOwner', 'Joy egasi bilan bog‘lanish')}
+              </button>
             )}
-
-            {reels.length > 0 && !reelsLoading && (
-              <Reels
-                reels={reels}
-                currentUser={user}
-                variant="grid2"
-                priorityId={location._id}
-                onReelUpdate={(reelId, updates) => {
-                  setReels((prev) => prev.map((r) => (r.id === reelId ? { ...r, ...updates } : r)));
-                }}
-              />
+            {user && (
+              <button type="button" className="dp-btn dp-btn--ghost" onClick={() => setShareOpen(true)}>
+                <Share2 size={17} /> {t('common.share', 'Do‘stga yuborish')}
+              </button>
             )}
           </div>
-        </div>
-
-        <EquipmentCarousel items={equipment} location={location} />
+        </aside>
       </div>
+
+      {/* TELEFONDA: PASTKI PANEL */}
+      {!isOwner && (
+        <div className="dp-actionbar">
+          {location.phone ? (
+            <>
+              <button type="button" className="dp-btn dp-btn--icon" onClick={handleChat} aria-label={T('Yozish')}>
+                <MessageCircle size={20} />
+              </button>
+              <a className="dp-btn dp-btn--primary" href={`tel:${location.phone}`}><Phone size={17} /> {T('Qo‘ng‘iroq qilish')}</a>
+            </>
+          ) : (
+            <button type="button" className="dp-btn dp-btn--primary" onClick={handleChat}><MessageCircle size={17} /> {T('Egasiga yozish')}</button>
+          )}
+        </div>
+      )}
 
       <ImageViewerModal
         isOpen={imageModalOpen}

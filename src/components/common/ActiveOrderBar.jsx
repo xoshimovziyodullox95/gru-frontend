@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Clock,
   MapPin,
@@ -14,6 +15,7 @@ import {
   ChevronRight,
   Loader2,
   Navigation,
+  BellRing,
   X,
 } from 'lucide-react';
 
@@ -29,33 +31,34 @@ import '../../styles/activeOrderBar.css';
    ============================================================ */
 
 const STATUS_INFO = {
+  // Ustaga: javob kutayotgan yangi buyurtmalar
+  incoming: {
+    icon: BellRing,
+    color: '#ff8a2a',
+    progress: 10,
+  },
   open: {
-    label: 'Usta qidirilmoqda',
     icon: Loader2,
     color: '#2196f3',
     spin: true,
     progress: 20,
   },
   accepted: {
-    label: 'Usta tayinlandi',
     icon: CheckCircle2,
     color: '#00c853',
     progress: 40,
   },
   on_way: {
-    label: 'Usta yo‘lda',
     icon: Navigation,
     color: '#ff8a2a',
     progress: 60,
   },
   arrived: {
-    label: 'Usta yetib keldi',
     icon: MapPin,
     color: '#00c853',
     progress: 80,
   },
   in_progress: {
-    label: 'Ish bajarilmoqda',
     icon: Wrench,
     color: '#7c4dff',
     progress: 100,
@@ -66,9 +69,10 @@ const STATUS_INFO = {
    COMPONENT
    ============================================================ */
 
-export default function ActiveOrderBar() {
+export default function ActiveOrderBar({ floating = false }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [active, setActive] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -134,7 +138,9 @@ export default function ActiveOrderBar() {
         notif.type === 'service_request' ||
         notif.type === 'new_offer' ||
         notif.type === 'offer_accepted' ||
-        notif.type === 'offer_declined'
+        notif.type === 'offer_declined' ||
+        notif.type === 'request_status' ||
+        notif.type === 'request_declined'
       ) {
         fetchActive();
       }
@@ -157,6 +163,10 @@ export default function ActiveOrderBar() {
   // Bitta joyda boshqariladi: RequestDetailPage (holat, tasdiqlash, yo'l)
   const handleOpenModal = () => {
     if (!active?._id) return;
+    if (active.status === 'incoming') {
+      navigate(active.incomingCount > 1 ? '/provider-requests' : `/provider-requests/${active._id}`);
+      return;
+    }
     navigate(active.viewer === 'provider' ? `/provider-requests/${active._id}` : `/requests/${active._id}`);
   };
 
@@ -183,49 +193,72 @@ export default function ActiveOrderBar() {
     (o) => o._id === active.acceptedOfferId
   );
 
+  const offersCount = (active.offers || []).length;
+
+  /* Sarlavha — mijozga taklif kelganini, ustaga yangi buyurtmani aniq aytadi */
+  const getLabel = () => {
+    if (active.status === 'incoming') {
+      return t('activeOrder.incoming', 'Sizga {{count}} ta yangi buyurtma', { count: active.incomingCount || 1 });
+    }
+    if (active.viewer === 'client' && active.status === 'open') {
+      if (offersCount > 0) return t('activeOrder.offersIn', '{{count}} ta taklif keldi', { count: offersCount });
+      if (active.isDirect) return t('activeOrder.sentToPro', 'So‘rov ustaga yuborildi');
+    }
+    return t(`activeOrder.status.${active.status}`);
+  };
+
   /* Subtitle */
   const getSubtitle = () => {
+    if (active.status === 'incoming') {
+      return active.isDirect
+        ? t('activeOrder.directWaiting', 'Mijoz sizga shaxsan buyurtma berdi — javob bering')
+        : t('activeOrder.replyIncoming', 'Narx taklif qiling');
+    }
+
     /* Client */
     if (active.viewer === 'client') {
       if (active.status === 'open') {
-        return `${active.notifiedCount || 0} ta ustaga yuborildi`;
+        if (offersCount > 0) return t('activeOrder.chooseOffer', 'Ko‘rib chiqing va ustani tanlang');
+        if (active.isDirect) return t('activeOrder.waitingPro', 'Usta javobini kutyapmiz');
+        return t('activeOrder.sentTo', '{{count}} ta ustaga yuborildi', { count: active.notifiedCount || 0 });
       }
 
       if (active.status === 'accepted' && acceptedOffer) {
-        return `${acceptedOffer.provider?.name || 'Usta'} · ${
-          acceptedOffer.arrivalMinutes || active.arrivalMinutes || 30
-        } daqiqada`;
+        return t('activeOrder.arrivesIn', '{{name}} · {{min}} daqiqada', {
+          name: acceptedOffer.provider?.name || t('activeOrder.pro', 'Usta'),
+          min: acceptedOffer.arrivalMinutes || active.arrivalMinutes || 30,
+        });
       }
 
       if (active.status === 'on_way') {
-        return acceptedOffer?.provider?.name || 'Usta yo‘lda';
+        return acceptedOffer?.provider?.name || t('activeOrder.status.on_way');
       }
 
       if (active.status === 'arrived') {
-        return 'Usta yetib keldi';
+        return t('activeOrder.status.arrived');
       }
 
       if (active.status === 'in_progress') {
-        return 'Ish bajarilmoqda';
+        return t('activeOrder.status.in_progress');
       }
     }
 
     /* Provider */
     if (active.viewer === 'provider') {
       if (active.status === 'accepted') {
-        return 'Manzilga yo‘l oling';
+        return t('activeOrder.goToAddress', 'Manzilga yo‘l oling');
       }
 
       if (active.status === 'on_way') {
-        return 'Yo‘lda';
+        return t('activeOrder.onWay', 'Yo‘lda');
       }
 
       if (active.status === 'arrived') {
-        return 'Ishni boshlang';
+        return t('activeOrder.startWork', 'Ishni boshlang');
       }
 
       if (active.status === 'in_progress') {
-        return 'Ish bajarilmoqda';
+        return t('activeOrder.status.in_progress');
       }
     }
 
@@ -235,7 +268,7 @@ export default function ActiveOrderBar() {
   return (
     <>
       <div
-        className="aob"
+        className={`aob ${floating ? 'aob--floating' : ''}`}
         style={{ '--aob-color': info.color }}
         onClick={handleOpenModal}
         role="button"
@@ -260,13 +293,13 @@ export default function ActiveOrderBar() {
           <Icon
             size={20}
             strokeWidth={2.2}
-            className={info.spin ? 'aob__icon--spin' : ''}
+            className={info.spin && offersCount === 0 ? 'aob__icon--spin' : ''}
           />
         </div>
 
         {/* Content */}
         <div className="aob__content">
-          <div className="aob__label">{info.label}</div>
+          <div className="aob__label">{getLabel()}</div>
 
           <div className="aob__sub">
             <Clock size={11} />
@@ -279,7 +312,7 @@ export default function ActiveOrderBar() {
           type="button"
           className="aob__close"
           onClick={handleHideBanner}
-          aria-label="Yashirish"
+          aria-label={t('activeOrder.hide', 'Yashirish')}
         >
           <X size={14} />
         </button>

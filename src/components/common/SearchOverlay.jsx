@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { Search, X, Clock, Tag, Package } from 'lucide-react';
 import '../../styles/searchOverlay.css';
 
+import { T } from '../utils/T';
 const MAX_RECENT = 10;
 
 function readRecent(storageKey) {
@@ -200,7 +201,7 @@ export default function SearchOverlay({
                     type="button"
                     className="search-overlay__recent-remove"
                     onClick={(event) => removeRecentItem(event, item)}
-                    aria-label="O‘chirish"
+                    aria-label={T('O‘chirish')}
                   >
                     <X size={15} />
                   </button>

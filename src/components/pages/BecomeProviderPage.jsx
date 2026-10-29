@@ -37,6 +37,7 @@ import AITextEnhanceButton from '../common/AITextEnhanceButton.jsx';
 import '../../styles/becomeProvider.css';
 import '../../styles/aienhance.css';
 
+import { T } from '../utils/T';
 /* ============================================================
    YO‘NALISHLAR (label + icon)
    Backend taxonomy bilan bir xil sluglar.
@@ -45,7 +46,7 @@ import '../../styles/aienhance.css';
 
 const DIRECTIONS = {
   'maishiy-va-uy-xizmatlari': {
-    label: 'Maishiy va uy xizmatlari',
+    label: T('Maishiy va uy xizmatlari'),
     icon: Home,
     color: '#00c8f8',
     categories: {
@@ -64,20 +65,21 @@ const DIRECTIONS = {
   },
 
   'tozalash-va-sanitariya': {
-    label: 'Tozalash va sanitariya',
+    label: T('Tozalash va sanitariya'),
     icon: SprayCan,
     color: '#18c895',
     categories: {
       'tozalash-klining': 'Tozalash (Klining)',
       ximchistka: 'Ximchistka',
       'gilam-tozalash': 'Gilam tozalash',
+      'gilam-va-fasad-tozalash': 'Gilam va fasad tozalash',
       dezinfeksiya: 'Dezinfeksiya',
       'chiqindilarni-olib-tashlash': 'Chiqindilarni olib tashlash',
     },
   },
 
   'qurilish-va-tamirlash': {
-    label: 'Qurilish va ta’mirlash',
+    label: T('Qurilish va ta’mirlash'),
     icon: Hammer,
     color: '#ff8a1f',
     categories: {
@@ -89,7 +91,7 @@ const DIRECTIONS = {
   },
 
   'talim-va-psixologiya': {
-    label: 'Ta’lim va psixologiya',
+    label: T('Ta’lim va psixologiya'),
     icon: GraduationCap,
     color: '#ffc21c',
     categories: {
@@ -101,7 +103,7 @@ const DIRECTIONS = {
   },
 
   'oila-va-parvarish': {
-    label: 'Oila va parvarish',
+    label: T('Oila va parvarish'),
     icon: HeartHandshake,
     color: '#ff6357',
     categories: {
@@ -111,7 +113,7 @@ const DIRECTIONS = {
   },
 
   'transport-va-maxsus-texnika': {
-    label: 'Transport va maxsus texnika',
+    label: T('Transport va maxsus texnika'),
     icon: Car,
     color: '#438bff',
     categories: {
@@ -123,7 +125,7 @@ const DIRECTIONS = {
   },
 
   'biznes-huquq-va-it': {
-    label: 'Biznes, huquq va IT',
+    label: T('Biznes, huquq va IT'),
     icon: Briefcase,
     color: '#1685ff',
     categories: {
@@ -131,6 +133,8 @@ const DIRECTIONS = {
       marketing: 'Marketing',
       advokat: 'Advokat',
       buxgalter: 'Buxgalter',
+      'advokat-va-buxgalter': 'Advokat va buxgalter',
+      notarius: 'Notarius',
       'rieltorlik-xizmatlari': 'Rieltorlik xizmatlari',
       tarjimon: 'Tarjimon',
       poligrafiya: 'Poligrafiya',
@@ -138,7 +142,7 @@ const DIRECTIONS = {
   },
 
   'gozallik-moda-va-tadbirlar': {
-    label: 'Go‘zallik, moda va tadbirlar',
+    label: T('Go‘zallik, moda va tadbirlar'),
     icon: Palette,
     color: '#20cdb7',
     categories: {
@@ -152,11 +156,12 @@ const DIRECTIONS = {
   },
 
   'boshqa-xizmatlar': {
-    label: 'Boshqa xizmatlar',
+    label: T('Boshqa xizmatlar'),
     icon: Sparkles,
     color: '#8fb9d8',
     categories: {
       bogdorchilik: 'Bog‘dorchilik',
+      'landshaft-dizayni': 'Landshaft dizayni',
       muhandis: 'Muhandis',
       turizm: 'Turizm',
       'yetkazib-berish': 'Yetkazib berish',
@@ -175,11 +180,11 @@ const LOCAL_TAXONOMY = Object.fromEntries(
 );
 
 const STEPS = [
-  { key: 'type', label: 'Tur' },
-  { key: 'direction', label: 'Yo‘nalish' },
-  { key: 'category', label: 'Kasb' },
-  { key: 'details', label: 'Ma’lumot' },
-  { key: 'review', label: 'Tasdiq' },
+  { key: 'type', label: T('Tur') },
+  { key: 'direction', label: T('Yo‘nalish') },
+  { key: 'category', label: T('Kasb') },
+  { key: 'details', label: T('Ma’lumot') },
+  { key: 'review', label: T('Tasdiq') },
 ];
 
 const INITIAL_FORM = {
@@ -188,6 +193,7 @@ const INITIAL_FORM = {
   description: '',
   phone: '',
   price_range: '',
+  area: '',
   email: '',
   website: '',
 };
@@ -399,6 +405,7 @@ export default function BecomeProviderPage() {
         description: formData.description.trim(),
         phone: formData.phone.trim(),
         price_range: formData.price_range.trim(),
+        location: { address: formData.area.trim() },
         email: formData.email.trim(),
         website:
           entityType === 'company'
@@ -754,6 +761,20 @@ export default function BecomeProviderPage() {
         </div>
       </div>
 
+      <div className="bp-field">
+        <label htmlFor="bp-area">
+          {t('becomeProvider.fields.area', 'Qaysi hududda ishlaysiz?')}
+        </label>
+        <input
+          id="bp-area"
+          name="area"
+          value={formData.area}
+          onChange={handleChange}
+          maxLength={200}
+          placeholder={t('becomeProvider.fields.areaPlaceholder', 'Masalan: Toshkent, Chilonzor va Yunusobod')}
+        />
+      </div>
+
       <div className="bp-row">
         <div className="bp-field">
           <label htmlFor="bp-email">
@@ -912,7 +933,7 @@ export default function BecomeProviderPage() {
 
       <section className="bp-card">
         {/* Progress */}
-        <nav className="bp-steps" aria-label="Qadamlar">
+        <nav className="bp-steps" aria-label={T('Qadamlar')}>
           {STEPS.map((item, index) => {
             const state =
               index < step

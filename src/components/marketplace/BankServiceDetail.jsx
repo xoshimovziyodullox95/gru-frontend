@@ -3,15 +3,17 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  ArrowLeft, Landmark, CheckCircle2, Send, Check, Loader2,
+  ArrowLeft, CheckCircle2, Send, Check, Loader2,
   FileText, ClipboardList, AlertTriangle, Building2, Percent, Sparkles, ShieldCheck
 } from 'lucide-react';
 import { getBankServiceById, getBankServices } from '../services/bankServices';
 import { useAuth } from '../context/AuthContext';
+import UniversalBankLogo from '../common/UniversalBankLogo';
 import { createBankApplication } from '../services/orders';
 import BankServiceCard from '../marketplace/BankServiceCard';
 import '../../styles/bankServiceDetail.css';
 
+import { T } from '../utils/T';
 export default function BankServiceDetail() {
   const { id } = useParams();
   const { t } = useTranslation();
@@ -82,7 +84,7 @@ export default function BankServiceDetail() {
       setApplied({ duplicate: res.data.duplicate });
       setApplyOpen(false);
     } catch (err) {
-      alert(err.response?.data?.error || 'Ariza yuborilmadi');
+      alert(err.response?.data?.error || T('Ariza yuborilmadi'));
     } finally {
       setApplying(false);
     }
@@ -106,7 +108,7 @@ export default function BankServiceDetail() {
                   onError={() => setErrored(true)}
                 />
               ) : (
-                <Landmark size={26} />
+                <UniversalBankLogo size={36} />
               )}
             </div>
             <div className="bsd-hero-titles">
@@ -139,15 +141,15 @@ export default function BankServiceDetail() {
               <Check size={18} />
               <span>
                 {applied.duplicate
-                  ? 'Bu xizmatga arizangiz allaqachon ko‘rib chiqilmoqda.'
-                  : 'Ariza yuborildi. Bank javobi bildirishnoma orqali keladi.'}
+                  ? T('Bu xizmatga arizangiz allaqachon ko‘rib chiqilmoqda.')
+                  : T('Ariza yuborildi. Bank javobi bildirishnoma orqali keladi.')}
               </span>
-              <Link to="/my-orders?tab=bank">Arizalarim</Link>
+              <Link to="/my-orders?tab=bank">{T('Arizalarim')}</Link>
             </div>
           ) : applyOpen ? (
             <form className="bsd-apply-form" onSubmit={submitApplication}>
               <label>
-                Telefon raqamingiz
+                {T('Telefon raqamingiz')}
                 <input
                   type="tel"
                   required
@@ -157,20 +159,20 @@ export default function BankServiceDetail() {
                 />
               </label>
               <label>
-                Izoh (ixtiyoriy)
+                {T('Izoh (ixtiyoriy)')}
                 <textarea
                   rows={3}
-                  placeholder="Masalan: kredit summasi, biznes turi"
+                  placeholder={T('Masalan: kredit summasi, biznes turi')}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />
               </label>
               <div className="bsd-apply-actions">
                 <button type="button" className="bsd-apply-cancel" onClick={() => setApplyOpen(false)}>
-                  Bekor qilish
+                  {T('Bekor qilish')}
                 </button>
                 <button type="submit" className="chat-owner-btn bsd-cart-btn-inline" disabled={applying}>
-                  {applying ? <Loader2 size={18} className="bsd-spin" /> : <Send size={18} />} Yuborish
+                  {applying ? <Loader2 size={18} className="bsd-spin" /> : <Send size={18} />} {T('Yuborish')}
                 </button>
               </div>
             </form>

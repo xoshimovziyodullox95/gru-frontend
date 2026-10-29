@@ -15,6 +15,7 @@ import UniversalCard from './UniversalCard';
 import { CATEGORY_CATALOGS } from '../utils/foodCategories'; // 🔥 TO'G'RI IMPORT
 import '../../styles/subcategory.css';
 
+import { T } from '../utils/T';
 export default function SubcategoryPage() {
   const { level1, level2 } = useParams();
   const { user } = useAuth();
@@ -59,7 +60,7 @@ export default function SubcategoryPage() {
     fetchData();
   }, [level1, level2]);
 
-  if (loading) return <div className="sub-loading-spinner">Yuklanmoqda...</div>;
+  if (loading) return <div className="sub-loading-spinner">{T('Yuklanmoqda...')}</div>;
 
   const decodedLevel1 = decodeURIComponent(level1);
   const decodedLevel2 = decodeURIComponent(level2);
@@ -241,6 +242,7 @@ export default function SubcategoryPage() {
                         price={eq.price}
                         currency={eq.currency}
                         link={`/equipment/${eqId}`}
+                        saleMode={eq.saleMode}
                       />
                     );
                   })}

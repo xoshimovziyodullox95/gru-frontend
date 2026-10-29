@@ -4,16 +4,18 @@ import { Link } from 'react-router-dom';
 import UniversalCard from '../pages/UniversalCard.jsx';
 import '../../styles/homeListingCarousel.css';
 
+import { T } from '../utils/T';
 export default function HomeListingCarousel({
   title,
   subtitle,
   items = [],
   emptyTitle,
   emptyText,
-  actionLabel = 'Barcha e’lonlarni ko‘rish',
+  actionLabel = T('Barcha e’lonlarni ko‘rish'),
   onAction,
   actionDisabled = false,
   actionKind = 'browse',
+  actionTo = '/marketplace/all',
 }) {
   const railRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -51,16 +53,16 @@ export default function HomeListingCarousel({
               <span>{actionLabel}</span>
             </button>
           ) : (
-            <Link className="home-listing-section__action" to="/marketplace/all">
+            <Link className="home-listing-section__action" to={actionTo}>
               {actionLabel}<ArrowRight size={15} />
             </Link>
           )}
           {items.length > 2 && (
-            <div className="home-listing-section__arrows" aria-label="Karusel boshqaruvi">
-              <button type="button" onClick={() => scroll(-1)} disabled={!canScrollLeft} aria-label="Oldingi e’lonlar">
+            <div className="home-listing-section__arrows" aria-label={T('Karusel boshqaruvi')}>
+              <button type="button" onClick={() => scroll(-1)} disabled={!canScrollLeft} aria-label={T('Oldingi e’lonlar')}>
                 <ChevronLeft size={18} />
               </button>
-              <button type="button" onClick={() => scroll(1)} disabled={!canScrollRight} aria-label="Keyingi e’lonlar">
+              <button type="button" onClick={() => scroll(1)} disabled={!canScrollRight} aria-label={T('Keyingi e’lonlar')}>
                 <ChevronRight size={18} />
               </button>
             </div>
@@ -83,6 +85,7 @@ export default function HomeListingCarousel({
                 isTop={item.isTop}
                 isVerified={item.isVerified}
                 maxQuantity={item.maxQuantity}
+                saleMode={item.saleMode}
               />
               {Number.isFinite(item.distanceKm) && (
                 <span className="home-listing-section__distance">
@@ -102,7 +105,7 @@ export default function HomeListingCarousel({
             <p>{emptyText}</p>
           </div>
           {!onAction && (
-            <Link to="/marketplace/all" aria-label={actionLabel}>
+            <Link to={actionTo} aria-label={actionLabel}>
               <ArrowRight size={18} />
             </Link>
           )}

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Eye, EyeOff, Lock, Save } from 'lucide-react';
 import '../../styles/auth.css';
 
+import { T } from '../utils/T';
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,11 +25,11 @@ export default function ResetPasswordPage() {
   const handleReset = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setError('Parollar mos kelmadi');
+      setError(T('Parollar mos kelmadi'));
       return;
     }
     if (newPassword.length < 6) {
-      setError('Parol kamida 6 ta belgidan iborat bo\'lishi kerak');
+      setError(T('Parol kamida 6 ta belgidan iborat bo\'lishi kerak'));
       return;
     }
     setLoading(true);
@@ -41,7 +42,7 @@ export default function ResetPasswordPage() {
     if (error) {
       setError(error.message);
     } else {
-      setMessage('Parol muvaffaqiyatli o\'zgartirildi!');
+      setMessage(T('Parol muvaffaqiyatli o\'zgartirildi!'));
       setTimeout(() => navigate('/login'), 2000);
     }
   };
@@ -50,7 +51,7 @@ export default function ResetPasswordPage() {
     <div className="auth-container">
       <div className="auth-card">
         <h1 className="auth-title">ZUMO</h1>
-        <p className="auth-subtitle">Yangi parol o'rnatish</p>
+        <p className="auth-subtitle">{T('Yangi parol o\'rnatish')}</p>
         <form onSubmit={handleReset}>
           {error && <div className="error-message">{error}</div>}
           {message && <div className="success-message">{message}</div>}
@@ -61,7 +62,7 @@ export default function ResetPasswordPage() {
               type={showPassword ? 'text' : 'password'}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Yangi parol"
+              placeholder={T('Yangi parol')}
               className="auth-input"
               required
             />
@@ -80,14 +81,14 @@ export default function ResetPasswordPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Yangi parolni takrorlang"
+              placeholder={T('Yangi parolni takrorlang')}
               className="auth-input"
               required
             />
           </div>
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Saqlanmoqda...' : <><Save size={18} /> Saqlash</>}
+            {loading ? T('Saqlanmoqda...') : <><Save size={18} /> {T('Saqlash')}</>}
           </button>
         </form>
       </div>

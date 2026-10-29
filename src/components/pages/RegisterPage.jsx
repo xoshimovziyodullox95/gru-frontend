@@ -5,17 +5,21 @@ import { supabase } from '../lib/supabase';
 import { Eye, EyeOff, UserPlus, Mail, Lock, User, Building2, Users, Tag } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { markAccountCreated } from '../../hooks/useGuestMode';
+import AuthBackButton from '../common/AuthBackButton';
+import { signInWithGoogle, authRedirectUrl } from '../utils/googleAuth';
+import AppleSignInButton from '../common/AppleSignInButton';
 import '../../styles/auth.css';
 
+import { T } from '../utils/T';
 const DIRECTIONS = [
-  { id: 'agro', label: 'Qishloq xo‘jaligi' },
-  { id: 'dokonlar', label: 'Do‘konlar' },
-  { id: 'klinika', label: 'Klinika' },
-  { id: 'kongilochar', label: 'Ko‘ngilochar' },
+  { id: 'agro', label: T('Qishloq xo‘jaligi') },
+  { id: 'dokonlar', label: T('Do‘konlar') },
+  { id: 'klinika', label: T('Klinika') },
+  { id: 'kongilochar', label: T('Ko‘ngilochar') },
   { id: 'restoran', label: 'Restoran / Kafe' },
-  { id: 'xizmatlar', label: 'Xizmatlar' },
-  { id: 'talim', label: 'TaКјlim' },
-  { id: 'yangi-biznes', label: 'Yangi biznes' },
+  { id: 'xizmatlar', label: T('Xizmatlar') },
+  { id: 'talim', label: T('Ta’lim') },
+  { id: 'yangi-biznes', label: T('Yangi biznes') },
 ];
 
 export default function RegisterPage() {
@@ -39,26 +43,26 @@ export default function RegisterPage() {
 
     // Validatsiya
     if (password !== confirmPassword) {
-      setError('Parollar mos emas');
-      toast.error('Parollar mos emas');
+      setError(T('Parollar mos emas'));
+      toast.error(T('Parollar mos emas'));
       return;
     }
     if (password.length < 6) {
-      setError('Parol kamida 6 ta belgidan iborat bo‘lishi kerak');
-      toast.error('Parol kamida 6 ta belgi');
+      setError(T('Parol kamida 6 ta belgidan iborat bo‘lishi kerak'));
+      toast.error(T('Parol kamida 6 ta belgi'));
       return;
     }
     if (role === 'company' && !direction) {
-      setError('Iltimos, yo‘nalishni tanlang');
-      toast.error('Yo‘nalish tanlanmagan');
+      setError(T('Iltimos, yo‘nalishni tanlang'));
+      toast.error(T('Yo‘nalish tanlanmagan'));
       return;
     }
 
     setLoading(true);
-    setDebugInfo('вЏі Ro‘yxatdan o‘tish boshlanmoqda...');
+    setDebugInfo('⏳ Ro‘yxatdan o‘tish boshlanmoqda...');
 
     try {
-      console.log('рџ“¤ Yuborilayotgan maКјlumotlar:', {
+      console.log('📤 Yuborilayotgan maʼlumotlar:', {
         email,
         fullName,
         role,
@@ -70,6 +74,7 @@ export default function RegisterPage() {
         email,
         password,
         options: {
+          emailRedirectTo: authRedirectUrl(),
           data: {
             full_name: fullName,
             role: role,
@@ -79,10 +84,10 @@ export default function RegisterPage() {
         }
       });
 
-      console.log('рџ“Ґ Supabase javobi:', { data, error });
+      console.log('📥 Supabase javobi:', { data, error });
 
       if (error) {
-        setDebugInfo(`вќЊ Xatolik: ${error.message}`);
+        setDebugInfo(`❌ Xatolik: ${error.message}`);
         setError(error.message);
         toast.error(error.message);
         setLoading(false);
@@ -90,62 +95,54 @@ export default function RegisterPage() {
       }
 
       if (data.user?.identities?.length === 0) {
-        setDebugInfo('вљ пёЏ Bu email allaqachon ro‘yxatdan o‘tgan');
-        setError('Bu email allaqachon ro‘yxatdan o‘tgan');
-        toast.error('Bu email allaqachon ro‘yxatdan o‘tgan');
+        setDebugInfo('вљ ️ Bu email allaqachon ro‘yxatdan o‘tgan');
+        setError(T('Bu email allaqachon ro‘yxatdan o‘tgan'));
+        toast.error(T('Bu email allaqachon ro‘yxatdan o‘tgan'));
         setLoading(false);
         return;
       }
 
-      // рџ”Ґ Bu qurilmada endi "ro'yxatdan o'tgan" deb belgilanadi —
+      // 🔥 Bu qurilmada endi "ro'yxatdan o'tgan" deb belgilanadi —
       //    Landing sahifasida bundan keyin faqat "Kirish" tugmasi ko'rinadi,
       //    va guest-mode flag (agar bo'lgan bo'lsa) tozalanadi
       markAccountCreated();
 
-      setDebugInfo('вњ… Ro‘yxatdan o‘tdingiz! Login sahifasiga o‘tish...');
-      toast.success('вњ… Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.');
+      setDebugInfo('✅ Ro‘yxatdan o‘tdingiz! Login sahifasiga o‘tish...');
+      toast.success(T('✅ Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.'));
 
-      // рџ”Ґ 1 soniya kutib, login sahifasiga o‘tish
+      // 🔥 1 soniya kutib, login sahifasiga o‘tish
       setTimeout(() => {
-        navigate('/login');
+        navigate('/login', { replace: true });
       }, 1500);
 
     } catch (err) {
-      console.error('вќЊ Kutilmagan xatolik:', err);
-      setDebugInfo(`вќЊ Xatolik: ${err.message}`);
-      setError(err.message || 'NomaКјlum xatolik yuz berdi');
-      toast.error(err.message || 'Xatolik yuz berdi');
+      console.error('❌ Kutilmagan xatolik:', err);
+      setDebugInfo(`❌ Xatolik: ${err.message}`);
+      setError(err.message || T('Nomaʼlum xatolik yuz berdi'));
+      toast.error(err.message || T('Xatolik yuz berdi'));
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      // рџ”Ґ Google orqali ham signup/login bo'lishi mumkin —
+      // 🔥 Google orqali ham signup/login bo'lishi mumkin —
       //    shu tugma bosilganda ham "ro'yxatdan o'tgan" deb belgilaymiz,
       //    chunki OAuth qaytib kelganda Landing'da "Kirish"gina chiqishi kerak
       markAccountCreated();
 
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          }
-        }
-      });
+      await signInWithGoogle({ access_type: 'offline', prompt: 'consent' });
     } catch {
-      toast.error('Google orqali kirishda xatolik');
+      toast.error(T('Google orqali kirishda xatolik'));
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
+        <AuthBackButton />
         <h1 className="auth-title">ZUMO</h1>
-        <p className="auth-subtitle">Ro‘yxatdan o‘tish</p>
+        <p className="auth-subtitle">{T('Ro‘yxatdan o‘tish')}</p>
 
         <button onClick={handleGoogleLogin} className="google-btn">
           <svg width="18" height="18" viewBox="0 0 24 24">
@@ -154,10 +151,12 @@ export default function RegisterPage() {
             <path fill="#FBBC05" d="M5.3 10.92c-.34 1.02-.34 2.1 0 3.12l-2.58 2.04c-.96-1.92-.96-4.2 0-6.12l2.58 2.04z" />
             <path fill="#4285F4" d="M12.48 7.2c1.33 0 2.5.45 3.43 1.33l2.55-2.55c-1.52-1.42-3.5-2.3-5.98-2.3-3.64 0-6.7 1.93-8.24 4.83l2.6 2.03c.7-2.14 2.68-3.7 5.04-3.7z" />
           </svg>
-          Google orqali kirish
+          {T('Google orqali kirish')}
         </button>
 
-        <div className="divider"><span>yoki email orqali</span></div>
+        <AppleSignInButton />
+
+        <div className="divider"><span>{T('yoki email orqali')}</span></div>
 
         <form onSubmit={handleRegister}>
           {error && (
@@ -188,7 +187,7 @@ export default function RegisterPage() {
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Ism sharif"
+              placeholder={T('Ism sharif')}
               className="auth-input"
               required
             />
@@ -202,7 +201,7 @@ export default function RegisterPage() {
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Kompaniya nomi"
+                  placeholder={T('Kompaniya nomi')}
                   className="auth-input"
                 />
               </div>
@@ -215,7 +214,7 @@ export default function RegisterPage() {
                   className="auth-input"
                   required={role === 'company'}
                 >
-                  <option value="">Yo‘nalishni tanlang *</option>
+                  <option value="">{T('Yo‘nalishni tanlang *')}</option>
                   {DIRECTIONS.map((dir) => (
                     <option key={dir.id} value={dir.id}>
                       {dir.label}
@@ -232,7 +231,7 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
+              placeholder={T('Email')}
               className="auth-input"
               required
             />
@@ -244,7 +243,7 @@ export default function RegisterPage() {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Parol (kamida 6 belgi)"
+              placeholder={T('Parol (kamida 6 belgi)')}
               className="auth-input"
               required
               minLength={6}
@@ -264,7 +263,7 @@ export default function RegisterPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Parolni tasdiqlang"
+              placeholder={T('Parolni tasdiqlang')}
               className="auth-input"
               required
             />
@@ -276,27 +275,27 @@ export default function RegisterPage() {
               <input type="radio" name="role" value="user" checked={role === 'user'} onChange={() => setRole('user')} />
               <Users size={18} />
               <div>
-                <span>Jismoniy shaxs</span>
-                <small>Oddiy foydalanuvchi</small>
+                <span>{T('Jismoniy shaxs')}</span>
+                <small>{T('Oddiy foydalanuvchi')}</small>
               </div>
             </label>
             <label className={`role-option ${role === 'company' ? 'active' : ''}`}>
               <input type="radio" name="role" value="company" checked={role === 'company'} onChange={() => setRole('company')} />
               <Building2 size={18} />
               <div>
-                <span>Kompaniya</span>
-                <small>Biznes egasi</small>
+                <span>{T('Kompaniya')}</span>
+                <small>{T('Biznes egasi')}</small>
               </div>
             </label>
           </div>
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Yuklanmoqda...' : <><UserPlus size={18} /> Ro‘yxatdan o‘tish</>}
+            {loading ? T('Yuklanmoqda...') : <><UserPlus size={18} /> {T('Ro‘yxatdan o‘tish')}</>}
           </button>
         </form>
 
         <p className="signup-link">
-          Hisobingiz bormi? <Link to="/login">Kirish</Link>
+          {T('Hisobingiz bormi?')} <Link to="/login" replace>{T('Kirish')}</Link>
         </p>
       </div>
     </div>

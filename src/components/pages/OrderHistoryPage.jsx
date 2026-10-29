@@ -3,7 +3,7 @@
    ============================================================ */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
   Clock, CheckCircle2, XCircle, Star, MapPin,
@@ -12,24 +12,25 @@ import {
 
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import RatingModal from '../common/RatingModal';
 
 import '../../styles/orderHistory.css';
 
+import { T } from '../utils/T';
+import { serviceLabel } from '../utils/i18nHelpers';
 const STATUS_INFO = {
-  completed: { label: 'Bajarildi', color: '#00c853', icon: CheckCircle2 },
-  cancelled: { label: 'Bekor qilindi', color: '#ef4444', icon: XCircle },
-  closed: { label: 'Yopilgan', color: '#94a3b8', icon: CheckCircle2 },
+  completed: { label: T('Bajarildi'), color: '#00c853', icon: CheckCircle2 },
+  cancelled: { label: T('Bekor qilindi'), color: '#ef4444', icon: XCircle },
+  closed: { label: T('Yopilgan'), color: '#94a3b8', icon: CheckCircle2 },
 };
 
 export default function OrderHistoryPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [tab, setTab] = useState('client');
   const [filter, setFilter] = useState('all');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [ratingModal, setRatingModal] = useState(null);
 
   const fetchHistory = async () => {
     setLoading(true);
@@ -40,7 +41,7 @@ export default function OrderHistoryPage() {
       setItems(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('History xato:', err);
-      toast.error("Tarixni yuklab bo'lmadi");
+      toast.error(T('Tarixni yuklab bo\'lmadi'));
       setItems([]);
     } finally {
       setLoading(false);
@@ -64,8 +65,8 @@ export default function OrderHistoryPage() {
           <ArrowLeft size={18} />
         </Link>
         <div>
-          <h1>Zakazlar tarixi</h1>
-          <p>O‘tgan buyurtmalaringiz</p>
+          <h1>{T('Zakazlar tarixi')}</h1>
+          <p>{T('O‘tgan buyurtmalaringiz')}</p>
         </div>
       </header>
 
@@ -76,7 +77,7 @@ export default function OrderHistoryPage() {
           onClick={() => setTab('client')}
         >
           <User size={16} />
-          Mening zakazlarim
+          {T('Mening zakazlarim')}
         </button>
         <button
           type="button"
@@ -84,7 +85,7 @@ export default function OrderHistoryPage() {
           onClick={() => setTab('provider')}
         >
           <Wrench size={16} />
-          Bajarilgan ishlar
+          {T('Bajarilgan ishlar')}
         </button>
       </div>
 
@@ -95,9 +96,9 @@ export default function OrderHistoryPage() {
           onChange={(e) => setFilter(e.target.value)}
           className="oh-filter__select"
         >
-          <option value="all">Hammasi</option>
-          <option value="completed">Bajarilgan</option>
-          <option value="cancelled">Bekor qilingan</option>
+          <option value="all">{T('Hammasi')}</option>
+          <option value="completed">{T('Bajarilgan')}</option>
+          <option value="cancelled">{T('Bekor qilingan')}</option>
         </select>
       </div>
 
@@ -110,8 +111,8 @@ export default function OrderHistoryPage() {
       {!loading && !filtered.length && (
         <div className="oh-empty">
           <Clock size={48} strokeWidth={1.5} />
-          <h3>Hozircha zakaz yo‘q</h3>
-          <p>Yangi zakazlar bu yerda ko‘rinadi</p>
+          <h3>{T('Hozircha zakaz yo‘q')}</h3>
+          <p>{T('Yangi zakazlar bu yerda ko‘rinadi')}</p>
         </div>
       )}
 
@@ -129,7 +130,7 @@ export default function OrderHistoryPage() {
               ? acceptedOffer?.provider
               : item.client;
 
-            const otherLabel = tab === 'client' ? 'Usta' : 'Mijoz';
+            const otherLabel = tab === 'client' ? T('Usta') : T('Mijoz');
             const hasReview = Boolean(item.review?.rating);
 
             return (
@@ -150,7 +151,7 @@ export default function OrderHistoryPage() {
                     </span>
                   </div>
                   <strong className="oh-card__category">
-                    {item.category || 'Xizmat'}
+                    {item.category ? serviceLabel(item.category) : T('Xizmat')}
                   </strong>
                 </header>
 
@@ -161,12 +162,12 @@ export default function OrderHistoryPage() {
                     </span>
                     <span className="oh-card__other-info">
                       <small>{otherLabel}</small>
-                      <strong>{other.fullName || other.name || 'Noma\'lum'}</strong>
+                      <strong>{other.fullName || other.name || T('Noma\'lum')}</strong>
                     </span>
                     {acceptedOffer?.price && (
                       <span className="oh-card__price">
                         {Number(acceptedOffer.price).toLocaleString('uz-UZ')}
-                        <small>so'm</small>
+                        <small>{T('so\'m')}</small>
                       </span>
                     )}
                   </div>
@@ -204,10 +205,10 @@ export default function OrderHistoryPage() {
                       <button
                         type="button"
                         className="oh-card__rate-btn"
-                        onClick={() => setRatingModal(item)}
+                        onClick={() => navigate(`/requests/${item._id}/done`)}
                       >
                         <Star size={14} />
-                        Xizmatni baholash
+                        {T('Xizmatni baholash')}
                       </button>
                     )}
                   </>
@@ -218,15 +219,6 @@ export default function OrderHistoryPage() {
         </div>
       )}
 
-      <RatingModal
-        isOpen={Boolean(ratingModal)}
-        request={ratingModal}
-        onClose={() => setRatingModal(null)}
-        onSubmitted={() => {
-          setRatingModal(null);
-          fetchHistory();
-        }}
-      />
     </div>
   );
 }

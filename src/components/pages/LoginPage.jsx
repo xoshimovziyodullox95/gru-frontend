@@ -8,8 +8,12 @@ import toast from 'react-hot-toast';
 import { getReturnPath, clearReturnPath, markAccountCreated } from '../../hooks/useGuestMode';
 import PhoneOtpLoginForm from '../forms/PhoneOtpLoginForm';
 import { getUserProfile } from '../services/user';
+import AuthBackButton from '../common/AuthBackButton';
+import { signInWithGoogle, authRedirectUrl } from '../utils/googleAuth';
+import AppleSignInButton from '../common/AppleSignInButton';
 import '../../styles/auth.css';
 
+import { T } from '../utils/T';
 export default function LoginPage() {
   const { user } = useAuth();
   const [email, setEmail] = useState('');
@@ -75,9 +79,9 @@ useEffect(() => {
       if (error) {
         // Xatolikni tahlil qilish
         if (error.message.includes('Invalid login credentials')) {
-          setError('❌ Email yoki parol noto‘g‘ri. Iltimos, qayta tekshirib ko‘ring.');
+          setError(T('❌ Email yoki parol noto‘g‘ri. Iltimos, qayta tekshirib ko‘ring.'));
         } else if (error.message.includes('Email not confirmed')) {
-          setError('📧 Emailingiz tasdiqlanmagan. Iltimos, pochtangizni tekshiring.');
+          setError(T('📧 Emailingiz tasdiqlanmagan. Iltimos, pochtangizni tekshiring.'));
           setShowResend(true);
         } else {
           setError(error.message);
@@ -88,7 +92,7 @@ useEffect(() => {
 
       // Login muvaffaqiyatli
   // Login muvaffaqiyatli
-toast.success('✅ Xush kelibsiz!');
+toast.success(T('✅ Xush kelibsiz!'));
 const role = data.user?.user_metadata?.role || 'user';
 let fallback = '/home';
 if (role === 'company' || role === 'business') fallback = '/dashboard';
@@ -98,7 +102,7 @@ const target = getTarget(fallback);
 clearReturnPath();
 navigate(target, { replace: true });
     } catch (err) {
-      setError('Tizimda xatolik yuz berdi');
+      setError(T('Tizimda xatolik yuz berdi'));
       setLoading(false);
     }
   };
@@ -109,12 +113,13 @@ navigate(target, { replace: true });
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email: email,
+        options: { emailRedirectTo: authRedirectUrl() },
       });
       if (error) throw error;
-      toast.success('✅ Tasdiqlash emaili qayta yuborildi!');
+      toast.success(T('✅ Tasdiqlash emaili qayta yuborildi!'));
       setShowResend(false);
     } catch (err) {
-      toast.error(err.message || 'Xatolik yuz berdi');
+      toast.error(err.message || T('Xatolik yuz berdi'));
     } finally {
       setResendLoading(false);
     }
@@ -127,20 +132,18 @@ navigate(target, { replace: true });
       //    Landing'ga qaytganda faqat "Tizimga kirish" chiqishi uchun
       markAccountCreated();
 
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin },
-      });
+      await signInWithGoogle();
     } catch (err) {
-      toast.error('Google orqali kirishda xatolik');
+      toast.error(T('Google orqali kirishda xatolik'));
     }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
+        <AuthBackButton />
         <h1 className="auth-title">ZUMO</h1>
-        <p className="auth-subtitle">Xush kelibsiz</p>
+        <p className="auth-subtitle">{T('Xush kelibsiz')}</p>
 
         <button onClick={handleGoogleLogin} className="google-btn">
           <svg width="18" height="18" viewBox="0 0 24 24">
@@ -149,10 +152,12 @@ navigate(target, { replace: true });
             <path fill="#FBBC05" d="M5.3 10.92c-.34 1.02-.34 2.1 0 3.12l-2.58 2.04c-.96-1.92-.96-4.2 0-6.12l2.58 2.04z" />
             <path fill="#4285F4" d="M12.48 7.2c1.33 0 2.5.45 3.43 1.33l2.55-2.55c-1.52-1.42-3.5-2.3-5.98-2.3-3.64 0-6.7 1.93-8.24 4.83l2.6 2.03c.7-2.14 2.68-3.7 5.04-3.7z" />
           </svg>
-          Google orqali kirish
+          {T('Google orqali kirish')}
         </button>
 
-        <div className="auth-method-switch" role="tablist" aria-label="Kirish usulini tanlang">
+        <AppleSignInButton />
+
+        <div className="auth-method-switch" role="tablist" aria-label={T('Kirish usulini tanlang')}>
           <button
             type="button"
             role="tab"
@@ -160,7 +165,7 @@ navigate(target, { replace: true });
             className={loginMethod === 'phone' ? 'active' : ''}
             onClick={() => { setLoginMethod('phone'); setError(''); }}
           >
-            <Smartphone size={17} /> Telefon
+            <Smartphone size={17} /> {T('Telefon')}
           </button>
           <button
             type="button"
@@ -169,11 +174,11 @@ navigate(target, { replace: true });
             className={loginMethod === 'email' ? 'active' : ''}
             onClick={() => { setLoginMethod('email'); setError(''); }}
           >
-            <Mail size={17} /> Email
+            <Mail size={17} /> {T('Email')}
           </button>
         </div>
 
-        <div className="divider"><span>{loginMethod === 'phone' ? 'SMS kod bilan kirish' : 'email orqali kirish'}</span></div>
+        <div className="divider"><span>{loginMethod === 'phone' ? T('SMS kod bilan kirish') : T('email orqali kirish')}</span></div>
 
         {loginMethod === 'phone' ? <PhoneOtpLoginForm /> : <form onSubmit={handleLogin}>
           {error && (
@@ -187,7 +192,7 @@ navigate(target, { replace: true });
                   onClick={handleResendEmail}
                   disabled={resendLoading}
                 >
-                  {resendLoading ? 'Yuborilmoqda...' : 'Qayta yuborish'}
+                  {resendLoading ? T('Yuborilmoqda...') : T('Qayta yuborish')}
                 </button>
               )}
             </div>
@@ -199,7 +204,7 @@ navigate(target, { replace: true });
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
+              placeholder={T('Email')}
               className="auth-input"
               required
             />
@@ -211,7 +216,7 @@ navigate(target, { replace: true });
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Parol"
+              placeholder={T('Parol')}
               className="auth-input"
               required
             />
@@ -226,21 +231,21 @@ navigate(target, { replace: true });
 
           <div className="flex-between">
             <label className="checkbox">
-              <input type="checkbox" /> Eslab qol
+              <input type="checkbox" /> {T('Eslab qol')}
             </label>
-            <Link to="/forgot-password" className="forgot-link">Parolni unutdingizmi?</Link>
+            <Link to="/forgot-password" replace className="forgot-link">{T('Parolni unutdingizmi?')}</Link>
           </div>
 
           <button type="submit" className="auth-button" disabled={loading}>
-            {loading ? 'Yuklanmoqda...' : <><LogIn size={18} /> Kirish</>}
+            {loading ? T('Yuklanmoqda...') : <><LogIn size={18} /> {T('Kirish')}</>}
           </button>
         </form>}
 
         <p className="signup-link">
           {loginMethod === 'phone' ? (
-            <>Telefon orqali birinchi marta kirsangiz, kod tasdiqlangach hisob ochiladi. <Link to="/register" className="link">Email bilan ro‘yxatdan o‘tish</Link></>
+            <>{T('Telefon orqali birinchi marta kirsangiz, kod tasdiqlangach hisob ochiladi.')} <Link to="/register" replace className="link">{T('Email bilan ro‘yxatdan o‘tish')}</Link></>
           ) : (
-            <>Hisobingiz yo‘qmi? <Link to="/register" className="link">Ro‘yxatdan o‘tish</Link></>
+            <>{T('Hisobingiz yo‘qmi?')} <Link to="/register" replace className="link">{T('Ro‘yxatdan o‘tish')}</Link></>
           )}
         </p>
       </div>

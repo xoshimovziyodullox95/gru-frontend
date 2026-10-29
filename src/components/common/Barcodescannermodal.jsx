@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { X, Camera, AlertCircle } from 'lucide-react';
 
+import { T } from '../utils/T';
 const LIB_URL = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
 
 function loadScannerLib() {
@@ -81,7 +82,7 @@ export default function BarcodeScannerModal({ onScan, onClose }) {
       .catch((err) => {
         console.error('Skaner xatosi:', err);
         if (!cancelled) {
-          setError("Kamerani ochib bo'lmadi. Ruxsat berilganini tekshiring yoki qo'lda kiriting.");
+          setError(T('Kamerani ochib bo\'lmadi. Ruxsat berilganini tekshiring yoki qo\'lda kiriting.'));
         }
       });
 
@@ -106,7 +107,7 @@ export default function BarcodeScannerModal({ onScan, onClose }) {
     <div className="bcs-overlay" onClick={onClose}>
       <div className="bcs-modal" onClick={(e) => e.stopPropagation()}>
         <div className="bcs-header">
-          <h3><Camera size={18} /> Shtrix-kodni skaner qiling</h3>
+          <h3><Camera size={18} /> {T('Shtrix-kodni skaner qiling')}</h3>
           <button onClick={onClose}><X size={20} /></button>
         </div>
 
@@ -118,20 +119,20 @@ export default function BarcodeScannerModal({ onScan, onClose }) {
         ) : (
           <>
             <div id={containerId} className="bcs-reader" />
-            {!ready && <p className="bcs-loading">Kamera ochilmoqda...</p>}
+            {!ready && <p className="bcs-loading">{T('Kamera ochilmoqda...')}</p>}
           </>
         )}
 
         <div className="bcs-manual">
-          <p>Yoki kodni qo'lda kiriting:</p>
+          <p>{T('Yoki kodni qo\'lda kiriting:')}</p>
           <form onSubmit={handleManualSubmit} className="bcs-manual-form">
             <input
               type="text"
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
-              placeholder="Shtrix-kod raqami"
+              placeholder={T('Shtrix-kod raqami')}
             />
-            <button type="submit">Qo'shish</button>
+            <button type="submit">{T('Qo\'shish')}</button>
           </form>
         </div>
       </div>

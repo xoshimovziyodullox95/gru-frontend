@@ -262,3 +262,24 @@
     height: 20px;
   }
 }
+/* ============================================================
+   FLOATING — bosh sahifada tepada, ZUMO topbar ostida (Yandex Go kabi)
+   ============================================================ */
+.aob.aob--floating {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  top: calc(env(safe-area-inset-top, 0px) + 52px + 8px);
+  /* topbar (50) dan past — tezkor amallar menyusi ustida ochilsin */
+  z-index: 40;
+  width: auto;
+  max-width: 560px;
+  margin: 0 auto;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.45),
+    0 0 0 1px color-mix(in srgb, var(--aob-color) 20%, transparent);
+}
+
+@media (max-width: 600px) {
+  .aob.aob--floating { top: calc(env(safe-area-inset-top, 0px) + 46px + 8px); }
+}

@@ -449,7 +449,7 @@
 
   overflow: hidden;
 
-  background: #000000;
+  background: var(--bg);
 
   border: 1px solid
     color-mix(
@@ -461,7 +461,7 @@
   border-radius: 22px;
 
   box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.32);
+    0 18px 40px rgba(var(--surface-rgb), 0.32);
 }
 
 .avf-preview-video {
@@ -475,7 +475,7 @@
 
   object-fit: contain;
 
-  background: #000000;
+  background: var(--bg);
 }
 
 .avf-preview-gradient {
@@ -483,13 +483,7 @@
   inset: 0;
 
   background:
-    linear-gradient(
-      180deg,
-      rgba(0, 5, 13, 0.45),
-      transparent 25%,
-      transparent 58%,
-      rgba(0, 5, 13, 0.82)
-    );
+    var(--bg);
 
   pointer-events: none;
 }
@@ -512,7 +506,7 @@
 
   padding: 5px 9px;
 
-  color: #ffffff;
+  color: var(--text);
   background: rgba(0, 22, 41, 0.68);
 
   border: 1px solid rgba(0, 207, 255, 0.25);
@@ -533,10 +527,10 @@
 
   padding: 0;
 
-  color: #ffffff;
+  color: var(--text);
   background: rgba(0, 12, 24, 0.7);
 
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(var(--text-rgb), 0.13);
   border-radius: 50%;
 
   cursor: pointer;
@@ -557,7 +551,7 @@
   bottom: 16px;
   left: 13px;
 
-  color: #ffffff;
+  color: var(--text);
 }
 
 .avf-preview-bottom strong {
@@ -577,7 +571,7 @@
   margin: 4px 0 0;
   overflow: hidden;
 
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--textMuted);
 
   font-size: 0.65rem;
   line-height: 1.4;
@@ -1026,7 +1020,7 @@
 .avf-submit-btn {
   flex: 1;
 
-  color: #ffffff;
+  color: var(--text);
 
   background:
     linear-gradient(

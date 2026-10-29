@@ -1,12 +1,26 @@
 ﻿import { safeGoBack } from '../utils/navigation.js';
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Plus, Send, Paperclip, Sparkles, Menu, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import AiMarkdown from '../common/AiMarkdown';
+import { getImageUrl } from '../utils/imageUrl';
+import { formatPrice } from '../utils/formatPrice';
 import '../../styles/aiAssistant.css';
+import '../../styles/aiChat.css';
 
+const MAX_IMAGE_MB = 10;
+const MAX_TEXT = 4000;
+const STARTERS = [
+  'Bugungi dollar kursi qancha?',
+  'ZUMO’da 5 mln gacha noutbuk bormi?',
+  'Kichik do‘kon uchun biznes-reja tuzib ber',
+  'Rasmdagi narsa nima? (rasm biriktiring)',
+];
+
+import { T } from '../utils/T';
 export default function AIAssistantPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -85,7 +99,13 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
 
   function handleFileSelect(e) {
     const selected = Array.from(e.target.files || []);
-    setFiles((prev) => [...prev, ...selected].slice(0, 5));
+    e.target.value = '';
+    // AI faqat rasmlarni ko'radi; juda katta fayllarni server baribir qabul qilmaydi
+    const ok = selected.filter((f) => f.type.startsWith('image/') && f.size <= MAX_IMAGE_MB * 1024 * 1024);
+    if (ok.length < selected.length) {
+      alert(T('Faqat rasm ({{mb}} MB gacha) biriktirish mumkin', { mb: MAX_IMAGE_MB }));
+    }
+    setFiles((prev) => [...prev, ...ok].slice(0, 5));
   }
 
   function removeFile(idx) {
@@ -135,16 +155,21 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
         body: formData,
       });
 
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.error) {
+        // Server tushunarli sabab qaytaradi (limit, uzun matn, rad etilgan so'rov)
+        const reason = new Error(data.error || 'error');
+        reason.userMessage = data.error;
+        throw reason;
+      }
 
-      setMessages((prev) => [...prev, { role: 'assistant', text: data.reply }]);
+      setMessages((prev) => [...prev, { role: 'assistant', text: data.reply, cards: data.cards || [] }]);
       fetchChats();
     } catch (err) {
       console.error('Xabar yuborishda xato:', err);
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', text: t('aiAssistant.errorMessage') },
+        { role: 'assistant', text: err.userMessage || t('aiAssistant.errorMessage') },
       ]);
     } finally {
       setLoading(false);
@@ -163,6 +188,17 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
     safeGoBack(navigate);
   };
 
+  const filePreview = files.length > 0 && (
+    <div className="gru-ai-file-preview">
+      {files.map((f, i) => (
+        <span key={i} className="gru-ai-attachment-chip removable">
+          🖼️ {f.name}
+          <button type="button" onClick={() => removeFile(i)} aria-label={T('O‘chirish')}>×</button>
+        </span>
+      ))}
+    </div>
+  );
+
   const inputBar = (
     <div className="gru-ai-input-row">
       <button
@@ -177,7 +213,7 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
         ref={fileInputRef}
         multiple
         hidden
-        accept="image/*,.pdf,.doc,.docx,.txt"
+        accept="image/jpeg,image/png,image/webp,image/gif"
         onChange={handleFileSelect}
       />
 
@@ -185,6 +221,7 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
         className="gru-ai-textarea"
         placeholder={t('aiAssistant.placeholder')}
         value={input}
+        maxLength={MAX_TEXT}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         rows={1}
@@ -254,8 +291,8 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
       {/* ===== MAIN CHAT AREA ===== */}
       <div className="gru-ai-main">
         <header className="gru-ai-header">
-          {/* рџ”Ґ YANGI: Orqaga qaytish tugmasi (har doim ko'rinadi) */}
-          <button className="gru-ai-back-header-btn" onClick={handleGoBack} aria-label="Orqaga">
+          {/* 🔥 YANGI: Orqaga qaytish tugmasi (har doim ko'rinadi) */}
+          <button className="gru-ai-back-header-btn" onClick={handleGoBack} aria-label={T('Orqaga')}>
             <ArrowLeft size={20} />
           </button>
 
@@ -283,8 +320,13 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
                 ? t('aiAssistant.welcomeTitle', { name: `, ${userName}` })
                 : t('aiAssistant.welcomeTitle', { name: '' })}
             </h1>
-            <p className="gru-ai-landing-sub">{t('aiAssistant.welcomeSub')}</p>
-            <div className="gru-ai-landing-input">{inputBar}</div>
+            <p className="gru-ai-landing-sub">{T('Internetdan qidiraman, rasmni ko‘raman va ZUMO’dagi e’lonlardan topib beraman')}</p>
+            <div className="gru-ai-landing-input">{filePreview}{inputBar}</div>
+            <div className="ai-chips gru-ai-starters">
+              {STARTERS.map((q) => (
+                <button key={q} type="button" className="ai-chip" onClick={() => setInput(T(q))}>{T(q)}</button>
+              ))}
+            </div>
           </div>
         ) : (
           <>
@@ -292,17 +334,38 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
               {messages.map((m, idx) => (
                 <div key={idx} className={`gru-ai-message ${m.role}`}>
                   <div className="gru-ai-bubble">
-                    {m.text}
+                    {m.role === 'assistant' ? <AiMarkdown>{m.text}</AiMarkdown> : m.text}
                     {m.attachments?.length > 0 && (
                       <div className="gru-ai-attachments">
                         {m.attachments.map((a, i) => (
                           <span key={i} className="gru-ai-attachment-chip">
-                            рџ“Ћ {a.name}
+                            📎 {a.name}
                           </span>
                         ))}
                       </div>
                     )}
                   </div>
+                  {m.cards?.length > 0 && (
+                    <div className="ai-suggestions-grid gru-ai-cards">
+                      {m.cards.map((card) => (
+                        <Link key={`${card.type}-${card.id}`} to={card.link} className="ai-suggestion-card">
+                          <img
+                            src={card.image ? getImageUrl(card.image) : '/images/zumo-placeholder.svg'}
+                            alt=""
+                            loading="lazy"
+                            onError={(e) => { e.currentTarget.src = '/images/zumo-placeholder.svg'; }}
+                          />
+                          <div className="ai-suggestion-info">
+                            <h4>{card.title}</h4>
+                            {card.price != null && card.price !== '' && (
+                              <span className="price">{typeof card.price === 'number' ? formatPrice(card.price, card.currency) : card.price}</span>
+                            )}
+                            {(card.region || card.address) && <span className="address">{card.region || card.address}</span>}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
 
@@ -318,16 +381,7 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
 
             <div className="gru-ai-input-area">
               <div className="gru-ai-input-inner">
-                {files.length > 0 && (
-                  <div className="gru-ai-file-preview">
-                    {files.map((f, i) => (
-                      <span key={i} className="gru-ai-attachment-chip removable">
-                        рџ“Ћ {f.name}
-                        <button onClick={() => removeFile(i)}>Г—</button>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                {filePreview}
                 {inputBar}
               </div>
             </div>

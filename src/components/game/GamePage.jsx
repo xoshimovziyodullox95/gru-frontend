@@ -11,6 +11,7 @@ import { updateUserCoins } from '../services/user';
 import toast from 'react-hot-toast';
 import '../../styles/game.css';
 
+import { T } from '../utils/T';
 const COLS = 10;
 const ROWS = 20;
 const BLOCK = 30;
@@ -198,7 +199,7 @@ export default function GamePage() {
   const endGame = (finalCoins) => {
     if (finalCoins > 0) {
       updateUserCoins(finalCoins)
-        .then(() => toast.success(`рџЋ‰ ${finalCoins} coin qo'shildi!`))
+        .then(() => toast.success(T('🎉 {{finalCoins}} coin qo\'shildi!', { finalCoins: finalCoins })))
         .catch(() => {});
     }
   };
@@ -365,15 +366,15 @@ export default function GamePage() {
   return (
     <div className="game-page">
       <button className="game-back-btn" onClick={() => safeGoBack(navigate)}>
-        <ArrowLeft size={20} /> Orqaga
+        <ArrowLeft size={20} /> {T('Orqaga')}
       </button>
 
       <div className="game-container tetris-container">
         <div className="game-header">
-          <h1>рџ§© TETRIS</h1>
+          <h1>{T('🧩 TETRIS')}</h1>
           <div className="game-stats">
             <div className="stat-item"><Trophy size={16} /><span>{score}</span></div>
-            <div className="stat-item"><span>Lvl</span><strong>{level}</strong></div>
+            <div className="stat-item"><span>{T('Lvl')}</span><strong>{level}</strong></div>
             <div className="stat-item"><Coins size={16} /><span>{coinsEarned}</span></div>
             {isPremium && <div className="stat-item premium-badge"><Zap size={16} /><span>x1.5</span></div>}
           </div>
@@ -386,14 +387,14 @@ export default function GamePage() {
 
           <div className="tetris-sidebar">
             <div>
-              <p>Keyingisi</p>
+              <p>{T('Keyingisi')}</p>
               <canvas ref={nextCanvasRef} width={120} height={120} className="next-canvas" />
             </div>
 
             <div className="controls-info">
-              <p>в†ђ в†’ : Harakat</p>
-              <p>в†“ : Tez tushirish</p>
-              <p>Space / в†‘ : Burish</p>
+              <p>{T('← → : Harakat')}</p>
+              <p>{T('↓ : Tez tushirish')}</p>
+              <p>{T('Space / ↑ : Burish')}</p>
             </div>
           </div>
         </div>
@@ -405,18 +406,18 @@ export default function GamePage() {
               onClick={() => setIsPaused(!isPaused)}
             >
               {isPaused ? <Play size={20} /> : <Pause size={20} />}
-              {isPaused ? 'Davom ettirish' : 'Pauza'}
+              {isPaused ? T('Davom ettirish') : T('Pauza')}
             </button>
 
             <div className="touch-controls">
               <div className="tc-row">
-                <button className="tc-btn" onClick={moveLeft} aria-label="Chapga"><ChevronLeft size={22} /></button>
-                <button className="tc-btn tc-primary" onClick={rotatePiece} aria-label="Burish"><RotateCw size={22} /></button>
-                <button className="tc-btn" onClick={moveRight} aria-label="O'ngga"><ChevronRight size={22} /></button>
+                <button className="tc-btn" onClick={moveLeft} aria-label={T('Chapga')}><ChevronLeft size={22} /></button>
+                <button className="tc-btn tc-primary" onClick={rotatePiece} aria-label={T('Burish')}><RotateCw size={22} /></button>
+                <button className="tc-btn" onClick={moveRight} aria-label={T('O\'ngga')}><ChevronRight size={22} /></button>
               </div>
               <div className="tc-row">
-                <button className="tc-btn" onClick={softDrop} aria-label="Sekin tushirish"><ChevronDown size={22} /></button>
-                <button className="tc-btn" onClick={hardDrop} aria-label="Tez tushirish"><ChevronsDown size={22} /></button>
+                <button className="tc-btn" onClick={softDrop} aria-label={T('Sekin tushirish')}><ChevronDown size={22} /></button>
+                <button className="tc-btn" onClick={hardDrop} aria-label={T('Tez tushirish')}><ChevronsDown size={22} /></button>
               </div>
             </div>
           </>
@@ -424,17 +425,17 @@ export default function GamePage() {
 
         {(gameOver || !started) && (
           <div className="game-overlay">
-            <h2>{gameOver ? "рџЏ† O'yin tugadi!" : "рџ§© TETRIS"}</h2>
+            <h2>{gameOver ? T('🏆 O\'yin tugadi!') : T('🧩 TETRIS')}</h2>
             {gameOver && (
               <div className="game-result">
-                <div className="result-item"><span>Ball</span><strong>{score}</strong></div>
-                <div className="result-item"><span>Level</span><strong>{level}</strong></div>
-                <div className="result-item"><span>Coin</span><strong>+{coinsEarned}</strong></div>
+                <div className="result-item"><span>{T('Ball')}</span><strong>{score}</strong></div>
+                <div className="result-item"><span>{T('Level')}</span><strong>{level}</strong></div>
+                <div className="result-item"><span>{T('Coin')}</span><strong>+{coinsEarned}</strong></div>
               </div>
             )}
-            {!gameOver && <p>Bloklarni tizib qatorlarni to'ldiring, coin yig'ing!</p>}
+            {!gameOver && <p>{T('Bloklarni tizib qatorlarni to\'ldiring, coin yig\'ing!')}</p>}
             <button className="game-btn" onClick={startGame}>
-              {gameOver ? "рџ”„ Qayta boshlash" : "рџљЂ Boshlash"}
+              {gameOver ? T('🔄 Qayta boshlash') : T('🚀 Boshlash')}
             </button>
           </div>
         )}

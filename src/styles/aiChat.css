@@ -276,3 +276,66 @@
   }
   .ai-chat-toggle svg { width: 20px; height: 20px; }
 }
+
+/* ---------- Tezkor savollar ---------- */
+.ai-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.ai-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border: 1px solid rgba(var(--cyan-rgb), 0.35);
+  border-radius: 999px;
+  background: rgba(var(--cyan-rgb), 0.06);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  cursor: pointer;
+}
+.ai-chip:hover { background: rgba(var(--cyan-rgb), 0.14); }
+.ai-chip--accent { border-color: var(--cyan); color: var(--cyan); font-weight: 700; }
+
+/* ---------- "Yozmoqda" nuqtalari ---------- */
+.ai-typing { display: inline-flex; gap: 4px; align-items: center; min-height: 20px; }
+.ai-typing span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--textMuted);
+  animation: ai-dot 1.2s infinite ease-in-out;
+}
+.ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+.ai-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes ai-dot { 0%, 80%, 100% { opacity: 0.3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+
+/* ---------- AI javobidagi markdown (yordam chati va ZUMO AI) ---------- */
+.ai-md { line-height: 1.55; overflow-wrap: anywhere; }
+.ai-md > :first-child { margin-top: 0; }
+.ai-md > :last-child { margin-bottom: 0; }
+.ai-md p { margin: 0 0 8px; }
+.ai-md h1, .ai-md h2, .ai-md h3, .ai-md h4 { margin: 12px 0 6px; font-size: 1.02em; font-weight: 800; }
+.ai-md ul, .ai-md ol { margin: 4px 0 8px; padding-left: 20px; }
+.ai-md ul { list-style: disc; }
+.ai-md ol { list-style: decimal; }
+.ai-md li { margin: 2px 0; }
+.ai-md a { color: var(--cyan); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.ai-md code {
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(var(--text-rgb), 0.08);
+  font-size: 0.9em;
+}
+.ai-md pre {
+  margin: 8px 0;
+  padding: 10px 12px;
+  overflow-x: auto;
+  border-radius: 10px;
+  background: rgba(var(--text-rgb), 0.06);
+}
+.ai-md pre code { padding: 0; background: none; }
+.ai-md blockquote { margin: 8px 0; padding-left: 10px; border-left: 3px solid rgba(var(--cyan-rgb), 0.5); color: var(--textSoft); }
+.ai-md-table { margin: 8px 0; overflow-x: auto; }
+.ai-md table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+.ai-md th, .ai-md td { padding: 6px 8px; border: 1px solid rgba(var(--text-rgb), 0.12); text-align: left; vertical-align: top; }
+.ai-md th { background: rgba(var(--text-rgb), 0.05); font-weight: 700; }

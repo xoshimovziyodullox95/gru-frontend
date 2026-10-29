@@ -17,8 +17,8 @@
 }
 
 body {
-  background: radial-gradient(circle at 30% 20%, #0F1A3A, var(--dark-bg));
-  color: #F0F3FF;
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
 }

@@ -6,8 +6,10 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { X, Star, Loader2 } from 'lucide-react';
 
+import { serviceLabel, formatSum } from '../utils/i18nHelpers';
 import '../../styles/requestTracker.css';
 
 export default function IncomingOfferModal({
@@ -19,12 +21,13 @@ export default function IncomingOfferModal({
   onView,
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [accepting, setAccepting] = useState(false);
 
   if (!isOpen || !offer) return null;
 
   const provider = offer.provider || {};
-  const name = provider.name || 'Usta';
+  const name = provider.name || t('activeOrder.pro', 'Usta');
 
   const handleView = () => {
     onClose?.();
@@ -48,12 +51,12 @@ export default function IncomingOfferModal({
           <span className="rt-grabber" aria-hidden="true" />
 
           <div className="rt-status">
-            <span className="rt-status__eyebrow">Yangi taklif</span>
+            <span className="rt-status__eyebrow">{t('incomingOffer.eyebrow', 'Yangi taklif')}</span>
             <h2 className="rt-status__title">{name}</h2>
-            {request?.category && <p className="rt-status__sub">{request.category}</p>}
+            {request?.category && <p className="rt-status__sub">{serviceLabel(request.category)}</p>}
           </div>
 
-          <button type="button" className="rt-map__close" onClick={onClose} aria-label="Yopish">
+          <button type="button" className="rt-map__close" onClick={onClose} aria-label={t('common.close', 'Yopish')}>
             <X size={20} />
           </button>
 
@@ -71,15 +74,15 @@ export default function IncomingOfferModal({
                       <em>({provider.ratingsCount})</em>
                     </span>
                   ) : (
-                    <span className="rt-rating rt-rating--new">yangi</span>
+                    <span className="rt-rating rt-rating--new">{t('common.new', 'yangi')}</span>
                   )}
-                  <span>· {offer.arrivalMinutes || 30} daq</span>
+                  <span>· {offer.arrivalMinutes || 30} {t('common.min', 'daq')}</span>
                 </span>
                 {offer.message && <span className="rt-row__msg">{offer.message}</span>}
               </span>
               <span className="rt-row__price">
-                {Number(offer.price || 0).toLocaleString('uz-UZ')}
-                <small>so‘m</small>
+                {formatSum(offer.price)}
+                <small>{t('common.sum', 'so‘m')}</small>
               </span>
             </div>
           </div>
@@ -87,10 +90,10 @@ export default function IncomingOfferModal({
           <footer className="rt-foot">
             <button type="button" className="rt-btn rt-btn--primary" onClick={handleAccept} disabled={accepting}>
               {accepting ? <Loader2 size={18} className="rt-spin" /> : null}
-              Tanlash · {Number(offer.price || 0).toLocaleString('uz-UZ')} so‘m
+              {t('incomingOffer.choose', 'Tanlash · {{price}} so‘m', { price: formatSum(offer.price) })}
             </button>
             <button type="button" className="rt-btn rt-btn--text" onClick={handleView}>
-              Barcha takliflarni ko‘rish
+              {t('incomingOffer.all', 'Barcha takliflarni ko‘rish')}
             </button>
           </footer>
         </div>

@@ -1,0 +1,177 @@
+/* ============================================================
+   SHARHLAR (Uzum uslubida) — ReviewsSection, ReviewCard, ReviewForm, ReviewsPage
+   ============================================================ */
+
+.rv-muted { color: rgba(var(--text-rgb), 0.62); }
+
+/* ---------- Yulduzlar ---------- */
+.rv-stars { display: inline-flex; gap: 2px; color: rgba(var(--text-rgb), 0.22); vertical-align: middle; }
+.rv-stars svg { fill: currentColor; }
+.rv-stars .is-on { color: #FFB800; }
+.rv-stars--input { gap: 6px; }
+.rv-stars--input button { padding: 2px; border: 0; background: none; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.rv-stars--input button:active { transform: scale(0.9); }
+
+/* ---------- Tugmalar ---------- */
+.rv-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 46px; padding: 0 18px;
+  border: 0; border-radius: 14px;
+  font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+}
+.rv-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.rv-btn--primary { background: var(--cyan); color: var(--on-accent, #fff); }
+.rv-btn--ghost { border: 1px solid rgba(var(--cyan-rgb), 0.35); background: rgba(var(--cyan-rgb), 0.06); color: var(--cyan); }
+.rv-btn--block { width: 100%; }
+.rv-icon-btn {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: 38px; height: 38px; padding: 0;
+  border: 1px solid var(--border); border-radius: 50%;
+  background: transparent; color: var(--text); cursor: pointer;
+}
+.rv-link { display: inline-flex; align-items: center; gap: 2px; padding: 0; border: 0; background: none; color: var(--cyan); font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+.rv-spin { animation: rv-spin 0.8s linear infinite; }
+@keyframes rv-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Detail sahifadagi blok ---------- */
+.rv-section-block {
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--border); border-radius: 20px;
+  background: var(--surface);
+}
+.rv-block-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rv-block-head h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text); }
+.rv-block-head h3 span { padding: 2px 9px; border-radius: 99px; background: rgba(var(--cyan-rgb), 0.12); color: var(--cyan); font-size: 0.8rem; }
+
+/* O'rtacha baho + taqsimot */
+.rv-summary { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
+.rv-summary__score { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 92px; }
+.rv-summary__score strong { font-size: 2.6rem; line-height: 1; color: var(--text); }
+.rv-summary__score span { font-size: 0.78rem; color: rgba(var(--text-rgb), 0.6); }
+.rv-summary__bars { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.rv-bar { display: grid; grid-template-columns: 34px 1fr 28px; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(var(--text-rgb), 0.7); }
+.rv-bar__label { display: inline-flex; align-items: center; gap: 2px; }
+.rv-bar__label svg { color: #FFB800; fill: currentColor; }
+.rv-bar__track { height: 7px; border-radius: 99px; background: rgba(var(--text-rgb), 0.1); overflow: hidden; }
+.rv-bar__track i { display: block; height: 100%; border-radius: inherit; background: #FFB800; }
+.rv-bar__count { text-align: right; }
+
+/* Xaridorlar rasmlari lentasi */
+.rv-photo-strip { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -2px; padding: 2px; }
+.rv-photo-strip::-webkit-scrollbar { display: none; }
+.rv-photo-strip button { flex: 0 0 72px; height: 72px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; cursor: pointer; background: rgba(var(--text-rgb), 0.06); }
+.rv-photo-strip img { width: 100%; height: 100%; object-fit: cover; }
+
+/* 3 ta sharh — telefonda gorizontal aylantiriladi */
+.rv-carousel { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 82%); gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 2px; }
+.rv-carousel::-webkit-scrollbar { display: none; }
+.rv-carousel > * { scroll-snap-align: start; }
+@media (min-width: 900px) { .rv-carousel { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; } }
+
+.rv-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 10px; text-align: center; color: rgba(var(--text-rgb), 0.65); }
+.rv-empty svg { color: #FFB800; }
+.rv-empty strong { color: var(--text); font-size: 1rem; }
+.rv-empty p { margin: 0; font-size: 0.88rem; line-height: 1.5; }
+.rv-hint { margin: -4px 0 0; text-align: center; font-size: 0.82rem; color: rgba(var(--text-rgb), 0.55); }
+
+/* ---------- Sharh kartochkasi ---------- */
+.rv-card {
+  display: flex; flex-direction: column; gap: 10px; min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border); border-radius: 16px;
+  background: var(--bg);
+}
+.rv-card__head { display: flex; align-items: center; gap: 10px; }
+.rv-card__avatar { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; object-fit: cover; }
+.rv-card__avatar--letter { display: grid; place-items: center; background: linear-gradient(140deg, #05c8d4, #087ce1); color: #fff; font-weight: 800; }
+.rv-card__who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.rv-card__who strong { overflow: hidden; color: var(--text); font-size: 0.92rem; text-overflow: ellipsis; white-space: nowrap; }
+.rv-card__who span { color: rgba(var(--text-rgb), 0.55); font-size: 0.76rem; }
+.rv-card__rating { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.rv-verified { display: inline-flex; align-items: center; gap: 4px; color: #16A34A; font-size: 0.76rem; font-weight: 700; }
+.rv-card__body { display: flex; flex-direction: column; gap: 8px; }
+.rv-card__body.is-clamped { max-height: 7.6em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 60%, transparent); mask-image: linear-gradient(#000 60%, transparent); }
+.rv-section { display: flex; flex-direction: column; gap: 2px; margin: 0; font-size: 0.9rem; line-height: 1.45; color: var(--text); overflow-wrap: anywhere; }
+.rv-section b { font-size: 0.78rem; color: rgba(var(--text-rgb), 0.6); }
+.rv-section--pros b { color: #16A34A; }
+.rv-section--cons b { color: #E5484D; }
+.rv-more { align-self: flex-start; padding: 0; border: 0; background: none; color: var(--cyan); font: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+.rv-card__photos { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.rv-card__photos button { flex: 0 0 64px; height: 64px; padding: 0; border: 0; border-radius: 10px; overflow: hidden; cursor: pointer; }
+.rv-card__photos img { width: 100%; height: 100%; object-fit: cover; }
+.rv-card--compact .rv-card__body.is-clamped { max-height: 5.2em; }
+.rv-reply { display: flex; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgba(var(--cyan-rgb), 0.08); color: var(--cyan); }
+.rv-reply div { min-width: 0; }
+.rv-reply b { font-size: 0.78rem; }
+.rv-reply p { margin: 2px 0 0; color: var(--text); font-size: 0.86rem; line-height: 1.45; overflow-wrap: anywhere; }
+.rv-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rv-helpful { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 99px; background: transparent; color: rgba(var(--text-rgb), 0.7); font: inherit; font-size: 0.8rem; cursor: pointer; }
+.rv-helpful.is-on { border-color: rgba(var(--cyan-rgb), 0.5); background: rgba(var(--cyan-rgb), 0.1); color: var(--cyan); }
+.rv-reply-form { display: flex; flex-direction: column; gap: 8px; }
+.rv-reply-form textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; resize: vertical; }
+.rv-reply-form div { display: flex; justify-content: flex-end; gap: 8px; }
+.rv-reply-form .rv-btn { min-height: 38px; }
+
+/* ---------- Rasm ko'ruvchi ---------- */
+.rv-viewer { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; background: rgba(0, 0, 0, 0.92); }
+.rv-viewer img { max-width: 100vw; max-height: 86vh; object-fit: contain; }
+.rv-viewer__close { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; display: grid; place-items: center; width: 42px; height: 42px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer; }
+.rv-viewer__nav { position: absolute; top: 50%; display: grid; place-items: center; width: 44px; height: 44px; margin-top: -22px; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer; }
+.rv-viewer__nav--prev { left: 10px; }
+.rv-viewer__nav--next { right: 10px; }
+.rv-viewer__count { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); color: #fff; font-size: 0.85rem; }
+
+/* ---------- Sharh yozish oynasi ---------- */
+.rv-sheet { position: fixed; inset: 0; z-index: 1900; display: flex; align-items: flex-end; justify-content: center; background: rgba(4, 12, 26, 0.55); }
+.rv-sheet__panel {
+  display: flex; flex-direction: column;
+  width: min(100%, 560px); max-height: 92vh;
+  border-radius: 22px 22px 0 0;
+  background: var(--surface); color: var(--text);
+  animation: rv-up 0.25s ease-out;
+}
+@keyframes rv-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.rv-sheet__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 18px 18px 10px; }
+.rv-sheet__head h3 { margin: 0; font-size: 1.15rem; }
+.rv-sheet__head p { margin: 3px 0 0; color: rgba(var(--text-rgb), 0.6); font-size: 0.85rem; }
+.rv-sheet__body { display: flex; flex-direction: column; gap: 14px; padding: 4px 18px 12px; overflow-y: auto; }
+.rv-sheet__foot { padding: 12px 18px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); }
+.rv-form-rating { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0 4px; }
+.rv-form-rating > span:last-child { color: rgba(var(--text-rgb), 0.65); font-size: 0.9rem; font-weight: 600; }
+.rv-field { display: flex; flex-direction: column; gap: 6px; }
+.rv-field > span { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: rgba(var(--text-rgb), 0.75); }
+.rv-field small { font-weight: 500; color: rgba(var(--text-rgb), 0.5); }
+.rv-field textarea { width: 100%; padding: 11px 13px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg); color: var(--text); font: inherit; font-size: 0.95rem; resize: vertical; }
+.rv-field textarea:focus { outline: none; border-color: var(--cyan); }
+.rv-photo-pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.rv-photo-pick__item, .rv-photo-pick__add { position: relative; width: 68px; height: 68px; border-radius: 12px; overflow: hidden; }
+.rv-photo-pick__item img { width: 100%; height: 100%; object-fit: cover; }
+.rv-photo-pick__item button { position: absolute; top: 3px; right: 3px; display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 50%; background: rgba(0, 0, 0, 0.6); color: #fff; cursor: pointer; }
+.rv-photo-pick__add { display: grid; place-items: center; border: 1.5px dashed rgba(var(--cyan-rgb), 0.5); color: var(--cyan); cursor: pointer; }
+
+/* ---------- Barcha sharhlar sahifasi ---------- */
+.rv-page { min-height: 100vh; background: var(--bg); color: var(--text); padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+.rv-page__top {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.rv-page__top h1 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+.rv-page__top p { margin: 1px 0 0; overflow: hidden; color: rgba(var(--text-rgb), 0.6); font-size: 0.82rem; text-overflow: ellipsis; white-space: nowrap; max-width: 70vw; }
+.rv-page__wrap { display: flex; flex-direction: column; gap: 14px; max-width: 760px; margin: 0 auto; padding: 16px; }
+.rv-page__wrap > .rv-summary { padding: 16px; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); }
+.rv-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+.rv-chips::-webkit-scrollbar { display: none; }
+.rv-chip { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; padding: 8px 14px; border: 1px solid var(--border); border-radius: 99px; background: var(--surface); color: var(--text); font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.rv-chip svg { color: #FFB800; fill: currentColor; }
+.rv-chip.is-on { border-color: var(--cyan); background: rgba(var(--cyan-rgb), 0.12); color: var(--cyan); }
+.rv-sort { display: flex; align-items: center; justify-content: flex-end; gap: 8px; font-size: 0.85rem; color: rgba(var(--text-rgb), 0.65); }
+.rv-sort select { padding: 7px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); color: var(--text); font: inherit; }
+.rv-list { display: flex; flex-direction: column; gap: 10px; }
+.rv-list .rv-card { background: var(--surface); }
+.rv-loading { display: grid; place-items: center; padding: 18px; color: var(--cyan); }
+.rv-page__cta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: var(--bg); }
+.rv-page__cta .rv-btn { max-width: 728px; margin: 0 auto; display: flex; }

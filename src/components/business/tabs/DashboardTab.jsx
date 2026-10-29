@@ -3,6 +3,7 @@ import { AlertTriangle, TrendingUp, TrendingDown, Wallet, Users, Package } from 
 import { useBusiness } from '../context/BusinessContext';
 import { getPnL, getLowStock, getDebtors } from '../../services/business';
 
+import { T } from '../../utils/T';
 function StatCard({ icon: Icon, label, value, badgeClass }) {
   return (
     <div className="bk-stat-card">
@@ -49,7 +50,7 @@ export default function DashboardTab() {
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) return <div className="bk-empty">Yuklanmoqda...</div>;
+  if (loading) return <div className="bk-empty">{T('Yuklanmoqda...')}</div>;
 
   const totalDebt = debtors.reduce((sum, d) => sum + d.totalDebt, 0);
 
@@ -57,28 +58,28 @@ export default function DashboardTab() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
       {canSeeFinance && pnl && (
         <div className="bk-stat-grid">
-          <StatCard icon={TrendingUp} label="Joriy oy sotuvlari" value={`${pnl.totalRevenue.toLocaleString()} so'm`} badgeClass="cyan" />
+          <StatCard icon={TrendingUp} label={T('Joriy oy sotuvlari')} value={`${pnl.totalRevenue.toLocaleString()} ${T('so‘m')}`} badgeClass="cyan" />
           <StatCard
             icon={pnl.netProfit >= 0 ? TrendingUp : TrendingDown}
-            label="Sof foyda"
-            value={`${pnl.netProfit.toLocaleString()} so'm`}
+            label={T('Sof foyda')}
+            value={`${pnl.netProfit.toLocaleString()} ${T('so‘m')}`}
             badgeClass={pnl.netProfit >= 0 ? 'green' : 'red'}
           />
-          <StatCard icon={Wallet} label="Qarzdorlik (nasiya)" value={`${totalDebt.toLocaleString()} so'm`} badgeClass="amber" />
-          <StatCard icon={Package} label="Kam qolgan mahsulotlar" value={lowStock.length} badgeClass="red" />
+          <StatCard icon={Wallet} label={T('Qarzdorlik (nasiya)')} value={`${totalDebt.toLocaleString()} ${T('so‘m')}`} badgeClass="amber" />
+          <StatCard icon={Package} label={T('Kam qolgan mahsulotlar')} value={lowStock.length} badgeClass="red" />
         </div>
       )}
 
       <div>
         <h4 className="bk-section-title">
-          <AlertTriangle size={16} style={{ color: '#ffaa00' }} /> Kam qolgan mahsulotlar
+          <AlertTriangle size={16} style={{ color: '#ffaa00' }} /> {T('Kam qolgan mahsulotlar')}
         </h4>
         {lowStock.length === 0 ? (
-          <div className="bk-empty">Hammasi yetarli miqdorda</div>
+          <div className="bk-empty">{T('Hammasi yetarli miqdorda')}</div>
         ) : (
           <div className="bk-table-wrap">
             <table className="bk-table">
-              <thead><tr><th>Mahsulot</th><th>Joriy qoldiq</th><th>Minimal chegaraviy</th></tr></thead>
+              <thead><tr><th>{T('Mahsulot')}</th><th>{T('Joriy qoldiq')}</th><th>{T('Minimal chegaraviy')}</th></tr></thead>
               <tbody>
                 {lowStock.map(({ product, totalQty }) => (
                   <tr key={product._id}>
@@ -96,14 +97,14 @@ export default function DashboardTab() {
       {canSeeFinance && (
         <div>
           <h4 className="bk-section-title">
-            <Users size={16} /> Eng ko'p qarzdor mijozlar
+            <Users size={16} /> {T('Eng ko\'p qarzdor mijozlar')}
           </h4>
           {debtors.length === 0 ? (
-            <div className="bk-empty">Qarzdorlar yo'q</div>
+            <div className="bk-empty">{T('Qarzdorlar yo\'q')}</div>
           ) : (
             <div className="bk-table-wrap">
               <table className="bk-table">
-                <thead><tr><th>Mijoz</th><th>Qarz</th></tr></thead>
+                <thead><tr><th>{T('Mijoz')}</th><th>{T('Qarz')}</th></tr></thead>
                 <tbody>
                   {debtors.slice(0, 5).map((d) => (
                     <tr key={d._id}>

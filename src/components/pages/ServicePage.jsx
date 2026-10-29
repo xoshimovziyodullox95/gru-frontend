@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { getServiceProviders } from '../services/serviceProviders';
 import ServiceProviderCard from '../marketplace/ServiceProviderCard';
+import { useUrlParam, useUrlFlag, useScrollRestore } from '../hooks/useUrlState';
 import '../../styles/servicePage.css'
 
 const categoryNames = {
@@ -18,6 +19,7 @@ const categoryNames = {
   'internet': 'Internet',
 };
 
+import { T } from '../utils/T';
 function SkeletonCard() {
   return (
     <div className="sp-skeleton">
@@ -37,10 +39,12 @@ export default function ServicePage() {
   const [loadedServices, setLoadedServices] = useState({ slug: null, providers: [] });
   const providers = loadedServices.slug === slug ? loadedServices.providers : [];
   const loading = loadedServices.slug !== slug;
-  const [query, setQuery] = useState('');
-  const [filterTop, setFilterTop] = useState(false);
-  const [filterVerified, setFilterVerified] = useState(false);
-  const [sort, setSort] = useState('rating');
+  // Filtrlar URL'da — ustaning sahifasidan orqaga qaytganda saqlanib qoladi
+  const [query, setQuery] = useUrlParam('q');
+  const [filterTop, setFilterTop] = useUrlFlag('top');
+  const [filterVerified, setFilterVerified] = useUrlFlag('verified');
+  const [sort, setSort] = useUrlParam('sort', 'rating');
+  useScrollRestore(!loading);
 
   useEffect(() => {
     let isCurrent = true;
@@ -85,13 +89,13 @@ export default function ServicePage() {
         <div className="sp-header">
           <button className="sp-back-btn" onClick={() => safeGoBack(navigate)}>
             <ArrowLeft size={16} />
-            Orqaga
+            {T('Orqaga')}
           </button>
 
           <div className="sp-title-row">
             <h1 className="sp-title">{categoryNames[slug] || slug}</h1>
             {!loading && (
-              <span className="sp-count">{providers.length} ta xizmat</span>
+              <span className="sp-count">{providers.length} {T('ta xizmat')}</span>
             )}
           </div>
 
@@ -101,7 +105,7 @@ export default function ServicePage() {
               <input
                 className="sp-search"
                 type="text"
-                placeholder="Xizmat yoki kompaniya qidiring..."
+                placeholder={T('Xizmat yoki kompaniya qidiring...')}
                 value={query}
                 onChange={e => setQuery(e.target.value)}
               />
@@ -112,7 +116,7 @@ export default function ServicePage() {
               onClick={() => setFilterTop(v => !v)}
             >
               <Flame size={14} />
-              Top
+              {T('Top')}
             </button>
 
             <button
@@ -120,7 +124,7 @@ export default function ServicePage() {
               onClick={() => setFilterVerified(v => !v)}
             >
               <ShieldCheck size={14} />
-              Tasdiqlangan
+              {T('Tasdiqlangan')}
             </button>
 
             <div className="sp-sort-wrap">
@@ -130,15 +134,15 @@ export default function ServicePage() {
                 value={sort}
                 onChange={e => setSort(e.target.value)}
               >
-                <option value="rating">Reyting</option>
-                <option value="name">Nom</option>
+                <option value="rating">{T('Reyting')}</option>
+                <option value="name">{T('Nom')}</option>
               </select>
             </div>
           </div>
 
           {!loading && (
             <p className="sp-results-label">
-              {filtered.length} ta natija ko'rsatilmoqda
+              {filtered.length} {T('ta natija ko\'rsatilmoqda')}
             </p>
           )}
         </div>
@@ -152,8 +156,8 @@ export default function ServicePage() {
         ) : filtered.length === 0 ? (
           <div className="sp-empty">
             <Search size={40} strokeWidth={1.2} />
-            <p>Hech narsa topilmadi</p>
-            <span>Qidiruvni yoki filtrlarni o'zgartiring</span>
+            <p>{T('Hech narsa topilmadi')}</p>
+            <span>{T('Qidiruvni yoki filtrlarni o\'zgartiring')}</span>
           </div>
         ) : (
           <div className="uc-grid">

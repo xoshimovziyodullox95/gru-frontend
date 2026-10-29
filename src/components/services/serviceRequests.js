@@ -95,3 +95,13 @@ export const respondPriceChange = (id, accept) =>
 
 export const getRequestHistory = (params = {}) =>
   api.get('/service-requests/history', { params });
+/* ============================================================
+   BAHO (mijoz, ish yakunlangach)
+   ============================================================ */
+
+export const submitServiceReview = (id, rating, comment = '') =>
+  api.post(`/service-requests/${id}/review`, { rating, comment });
+
+/* Usta to'g'ridan-to'g'ri buyurtmani qabul qila olmaydi */
+export const declineServiceRequest = (id, reason = '') =>
+  api.post(`/service-requests/${id}/decline`, { reason });

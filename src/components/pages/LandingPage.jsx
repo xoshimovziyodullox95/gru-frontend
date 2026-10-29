@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/landing.css';
 
+import { T } from '../utils/T';
 export default function LandingPage() {
   const navigate = useNavigate();
   const [animationPhase, setAnimationPhase] = useState('entering');
@@ -56,7 +57,7 @@ export default function LandingPage() {
       className={`gru-splash ${animationPhase}`}
       role="status"
       aria-live="polite"
-      aria-label="ZUMO yuklanmoqda"
+      aria-label={T('ZUMO yuklanmoqda')}
     >
       {/* Orqa fon effektlari */}
       <div className="gru-splash__background" aria-hidden="true">
@@ -69,37 +70,20 @@ export default function LandingPage() {
         <div className="gru-splash__logo-container">
           <div className="gru-splash__glow" aria-hidden="true" />
 
-          <h1 className="gru-splash__logo" aria-label="ZUMO">
-            <span
-              className="gru-splash__letter"
-              style={{ '--letter-delay': '0.25s' }}
-            >
-              Z
-            </span>
-
-            <span
-              className="gru-splash__letter"
-              style={{ '--letter-delay': '0.4s' }}
-            >
-              U
-            </span>
-
-            <span
-              className="gru-splash__letter"
-              style={{ '--letter-delay': '0.55s' }}
-            >
-              M
-            </span>
-
-            <span
-              className="gru-splash__letter"
-              style={{ '--letter-delay': '0.7s' }}
-            >
-              O
-            </span>
+          <img className="gru-splash__logo" src="/ZUMO.png" alt="" />
+          <h1 className="gru-splash__wordmark" aria-label="ZUMO">
+            {['Z', 'U', 'M', 'O'].map((letter, index) => (
+              <span
+                className="gru-splash__letter"
+                style={{ '--letter-delay': `${0.25 + index * 0.15}s` }}
+                key={letter}
+              >
+                {letter}
+              </span>
+            ))}
           </h1>
 
-          <p className="gru-splash__tagline">Yangi imkoniyat</p>
+          <p className="gru-splash__tagline">{T('Yangi imkoniyat')}</p>
         </div>
 
         {/* Yuklanish chizig'i */}

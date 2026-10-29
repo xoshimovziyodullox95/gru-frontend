@@ -33,7 +33,8 @@ import EmojiPicker from 'emoji-picker-react';
 import toast from 'react-hot-toast';
 import '../../styles/chat.css';
 
-const MEDIA_BASE = 'http://localhost:5000';
+import { T } from '../utils/T';
+import { getImageUrl } from '../utils/imageUrl';
 const LOCATION_PREFIX = 'LOC::';
 const REEL_PREFIX = 'REEL::';
 const LISTING_PREFIX = 'LISTING::';
@@ -62,10 +63,31 @@ function parseSharedListingMessage(text) {
   return {
     listingType: decode(parts[0]),
     url: decode(parts[1]),
-    title: decode(parts[2]) || 'E’lon',
+    title: decode(parts[2]) || T('E’lon'),
     thumbnail: decode(parts[3]),
     price: decode(parts[4]),
+    note: decode(parts[5]),
   };
+}
+
+function buildListingDraftMessage({ type, id, title, thumbnail, price, note }) {
+  const routeByType = {
+    equipment: 'equipment',
+    location: 'location',
+    serviceprovider: 'service-provider',
+  };
+  const route = routeByType[type];
+  if (!route || !id || !title) return '';
+  const parts = [type, `/${route}/${encodeURIComponent(id)}`, title, thumbnail, price, note];
+  return `${LISTING_PREFIX}${parts.map((part) => encodeURIComponent(part || '')).join('::')}`;
+}
+
+function setListingMessageNote(message, note) {
+  if (!isSharedListingMessage(message)) return message;
+  const parts = message.slice(LISTING_PREFIX.length).split('::');
+  while (parts.length < 5) parts.push('');
+  parts[5] = encodeURIComponent(note || '');
+  return `${LISTING_PREFIX}${parts.slice(0, 5).join('::')}::${parts[5]}`;
 }
 
 function parseReelMessage(text) {
@@ -82,7 +104,7 @@ function parseReelMessage(text) {
 
   return {
     url: parts[0] || '',
-    title: safeDecode(parts[1]) || 'Video',
+    title: safeDecode(parts[1]) || T('Video'),
     thumbnail: safeDecode(parts[2]) || '',
   };
 }
@@ -98,12 +120,12 @@ function toIdStr(value) {
 }
 
 function previewOf(msg) {
-  if (msg.mediaType === 'image') return '📷 Rasm yuborildi';
-  if (msg.mediaType === 'video') return '🎥 Video yuborildi';
+  if (msg.mediaType === 'image') return T('📷 Rasm yuborildi');
+  if (msg.mediaType === 'video') return T('🎥 Video yuborildi');
   if (isLocationMessage(msg.message)) return '📍 Joylashuv';
-  if (isReelMessage(msg.message)) return '🎬 Video ulashildi';
-  if (isSharedListingMessage(msg.message)) return `📦 E’lon: ${parseSharedListingMessage(msg.message).title}`;
-  return msg.message?.substring(0, 40) || 'Yangi xabar';
+  if (isReelMessage(msg.message)) return T('🎬 Video ulashildi');
+  if (isSharedListingMessage(msg.message)) return T('📦 E’lon: {{title}}', { title: parseSharedListingMessage(msg.message).title });
+  return msg.message?.substring(0, 40) || T('Yangi xabar');
 }
 
 /* ============================================================
@@ -170,7 +192,7 @@ function ReelMessageCard({ text }) {
         <strong>{title}</strong>
         <small className="tg-reel-card__url">{url}</small>
         <span className="tg-reel-card__open">
-          <ExternalLink size={12} /> Ochish
+          <ExternalLink size={12} /> {T('Ochish')}
         </span>
       </div>
     </div>
@@ -179,7 +201,7 @@ function ReelMessageCard({ text }) {
 
 function SharedListingMessageCard({ text }) {
   const navigate = useNavigate();
-  const { url, title, thumbnail, price, listingType } = parseSharedListingMessage(text);
+  const { url, title, thumbnail, price, listingType, note } = parseSharedListingMessage(text);
   const [thumbFailed, setThumbFailed] = useState(false);
   const openListing = (event) => {
     event.stopPropagation();
@@ -194,10 +216,11 @@ function SharedListingMessageCard({ text }) {
         <img src={thumbnail} alt="" onError={() => setThumbFailed(true)} />
       ) : <span className="tg-shared-listing-card__placeholder">📦</span>}
       <span className="tg-shared-listing-card__info">
-        <small>{listingType === 'serviceprovider' ? 'XIZMAT' : 'E’LON'}</small>
+        <small>{listingType === 'serviceprovider' ? 'XIZMAT' : T('E’LON')}</small>
         <strong>{title}</strong>
         {price && <span>{price}</span>}
-        <span className="tg-shared-listing-card__open"><ExternalLink size={12} /> E’lonni ko‘rish</span>
+        {note && <span className="tg-shared-listing-card__note">{note}</span>}
+        <span className="tg-shared-listing-card__open"><ExternalLink size={12} /> {T('E’lonni ko‘rish')}</span>
       </span>
     </button>
   );
@@ -213,6 +236,15 @@ export default function ChatPage() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const targetUserId = searchParams.get('userId');
+  const listingDraft = searchParams.get('draft') || '';
+  const listingAttachmentDraft = buildListingDraftMessage({
+    type: searchParams.get('listingType'),
+    id: searchParams.get('listingId'),
+    title: searchParams.get('listingTitle'),
+    thumbnail: searchParams.get('listingThumbnail'),
+    price: searchParams.get('listingPrice'),
+    note: listingDraft,
+  });
 
   const [currentUserId, setCurrentUserId] = useState('');
   useEffect(() => {
@@ -227,6 +259,7 @@ export default function ChatPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [pendingListingMessage, setPendingListingMessage] = useState(listingAttachmentDraft);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [socket, setSocket] = useState(null);
@@ -243,6 +276,10 @@ export default function ChatPage() {
   const [isMuted, setIsMuted] = useState(
     () => localStorage.getItem('chat_muted') === '1'
   );
+
+  useEffect(() => {
+    setPendingListingMessage(listingAttachmentDraft);
+  }, [listingAttachmentDraft]);
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -279,10 +316,10 @@ export default function ChatPage() {
     if (st.isOnline) return 'online';
     if (st.lastSeen) {
       const diff = Math.floor((Date.now() - new Date(st.lastSeen).getTime()) / 1000);
-      if (diff < 60) return 'hozirgina onlayn edi';
-      if (diff < 3600) return `${Math.floor(diff / 60)} daqiqa oldin onlayn edi`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)} soat oldin onlayn edi`;
-      return `oxirgi marta ${new Date(st.lastSeen).toLocaleDateString('uz-UZ')}`;
+      if (diff < 60) return T('hozirgina onlayn edi');
+      if (diff < 3600) return T('{{v}} daqiqa oldin onlayn edi', { v: Math.floor(diff / 60) });
+      if (diff < 86400) return T('{{v}} soat oldin onlayn edi', { v: Math.floor(diff / 3600) });
+      return T('oxirgi marta {{v}}', { v: new Date(st.lastSeen).toLocaleDateString('uz-UZ') });
     }
     return 'offline';
   };
@@ -553,7 +590,7 @@ export default function ChatPage() {
 
     setReplyTo(null);
     setEditingMessage(null);
-    setNewMessage('');
+    setNewMessage(listingDraft);
 
     fetchStatuses([activeChat.userId]);
 
@@ -568,7 +605,7 @@ export default function ChatPage() {
         if (hasUnread) markActiveRead(activeChat.userId);
       })
       .catch(console.error);
-  }, [activeChat, currentUserId, fetchStatuses, markActiveRead]);
+  }, [activeChat, currentUserId, fetchStatuses, markActiveRead, listingDraft]);
 
   useEffect(() => {
     const onVisible = () => {
@@ -734,15 +771,19 @@ export default function ChatPage() {
   const send = async () => {
     if (!newMessage.trim() || !activeChat) return;
     const msgText = newMessage.trim();
+    const messageText = pendingListingMessage
+      ? setListingMessageNote(pendingListingMessage, msgText)
+      : msgText;
     setNewMessage('');
     stopTyping();
 
     try {
-      const res = await sendMessage({ to: activeChat.userId, message: msgText });
+      const res = await sendMessage({ to: activeChat.userId, message: messageText });
       setMessages((prev) => [...prev, res.data]);
       bumpAfterSend(res.data);
+      setPendingListingMessage('');
     } catch (err) {
-      toast.error('Xabar yuborilmadi');
+      toast.error(T('Xabar yuborilmadi'));
       setNewMessage(msgText);
     }
   };
@@ -756,7 +797,7 @@ export default function ChatPage() {
       bumpAfterSend(res.data);
       setMediaPreview(null);
     } catch (err) {
-      toast.error('Media yuborilmadi');
+      toast.error(T('Media yuborilmadi'));
     } finally {
       setSendingMedia(false);
     }
@@ -772,7 +813,7 @@ export default function ChatPage() {
         setMessages((prev) => [...prev, res.data]);
         bumpAfterSend(res.data);
       } catch (err) {
-        toast.error('Media yuborilmadi');
+        toast.error(T('Media yuborilmadi'));
       }
     }
     setSendingMedia(false);
@@ -791,9 +832,9 @@ export default function ChatPage() {
             setMessages((prev) => [...prev, res.data]);
             bumpAfterSend(res.data);
           })
-          .catch(() => toast.error('Joylashuv yuborilmadi'));
+          .catch(() => toast.error(T('Joylashuv yuborilmadi')));
       },
-      () => toast.error('Joylashuv olinmadi')
+      () => toast.error(T('Joylashuv olinmadi'))
     );
   };
 
@@ -814,7 +855,7 @@ export default function ChatPage() {
       setNewMessage('');
       setReplyTo(null);
     } catch (err) {
-      toast.error('Xabar yuborilmadi');
+      toast.error(T('Xabar yuborilmadi'));
     }
   };
 
@@ -827,7 +868,7 @@ export default function ChatPage() {
     } else {
       navigator.clipboard.writeText(msg.message || '');
     }
-    toast.success('Nusxalandi');
+    toast.success(T('Nusxalandi'));
     setOpenMenuId(null);
   };
 
@@ -858,18 +899,18 @@ export default function ChatPage() {
       setEditingMessage(null);
       setNewMessage('');
     } catch (err) {
-      toast.error('Tahrirlanmadi');
+      toast.error(T('Tahrirlanmadi'));
     }
   };
 
   const handleDelete = async (msg) => {
     setOpenMenuId(null);
-    if (!window.confirm("O'chirishni tasdiqlaysizmi?")) return;
+    if (!window.confirm(T('O\'chirishni tasdiqlaysizmi?'))) return;
     try {
       await deleteMessage(msg._id);
       setMessages((prev) => prev.filter((m) => m._id !== msg._id));
     } catch (err) {
-      toast.error("O'chirilmadi");
+      toast.error(T('O\'chirilmadi'));
     }
   };
 
@@ -881,7 +922,7 @@ export default function ChatPage() {
     return (
       <div className="tg-loading">
         <Loader2 size={28} className="spin" />
-        <span>Yuklanmoqda...</span>
+        <span>{T('Yuklanmoqda...')}</span>
       </div>
     );
   }
@@ -898,16 +939,16 @@ export default function ChatPage() {
               type="button"
               className="tg-icon-btn"
               onClick={() => safeGoBack(navigate)}
-              aria-label="Orqaga"
+              aria-label={T('Orqaga')}
             >
               <ArrowLeft size={20} />
             </button>
-            <h2>Suhbatlar</h2>
+            <h2>{T('Suhbatlar')}</h2>
             <button
               type="button"
               className="tg-icon-btn"
               onClick={toggleMute}
-              aria-label={isMuted ? 'Ovozni yoqish' : "Ovozni o'chirish"}
+              aria-label={isMuted ? T('Ovozni yoqish') : "Ovozni o'chirish"}
             >
               {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
             </button>
@@ -917,7 +958,7 @@ export default function ChatPage() {
             <Search size={16} />
             <input
               type="text"
-              placeholder="Foydalanuvchi qidirish..."
+              placeholder={T('Foydalanuvchi qidirish...')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -937,7 +978,7 @@ export default function ChatPage() {
               filteredUsers.length === 0 ? (
                 <div className="tg-empty">
                   <Search size={32} />
-                  <span>Foydalanuvchi topilmadi</span>
+                  <span>{T('Foydalanuvchi topilmadi')}</span>
                 </div>
               ) : (
                 filteredUsers.map((u) => {
@@ -975,7 +1016,7 @@ export default function ChatPage() {
             ) : conversations.length === 0 ? (
               <div className="tg-empty">
                 <Inbox size={36} />
-                <span>Hozircha suhbat yo'q</span>
+                <span>{T('Hozircha suhbat yo\'q')}</span>
               </div>
             ) : (
               conversations.map((conv) => (
@@ -1009,13 +1050,13 @@ export default function ChatPage() {
                         <span className="tg-chatitem__last">
                           {isLocationMessage(conv.lastMessage) ? (
                             <>
-                              <MapPin size={12} /> Joylashuv
+                              <MapPin size={12} /> {T('Joylashuv')}
                             </>
                           ) : isSharedListingMessage(conv.lastMessage) ? (
-                            <><Package size={12} /> E’lon</>
+                            <><Package size={12} /> {T('E’lon')}</>
                           ) : isReelMessage(conv.lastMessage) ? (
                             <>
-                              <Film size={12} /> Video
+                              <Film size={12} /> {T('Video')}
                             </>
                           ) : (
                             conv.lastMessage?.substring(0, 40)
@@ -1042,7 +1083,7 @@ export default function ChatPage() {
                   type="button"
                   className="tg-icon-btn tg-back-mobile"
                   onClick={() => setActiveChat(null)}
-                  aria-label="Orqaga"
+                  aria-label={T('Orqaga')}
                 >
                   <ArrowLeft size={20} />
                 </button>
@@ -1057,7 +1098,7 @@ export default function ChatPage() {
                   <div className={`tg-header__status ${activeIsOnline ? 'online' : ''}`}>
                     {typingUsers[activeChat.userId] ? (
                       <span className="tg-typing">
-                        yozmoqda&nbsp;
+                        {T('yozmoqda')} 
                         <span></span>
                         <span></span>
                         <span></span>
@@ -1072,7 +1113,7 @@ export default function ChatPage() {
                   type="button"
                   className="tg-icon-btn"
                   onClick={toggleMute}
-                  aria-label={isMuted ? 'Ovozni yoqish' : "Ovozni o'chirish"}
+                  aria-label={isMuted ? T('Ovozni yoqish') : "Ovozni o'chirish"}
                 >
                   {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </button>
@@ -1085,7 +1126,7 @@ export default function ChatPage() {
                 {messages.length === 0 ? (
                   <div className="tg-empty">
                     <MessageSquare size={40} />
-                    <span>Hozircha xabarlar yo'q</span>
+                    <span>{T('Hozircha xabarlar yo\'q')}</span>
                   </div>
                 ) : (
                   messages.map((msg, i) => {
@@ -1130,17 +1171,17 @@ export default function ChatPage() {
                                 <div className="tg-reply-body">
                                   <span className="tg-reply-name">
                                     {toIdStr(msg.replyTo?.from) === currentUserId
-                                      ? 'Siz'
+                                      ? T('Siz')
                                       : activeChat.fullName}
                                   </span>
                                   <span className="tg-reply-text">
                                     {isSharedListingMessage(msg.replyTo?.message)
-                                      ? `📦 E’lon: ${parseSharedListingMessage(msg.replyTo.message).title}`
+                                      ? T('📦 E’lon: {{title}}', { title: parseSharedListingMessage(msg.replyTo.message).title })
                                       : isReelMessage(msg.replyTo?.message)
                                       ? '🎬 Video'
                                       : isLocationMessage(msg.replyTo?.message)
                                       ? '📍 Joylashuv'
-                                      : msg.replyTo?.message || 'Xabar'}
+                                      : msg.replyTo?.message || T('Xabar')}
                                   </span>
                                 </div>
                               </div>
@@ -1150,11 +1191,11 @@ export default function ChatPage() {
                               <div
                                 className="tg-media-wrap"
                                 onClick={() =>
-                                  setLightbox({ url: `${MEDIA_BASE}${msg.mediaUrl}`, type: 'image' })
+                                  setLightbox({ url: getImageUrl(msg.mediaUrl), type: 'image' })
                                 }
                               >
                                 <img
-                                  src={`${MEDIA_BASE}${msg.mediaUrl}`}
+                                  src={getImageUrl(msg.mediaUrl)}
                                   alt=""
                                   className="tg-media-img"
                                 />
@@ -1165,11 +1206,11 @@ export default function ChatPage() {
                               <div
                                 className="tg-media-wrap tg-media-video"
                                 onClick={() =>
-                                  setLightbox({ url: `${MEDIA_BASE}${msg.mediaUrl}`, type: 'video' })
+                                  setLightbox({ url: getImageUrl(msg.mediaUrl), type: 'video' })
                                 }
                               >
                                 <video
-                                  src={`${MEDIA_BASE}${msg.mediaUrl}`}
+                                  src={getImageUrl(msg.mediaUrl)}
                                   muted
                                   className="tg-media-img"
                                 />
@@ -1190,8 +1231,8 @@ export default function ChatPage() {
                                   <MapPin size={20} />
                                 </div>
                                 <div className="tg-location__text">
-                                  <strong>Joylashuv</strong>
-                                  <span>Xaritada ko'rish</span>
+                                  <strong>{T('Joylashuv')}</strong>
+                                  <span>{T('Xaritada ko\'rish')}</span>
                                 </div>
                               </a>
                             ) : isSharedListing ? (
@@ -1203,7 +1244,7 @@ export default function ChatPage() {
                             )}
 
                             <div className="tg-meta">
-                              {msg.edited && <span className="tg-edited">tahrirlandi</span>}
+                              {msg.edited && <span className="tg-edited">{T('tahrirlandi')}</span>}
                               <span className="tg-time">{formatTime(msg.createdAt)}</span>
                               {isSent && (
                                 <span className={`tg-check ${msg.isRead ? 'read' : ''}`}>
@@ -1224,22 +1265,22 @@ export default function ChatPage() {
                             {openMenuId === menuId && (
                               <div className="tg-msg-menu">
                                 <button onClick={() => handleReply(msg)}>
-                                  <Reply size={14} /> Javob berish
+                                  <Reply size={14} /> {T('Javob berish')}
                                 </button>
                                 {msg.message && !isLocation && (
                                   <button onClick={() => handleCopy(msg)}>
                                     <Copy size={14} />{' '}
-                                    {isReel ? 'Havolani nusxalash' : 'Nusxalash'}
+                                    {isReel ? T('Havolani nusxalash') : T('Nusxalash')}
                                   </button>
                                 )}
                                 {canEdit && (
                                   <button onClick={() => handleEditStart(msg)}>
-                                    <Pencil size={14} /> Tahrirlash
+                                    <Pencil size={14} /> {T('Tahrirlash')}
                                   </button>
                                 )}
                                 {isSent && (
                                   <button className="danger" onClick={() => handleDelete(msg)}>
-                                    <Trash2 size={14} /> O'chirish
+                                    <Trash2 size={14} /> {T('O\'chirish')}
                                   </button>
                                 )}
                               </div>
@@ -1257,7 +1298,7 @@ export default function ChatPage() {
                 <div className="tg-reply-bar tg-reply-bar--edit">
                   <Pencil size={16} />
                   <div className="tg-reply-bar__body">
-                    <span className="tg-reply-bar__label">Xabarni tahrirlash</span>
+                    <span className="tg-reply-bar__label">{T('Xabarni tahrirlash')}</span>
                     <span className="tg-reply-bar__text">
                       {editingMessage.message?.substring(0, 60)}
                     </span>
@@ -1272,10 +1313,10 @@ export default function ChatPage() {
                 <div className="tg-reply-bar">
                   <Reply size={16} />
                   <div className="tg-reply-bar__body">
-                    <span className="tg-reply-bar__label">Javob</span>
+                    <span className="tg-reply-bar__label">{T('Javob')}</span>
                     <span className="tg-reply-bar__text">
                       {isSharedListingMessage(replyTo.message)
-                        ? `📦 E’lon: ${parseSharedListingMessage(replyTo.message).title}`
+                        ? T('📦 E’lon: {{title}}', { title: parseSharedListingMessage(replyTo.message).title })
                         : isReelMessage(replyTo.message)
                         ? '🎬 Video'
                         : isLocationMessage(replyTo.message)
@@ -1303,7 +1344,7 @@ export default function ChatPage() {
                     <X size={18} />
                   </button>
                   {mediaPreview.type === 'image' ? (
-                    <img src={mediaPreview.url} alt="preview" />
+                    <img src={mediaPreview.url} alt="" />
                   ) : (
                     <video src={mediaPreview.url} controls />
                   )}
@@ -1313,7 +1354,21 @@ export default function ChatPage() {
                     onClick={handleSendMedia}
                     disabled={sendingMedia}
                   >
-                    {sendingMedia ? 'Yuborilmoqda...' : 'Yuborish'}
+                    {sendingMedia ? T('Yuborilmoqda...') : T('Yuborish')}
+                  </button>
+                </div>
+              )}
+
+              {pendingListingMessage && (
+                <div className="tg-pending-listing">
+                  <SharedListingMessageCard text={setListingMessageNote(pendingListingMessage, newMessage)} />
+                  <button
+                    type="button"
+                    className="tg-pending-listing__remove"
+                    aria-label={T('Olib tashlash')}
+                    onClick={() => setPendingListingMessage('')}
+                  >
+                    <X size={16} />
                   </button>
                 </div>
               )}
@@ -1332,7 +1387,7 @@ export default function ChatPage() {
                   type="button"
                   className="tg-input__icon"
                   onClick={() => fileInputRef.current?.click()}
-                  aria-label="Fayl"
+                  aria-label={T('Fayl')}
                 >
                   <Paperclip size={20} />
                 </button>
@@ -1341,7 +1396,7 @@ export default function ChatPage() {
                   type="button"
                   className="tg-input__icon"
                   onClick={sendLocation}
-                  aria-label="Joylashuv"
+                  aria-label={T('Joylashuv')}
                 >
                   <MapPin size={20} />
                 </button>
@@ -1352,10 +1407,10 @@ export default function ChatPage() {
                     type="text"
                     placeholder={
                       editingMessage
-                        ? 'Tahrirlash...'
+                        ? T('Tahrirlash...')
                         : replyTo
-                        ? 'Javob yozing...'
-                        : 'Xabar yozing...'
+                        ? T('Javob yozing...')
+                        : T('Xabar yozing...')
                     }
                     value={newMessage}
                     onChange={(e) => {
@@ -1376,7 +1431,7 @@ export default function ChatPage() {
                     type="button"
                     className="tg-input__emoji"
                     onClick={() => setShowEmoji(!showEmoji)}
-                    aria-label="Emoji"
+                    aria-label={T('Emoji')}
                   >
                     <Smile size={20} />
                   </button>
@@ -1399,7 +1454,7 @@ export default function ChatPage() {
                   className="tg-input__send"
                   onClick={editingMessage ? handleEditSave : replyTo ? sendReply : send}
                   disabled={!newMessage.trim()}
-                  aria-label="Yuborish"
+                  aria-label={T('Yuborish')}
                 >
                   {editingMessage ? <Check size={20} /> : <Send size={20} />}
                 </button>
@@ -1408,8 +1463,8 @@ export default function ChatPage() {
           ) : (
             <div className="tg-placeholder">
               <MessageSquare size={64} />
-              <h3>Suhbatni tanlang</h3>
-              <p>Xabar yozishni boshlash uchun chapdan suhbat tanlang</p>
+              <h3>{T('Suhbatni tanlang')}</h3>
+              <p>{T('Xabar yozishni boshlash uchun chapdan suhbat tanlang')}</p>
             </div>
           )}
         </main>

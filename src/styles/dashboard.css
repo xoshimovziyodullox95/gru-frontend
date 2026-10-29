@@ -293,7 +293,7 @@
   border: none;
   border-radius: 2rem;
   background: linear-gradient(135deg, #FFD700, #FFA500);
-  color: #0A1628;
+  color: var(--on-accent);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;

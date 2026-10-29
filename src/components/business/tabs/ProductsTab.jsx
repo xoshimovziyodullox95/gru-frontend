@@ -6,6 +6,7 @@ import { getProducts, createProduct, updateProduct, deleteProduct } from '../../
 import ImageRecognizeModal from './warehouse/Imagerecognizemodal.jsx'; // yo‘lni tekshiring
 import '../../../styles/productsTab.css';
 
+import { T } from '../../utils/T';
 const UNITS = ['dona', 'kg', 'litr', 'metr', 'quti', 'paket'];
 
 const EMPTY_FORM = {
@@ -34,7 +35,7 @@ function ProductFormModal({ initial, onClose, onSaved, businessId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.sellPrice) {
-      setError('Nomi va sotuv narxi majburiy');
+      setError(T('Nomi va sotuv narxi majburiy'));
       return;
     }
     setSaving(true);
@@ -56,7 +57,7 @@ function ProductFormModal({ initial, onClose, onSaved, businessId }) {
       }
       onSaved();
     } catch (err) {
-      setError(err.response?.data?.error || 'Xatolik yuz berdi');
+      setError(err.response?.data?.error || T('Xatolik yuz berdi'));
     } finally {
       setSaving(false);
     }
@@ -66,50 +67,50 @@ function ProductFormModal({ initial, onClose, onSaved, businessId }) {
     <div className="pt-modal-overlay" onClick={onClose}>
       <form className="pt-modal" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
         <div className="pt-modal-header">
-          <h3>{isEdit ? 'Mahsulotni tahrirlash' : 'Yangi mahsulot'}</h3>
+          <h3>{isEdit ? T('Mahsulotni tahrirlash') : T('Yangi mahsulot')}</h3>
           <button type="button" className="pt-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
 
         <div className="pt-form-grid">
           <label className="pt-field">
             <span>Nomi *</span>
-            <input name="name" value={form.name} onChange={handleChange} placeholder="Masalan: Pepsi 1.5L" required />
+            <input name="name" value={form.name} onChange={handleChange} placeholder={T('Masalan: Pepsi 1.5L')} required />
           </label>
 
           <label className="pt-field">
             <span>Shtrix-kod</span>
-            <input name="barcode" value={form.barcode} onChange={handleChange} placeholder="Ixtiyoriy" />
+            <input name="barcode" value={form.barcode} onChange={handleChange} placeholder={T('Ixtiyoriy')} />
           </label>
 
           <label className="pt-field">
-            <span>O'lchov birligi</span>
+            <span>{T('O\'lchov birligi')}</span>
             <select name="unit" value={form.unit} onChange={handleChange}>
               {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
             </select>
           </label>
 
           <label className="pt-field">
-            <span>Kategoriya</span>
-            <input name="category" value={form.category} onChange={handleChange} placeholder="Ixtiyoriy" />
+            <span>{T('Kategoriya')}</span>
+            <input name="category" value={form.category} onChange={handleChange} placeholder={T('Ixtiyoriy')} />
           </label>
 
           <label className="pt-field">
-            <span>Tannarx</span>
+            <span>{T('Tannarx')}</span>
             <input name="costPrice" type="number" min="0" value={form.costPrice} onChange={handleCostOrMarkupChange} placeholder="0" />
           </label>
 
           <label className="pt-field">
-            <span>Foiz qo'yish (%)</span>
+            <span>{T('Foiz qo\'yish (%)')}</span>
             <input name="markupPercent" type="number" min="0" value={form.markupPercent} onChange={handleCostOrMarkupChange} placeholder="Masalan: 20" />
           </label>
 
           <label className="pt-field">
-            <span>Sotuv narxi *</span>
+            <span>{T('Sotuv narxi *')}</span>
             <input name="sellPrice" type="number" min="0" value={form.sellPrice} onChange={handleChange} placeholder="0" required />
           </label>
 
           <label className="pt-field pt-field-full">
-            <span>Minimal qoldiq (ogohlantirish uchun)</span>
+            <span>{T('Minimal qoldiq (ogohlantirish uchun)')}</span>
             <input name="minStockThreshold" type="number" min="0" value={form.minStockThreshold} onChange={handleChange} placeholder="Masalan: 5" />
           </label>
         </div>
@@ -117,9 +118,9 @@ function ProductFormModal({ initial, onClose, onSaved, businessId }) {
         {error && <div className="pt-error">{error}</div>}
 
         <div className="pt-modal-actions">
-          <button type="button" onClick={onClose} className="pt-btn-secondary">Bekor qilish</button>
+          <button type="button" onClick={onClose} className="pt-btn-secondary">{T('Bekor qilish')}</button>
           <button type="submit" disabled={saving} className="pt-btn-primary">
-            {saving ? 'Saqlanmoqda...' : isEdit ? 'Saqlash' : 'Qo\'shish'}
+            {saving ? T('Saqlanmoqda...') : isEdit ? T('Saqlash') : T('Qo\'shish')}
           </button>
         </div>
       </form>
@@ -160,7 +161,7 @@ export default function ProductsTab() {
       await deleteProduct(activeBusiness._id, product._id);
       loadProducts();
     } catch (err) {
-      alert(err.response?.data?.error || 'Xatolik yuz berdi');
+      alert(err.response?.data?.error || T('Xatolik yuz berdi'));
     }
   };
 
@@ -170,7 +171,7 @@ export default function ProductsTab() {
         <div className="pt-search">
           <Search size={16} />
           <input
-            placeholder="Mahsulot qidirish..."
+            placeholder={T('Mahsulot qidirish...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -179,36 +180,36 @@ export default function ProductsTab() {
         <div style={{ display: 'flex', gap: 8 }}>
           <RoleGate roles={['admin', 'warehouse_worker']}>
             <button className="pt-btn-primary" onClick={() => setModalState('new')}>
-              <Plus size={16} /> Yangi mahsulot
+              <Plus size={16} /> {T('Yangi mahsulot')}
             </button>
           </RoleGate>
 
           {/* ===== RASM ORQALI QO'SHISH TUGMASI ===== */}
           <RoleGate roles={['admin', 'warehouse_worker']}>
             <button className="pt-btn-secondary" onClick={() => setShowImageRecognize(true)}>
-              <Camera size={16} /> Rasm orqali qo'shish
+              <Camera size={16} /> {T('Rasm orqali qo\'shish')}
             </button>
           </RoleGate>
         </div>
       </div>
 
       {loading ? (
-        <div className="pt-empty">Yuklanmoqda...</div>
+        <div className="pt-empty">{T('Yuklanmoqda...')}</div>
       ) : products.length === 0 ? (
         <div className="pt-empty">
-          {search ? 'Hech narsa topilmadi' : 'Hali mahsulot qo\'shilmagan'}
+          {search ? T('Hech narsa topilmadi') : T('Hali mahsulot qo\'shilmagan')}
         </div>
       ) : (
         <div className="pt-table-wrap">
           <table className="pt-table">
             <thead>
               <tr>
-                <th>Nomi</th>
+                <th>{T('Nomi')}</th>
                 <th>Shtrix-kod</th>
-                <th>Birlik</th>
-                <th>Tannarx</th>
-                <th>Sotuv narxi</th>
-                <th>Min. qoldiq</th>
+                <th>{T('Birlik')}</th>
+                <th>{T('Tannarx')}</th>
+                <th>{T('Sotuv narxi')}</th>
+                <th>{T('Min. qoldiq')}</th>
                 <th></th>
               </tr>
             </thead>

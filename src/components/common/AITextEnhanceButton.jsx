@@ -1,73 +1,73 @@
 // src/components/common/AITextEnhanceButton.jsx
 //
 // Foydalanish: <AITextEnhanceButton value={text} onChange={setText} />
-// Textarea/input ustiga, o'ng burchakka joylashtiriladi.
+// Textarea ustiga qo'yiladi — doim ko'rinib turadigan AI tugmalari qatori.
 
-import { useState, useRef, useEffect } from 'react';
-import { Sparkles, SpellCheck, Wand2, Combine, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Sparkles, SpellCheck, Wand2, Combine, Loader2, Undo2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../services/api';
 
-export default function AITextEnhanceButton({ value, onChange, disabled }) {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [loadingMode, setLoadingMode] = useState(null);
-  const wrapRef = useRef(null);
+import { T } from '../utils/T';
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+const ACTIONS = [
+  { mode: 'fix', icon: SpellCheck, label: T('Imloni tuzatish') },
+  { mode: 'expand', icon: Wand2, label: T('Uzaytirish') },
+  { mode: 'both', icon: Combine, label: T('Ikkalasi') },
+];
+
+export default function AITextEnhanceButton({ value, onChange, disabled }) {
+  const [loadingMode, setLoadingMode] = useState(null);
+  // AI natijasi yoqmasa — oldingi matnga qaytish uchun
+  const [previous, setPrevious] = useState(null);
 
   const handleEnhance = async (mode) => {
-    if (!value || !value.trim()) {
-      alert("Avval matn kiriting");
+    if (!value || value.trim().length < 5) {
+      toast(T('Avval bir-ikki gap yozing — AI uni tuzatib, chiroyli qilib beradi'));
       return;
     }
-    setLoading(true);
     setLoadingMode(mode);
     try {
       const res = await api.post('/ai/enhance-text', { text: value, mode });
+      setPrevious(value);
       onChange(res.data.enhancedText);
-      setOpen(false);
     } catch (err) {
-      alert("AI xatolik: " + (err.response?.data?.error || err.message));
+      toast.error(err.response?.data?.error || T('AI hozir javob bermadi, birozdan so‘ng urinib ko‘ring'));
     } finally {
-      setLoading(false);
       setLoadingMode(null);
     }
   };
 
-  return (
-    <div className="ai-enhance-wrap" ref={wrapRef}>
-      <button
-        type="button"
-        className={`ai-enhance-trigger ${open ? 'open' : ''}`}
-        onClick={() => setOpen(!open)}
-        disabled={disabled}
-        title="AI bilan yaxshilash"
-      >
-        <Sparkles size={15} />
-        <span>AI</span>
-      </button>
+  const handleUndo = () => {
+    onChange(previous);
+    setPrevious(null);
+  };
 
-      <div className={`ai-enhance-menu ${open ? 'ai-enhance-menu-open' : ''}`}>
-        <button type="button" onClick={() => handleEnhance('fix')} disabled={loading}>
-          {loading && loadingMode === 'fix' ? <Loader2 size={14} className="ai-spin" /> : <SpellCheck size={14} />}
-          Imloni tuzatish
-        </button>
-        <button type="button" onClick={() => handleEnhance('expand')} disabled={loading}>
-          {loading && loadingMode === 'expand' ? <Loader2 size={14} className="ai-spin" /> : <Wand2 size={14} />}
-          Batafsilroq qilish
-        </button>
-        <button type="button" onClick={() => handleEnhance('both')} disabled={loading}>
-          {loading && loadingMode === 'both' ? <Loader2 size={14} className="ai-spin" /> : <Combine size={14} />}
-          Ikkalasini ham
-        </button>
+  const busy = Boolean(loadingMode);
+
+  return (
+    <div className={`ai-bar ${busy ? 'is-busy' : ''}`}>
+      <span className="ai-bar__label">
+        <Sparkles size={14} /> {T('AI yordamchi')}
+      </span>
+      <div className="ai-bar__actions">
+        {ACTIONS.map(({ mode, icon: Icon, label }) => (
+          <button
+            key={mode}
+            type="button"
+            className={`ai-chip ${loadingMode === mode ? 'is-loading' : ''}`}
+            onClick={() => handleEnhance(mode)}
+            disabled={disabled || busy}
+          >
+            {loadingMode === mode ? <Loader2 size={14} className="ai-spin" /> : <Icon size={14} />}
+            {label}
+          </button>
+        ))}
+        {previous !== null && !busy && (
+          <button type="button" className="ai-chip ai-chip--undo" onClick={handleUndo}>
+            <Undo2 size={14} /> {T('Qaytarish')}
+          </button>
+        )}
       </div>
     </div>
   );

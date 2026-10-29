@@ -2,6 +2,7 @@
 import { Plus, Minus, Check } from 'lucide-react';
 import '../styles/CartStepper.css';
 
+import { T } from './utils/T';
 /**
  * Savat steppери.
  *
@@ -30,9 +31,9 @@ export default function CartStepper({ quantity = 0, onIncrement, onDecrement, ma
         type="button"
         className={`cart-toggle-btn cart-stepper--${size} ${added ? 'is-added' : ''}`}
         onClick={(e) => { stop(e); added ? onDecrement() : onIncrement(); }}
-        aria-label={added ? 'Savatdan olib tashlash' : "Savatga qo'shish"}
+        aria-label={added ? T('Savatdan olib tashlash') : T('Savatga qo\'shish')}
       >
-        {added ? <><Check size={14} /> Qo'shildi</> : <><Plus size={14} /> Qo'shish</>}
+        {added ? <><Check size={14} /> {T('Qo\'shildi')}</> : <><Plus size={14} /> {T('Qo\'shish')}</>}
       </button>
     );
   }
@@ -43,7 +44,7 @@ export default function CartStepper({ quantity = 0, onIncrement, onDecrement, ma
         type="button"
         className={`cart-stepper-add cart-stepper--${size}`}
         onClick={(e) => { stop(e); onIncrement(); }}
-        aria-label="Savatga qo'shish"
+        aria-label={T('Savatga qo\'shish')}
       >
         <Plus size={16} />
       </button>
@@ -58,7 +59,7 @@ export default function CartStepper({ quantity = 0, onIncrement, onDecrement, ma
         type="button"
         className="cart-stepper-btn"
         onClick={(e) => { stop(e); onDecrement(); }}
-        aria-label="Kamaytirish"
+        aria-label={T('Kamaytirish')}
       >
         <Minus size={14} />
       </button>
@@ -68,7 +69,7 @@ export default function CartStepper({ quantity = 0, onIncrement, onDecrement, ma
         className="cart-stepper-btn"
         disabled={reachedMax}
         onClick={(e) => { stop(e); if (!reachedMax) onIncrement(); }}
-        aria-label="Ko'paytirish"
+        aria-label={T('Ko\'paytirish')}
       >
         <Plus size={14} />
       </button>

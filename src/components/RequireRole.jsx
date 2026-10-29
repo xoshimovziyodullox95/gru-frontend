@@ -2,12 +2,13 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 
+import { T } from './utils/T';
 export default function RequireRole({ allowedRoles, children }) {
   const { user, loading, getUserRole } = useAuth();
   const location = useLocation();
 
   if (loading) {
-    return <div className="rr-loading">Yuklanmoqda...</div>;
+    return <div className="rr-loading">{T('Yuklanmoqda...')}</div>;
   }
 
   if (!user) {

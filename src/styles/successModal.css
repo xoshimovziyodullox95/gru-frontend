@@ -4,7 +4,7 @@
 .success-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(var(--surface-rgb), 0.6);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -22,7 +22,7 @@
   border: 1px solid var(--border);
   border-radius: 1.75rem;
   padding: 2.5rem 2.2rem;
-  box-shadow: 0 24px 60px var(--shadow, rgba(0,0,0,0.5));
+  box-shadow: 0 24px 60px var(--shadow, rgba(var(--surface-rgb), 0.5));
   animation: successPop 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   max-width: 320px;
   text-align: center;
@@ -60,7 +60,7 @@
 }
 
 .success-check-icon {
-  color: #ffffff;
+  color: var(--text);
   animation: successCheckIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 

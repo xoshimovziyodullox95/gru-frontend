@@ -2,8 +2,8 @@
 import {
   FiHeart, FiMail, FiPhone, FiMapPin,
   FiSend, FiInstagram, FiYoutube, FiLinkedin, FiGithub, FiTwitter,
-  FiArrowRight, FiHome, FiGrid, FiInfo, FiHelpCircle,
-  FiFileText, FiShield, FiPhoneCall, FiArrowUp
+  FiHome, FiGrid, FiInfo, FiHelpCircle,
+  FiFileText, FiShield, FiArrowUp
 } from 'react-icons/fi';
 import { FaApple, FaGooglePlay, FaTelegramPlane } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';   // <-- qo‘shildi
 import '../../styles/footer.css';
 
+import { T } from '../utils/T';
 export default function Footer() {
   const { t } = useTranslation();                // <-- i18next hook
   const currentYear = new Date().getFullYear();
@@ -39,18 +40,18 @@ export default function Footer() {
           <div className="footer-col">
             <div className="footer-brand">
               <span>ZUMO</span>
-              <span className="badge">Corp</span>
+              <span className="badge">{T('Corp')}</span>
             </div>
             <p className="footer-description">
               {t('footer.description')}
             </p>
             <div className="footer-socials">
-              <a href="#" aria-label="Telegram"><FaTelegramPlane size={18} /></a>
-              <a href="#" aria-label="Instagram"><FiInstagram size={18} /></a>
+              <a href="#" aria-label={T('Telegram')}><FaTelegramPlane size={18} /></a>
+              <a href="#" aria-label={T('Instagram')}><FiInstagram size={18} /></a>
               <a href="#" aria-label="YouTube"><FiYoutube size={18} /></a>
               <a href="#" aria-label="GitHub"><FiGithub size={18} /></a>
               <a href="#" aria-label="LinkedIn"><FiLinkedin size={18} /></a>
-              <a href="#" aria-label="Twitter"><FiTwitter size={18} /></a>
+              <a href="#" aria-label={T('Twitter')}><FiTwitter size={18} /></a>
             </div>
           </div>
 
@@ -61,7 +62,6 @@ export default function Footer() {
               <li><Link to="/home"><FiHome size={14} /> {t('footer.links.home')}</Link></li>
               <li><Link to="/marketplace"><FiGrid size={14} /> {t('footer.links.marketplace')}</Link></li>
               <li><Link to="/business-directions"><FiInfo size={14} /> {t('footer.links.directions', 'Biznes yo‘nalishlari')}</Link></li>
-              <li><Link to="/bank-services"><FiPhoneCall size={14} /> {t('footer.links.bank', 'Bank xizmatlari')}</Link></li>
               <li><Link to="/ai-assistant"><FiHelpCircle size={14} /> {t('footer.links.ai', 'AI yordamchi')}</Link></li>
             </ul>
           </div>
@@ -138,7 +138,7 @@ export default function Footer() {
       </div>
 
       {/* ===== YUQORIGA QAYTISH (position:fixed) ===== */}
-      <button className="footer-to-top" onClick={scrollToTop} aria-label={t('common.back') || 'Yuqoriga'}>
+      <button className="footer-to-top" onClick={scrollToTop} aria-label={t('common.back') || T('Yuqoriga')}>
         <FiArrowUp size={18} />
       </button>
     </footer>

@@ -11,6 +11,7 @@ import {
   Search,
   ArrowRight,
   Package,
+  LayoutGrid,
   TrendingUp,
   Wrench,
   Store,
@@ -18,7 +19,8 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
-import { getLevel1 } from '../services/categories';
+import { useProductCategories, categoryPath } from '../utils/productCategories';
+import ProductCategoryGrid from '../common/ProductCategoryGrid';
 import { getEquipment } from '../services/equipment';
 import { getLocations } from '../services/locations';
 import { getServiceProviders } from '../services/serviceProviders';
@@ -29,6 +31,7 @@ import MarketplaceReels from './MarketplaceReels';
 import SearchOverlay from '../common/SearchOverlay';
 import '../../styles/marketplaceHome.css';
 
+import { T } from '../utils/T';
 /* ============================================================
    YORDAMCHILAR
    ============================================================ */
@@ -46,39 +49,10 @@ function getResponseArray(response) {
   return candidates.find(Array.isArray) || [];
 }
 
-const CATEGORY_EMOJI = {
-  Agro: '🌱',
-  'Restoran/Kafe': '🍽️',
-  Klinika: '🏥',
-  Service: '🔧',
-  "Ta'lim": '🎓',
-  "Do'konlar": '🏪',
-  "Ko'ngilochar": '🎉',
-  'Yangi biznes': '💡',
-};
-
-const CATEGORY_COLORS = {
-  Agro: ['#2fd576', '#0a9a52'],
-  'Restoran/Kafe': ['#ff5c7a', '#e0264f'],
-  Klinika: ['#4b8dff', '#2a4fe0'],
-  Service: ['#22d3c5', '#0a8f8a'],
-  "Ta'lim": ['#a78bfa', '#6d3fe0'],
-  "Do'konlar": ['#ff8a2a', '#e8500a'],
-  "Ko'ngilochar": ['#ff5fc4', '#c21fa0'],
-  'Yangi biznes': ['#ffe14d', '#f5a300'],
-};
-
-const FALLBACK_COLORS = [
-  ['#7c86ff', '#4a3fe0'],
-  ['#a3e635', '#5fa30f'],
-  ['#38bdf8', '#0369a1'],
-  ['#94a3b8', '#475569'],
-];
-
 const ROLE_IMAGES = {
-  provider: '/images/service-human.png',
-  seller: '/images/seler-human.png',
-  business: '/images/biznes-human.png',
+  provider: '/images/service-human.webp',
+  seller: '/images/seler-human.webp',
+  business: '/images/biznes-human.webp',
 };
 
 const PRODUCTS_PREVIEW_LIMIT = 12;
@@ -135,7 +109,7 @@ function getOwnerName(owner) {
     owner?.full_name ||
     owner?.name ||
     owner?.email ||
-    'Foydalanuvchi'
+    T('Foydalanuvchi')
   );
 }
 
@@ -226,7 +200,7 @@ function formatProduct(item) {
   return {
     id,
     type: 'equipment',
-    title: item.title || item.name || 'Tovar',
+    title: item.title || item.name || T('Tovar'),
     image:
       item.images?.[0] ||
       item.image ||
@@ -238,6 +212,7 @@ function formatProduct(item) {
     isVerified: Boolean(item.isVerified || item.is_verified),
     maxQuantity:
       typeof item.stockQuantity === 'number' ? item.stockQuantity : undefined,
+    saleMode: item.saleMode,
   };
 }
 
@@ -245,7 +220,7 @@ function formatProduct(item) {
    ROLE CAROUSEL
    ============================================================ */
 
-function RoleCarousel() {
+export function RoleCarousel() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -396,12 +371,13 @@ function RoleCarousel() {
 
 export default function MarketplaceHome() {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   const userId = user?.id || user?._id || null;
 
-  const [categories, setCategories] = useState([]);
+  // Marketplace tovar kategoriyalari (OLX kabi)
+  const { categories } = useProductCategories();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -413,42 +389,6 @@ export default function MarketplaceHome() {
   /* ✅ HAMMA "Barchasi" va "Yana ko'rish" shu yo'lga olib boradi */
   const ALL_MARKETPLACE_PATH = '/marketplace/all';
 
-  /* ---------- Kategoriyalar ---------- */
-  useEffect(() => {
-    let mounted = true;
-
-    getLevel1()
-      .then((response) => {
-        if (!mounted) return;
-        const raw = getResponseArray(response);
-
-        const formatted = raw
-          .filter((item) => item?.key)
-          .map((item, index) => {
-            const colors =
-              CATEGORY_COLORS[item.key] ||
-              FALLBACK_COLORS[index % FALLBACK_COLORS.length];
-            return {
-              key: item.key,
-              name: t(`categories.${item.key}`, {
-                defaultValue: item.name || item.key,
-              }),
-              emoji: CATEGORY_EMOJI[item.key] || '📦',
-              colors,
-            };
-          });
-
-        setCategories(formatted);
-      })
-      .catch((error) => {
-        console.error('Kategoriyalar yuklanmadi:', error);
-        if (mounted) setCategories([]);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [t, i18n.resolvedLanguage]);
 
   /* ---------- Tovarlar + Reels ma'lumotlari ---------- */
   useEffect(() => {
@@ -498,14 +438,10 @@ export default function MarketplaceHome() {
     };
   }, []);
 
-  const visibleCategories = useMemo(
-    () => categories.slice(0, 8),
-    [categories]
-  );
 
   const searchSuggestions = useMemo(() => {
     const categorySuggestions = categories.map((category) => ({
-      id: category.key,
+      id: category.id,
       label: category.name,
       kind: 'category',
       hint: t('mkt.categories', 'Kategoriya'),
@@ -521,7 +457,7 @@ export default function MarketplaceHome() {
       if (!unique.has(key)) unique.set(key, item);
     });
     return [...unique.values()];
-  }, [categories, content, t, i18n.resolvedLanguage]);
+  }, [categories, content, t]);
 
   const reels = useMemo(
     () =>
@@ -571,6 +507,15 @@ export default function MarketplaceHome() {
             <ArrowRight size={17} />
           </button>
         </form>
+        <button
+          type="button"
+          className="mkt-catalog-shortcut"
+          onClick={() => navigate('/catalog')}
+          aria-label={t('Katalogni ochish', 'Katalogni ochish')}
+        >
+          <LayoutGrid size={18} />
+          <span>{t('Katalog', 'Katalog')}</span>
+        </button>
         <SearchOverlay
           isOpen={isSearchOpen}
           onClose={() => setIsSearchOpen(false)}
@@ -581,7 +526,7 @@ export default function MarketplaceHome() {
           suggestions={searchSuggestions}
           onSelectSuggestion={(suggestion) => {
             if (suggestion.kind === 'category') {
-              navigate(`${ALL_MARKETPLACE_PATH}?level1=${encodeURIComponent(suggestion.id)}`);
+              navigate(categoryPath(suggestion.id));
               return;
             }
             const query = suggestion.label.trim();
@@ -600,43 +545,15 @@ export default function MarketplaceHome() {
       <RoleCarousel />
 
       {/* ==================== KATEGORIYALAR ==================== */}
-      {visibleCategories.length > 0 && (
+      {categories.length > 0 && (
         <section className="mkt-block">
           <header className="mkt-block__head">
             <h2 className="mkt-block__title">
               {t('mkt.categories', 'Kategoriyalar')}
             </h2>
-            <button
-              type="button"
-              className="mkt-block__more"
-              onClick={() => navigate(ALL_MARKETPLACE_PATH)}
-            >
-              {t('mkt.all', 'Barchasi')}
-              <ArrowRight size={14} strokeWidth={2.4} />
-            </button>
           </header>
 
-          <div className="mkt-cat-grid">
-            {visibleCategories.map((cat) => (
-              <button
-                key={cat.key}
-                type="button"
-                className="mkt-cat"
-                style={{
-                  '--cat-from': cat.colors[0],
-                  '--cat-to': cat.colors[1],
-                }}
-                onClick={() =>
-                  navigate(`${ALL_MARKETPLACE_PATH}?level1=${encodeURIComponent(cat.key)}`)
-                }
-              >
-                <span className="mkt-cat__shape">
-                  <span className="mkt-cat__emoji">{cat.emoji}</span>
-                </span>
-                <span className="mkt-cat__name">{cat.name}</span>
-              </button>
-            ))}
-          </div>
+          <ProductCategoryGrid categories={categories} />
         </section>
       )}
 
@@ -689,6 +606,7 @@ export default function MarketplaceHome() {
                 isTop={item.isTop}
                 isVerified={item.isVerified}
                 maxQuantity={item.maxQuantity}
+                saleMode={item.saleMode}
               />
             ))}
           </div>

@@ -8,6 +8,7 @@ import {
   Menu,
   Plus,
   Search,
+  Settings,
   Sparkles,
   UserRound,
   Video,
@@ -15,15 +16,17 @@ import {
 import '../../styles/zumoQuickMenu.css';
 import { openZumoGuide } from './zumoGuideEvents.js';
 
+import { T } from '../utils/T';
 const ACTIONS = [
-  { label: 'Qidiruv va barcha e’lonlar', icon: Search, path: '/marketplace/all?openSearch=1' },
-  { label: 'E’lon joylash', icon: Plus, path: '/add-listing' },
-  { label: 'Video post qo‘shish', icon: Video, path: '/add-video' },
-  { label: 'ZUMO AI yordamchisi', icon: Sparkles, path: '/ai-assistant' },
-  { label: 'Saqlangan e’lonlar', icon: Heart, path: '/saved' },
-  { label: 'Bildirishnomalar', icon: Bell, path: '/notifications' },
-  { label: 'Profil sozlamalari', icon: UserRound, path: '/profile?settings=1' },
-  { label: 'ZUMO bilan tanishuv', icon: Sparkles, guide: true },
+  { label: T('Qidiruv va barcha e’lonlar'), icon: Search, path: '/marketplace/all?openSearch=1' },
+  { label: T('E’lon joylash'), icon: Plus, path: '/add-listing' },
+  { label: T('Video post qo‘shish'), icon: Video, path: '/add-video' },
+  { label: T('ZUMO AI yordamchisi'), icon: Sparkles, path: '/ai-assistant' },
+  { label: T('Saqlangan e’lonlar'), icon: Heart, path: '/saved' },
+  { label: T('Bildirishnomalar'), icon: Bell, path: '/notifications' },
+  { label: T('Profil'), icon: UserRound, path: '/profile' },
+  { label: T('Sozlamalar'), icon: Settings, path: '/settings' },
+  { label: T('ZUMO bilan tanishuv'), icon: Sparkles, guide: true },
 ];
 
 export default function ZumoQuickMenu({ isOpen, onToggle }) {
@@ -54,7 +57,7 @@ export default function ZumoQuickMenu({ isOpen, onToggle }) {
         type="button"
         className="zumo-topbar__menu"
         onClick={() => onToggle(!isOpen)}
-        aria-label="Tezkor amallar menyusi"
+        aria-label={T('Tezkor amallar menyusi')}
         aria-expanded={isOpen}
         aria-haspopup="menu"
       >
@@ -72,13 +75,13 @@ export default function ZumoQuickMenu({ isOpen, onToggle }) {
           <button
             type="button"
             className="zumo-quick-menu__scrim"
-            aria-label="Menyuni yopish"
+            aria-label={T('Menyuni yopish')}
             onClick={() => onToggle(false)}
           />
-          <nav className="zumo-quick-menu" role="menu" aria-label="Tezkor amallar">
+          <nav className="zumo-quick-menu" role="menu" aria-label={T('Tezkor amallar')}>
             <div className="zumo-quick-menu__heading">
-              <strong>Tezkor amallar</strong>
-              <span>Kerakli bo‘limni tanlang</span>
+              <strong>{T('Tezkor amallar')}</strong>
+              <span>{T('Kerakli bo‘limni tanlang')}</span>
             </div>
             {ACTIONS.map(({ label, icon: Icon, path, guide }) => (
               <button

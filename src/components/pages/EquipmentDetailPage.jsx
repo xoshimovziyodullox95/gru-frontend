@@ -1,42 +1,43 @@
 import { safeGoBack } from '../utils/navigation.js';
 import { recordRecentlyViewed } from '../utils/recentlyViewed.js';
+import { listingChatUrl } from '../utils/listingChatUrl.js';
 import useBodyScrollLock from '../../hooks/useBodyScrollLock.js';
 import ShareSheet from '../common/ShareSheet.jsx';
 // src/pages/EquipmentDetailPage.jsx
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getEquipmentById, rateEquipment, commentEquipment, replyEquipmentComment } from '../services/equipment';
+import { getEquipmentById } from '../services/equipment';
 import { useAuth } from '../context/AuthContext';
+import { useMyMongoId, sameId } from '../hooks/useMyMongoId';
 import { useCart } from '../hooks/useCart';
 import { getPosts } from '../services/videos';
 import { getImageUrl } from '../utils/imageUrl';
 import {
-  Phone, TrendingUp, ArrowLeft, ShieldCheck,
+  Phone, ArrowLeft, ShieldCheck,
   Award, Calendar, X,
   Ruler, Building2, User, Zap, FileText, Settings,
   Package, CalendarDays,
   ChevronLeft, ChevronRight, MessageCircle,
   Share2, Layers,
   Cpu, UtensilsCrossed, Sofa, Palette,
-  Maximize2, ShoppingCart, Check
+  ShoppingCart, Check
 } from 'lucide-react';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS, CategoryScale, LinearScale, PointElement,
-  LineElement, Title, Tooltip, Filler, Legend
-} from 'chart.js';
 import ReelsStrip from '../marketplace/MarketplaceReels';
+import EquipmentRelatedListings from '../marketplace/EquipmentRelatedListings.jsx';
 import { likePost, commentPost } from '../services/videos';
 import '../../styles/equipmentDetail.css';
 import '../../styles/equipmentDetailAttrs.css';
 import '../../styles/locationPage.css';
-import CelebrityMotivationCard from '../common/CelebrityMotivationCard';
 import { formatPrice } from '../utils/formatPrice';
-import RatingAndComments from '../common/RatingAndComments';
-import '../../styles/ratingAndComments.css';
+import DetailGallery from '../detail/DetailGallery';
+import RatingLink from '../detail/RatingLink';
+import ClampText from '../detail/ClampText';
+import Avatar from '../detail/Avatar';
+import ReviewsSection from '../reviews/ReviewsSection';
+import '../../styles/detailModern.css';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend);
+import { T } from '../utils/T';
 
 // ============================================================
 // MAHSULOT TURI META
@@ -119,13 +120,13 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 
   return (
     <div className="ImageViewerOverlay">
-      <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label="Yopish">
+      <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label={T('Yopish')}>
         <X size={22} />
       </button>
       {images.length > 1 && (
         <>
-          <button className="ImageViewerNav prev" onClick={goPrev} aria-label="Oldingi"><ChevronLeft size={26} /></button>
-          <button className="ImageViewerNav next" onClick={goNext} aria-label="Keyingi"><ChevronRight size={26} /></button>
+          <button className="ImageViewerNav prev" onClick={goPrev} aria-label={T('Oldingi')}><ChevronLeft size={26} /></button>
+          <button className="ImageViewerNav next" onClick={goNext} aria-label={T('Keyingi')}><ChevronRight size={26} /></button>
         </>
       )}
       <div className="ImageViewerScroll" onClick={onClose}>
@@ -155,53 +156,13 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 };
 
 // ============================================================
-// USER INFO CARD
-// ============================================================
-const UserInfoCard = ({ user, t }) => {
-  const navigate = useNavigate();
-  if (!user) return null;
-
-  const avatarUrl = user.avatar_url || (user.user_metadata?.avatar_url) ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || user.email || 'U')}&background=00E5FF&color=fff&rounded=true&size=60`;
-
-  const handleProfileClick = () => {
-    const userId = user._id || user.id;
-    if (userId) navigate(`/profile/${userId}`);
-  };
-
-  return (
-    <div className="user-info-card">
-      <h3 className="ModuleHeading"><User size={18} /> {t('equipment.owner')}</h3>
-      <div className="user-info clickable" onClick={handleProfileClick}>
-        <img src={avatarUrl} alt={user.full_name || user.email} className="user-avatar" onError={(e) => e.target.src = '/images/zumo-placeholder.svg'} />
-        <div className="user-details">
-          <p><strong>{user.full_name || t('equipment.fullName')}</strong></p>
-          <p className="user-email">{user.email}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ============================================================
-// ANALYTICS CARD
-// ============================================================
-const AnalyticsCard = ({ trafficData, chartOptions, t }) => {
-  return (
-    <div className="AnalyticsCard">
-      <h3 className="CardSmallTitle"><TrendingUp size={15} /> {t('equipment.analyticsTitle')}</h3>
-      <div className="ChartWrapper"><Line data={trafficData} options={chartOptions} /></div>
-    </div>
-  );
-};
-
-// ============================================================
 // ASOSIY KOMPONENT
 // ============================================================
 export default function EquipmentDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const myId = useMyMongoId();
   const { getQuantity, increment, removeItem } = useCart();
   const { t } = useTranslation();
   const [equipment, setEquipment] = useState(null);
@@ -214,10 +175,11 @@ export default function EquipmentDetailPage() {
   const [shareOpen, setShareOpen] = useState(false);
 
   // ===== SAVAT =====
-  const inCart = equipment ? getQuantity(equipment._id) > 0 : false;
+  const isStoreProduct = equipment?.saleMode !== 'classified';
+  const inCart = equipment && isStoreProduct ? getQuantity(equipment._id) > 0 : false;
 
   const handleCartClick = () => {
-    if (!equipment) return;
+    if (!equipment || !isStoreProduct) return;
     if (inCart) {
       removeItem(equipment._id);
     } else {
@@ -236,10 +198,16 @@ export default function EquipmentDetailPage() {
   const handleChat = () => {
     const targetId = equipment?.userId?._id || equipment?.userId;
     if (!targetId) {
-      alert('Bu e’lon egasi haqida ma’lumot yo‘q');
+      alert(T('Bu e’lon egasi haqida ma’lumot yo‘q'));
       return;
     }
-    navigate(`/chat?userId=${targetId}`);
+    navigate(listingChatUrl(targetId, {
+      id: equipment?._id,
+      type: 'equipment',
+      title: equipment?.title,
+      thumbnail: equipment?.images?.[0] ? getImageUrl(equipment.images[0]) : '',
+      price: equipment ? formatPrice(equipment.price, equipment.currency) : '',
+    }));
   };
 
   // ===== MA'LUMOTLARNI YUKLASH =====
@@ -258,12 +226,13 @@ export default function EquipmentDetailPage() {
         recordRecentlyViewed(user?._id || user?.id, {
           id: res.data._id || id,
           type: 'equipment',
-          title: res.data.title || res.data.name || 'E’lon',
+          title: res.data.title || res.data.name || T('E’lon'),
           image: res.data.images?.[0] || res.data.image || res.data.imageUrl || '',
           price: res.data.price,
           currency: res.data.currency,
           link: `/equipment/${res.data._id || id}`,
           maxQuantity: res.data.stockQuantity,
+          saleMode: res.data.saleMode,
         });
       } catch (err) {
         console.error('Xatolik:', err);
@@ -293,14 +262,14 @@ export default function EquipmentDetailPage() {
               id: `eq-${equipment._id}-${idx}`,
               originalId: equipment._id,
               videoUrl: url,
-              title: equipment.title || 'Video',
+              title: equipment.title || T('Video'),
               typeLabel: 'Texnika',
               link: `/equipment/${equipment._id}`,
               userId: equipment.userId?._id || equipment.userId,
               userName: equipment.userId?.full_name || 'Foydalanuvchi',
               avatarUrl: equipment.userId?.avatar_url || '',
               likesCount: equipment.likes?.length || 0,
-              liked: equipment.likes?.some(id => id.toString() === user?.id?.toString()) || false,
+              liked: equipment.likes?.some(id => sameId(id, myId)) || false,
               disliked: false,
               comments: (equipment.comments || []).map(c => ({
                 id: c._id,
@@ -337,7 +306,7 @@ export default function EquipmentDetailPage() {
                 id: `post-${post._id}`,
                 originalId: post._id,
                 videoUrl: post.videoUrl,
-                title: post.title || 'Video',
+                title: post.title || T('Video'),
                 typeLabel: 'Post',
                 link: `/posts/${post._id}`,
                 userId: post.userId?._id || post.userId,
@@ -380,28 +349,7 @@ export default function EquipmentDetailPage() {
     };
 
     fetchReels();
-  }, [equipment, user]);
-
-  const trafficData = {
-    labels: ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun'],
-    datasets: [{
-      label: 'Murojaatlar',
-      data: [8, 15, 22, 28, 35, 42],
-      fill: true,
-      backgroundColor: 'rgba(0,150,255,0.12)',
-      borderColor: '#0096ff',
-      tension: 0.4
-    }],
-  };
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { ticks: { color: '#4d7a9a' }, grid: { color: 'rgba(0,130,255,0.08)' } },
-      y: { ticks: { color: '#4d7a9a' }, grid: { color: 'rgba(0,130,255,0.08)' } }
-    }
-  };
+  }, [equipment, user, myId]);
 
   if (loading) return <div className="StatusScreen">{t('equipment.loading')}</div>;
   if (error || !equipment) {
@@ -427,191 +375,228 @@ export default function EquipmentDetailPage() {
   const attributeItems = buildAttributeItems(equipment.productType, equipment.attributes || {}, t);
   const productTypeMeta = getProductTypeMeta(equipment.productType, t);
 
+  const owner = equipment.userId && typeof equipment.userId === 'object' ? equipment.userId : null;
+  const ownerName = owner?.fullName || owner?.full_name || owner?.companyName || equipment.supplier || '';
+  const isOwner = sameId(owner?._id || equipment.userId, myId);
+  const priceText = formatPrice(equipment.price, equipment.currency);
+  const facts = [
+    { label: T('Holati'), value: equipment.condition === 'new' ? t('equipment.conditionNew') : t('equipment.conditionUsed') },
+    equipment.category && { label: T('Bo‘lim'), value: equipment.category },
+    equipment.supplier && { label: t('equipment.supplier'), value: equipment.supplier },
+  ].filter(Boolean);
+
   return (
     <>
-      <div className="EquipmentPageWrapper">
-        <div className="MainViewport">
-          <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
-            <ArrowLeft size={16} /> {t('equipment.back')}
-          </button>
+      <div className="dp-page">
+        <div className="dp-layout">
+          <main className="dp-main">
+            <DetailGallery
+              images={images}
+              title={equipment.title}
+              contain
+              onBack={() => safeGoBack(navigate)}
+              onShare={user ? () => setShareOpen(true) : undefined}
+              onOpen={(i) => { setActiveImageIndex(i); setImageModalOpen(true); }}
+            />
 
-          {/* GALEREYA */}
-          <div className="equipment-gallery">
-            <div className="equipment-gallery-main" onClick={() => setImageModalOpen(true)}>
-              <img
-                src={getImageUrl(images[activeImageIndex]) || '/images/zumo-placeholder.svg'}
-                alt={equipment.title}
-                className="equipment-gallery-img"
-                loading="eager"
-                decoding="async"
-                onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
-              />
-              <div className="image-gallery-zoom-hint">
-                <Maximize2 size={14} /> {t('equipment.viewFull') || "Kattalashtirib ko'rish"}
+            {/* SARLAVHA, BAHO, NARX */}
+            <section className="dp-card dp-head">
+              <h1 className="dp-title">{equipment.title}</h1>
+              {isStoreProduct && <RatingLink type="equipment" id={equipment._id} title={equipment.title} />}
+              <div className="dp-price">
+                <strong>{priceText}</strong>
+                {equipment.attributes?.negotiable && <span>{T('Narxi kelishiladi')}</span>}
               </div>
-            </div>
-            {images.length > 1 && (
-              <div className="equipment-gallery-thumbs">
-                {images.map((img, idx) => (
-                  <button key={idx} className={`gallery-thumb ${idx === activeImageIndex ? 'active' : ''}`} onClick={() => setActiveImageIndex(idx)}>
-                    <img src={getImageUrl(img) || '/images/zumo-placeholder.svg'} alt={`thumb-${idx}`} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }} />
-                  </button>
+              <div className="dp-badges">
+                <span className={`dp-badge ${equipment.condition === 'new' ? 'dp-badge--ok' : ''}`}>
+                  <Settings size={13} /> {equipment.condition === 'new' ? t('equipment.conditionNew') : t('equipment.conditionUsed')}
+                </span>
+                {isStoreProduct ? (
+                  <span className="dp-badge"><Building2 size={13} /> {T('Do‘kon')}</span>
+                ) : (
+                  <span className="dp-badge"><User size={13} /> {T('Shaxsiy e’lon')}</span>
+                )}
+                {equipment.attributes?.powerConsumption ? (
+                  <span className="dp-badge"><Zap size={13} /> {equipment.attributes.powerConsumption} {t('equipment.unitWatt')}</span>
+                ) : specs.power ? (
+                  <span className="dp-badge"><Zap size={13} /> {specs.power}</span>
+                ) : null}
+              </div>
+              {!isStoreProduct && <p className="dp-note">{T('Bu oddiy e’lon. Narxni sotuvchi bilan kelishing.')}</p>}
+            </section>
+
+            {/* TAVSIF */}
+            <section className="dp-card">
+              <h2 className="dp-card__title"><FileText size={18} /> {T('Tavsif')}</h2>
+              <ClampText text={equipment.description || t('equipment.defaultDescription')} />
+              <dl className="dp-facts">
+                {facts.map((f) => (
+                  <div key={f.label}><dt>{f.label}</dt><dd>{f.value}</dd></div>
                 ))}
-              </div>
-            )}
-          </div>
+              </dl>
+            </section>
 
-          <div className="LayoutGrid">
-            <div className="InformationContent">
-              <div className="DetailsModule">
-                <h2 className="ModuleHeading">{equipment.title}</h2>
-                <p className="ModuleText">{equipment.description || t('equipment.defaultDescription')}</p>
-                <div className="equipment-meta">
-                  <span className="meta-badge"><Settings size={14} /> {equipment.condition === 'new' ? t('equipment.conditionNew') : t('equipment.conditionUsed')}</span>
-                  {equipment.attributes?.powerConsumption ? (
-                    <span className="meta-badge"><Zap size={14} /> {equipment.attributes.powerConsumption} {t('equipment.unitWatt')}</span>
-                  ) : (
-                    <span className="meta-badge"><Zap size={14} /> {specs.power || t('equipment.unknown')}</span>
-                  )}
-                  <span className="meta-badge"><Ruler size={14} /> {equipment.category}</span>
-                </div>
-              </div>
-
-              <CelebrityMotivationCard category={equipment.level1} />
-
-              {attributeItems.length > 0 && productTypeMeta && (
-                <div className="eqattr-module">
-                  <h3 className="ModuleHeading"><productTypeMeta.icon size={18} /> {productTypeMeta.label}</h3>
-                  <div className="eqattr-grid">
-                    {attributeItems.map((item, idx) => {
-                      const Icon = item.icon;
-                      return (
-                        <div className="eqattr-item" key={idx}>
-                          <span className="eqattr-icon"><Icon size={16} /></span>
-                          <div className="eqattr-text">
-                            <span className="eqattr-label">{item.label}</span>
-                            <strong className="eqattr-value">{item.value}</strong>
-                          </div>
+            {/* XUSUSIYATLAR */}
+            {attributeItems.length > 0 && productTypeMeta && (
+              <section className="dp-card">
+                <h2 className="dp-card__title"><productTypeMeta.icon size={18} /> {productTypeMeta.label}</h2>
+                <div className="eqattr-grid">
+                  {attributeItems.map((item, idx) => {
+                    const Icon = item.icon;
+                    return (
+                      <div className="eqattr-item" key={idx}>
+                        <span className="eqattr-icon"><Icon size={16} /></span>
+                        <div className="eqattr-text">
+                          <span className="eqattr-label">{item.label}</span>
+                          <strong className="eqattr-value">{item.value}</strong>
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
+              </section>
+            )}
 
-              {hasLegacySpecs && (
-                <div className="SpecsModule">
-                  <h3 className="ModuleHeading"><Settings size={18} /> {t('equipment.specsTitle')}</h3>
-                  <div className="specs-grid">
-                    <div className="spec-item"><span className="spec-label">{t('equipment.specPower')}</span><span className="spec-value">{specs.power || '—'}</span></div>
-                    <div className="spec-item"><span className="spec-label">{t('equipment.specFrequency')}</span><span className="spec-value">{specs.frequency || '—'}</span></div>
-                    <div className="spec-item"><span className="spec-label">{t('equipment.specRequirements')}</span><span className="spec-value">{specs.requirements || t('equipment.specNone')}</span></div>
-                  </div>
+            {hasLegacySpecs && (
+              <section className="dp-card">
+                <h2 className="dp-card__title"><Settings size={18} /> {t('equipment.specsTitle')}</h2>
+                <dl className="dp-facts">
+                  <div><dt>{t('equipment.specPower')}</dt><dd>{specs.power || '—'}</dd></div>
+                  <div><dt>{t('equipment.specFrequency')}</dt><dd>{specs.frequency || '—'}</dd></div>
+                  <div><dt>{t('equipment.specRequirements')}</dt><dd>{specs.requirements || t('equipment.specNone')}</dd></div>
+                </dl>
+              </section>
+            )}
+
+            {equipment.documents?.length > 0 && (
+              <section className="dp-card">
+                <h2 className="dp-card__title"><ShieldCheck size={18} /> {t('equipment.certificatesTitle')}</h2>
+                <div className="dp-tags">
+                  {equipment.documents.map((doc, idx) => (
+                    <a key={idx} href={doc.url} target="_blank" rel="noopener noreferrer"><FileText size={12} /> {doc.name}</a>
+                  ))}
                 </div>
-              )}
+              </section>
+            )}
 
-              {equipment.documents?.length > 0 && (
-                <div className="CertificatesModule">
-                  <h3 className="ModuleHeading"><FileText size={18} /> {t('equipment.certificatesTitle')}</h3>
-                  <div className="BadgeCloud">
-                    {equipment.documents.map((doc, idx) => (
-                      <a key={idx} href={doc.url} target="_blank" rel="noopener noreferrer" className="VerificationBadge">
-                        <ShieldCheck size={13} /> {doc.name}
-                      </a>
-                    ))}
-                  </div>
+            {/* SOTUVCHI */}
+            {(owner || equipment.supplier) && (
+              <section className="dp-card dp-owner">
+                <Avatar className="dp-owner__avatar" src={owner?.avatar_url} name={ownerName} />
+                <div className="dp-owner__text">
+                  <span>{T('Sotuvchi')}</span>
+                  <strong>{ownerName || t('equipment.fullName')}</strong>
                 </div>
-              )}
-
-              {equipment.userId && <UserInfoCard user={equipment.userId} t={t} />}
-
-              <RatingAndComments
-                itemId={equipment._id}
-                initialRatings={equipment.ratings || []}
-                initialComments={equipment.comments || []}
-                currentUser={user}
-                api={{ rate: rateEquipment, comment: commentEquipment, reply: replyEquipmentComment }}
-              />
-            </div>
-
-            <div className="ActionSidebar">
-              <div className="PriceIndicatorCard">
-                <span className="PriceTagLabel">{t('equipment.price')}</span>
-                <span className="PriceTagValue">{formatPrice(equipment.price, equipment.currency)}</span>
-                <button
-                  onClick={handleCartClick}
-                  className={`add-to-cart-btn ${inCart ? 'in-cart' : ''}`}
-                  style={{ marginTop: 12, width: '100%' }}
-                >
-                  {inCart ? (
-                    <><Check size={16} /> {t('equipment.inCart') || 'Savatda'}</>
-                  ) : (
-                    <><ShoppingCart size={16} /> {t('equipment.addToCart') || 'Savatga qo\'shish'}</>
-                  )}
-                </button>
-              </div>
-
-              <div className="ContactSurface">
-                <h3 className="CardSmallTitle"><Phone size={15} /> {t('equipment.contact')}</h3>
-                <a href={`tel:${equipment.phone}`} className="DirectPhoneLink">{equipment.phone}</a>
-                <p className="supplier-contact">{equipment.supplier || t('equipment.supplierNotAvailable')}</p>
-              </div>
-
-              <AnalyticsCard trafficData={trafficData} chartOptions={chartOptions} t={t} />
-
-              <div className="chat-with-owner">
-                <button onClick={handleChat} className="chat-owner-btn">
-                  <MessageCircle size={18} /> {t('equipment.chatWithOwner')}
-                </button>
-                {user && (
-                  <button type="button" onClick={() => setShareOpen(true)} className="chat-owner-btn equipment-share-btn">
-                    <Share2 size={18} /> {t('common.share', 'Do‘stga yuborish')}
+                {owner?._id && (
+                  <button type="button" className="dp-chip-btn" onClick={() => navigate(`/profile/${owner._id}`)}>
+                    {T('Profil')} <ChevronRight size={15} />
                   </button>
                 )}
-              </div>
+              </section>
+            )}
 
-              <div className="ContactSurface">
-                <h3 className="ModuleHeading"><Building2 size={18} /> {t('equipment.supplier')}</h3>
-                <p className="supplier-name">{equipment.supplier || t('equipment.supplierUnknown')}</p>
-                <div className="AddressLine"><Phone size={15} /> {equipment.phone || '—'}</div>
-              </div>
+            {/* ALOQA */}
+            {equipment.phone && (
+              <section className="dp-card">
+                <h2 className="dp-card__title"><Phone size={18} /> {t('equipment.contact')}</h2>
+                <a href={`tel:${equipment.phone}`} className="dp-phone-btn dp-phone-btn--open">{equipment.phone}</a>
+              </section>
+            )}
 
-              {reels.length > 0 && !reelsLoading && (
-                <ReelsStrip
-                  reels={reels}
-                  showHeader={true}
-                  showProfileLink={true}
-                  emptyText={t('equipment.noVideos')}
-                  onLike={async (reelId) => {
-                    try {
-                      const reel = reels.find(r => r.id === reelId);
-                      if (!reel) return;
-                      const res = await likePost(reel.originalId);
-                      setReels(prev => prev.map(r => r.id === reelId ? { ...r, likesCount: res.data.likesCount, liked: res.data.liked } : r));
-                    } catch (err) { console.error('Like xatoligi:', err); }
-                  }}
-                  onComment={async (reelId, text) => {
-                    try {
-                      const reel = reels.find(r => r.id === reelId);
-                      if (!reel) return;
-                      const res = await commentPost(reel.originalId, { text });
-                      const newComment = {
-                        id: res.data._id,
-                        userId: res.data.userId,
-                        userName: user?.full_name || 'Siz',
-                        text: res.data.text,
-                        createdAt: res.data.createdAt,
-                        replies: [],
-                        avatarUrl: user?.avatar_url || ''
-                      };
-                      setReels(prev => prev.map(r => r.id === reelId ? { ...r, comments: [...(r.comments || []), newComment] } : r));
-                    } catch (err) { console.error('Comment xatoligi:', err); }
-                  }}
-                />
+            {/* SHARHLAR — faqat do'kon tovarlarida (b/u yakka e'lonlarda yo'q) */}
+            {isStoreProduct && <ReviewsSection type="equipment" id={equipment._id} title={equipment.title} />}
+
+            {reels.length > 0 && !reelsLoading && (
+              <ReelsStrip
+                reels={reels}
+                showHeader={true}
+                showProfileLink={true}
+                emptyText={t('equipment.noVideos')}
+                onLike={async (reelId) => {
+                  try {
+                    const reel = reels.find(r => r.id === reelId);
+                    if (!reel) return;
+                    const res = await likePost(reel.originalId);
+                    setReels(prev => prev.map(r => r.id === reelId ? { ...r, likesCount: res.data.likesCount, liked: res.data.liked } : r));
+                  } catch (err) { console.error('Like xatoligi:', err); }
+                }}
+                onComment={async (reelId, text) => {
+                  try {
+                    const reel = reels.find(r => r.id === reelId);
+                    if (!reel) return;
+                    const res = await commentPost(reel.originalId, { text });
+                    const newComment = {
+                      id: res.data._id,
+                      userId: res.data.userId,
+                      userName: user?.full_name || 'Siz',
+                      text: res.data.text,
+                      createdAt: res.data.createdAt,
+                      replies: [],
+                      avatarUrl: user?.avatar_url || ''
+                    };
+                    setReels(prev => prev.map(r => r.id === reelId ? { ...r, comments: [...(r.comments || []), newComment] } : r));
+                  } catch (err) { console.error('Comment xatoligi:', err); }
+                }}
+              />
+            )}
+
+          </main>
+
+          {/* KOMPYUTERDA: O'NG USTUN */}
+          <aside className="dp-aside">
+            <div className="dp-card dp-aside__box">
+              <span className="dp-aside__label">{t('equipment.price')}</span>
+              <strong className="dp-aside__price">{priceText}</strong>
+              {isStoreProduct && !isOwner && (
+                <button type="button" className={`dp-btn ${inCart ? 'dp-btn--done' : 'dp-btn--primary'}`} onClick={handleCartClick}>
+                  {inCart ? <><Check size={17} /> {t('equipment.inCart') || T('Savatda')}</> : <><ShoppingCart size={17} /> {t('equipment.addToCart') || T('Savatga qo‘shish')}</>}
+                </button>
+              )}
+              {!isOwner && (
+                <button type="button" className="dp-btn dp-btn--ghost" onClick={handleChat}>
+                  <MessageCircle size={17} /> {t('equipment.chatWithOwner')}
+                </button>
+              )}
+              {user && (
+                <button type="button" className="dp-btn dp-btn--ghost" onClick={() => setShareOpen(true)}>
+                  <Share2 size={17} /> {t('common.share', 'Do‘stga yuborish')}
+                </button>
               )}
             </div>
-          </div>
+          </aside>
         </div>
+
+        <EquipmentRelatedListings currentId={equipment._id} />
+
+        {/* TELEFONDA: PASTKI PANEL */}
+        {!isOwner && (
+          <div className="dp-actionbar">
+            {isStoreProduct ? (
+              <>
+                <div className="dp-actionbar__price">
+                  <span>{t('equipment.price')}</span>
+                  <strong>{priceText}</strong>
+                </div>
+                <button type="button" className={`dp-btn ${inCart ? 'dp-btn--done' : 'dp-btn--primary'}`} onClick={handleCartClick}>
+                  {inCart ? <><Check size={17} /> {T('Savatda')}</> : <><ShoppingCart size={17} /> {T('Savatga')}</>}
+                </button>
+              </>
+            ) : (
+              <>
+                {equipment.phone ? (
+                  <>
+                    <button type="button" className="dp-btn dp-btn--icon" onClick={handleChat} aria-label={T('Yozish')}>
+                      <MessageCircle size={20} />
+                    </button>
+                    <a className="dp-btn dp-btn--primary" href={`tel:${equipment.phone}`}><Phone size={17} /> {T('Qo‘ng‘iroq qilish')}</a>
+                  </>
+                ) : (
+                  <button type="button" className="dp-btn dp-btn--primary" onClick={handleChat}><MessageCircle size={17} /> {T('Sotuvchiga yozish')}</button>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <ImageViewerModal isOpen={imageModalOpen} onClose={() => setImageModalOpen(false)} images={images} activeIndex={activeImageIndex} setActiveIndex={setActiveImageIndex} title={equipment.title} />

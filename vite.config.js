@@ -21,6 +21,20 @@ function localFirstProxy() {
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rolldownOptions: {
+      output: {
+        // Mayda bo'laklarni birlashtiramiz: ikonkalar va React yadrosi bitta-bittadan fayl,
+        // og'ir kutubxonalar (xarita, markdown) esa kerak bo'lganda alohida yuklanadi
+        codeSplitting: {
+          groups: [
+            { name: 'icons', test: /node_modules[\/]lucide-react/ },
+            { name: 'react', test: /node_modules[\/](react|react-dom|react-router|react-router-dom|scheduler)[\/]/ },
+          ],
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/images': localFirstProxy(),

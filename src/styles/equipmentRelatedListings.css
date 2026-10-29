@@ -1,0 +1,17 @@
+.eq-related-listings { width: min(1240px, calc(100% - 32px)); margin: 12px auto 32px; display: grid; gap: 28px; }
+.eq-related-section { min-width: 0; }
+.eq-related-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.eq-related-heading h2 { margin: 0; color: var(--text, #10253a); font-size: clamp(1.1rem, 2vw, 1.45rem); }
+.eq-related-actions { display: flex; align-items: center; gap: 7px; }
+.eq-related-actions button { display: grid; place-items: center; min-width: 36px; height: 36px; padding: 0 10px; border: 1px solid var(--border, #d7e4ed); border-radius: 999px; background: var(--surface, #fff); color: var(--text, #10253a); cursor: pointer; }
+.eq-related-actions .eq-related-all { display: block; color: var(--primary, #009fc0); font-size: .83rem; font-weight: 700; }
+.eq-related-row { display: grid; grid-auto-columns: minmax(210px, 250px); grid-auto-flow: column; gap: 14px; overflow-x: auto; padding: 2px 2px 12px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+.eq-related-card { min-width: 0; scroll-snap-align: start; }
+.eq-related-card > .uc-card { width: 100%; height: 100%; }
+@media (max-width: 600px) {
+  .eq-related-listings { width: calc(100% - 24px); gap: 22px; margin-top: 8px; }
+  .eq-related-row { grid-auto-columns: minmax(190px, 72vw); gap: 10px; }
+  .eq-related-actions { gap: 5px; }
+  .eq-related-actions button { min-width: 32px; height: 32px; }
+  .eq-related-actions .eq-related-all { padding-inline: 8px; font-size: .75rem; }
+}
