@@ -24,6 +24,7 @@
 /* ===== Rasm ===== */
 .uc-image-wrap {
   position: relative;
+  flex-shrink: 0;
   padding-top: 80%;
   overflow: hidden;
   background: var(--bg);
@@ -138,7 +139,8 @@
 /* Matn qismi — narx, nom, bitta amal (Uzum uslubi) */
 .uc-body {
   padding: 0.7rem 0.8rem 0.8rem;
-  flex: 1;
+  /* iOS Safari: height:100% noaniq bo'lsa ham matn 0 gacha siqilmasin */
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;

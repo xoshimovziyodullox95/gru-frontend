@@ -19,6 +19,19 @@ workflows:
     triggering:
       events: []
     scripts:
+      - name: Sozlamalarni tekshirish
+        script: |
+          for v in VITE_API_URL VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY; do
+            if [ -z "${!v}" ]; then
+              echo "XATO: $v berilmagan — Environment variables'da 'zumo' guruhiga qo'shing"
+              exit 1
+            fi
+          done
+          case "$VITE_API_URL" in
+            https://*) ;;
+            *) echo "XATO: VITE_API_URL https:// bilan boshlanishi kerak (localhost emas): $VITE_API_URL"; exit 1 ;;
+          esac
+          echo "Server: $VITE_API_URL"
       - name: Paketlar
         script: npm ci
       - name: Web qismini yig'ish va iOS'ga ko'chirish

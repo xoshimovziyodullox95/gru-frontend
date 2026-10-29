@@ -46,6 +46,9 @@
   pointer-events: none;
 }
 .pcg-tile__image {
+  /* absolute: iOS 17 Safari aspect-ratio + height:100% da qator balandligini noto'g'ri hisoblaydi */
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
