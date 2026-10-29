@@ -141,7 +141,7 @@ body {
 
 /* ===== NAVBAR OFFSET ===== */
 body {
-  padding-top: 70px; /* desktop */
+  padding-top: calc(70px + env(safe-area-inset-top)); /* desktop; iPhone'da + orolcha balandligi */
 }
 
 /* Pages that hide the fixed global navbar must not inherit its top spacer. */
@@ -149,13 +149,13 @@ body.no-global-navbar-offset { padding-top: 0 !important; }
 
 @media (max-width: 768px) {
   body {
-    padding-top: 60px;
+    padding-top: calc(60px + env(safe-area-inset-top));
   }
 }
 
 @media (max-width: 480px) {
   body {
-    padding-top: 56px;
+    padding-top: calc(56px + env(safe-area-inset-top));
   }
 }
 

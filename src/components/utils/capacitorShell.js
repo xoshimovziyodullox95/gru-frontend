@@ -64,6 +64,16 @@ function showExitHint() {
 
 export async function setupNativeShell() {
   if (!Capacitor.isNativePlatform()) return;
+
+  // iPhone: ilova soat/batareyagacha to'liq ekranni egallaydi; sarlavhalar
+  // env(safe-area-inset-top) bilan orolcha ostidan pastga suriladi.
+  // Faqat iOS — Android'da env() 0 bo'lib qoladi va hozirgi ko'rinish o'zgarmaydi.
+  if (Capacitor.getPlatform() === 'ios') {
+    const meta = document.querySelector('meta[name="viewport"]');
+    if (meta && !meta.content.includes('viewport-fit')) meta.content += ', viewport-fit=cover';
+    document.documentElement.classList.add('is-ios-app');
+  }
+
   const [{ App }, { StatusBar, Style }, { SplashScreen }] = await Promise.all([
     import('@capacitor/app'),
     import('@capacitor/status-bar'),

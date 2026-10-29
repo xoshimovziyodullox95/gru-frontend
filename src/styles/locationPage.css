@@ -347,7 +347,7 @@ body {
 
 .reel-modal-close {
   position: fixed;
-  top: 16px;
+  top: max(16px, env(safe-area-inset-top));
   right: 16px;
   background: rgba(var(--text-rgb), 0.15);
   border: none;

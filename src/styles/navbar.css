@@ -20,6 +20,9 @@
   left: 0;
   right: 0;
   height: 70px;
+  /* iPhone: soat/orolcha ostida qolmasin — balandlik tarkibga, chekka ustiga qo'shiladi */
+  box-sizing: content-box;
+  padding-top: env(safe-area-inset-top);
   background: var(--bg);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);

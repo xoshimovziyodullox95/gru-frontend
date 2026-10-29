@@ -10,6 +10,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
+  padding-top: calc(16px + env(safe-area-inset-top));
   border-bottom: 1px solid rgba(0, 229, 255, 0.15);
   position: sticky;
   top: 0;

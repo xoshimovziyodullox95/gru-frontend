@@ -33,9 +33,5 @@
         }
       }
     }
-  },
-  "ios": {
-    "contentInset": "always",
-    "backgroundColor": "#0A1628"
   }
 }

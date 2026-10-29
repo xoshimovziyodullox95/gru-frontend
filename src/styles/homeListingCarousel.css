@@ -130,6 +130,7 @@
   .home-listing-section__actions { gap: 0; }
   .home-listing-section__arrows { display: none; }
   .home-listing-section__action { min-height: 34px; padding: 7px 9px; font-size: .68rem; }
-  .home-listing-section__rail { grid-auto-columns: minmax(170px, 70vw); gap: 11px; margin-right: -16px; padding-right: 16px; }
+  /* Qat'iy kenglik: bitta e'lon bo'lsa ham karta cho'zilib ketmasin (2 ta + keyingisining cheti) */
+  .home-listing-section__rail { grid-auto-columns: clamp(158px, 44vw, 190px); gap: 11px; margin-right: -16px; padding-right: 16px; }
   .home-listing-section__empty { align-items: flex-start; padding: 13px; }
 }
