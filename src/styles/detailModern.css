@@ -204,3 +204,8 @@
 @media (min-width: 900px) {
   .dp-gallery--empty .dp-gallery__track { height: 260px; }
 }
+
+/* Egasi o'z xizmatini ko'rganda — buyurtma o'rniga boshqaruv tugmalari */
+.dp-actionbar--owner { flex-wrap: wrap; }
+.dp-actionbar__owner-note { flex-basis: 100%; font-size: 0.8rem; font-weight: 600; color: var(--textMuted, rgba(var(--text-rgb), 0.6)); }
+.dp-actionbar--owner .dp-btn { flex: 1; }

@@ -15,8 +15,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import {
-  ChevronDown,
-  ChevronUp,
   Clapperboard,
   Eye,
   MessageCircle,
@@ -468,6 +466,25 @@ function YoutubeReelPlayer({ reel, slideDirection }) {
    REEL VIEWER
    ============================================================ */
 
+/* Sudrash paytida pleer ostidan ko'rinadigan qo'shni video muqovasi */
+function ReelPeek({ reel, position }) {
+  if (!reel) return null;
+  const poster = reel.thumbnailUrl
+    ? getImageUrl(reel.thumbnailUrl)
+    : reel.isYoutube && reel.youtubeId
+      ? `https://i.ytimg.com/vi/${reel.youtubeId}/hqdefault.jpg`
+      : null;
+  return (
+    <div className={`reel-peek reel-peek--${position}`} aria-hidden="true">
+      {poster ? (
+        <img src={poster} alt="" />
+      ) : (
+        <video src={`${getImageUrl(reel.videoUrl)}#t=0.5`} muted playsInline preload="metadata" />
+      )}
+    </div>
+  );
+}
+
 function ReelViewer({
   reels,
   index,
@@ -488,12 +505,17 @@ function ReelViewer({
   const wheelLockedRef = useRef(false);
   const wheelTimerRef = useRef(null);
   const touchStartYRef = useRef(null);
+  const touchStartTimeRef = useRef(0);
+  const dragNavRef = useRef(false);
 
   const [commentText, setCommentText] = useState('');
   const [replyText, setReplyText] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [activeReplyId, setActiveReplyId] = useState(null);
   const [slideDirection, setSlideDirection] = useState('down');
+  // Instagram kabi: video barmoq ortidan suriladi, ostidan keyingisi ko'rinadi
+  const [dragY, setDragY] = useState(0);
+  const [dragAnimating, setDragAnimating] = useState(false);
   const [commentSending, setCommentSending] = useState(false);
   const [isMuted, setIsMuted] = useState(
     () => localStorage.getItem('gru-reels-muted') !== 'false'
@@ -511,7 +533,9 @@ function ReelViewer({
 
   useEffect(() => {
     if (index !== previousIndexRef.current) {
-      setSlideDirection(index > previousIndexRef.current ? 'down' : 'up');
+      // Sudrab almashtirilganda video allaqachon joyida — kirish animatsiyasi kerak emas
+      setSlideDirection(dragNavRef.current ? 'none' : index > previousIndexRef.current ? 'down' : 'up');
+      dragNavRef.current = false;
       previousIndexRef.current = index;
     }
   }, [index]);
@@ -593,31 +617,51 @@ function ReelViewer({
   };
 
   const handleTouchStart = (event) => {
-    if (showComments || shouldIgnoreNavigation(event.target)) {
+    if (showComments || dragAnimating || shouldIgnoreNavigation(event.target)) {
       touchStartYRef.current = null;
       return;
     }
     touchStartYRef.current = event.touches?.[0]?.clientY ?? null;
+    touchStartTimeRef.current = Date.now();
+  };
+
+  const handleTouchMove = (event) => {
+    if (touchStartYRef.current === null) return;
+    const y = event.touches?.[0]?.clientY;
+    if (typeof y !== 'number') return;
+    let delta = y - touchStartYRef.current;
+    // Birinchi/oxirgi videoda chetga rezinadek qarshilik
+    const atEdge = (delta > 0 && index === 0) || (delta < 0 && index === reels.length - 1);
+    if (atEdge) delta *= 0.25;
+    setDragY(delta);
   };
 
   const handleTouchEnd = (event) => {
-    if (
-      showComments ||
-      touchStartYRef.current === null ||
-      shouldIgnoreNavigation(event.target)
-    ) {
-      touchStartYRef.current = null;
-      return;
-    }
+    if (touchStartYRef.current === null) return;
     const endY = event.changedTouches?.[0]?.clientY;
-    if (typeof endY !== 'number') {
-      touchStartYRef.current = null;
+    const delta = typeof endY === 'number' ? endY - touchStartYRef.current : 0;
+    const elapsed = Math.max(1, Date.now() - touchStartTimeRef.current);
+    touchStartYRef.current = null;
+
+    const direction = delta < 0 ? 1 : -1;
+    const target = index + direction;
+    const height = window.innerHeight || 800;
+    const flick = Math.abs(delta) > 40 && Math.abs(delta) / elapsed > 0.45;
+    const commit = target >= 0 && target < reels.length && (Math.abs(delta) > height * 0.18 || flick);
+
+    setDragAnimating(true);
+    if (!commit) {
+      setDragY(0);
+      window.setTimeout(() => setDragAnimating(false), 260);
       return;
     }
-    const delta = touchStartYRef.current - endY;
-    touchStartYRef.current = null;
-    if (Math.abs(delta) < 55) return;
-    onNavigateIndex(delta > 0 ? 1 : -1);
+    setDragY(direction > 0 ? -height : height);
+    window.setTimeout(() => {
+      dragNavRef.current = true;
+      onNavigateIndex(direction);
+      setDragAnimating(false);
+      setDragY(0);
+    }, 260);
   };
 
   const goToProfile = (event) => {
@@ -680,7 +724,9 @@ function ReelViewer({
       onClick={onClose}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       <button
         type="button"
@@ -691,34 +737,15 @@ function ReelViewer({
         <X size={22} />
       </button>
 
-      {index > 0 && (
-        <button
-          type="button"
-          className="reel-modal-nav reel-modal-nav--up"
-          onClick={(event) => {
-            event.stopPropagation();
-            onNavigateIndex(-1);
-          }}
-          aria-label={T('Oldingi video')}
-        >
-          <ChevronUp size={24} />
-        </button>
-      )}
-
-      {index < reels.length - 1 && (
-        <button
-          type="button"
-          className="reel-modal-nav reel-modal-nav--down"
-          onClick={(event) => {
-            event.stopPropagation();
-            onNavigateIndex(1);
-          }}
-          aria-label={T('Keyingi video')}
-        >
-          <ChevronDown size={24} />
-        </button>
-      )}
-
+      <div
+        className="reel-track"
+        style={{
+          transform: `translate3d(0, ${dragY}px, 0)`,
+          transition: dragAnimating ? 'transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)' : 'none',
+        }}
+      >
+      <ReelPeek reel={reels[index - 1]} position="prev" />
+      <ReelPeek reel={reels[index + 1]} position="next" />
       <div
         className="reel-modal-player"
         onClick={(event) => event.stopPropagation()}
@@ -990,6 +1017,7 @@ function ReelViewer({
             </button>
           </form>
         </div>
+      </div>
       </div>
     </div>
   );

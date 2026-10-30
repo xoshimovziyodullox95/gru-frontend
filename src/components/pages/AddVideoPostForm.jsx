@@ -24,7 +24,10 @@ import { createVideoPost } from '../services/videos';
 import '../../styles/addVideoForm.css';
 
 import { T } from '../utils/T';
-const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
+// Server (routes/posts.js) bilan bir xil: Supabase bepul tarifida bitta fayl 50 MB gacha
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
+// Reels — qisqa video (Instagram kabi)
+const MAX_VIDEO_SECONDS = 90;
 const MAX_TITLE_LENGTH = 80;
 const MAX_DESCRIPTION_LENGTH = 500;
 
@@ -136,8 +139,8 @@ export default function AddVideoPostForm() {
     if (file.size > MAX_VIDEO_SIZE) {
       setError(
         t(
-          'addVideo.errors.fileTooLarge',
-          'Video hajmi 100 MB dan oshmasligi kerak'
+          'addVideo.errors.fileTooLarge50',
+          'Video hajmi 50 MB dan oshmasligi kerak'
         )
       );
       resetFileInput();
@@ -204,6 +207,10 @@ export default function AddVideoPostForm() {
   const handleVideoMetadata = (event) => {
     const video = event.currentTarget;
 
+    if (video.duration && video.duration > MAX_VIDEO_SECONDS + 0.5) {
+      setError(t('addVideo.errors.tooLong', 'Video {{max}} soniyadan oshmasligi kerak', { max: MAX_VIDEO_SECONDS }));
+    }
+
     setVideoMeta({
       duration: video.duration || 0,
       width: video.videoWidth || 0,
@@ -227,6 +234,11 @@ export default function AddVideoPostForm() {
           'Iltimos, video tanlang'
         )
       );
+      return;
+    }
+
+    if (videoMeta?.duration > MAX_VIDEO_SECONDS + 0.5) {
+      setError(t('addVideo.errors.tooLong', 'Video {{max}} soniyadan oshmasligi kerak', { max: MAX_VIDEO_SECONDS }));
       return;
     }
 
@@ -384,7 +396,7 @@ export default function AddVideoPostForm() {
                 </span>
 
                 <span className="avf-upload-limit">
-                  {T('MP4, WebM, MOV · maksimum 100 MB')}
+                  {T('MP4, WebM, MOV · 50 MB gacha, 90 soniyagacha')}
                 </span>
               </button>
             ) : (

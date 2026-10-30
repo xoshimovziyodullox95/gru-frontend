@@ -7,7 +7,7 @@ import {
   Phone, ArrowLeft, ShieldCheck, Flame,
   Tag, Mail, Globe, MessageCircle,
   User, ChevronLeft, ChevronRight, X, FileText, Share2,
-  Send
+  Send, Pencil, Inbox
 } from 'lucide-react';
 import { getServiceProviderById, getServiceProviders } from '../services/serviceProviders';
 import { useAuth } from '../context/AuthContext';
@@ -178,6 +178,10 @@ export default function ServiceProviderDetailPage() {
   };
 
   const isOwner = sameId(provider?.userId?._id || provider?.userId, myId);
+  // Kirgan foydalanuvchining ID'si hali kelmagan bo'lsa egami-yo'qmi noma'lum —
+  // tugmalar avval chiqib, keyin yo'qolib qolmasligi uchun kutamiz
+  const ownerKnown = !user || Boolean(myId);
+  const showVisitorActions = ownerKnown && !isOwner;
 
   // ===== YUKLASH / XATOLIK =====
   if (loading) return <div className="StatusScreen">{t('serviceProvider.loading')}</div>;
@@ -337,12 +341,12 @@ export default function ServiceProviderDetailPage() {
             <div className="dp-card dp-aside__box">
               <span className="dp-aside__label">{t('serviceProvider.priceRange')}</span>
               <strong className="dp-aside__price">{price}</strong>
-              {!isOwner && (
+              {showVisitorActions && (
                 <button type="button" className="dp-btn dp-btn--primary" onClick={handleOrder}>
                   <Send size={17} /> {T('Buyurtma berish')}
                 </button>
               )}
-              {!isOwner && (
+              {showVisitorActions && (
                 <button type="button" className="dp-btn dp-btn--ghost" onClick={handleChat}>
                   <MessageCircle size={17} /> {t('serviceProvider.chatWithOwner')}
                 </button>
@@ -357,7 +361,18 @@ export default function ServiceProviderDetailPage() {
         </div>
 
         {/* TELEFONDA: PASTKI PANEL */}
-        {!isOwner && (
+        {isOwner && (
+          <div className="dp-actionbar dp-actionbar--owner">
+            <span className="dp-actionbar__owner-note">{T('Bu sizning xizmatingiz')}</span>
+            <button type="button" className="dp-btn dp-btn--ghost" onClick={() => navigate(`/edit/service/${provider._id}`)}>
+              <Pencil size={16} /> {T('Tahrirlash')}
+            </button>
+            <button type="button" className="dp-btn dp-btn--primary" onClick={() => navigate('/provider-requests')}>
+              <Inbox size={16} /> {T('Buyurtmalar')}
+            </button>
+          </div>
+        )}
+        {showVisitorActions && (
           <div className="dp-actionbar">
             <button type="button" className="dp-btn dp-btn--icon" onClick={handleChat} aria-label={T('Yozish')}>
               <MessageCircle size={20} />

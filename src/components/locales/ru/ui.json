@@ -1316,5 +1316,8 @@
   "Mening joylashuvim": "Моё местоположение",
   "Aniqlanmoqda...": "Определяем...",
   "Qurilmangiz joylashuvni aniqlay olmaydi. Manzilni qo‘lda yozing.": "Устройство не определяет местоположение. Введите адрес вручную.",
-  "Joylashuvni aniqlab bo‘lmadi. Ruxsat bering yoki xaritadan nuqta tanlang.": "Не удалось определить местоположение. Разрешите доступ или выберите точку на карте."
+  "Joylashuvni aniqlab bo‘lmadi. Ruxsat bering yoki xaritadan nuqta tanlang.": "Не удалось определить местоположение. Разрешите доступ или выберите точку на карте.",
+  "Bu sizning xizmatingiz": "Это ваша услуга",
+  "Buyurtmalar": "Заказы",
+  "MP4, WebM, MOV · 50 MB gacha, 90 soniyagacha": "MP4, WebM, MOV · до 50 МБ, до 90 секунд"
 }

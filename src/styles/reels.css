@@ -1828,3 +1828,47 @@ iframe.reel-modal-video {
     transition-duration: 0.01ms !important;
   }
 }
+/* ============================================================
+   INSTAGRAM USLUBIDA SUDRASH — trek va qo'shni muqovalar
+   ============================================================ */
+
+.reel-modal-overlay {
+  overflow: hidden;
+  touch-action: none;            /* brauzerning o'z aylantirishi/yangilashi aralashmasin */
+  overscroll-behavior: contain;
+}
+
+.reel-track {
+  position: relative;
+  width: min(100%, 430px);
+  height: 100vh;
+  height: 100dvh;
+  max-height: 920px;
+  will-change: transform;
+}
+
+.reel-track > .reel-modal-player {
+  width: 100%;
+  height: 100%;
+}
+
+.reel-peek {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000711;
+  pointer-events: none;
+}
+.reel-peek--prev { bottom: 100%; }
+.reel-peek--next { top: 100%; }
+.reel-peek img,
+.reel-peek video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.reel-comments-sheet,
+.reel-comments-list { touch-action: pan-y; }

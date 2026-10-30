@@ -1298,5 +1298,8 @@
   "Mening joylashuvim": "My location",
   "Aniqlanmoqda...": "Locating...",
   "Qurilmangiz joylashuvni aniqlay olmaydi. Manzilni qo‘lda yozing.": "Your device cannot detect location. Type the address.",
-  "Joylashuvni aniqlab bo‘lmadi. Ruxsat bering yoki xaritadan nuqta tanlang.": "Could not get your location. Allow access or pick a point on the map."
+  "Joylashuvni aniqlab bo‘lmadi. Ruxsat bering yoki xaritadan nuqta tanlang.": "Could not get your location. Allow access or pick a point on the map.",
+  "Bu sizning xizmatingiz": "This is your service",
+  "Buyurtmalar": "Orders",
+  "MP4, WebM, MOV · 50 MB gacha, 90 soniyagacha": "MP4, WebM, MOV · up to 50 MB, up to 90 seconds"
 }

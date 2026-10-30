@@ -1903,7 +1903,9 @@
       "videoOnly": "Only video files are allowed",
       "fileTooLarge": "Video must be under 100 MB",
       "videoRequired": "Please choose a video",
-      "uploadFailed": "Video upload failed"
+      "uploadFailed": "Video upload failed",
+      "fileTooLarge50": "Video must be 50 MB or smaller",
+      "tooLong": "Video must be {{max}} seconds or shorter"
     },
     "title": "New video",
     "subtitle": "Share your video and reach a new audience",

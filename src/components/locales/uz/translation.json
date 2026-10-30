@@ -1918,7 +1918,9 @@
       "videoOnly": "Faqat video fayl yuklash mumkin",
       "fileTooLarge": "Video hajmi 100 MB dan oshmasligi kerak",
       "videoRequired": "Iltimos, video tanlang",
-      "uploadFailed": "Video yuklashda xatolik yuz berdi"
+      "uploadFailed": "Video yuklashda xatolik yuz berdi",
+      "fileTooLarge50": "Video hajmi 50 MB dan oshmasligi kerak",
+      "tooLong": "Video {{max}} soniyadan oshmasligi kerak"
     },
     "title": "Yangi video",
     "subtitle": "Videongizni ulashing va yangi auditoriyaga yetib boring",

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -32,11 +32,20 @@ const ACTIONS = [
 export default function ZumoQuickMenu({ isOpen, onToggle }) {
   const navigate = useNavigate();
   const rootRef = useRef(null);
+  const drawerRef = useRef(null);
+  // Yopilganda panel darrov yo'qolmasin — chapga qaytib ketish animatsiyasi tugaguncha ko'rsatamiz
+  const [rendered, setRendered] = useState(isOpen);
+  if (isOpen && !rendered) setRendered(true);
+  useEffect(() => {
+    if (isOpen || !rendered) return undefined;
+    const id = setTimeout(() => setRendered(false), 280);
+    return () => clearTimeout(id);
+  }, [isOpen, rendered]);
 
   useEffect(() => {
     if (!isOpen) return undefined;
     const closeOnOutsideClick = (event) => {
-      if (!rootRef.current?.contains(event.target)) onToggle(false);
+      if (!rootRef.current?.contains(event.target) && !drawerRef.current?.contains(event.target)) onToggle(false);
     };
     const closeOnEscape = (event) => {
       if (event.key === 'Escape') onToggle(false);
@@ -52,6 +61,7 @@ export default function ZumoQuickMenu({ isOpen, onToggle }) {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
+    <>
     <header className="zumo-topbar" ref={rootRef}>
       <button
         type="button"
@@ -70,15 +80,18 @@ export default function ZumoQuickMenu({ isOpen, onToggle }) {
       </div>
       <div className="zumo-topbar__actions" aria-hidden="true" />
 
-      {isOpen && (
+    </header>
+    {/* Panel sarlavhadan tashqarida: sarlavhaning backdrop-filter'i fixed elementni o'ziga qamab qo'yadi */}
+    <div className="zumo-quick-drawer" ref={drawerRef}>
+      {rendered && (
         <>
           <button
             type="button"
-            className="zumo-quick-menu__scrim"
+            className={`zumo-quick-menu__scrim${isOpen ? '' : ' is-closing'}`}
             aria-label={T('Menyuni yopish')}
             onClick={() => onToggle(false)}
           />
-          <nav className="zumo-quick-menu" role="menu" aria-label={T('Tezkor amallar')}>
+          <nav className={`zumo-quick-menu${isOpen ? '' : ' is-closing'}`} role="menu" aria-label={T('Tezkor amallar')}>
             <div className="zumo-quick-menu__heading">
               <strong>{T('Tezkor amallar')}</strong>
               <span>{T('Kerakli bo‘limni tanlang')}</span>
@@ -103,7 +116,8 @@ export default function ZumoQuickMenu({ isOpen, onToggle }) {
           </nav>
         </>
       )}
-    </header>,
+    </div>
+    </>,
     document.body
   );
 }

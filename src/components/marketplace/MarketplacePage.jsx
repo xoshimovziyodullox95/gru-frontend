@@ -25,7 +25,7 @@ const searchableText = (value) => (typeof value === 'string' ? value.toLocaleLow
 export default function MarketplacePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState([]);
   // Tovar kategoriyalari (OLX kabi) — filtr, ichki bo'limlar va qidiruv uchun
   const { categories } = useProductCategories();
@@ -38,6 +38,15 @@ export default function MarketplacePage() {
   const [selectedSubs, setSelectedSubs] = useUrlSet('sub');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(() => searchParams.get('openSearch') === '1');
+
+  // ?openSearch=1 bir martalik: URL'dan olib tashlaymiz, aks holda e'londan "orqaga"
+  // qaytganda sahifa qayta ochilib qidiruv yana avtomatik chiqib ketadi
+  useEffect(() => {
+    if (searchParams.get('openSearch') !== '1') return;
+    const next = new URLSearchParams(searchParams);
+    next.delete('openSearch');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   // ========== MA'LUMOTLARNI YUKLASH ==========
   useEffect(() => {
