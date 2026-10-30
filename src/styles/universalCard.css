@@ -389,3 +389,12 @@
   transform: rotate(45deg) scale(1.08);
 }
 
+
+/* Telefonda doim 2 ustun. Kuchliroq selektor: sahifa CSS'lari (masalan subcategory.css
+   dagi minmax(260px)) keyin yuklanib, butun ilovada 1 ustunga tushirib qo'ymasin */
+@media (max-width: 600px) {
+  html body .uc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+}

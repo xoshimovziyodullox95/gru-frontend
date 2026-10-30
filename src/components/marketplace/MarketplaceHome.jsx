@@ -32,6 +32,7 @@ import SearchOverlay from '../common/SearchOverlay';
 import '../../styles/marketplaceHome.css';
 
 import { T } from '../utils/T';
+import { useMyMongoId } from '../hooks/useMyMongoId';
 /* ============================================================
    YORDAMCHILAR
    ============================================================ */
@@ -186,8 +187,8 @@ function buildReels(items, source, currentUserId) {
       userName,
       avatarUrl,
       itemType: source.itemType,
-      liked: Boolean(currentUserId) && likes.includes(currentUserId),
-      disliked: Boolean(currentUserId) && dislikes.includes(currentUserId),
+      liked: Boolean(currentUserId) && likes.map(String).includes(String(currentUserId)),
+      disliked: Boolean(currentUserId) && dislikes.map(String).includes(String(currentUserId)),
       likesCount: likes.length || item.likesCount || 0,
       views: item.viewsCount || item.views || 0,
       comments: formatComments(item.comments),
@@ -374,7 +375,10 @@ export default function MarketplaceHome() {
   const { t } = useTranslation();
   const { user } = useAuth();
 
-  const userId = user?.id || user?._id || null;
+  // Like/dislike ro'yxatlarida Mongo ID saqlanadi — Supabase UUID (user.id) bilan solishtirsa
+  // oldin bosilgan like ko'rinmay, qayta bosish uni olib tashlab yuborardi
+  const myMongoId = useMyMongoId();
+  const userId = myMongoId || null;
 
   // Marketplace tovar kategoriyalari (OLX kabi)
   const { categories } = useProductCategories();

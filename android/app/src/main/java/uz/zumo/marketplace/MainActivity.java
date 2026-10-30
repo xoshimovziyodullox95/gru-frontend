@@ -11,5 +11,6 @@ public class MainActivity extends BridgeActivity {
         LaunchPlugin.restored = savedInstanceState != null;
         registerPlugin(LaunchPlugin.class);
         super.onCreate(savedInstanceState);
+        OrderAlertChannel.ensure(this);
     }
 }

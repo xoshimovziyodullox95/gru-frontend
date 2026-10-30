@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Clapperboard,
   Eye,
+  Heart,
   MessageCircle,
   Pause,
   Play,
@@ -363,7 +364,7 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
         ref={videoRef}
         key={reel.id}
         src={getImageUrl(reel.videoUrl)}
-        poster={reel.thumbnailUrl ? getImageUrl(reel.thumbnailUrl) : undefined}
+        poster={reel.thumbnailUrl ? getImageUrl(reel.thumbnailUrl) : TRANSPARENT_POSTER}
         className={`reel-modal-video reel-slide-${slideDirection}`}
         autoPlay
         muted={isMuted}
@@ -466,7 +467,11 @@ function YoutubeReelPlayer({ reel, slideDirection }) {
    REEL VIEWER
    ============================================================ */
 
-/* Sudrash paytida pleer ostidan ko'rinadigan qo'shni video muqovasi */
+// 1x1 shaffof GIF: Android WebView video yuklanguncha kulrang fon va katta "▶" chizmasin
+const TRANSPARENT_POSTER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+/* Qo'shni va joriy video kadri. Bir xil key (reel.id) bilan qoladi — almashtirilganda
+   "keyingi" kadr "joriy" o'ringa o'tadi va video yuklanguncha qora ekran o'rniga ko'rinib turadi */
 function ReelPeek({ reel, position }) {
   if (!reel) return null;
   const poster = reel.thumbnailUrl
@@ -516,6 +521,9 @@ function ReelViewer({
   // Instagram kabi: video barmoq ortidan suriladi, ostidan keyingisi ko'rinadi
   const [dragY, setDragY] = useState(0);
   const [dragAnimating, setDragAnimating] = useState(false);
+  // Ikki marta bosish — like (Instagram kabi, faqat qo'yadi, olmaydi)
+  const lastTapRef = useRef(0);
+  const [heartBurst, setHeartBurst] = useState(0);
   const [commentSending, setCommentSending] = useState(false);
   const [isMuted, setIsMuted] = useState(
     () => localStorage.getItem('gru-reels-muted') !== 'false'
@@ -664,6 +672,18 @@ function ReelViewer({
     }, 260);
   };
 
+  const handlePlayerTap = (event) => {
+    if (shouldIgnoreNavigation(event.target) || event.target.closest?.('.reel-modal-info')) return;
+    const now = Date.now();
+    if (now - lastTapRef.current < 300) {
+      lastTapRef.current = 0;
+      setHeartBurst((n) => n + 1);
+      if (!reel.liked) onToggleLike(reel.id);
+      return;
+    }
+    lastTapRef.current = now;
+  };
+
   const goToProfile = (event) => {
     event.stopPropagation();
     if (!reel.userId) return;
@@ -744,12 +764,19 @@ function ReelViewer({
           transition: dragAnimating ? 'transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)' : 'none',
         }}
       >
-      <ReelPeek reel={reels[index - 1]} position="prev" />
-      <ReelPeek reel={reels[index + 1]} position="next" />
+      {[[index - 1, 'prev'], [index, 'current'], [index + 1, 'next']].map(([i, position]) =>
+        reels[i] ? <ReelPeek key={reels[i].id} reel={reels[i]} position={position} /> : null
+      )}
       <div
         className="reel-modal-player"
         onClick={(event) => event.stopPropagation()}
+        onPointerUp={handlePlayerTap}
       >
+        {heartBurst > 0 && (
+          <span key={heartBurst} className="reel-heart-burst" aria-hidden="true">
+            <Heart size={110} fill="currentColor" strokeWidth={0} />
+          </span>
+        )}
         {reel.isYoutube && reel.youtubeId ? (
           <YoutubeReelPlayer reel={reel} slideDirection={slideDirection} />
         ) : (

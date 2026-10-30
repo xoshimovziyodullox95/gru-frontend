@@ -120,20 +120,8 @@ async function registerMobilePush(platform) {
     }
     if (receive !== 'granted') return false;
 
-    // Ustalar uchun yangi buyurtma kanali: o'z baland ovozi va tebranishi bilan
-    // (Telegram va boshqa xabarlardan ajralib turishi uchun). Backend shu id'ga yuboradi.
-    if (platform === 'android') {
-      await FirebaseMessaging.createChannel({
-        id: 'zumo_orders',
-        name: 'Yangi buyurtmalar',
-        description: 'Ustaga kelgan yangi buyurtmalar — baland ovoz bilan',
-        importance: 5,
-        sound: 'zumo_order',
-        vibration: true,
-        lights: true,
-        visibility: 1,
-      }).catch(() => {});
-    }
+    // "Yangi buyurtmalar" kanali (ovoz + tebranish ritmi) Android kodida yaratiladi:
+    // android/.../OrderAlertChannel.java — ID backend'dagi bilan bir xil bo'lishi shart
 
     if (!mobileListenersAdded) {
       mobileListenersAdded = true;

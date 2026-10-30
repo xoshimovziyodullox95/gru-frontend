@@ -38,6 +38,7 @@ import { getRecentlyViewed } from '../utils/recentlyViewed.js';
 import '../../styles/home.css';
 
 import { T } from '../utils/T';
+import { useMyMongoId } from '../hooks/useMyMongoId';
 /* ============================================================
    CONSTANTS
    ============================================================ */
@@ -322,8 +323,8 @@ function buildReels(items, source, currentUserId, t) {
       avatarUrl,
       itemType: source.itemType,
 
-      liked: Boolean(currentUserId) && likes.includes(currentUserId),
-      disliked: Boolean(currentUserId) && dislikes.includes(currentUserId),
+      liked: Boolean(currentUserId) && likes.map(String).includes(String(currentUserId)),
+      disliked: Boolean(currentUserId) && dislikes.map(String).includes(String(currentUserId)),
       likesCount: likes.length || item.likesCount || 0,
       views: item.viewsCount || item.views || 0,
 
@@ -342,7 +343,10 @@ export default function HomePage() {
   const { favorites } = useFavorites();
   const { t, i18n } = useTranslation();
 
-  const userId = user?.id || user?._id || null;
+  // Like/dislike ro'yxatlarida Mongo ID saqlanadi — Supabase UUID (user.id) bilan solishtirsa
+  // oldin bosilgan like ko'rinmay, qayta bosish uni olib tashlab yuborardi
+  const myMongoId = useMyMongoId();
+  const userId = myMongoId || null;
   const isPremium = Boolean(user?.isPremium || user?.user_metadata?.isPremium);
 
   // Marketplace tovar kategoriyalari (150+ biznes yo'nalishi emas)
