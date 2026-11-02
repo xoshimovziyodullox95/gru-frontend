@@ -76,7 +76,8 @@ export default function UniversalCard({
       </div>
 
       {/* Uzum uslubi: narx → nom → bitta amal. Butun karta havola, shuning uchun "Batafsil" tugmasi yo'q */}
-      <div className="uc-body">
+      {/* Xizmatda esa nom asosiy: "Narx so'rov asosida" katta sarlavha bo'lib turmasin */}
+      <div className={`uc-body ${type === 'service' ? 'uc-body--service' : ''}`}>
         <span className="uc-price">
           {(typeof price === 'number' ? formatPrice(price, currency) : price) || t('universalCard.priceNotAvailable')}
         </span>

@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import OrderAlertTip from '../common/OrderAlertTip';
 import { ArrowLeft, Clock, MapPin, RefreshCw, Inbox, ChevronRight, Loader2 } from 'lucide-react';
 
 import { getProviderServiceRequests } from '../services/serviceRequests';
@@ -75,6 +76,8 @@ export default function ProviderRequestsPage() {
           <RefreshCw size={18} className={loading ? 'rt-spin' : ''} />
         </button>
       </header>
+
+      <OrderAlertTip />
 
       <div className="prq-tabs" role="tablist">
         {TABS.map((value) => (

@@ -10,6 +10,7 @@ public class MainActivity extends BridgeActivity {
         // web tomon oxirgi sahifani tiklaydi. Qatordan o'chirilsa — noldan boshlanadi.
         LaunchPlugin.restored = savedInstanceState != null;
         registerPlugin(LaunchPlugin.class);
+        registerPlugin(BackgroundPlugin.class);
         super.onCreate(savedInstanceState);
         OrderAlertChannel.ensure(this);
     }

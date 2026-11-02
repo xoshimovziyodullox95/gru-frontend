@@ -26,6 +26,7 @@ import { RoleCarousel } from '../marketplace/MarketplaceHome.jsx';
 import '../../styles/marketplaceLayout.css';
 import UniversalBankLogo from '../common/UniversalBankLogo.jsx';
 import HomeListingCarousel from '../home/HomeListingCarousel.jsx';
+import MarketplaceTabbar from '../marketplace/MarketplaceTabbar.jsx';
 import { useFavorites } from '../hooks/useFavorites';
 
 import { useProductCategories } from '../utils/productCategories';
@@ -387,6 +388,12 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t, i18n.resolvedLanguage]);
 
+  // Pastki menyu uchun joy: sahifa oxiri va AI chat tugmasi menyu ostida qolmasin
+  useEffect(() => {
+    document.body.classList.add('has-bottom-tabbar');
+    return () => document.body.classList.remove('has-bottom-tabbar');
+  }, []);
+
   useEffect(() => {
     if (heroPhrases.length <= 1) return undefined;
 
@@ -498,6 +505,12 @@ export default function HomePage() {
     .sort((a, b) => (Number(b.isVerified) + Number(b.isTop)) - (Number(a.isVerified) + Number(a.isTop))
       || b.rating - a.rating)
     .slice(0, 12), [homeListings]);
+
+  // "Sizga mos" yuqoridagi ustalarni takrorlamasin
+  const forYouListings = useMemo(() => {
+    const shown = new Set(topProviders.map((item) => `${item.type}-${item.id}`));
+    return recommendedListings.filter((item) => !shown.has(`${item.type}-${item.id}`));
+  }, [recommendedListings, topProviders]);
 
   const todayListings = useMemo(() => {
     const startOfToday = new Date();
@@ -713,6 +726,8 @@ export default function HomePage() {
             actionLabel={T('Barcha ustalar')}
             actionTo="/marketplace/all?type=service"
           />
+          {/* Bo'sh bo'limlar sahifani "o'lik" ko'rsatadi — faqat e'lon bo'lsa chiqadi */}
+          {todayListings.length > 0 && (
           <HomeListingCarousel
             title={T('Bugun qo‘shilganlar')}
             subtitle={T('Yangi joylangan tovar, joy va xizmatlar')}
@@ -721,16 +736,19 @@ export default function HomePage() {
             emptyText={T('Yangi e’lonlar joylanishi bilan shu yerda paydo bo‘ladi.')}
             actionLabel={T('Barcha e’lonlar')}
           />
+          )}
+          {forYouListings.length > 0 && (
           <HomeListingCarousel
             title={T('Sizga mos')}
             subtitle={favorites.length || recentlyViewed.length
               ? T('Ko‘rgan va saqlagan e’lonlaringizga yaqin takliflar')
               : T('Yangi e’lonlardan boshlash uchun tavsiyalar')}
-            items={recommendedListings}
+            items={forYouListings}
             emptyTitle={T('Tavsiya uchun e’lon yo‘q')}
             emptyText={T('Keyinroq qaytib ko‘ring yoki barcha e’lonlarni oching.')}
             actionLabel={T('Barcha e’lonlar')}
           />
+          )}
           <HomeListingCarousel
             title={T('Yaqin atrofda')}
             subtitle={nearbyPosition
@@ -783,6 +801,9 @@ export default function HomePage() {
           onReelUpdate={handleReelUpdate}
         />
       )}
+
+      {/* Marketplace'dagi pastki menyu — telefonda bosh sahifada ham */}
+      <MarketplaceTabbar homePath="/home" floating />
     </main>
   );
 }

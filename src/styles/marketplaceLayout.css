@@ -187,7 +187,8 @@
    4. BOTTOM NAV
    ------------------------------------------------------------ */
 
-.mkt-shell > .mkt-tabbar {
+.mkt-shell > .mkt-tabbar,
+.mkt-tabbar--floating {
   flex-shrink: 0;
 
   display: grid;
@@ -245,6 +246,23 @@
 
 .mkt-tab--add:hover svg {
   transform: scale(1.1) rotate(90deg);
+}
+
+/* Bosh sahifada: ekran pastiga yopishgan, faqat telefon/planshet o'lchamida */
+.mkt-tabbar--floating,
+.mkt-tabbar--floating * {
+  box-sizing: border-box;
+}
+.mkt-tabbar--floating {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  color: var(--text);
+}
+@media (min-width: 901px) {
+  .mkt-tabbar--floating { display: none; }
 }
 
 .mkt-add-menu-backdrop {
@@ -371,7 +389,8 @@
    ------------------------------------------------------------ */
 
 @media (max-width: 380px) {
-  .mkt-shell > .mkt-tabbar {
+  .mkt-shell > .mkt-tabbar,
+  .mkt-tabbar--floating {
     padding: 6px 6px;
     padding-bottom: calc(6px + env(safe-area-inset-bottom));
     gap: 2px;
@@ -1485,4 +1504,11 @@
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* Bosh sahifadagi pastki menyu uchun joy (HomePage body'ga klass qo'shadi) */
+@media (max-width: 900px) {
+  body.has-bottom-tabbar { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+  body.has-bottom-tabbar .ai-chat-toggle { bottom: calc(88px + env(safe-area-inset-bottom)); }
+  body.has-bottom-tabbar .ai-chat-modal { bottom: calc(150px + env(safe-area-inset-bottom)); }
 }

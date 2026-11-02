@@ -1,0 +1,57 @@
+.zumo-bot {
+  overflow: visible;
+  filter: drop-shadow(0 8px 18px rgba(0, 150, 220, 0.35));
+}
+
+.zumo-bot__float {
+  animation: zumoBotFloat 2.6s ease-in-out infinite;
+}
+
+.zumo-bot__beacon {
+  animation: zumoBotBeacon 1.4s ease-in-out infinite;
+}
+
+.zumo-bot__eyes {
+  transform-box: view-box;
+  transform-origin: 40px 33px;
+  animation: zumoBotBlink 4.2s infinite;
+}
+
+.zumo-bot__arm {
+  transform-box: view-box;
+  transform-origin: 58px 58px;
+  transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.zumo-bot__arm--wave {
+  animation: zumoBotWave 1.1s ease-in-out infinite;
+}
+
+@keyframes zumoBotFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes zumoBotBeacon {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes zumoBotBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+@keyframes zumoBotWave {
+  0%, 100% { transform: rotate(-70deg); }
+  50% { transform: rotate(-25deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zumo-bot__float,
+  .zumo-bot__beacon,
+  .zumo-bot__eyes,
+  .zumo-bot__arm--wave {
+    animation: none;
+  }
+}

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Loader2, MapPin, Clock, X, MessageCircle } from 'lucide-react';
 import { getReceivedOrders, updateOrderStatus, rejectOrder } from '../services/orders';
 import '../../styles/myOrders.css';
+import OrderAlertTip from '../common/OrderAlertTip';
 import { formatPrice } from '../utils/formatPrice';
 
 import { T } from '../utils/T';
@@ -187,6 +188,7 @@ export default function ReceivedOrdersPage() {
         <ArrowLeft size={16} /> {T('Orqaga')}
       </button>
       <h1 className="mo-title">{T('Kelgan buyurtmalar ({{count}})', { count: active.length })}</h1>
+      <OrderAlertTip />
 
       {active.length === 0 ? (
         <div className="mo-empty">{T('Hozircha yangi buyurtma yo\'q')}</div>

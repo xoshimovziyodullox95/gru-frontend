@@ -72,7 +72,9 @@
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
-  overflow-wrap: anywhere;
+  /* So'z o'rtasidan bo'linmasin ("Электрони-ка"); juda uzun bo'lsa defis bilan */
+  overflow-wrap: normal;
+  hyphens: auto;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
