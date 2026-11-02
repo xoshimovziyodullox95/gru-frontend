@@ -475,3 +475,18 @@ html.dark .rq {
   background: var(--paper, #fff);
   box-shadow: 0 4px 18px rgba(11, 37, 64, 0.18);
 }
+
+/* Buyurtmachi turi: jismoniy / yuridik (tez kunda) */
+.rq-who { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 14px; }
+.rq-who__opt {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 10px; border-radius: 14px;
+  border: 1.5px solid var(--border, rgba(0,0,0,.12)); background: var(--card, #fff); color: var(--text);
+  font: inherit; font-size: 0.9rem; font-weight: 650; cursor: pointer;
+}
+.rq-who__opt.is-active { border-color: #00a6d6; background: rgba(0, 180, 216, .1); color: #0089b3; }
+.rq-who__opt--soon { opacity: .6; }
+.rq-who__badge {
+  position: absolute; top: -8px; right: 8px; padding: 2px 8px; border-radius: 999px;
+  background: #ffb020; color: #3a2600; font-size: 0.65rem; font-weight: 800;
+}

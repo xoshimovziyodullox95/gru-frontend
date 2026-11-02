@@ -62,6 +62,13 @@ export default function Navbar() {
     location.pathname.startsWith('/chat') ||
     location.pathname.startsWith('/ai-assistant');
 
+  // Pastki menyu uchun body'da joy — faqat menyu haqiqatan ko'rinayotganda (navbar.css)
+  const showBottomNav = Boolean(user) && !hideBottomNav;
+  useEffect(() => {
+    document.body.classList.toggle('has-gru-bottom-nav', showBottomNav);
+    return () => document.body.classList.remove('has-gru-bottom-nav');
+  }, [showBottomNav]);
+
   const getProfileLink = () => {
     const r = getUserRole();
     if (r === 'bank_employee') return '/bank-dashboard';

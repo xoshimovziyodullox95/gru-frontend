@@ -106,6 +106,8 @@ function parseReelMessage(text) {
     url: parts[0] || '',
     title: safeDecode(parts[1]) || T('Video'),
     thumbnail: safeDecode(parts[2]) || '',
+    // Muqovasi yo'q reels uchun — videoning o'zidan kadr (eski xabarlarda bo'lmaydi)
+    video: safeDecode(parts[3]) || '',
   };
 }
 
@@ -134,66 +136,41 @@ function previewOf(msg) {
 
 function ReelMessageCard({ text }) {
   const navigate = useNavigate();
-  const { url, title, thumbnail } = parseReelMessage(text);
+  const { url, title, thumbnail, video } = parseReelMessage(text);
   const [thumbFailed, setThumbFailed] = useState(false);
 
   const handleClick = (e) => {
     e.stopPropagation();
     if (!url) return;
-
-    // Tashqi havola (YouTube, boshqa sayt) — yangi tab
-    if (
-      url.startsWith('http') &&
-      !url.startsWith(window.location.origin)
-    ) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-
-    // Ichki havola — SPA navigate
-    let path = url;
-    if (url.startsWith(window.location.origin)) {
-      path = url.replace(window.location.origin, '');
-    }
-
-    if (path.startsWith('/')) {
-      navigate(path);
-    }
+    // Ichki havola — ilova ichida (reels/post sahifasi); faqat YouTube va boshqa saytlar brauzerda
+    const path = internalPath(url);
+    if (path) navigate(path);
+    else if (/^https?:\/\//.test(url)) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  // Reels formatida: tik (9:16) kartochka, pastda nom — Instagram'da ulashilgan reels kabi
   return (
     <div
       className="tg-reel-card"
       onClick={handleClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') handleClick(e);
-      }}
+      onKeyDown={(e) => { if (e.key === 'Enter') handleClick(e); }}
     >
       <div className="tg-reel-card__thumb">
         {thumbnail && !thumbFailed ? (
-          <img
-            src={thumbnail}
-            alt={title}
-            onError={() => setThumbFailed(true)}
-          />
+          <img src={thumbnail} alt={title} onError={() => setThumbFailed(true)} />
+        ) : video ? (
+          <video src={`${getImageUrl(video)}#t=0.5`} muted playsInline preload="metadata" poster={TRANSPARENT_POSTER} />
         ) : (
-          <div className="tg-reel-card__placeholder">
-            <Film size={36} />
-          </div>
+          <div className="tg-reel-card__placeholder"><Film size={36} /></div>
         )}
-        <span className="tg-reel-card__play-icon">
-          <PlayCircle size={44} />
-        </span>
-      </div>
-
-      <div className="tg-reel-card__info">
-        <strong>{title}</strong>
-        <small className="tg-reel-card__url">{url}</small>
-        <span className="tg-reel-card__open">
-          <ExternalLink size={12} /> {T('Ochish')}
-        </span>
+        <span className="tg-reel-card__badge"><Film size={12} /> Reels</span>
+        <span className="tg-reel-card__play-icon"><PlayCircle size={44} /></span>
+        <div className="tg-reel-card__info">
+          <strong>{title}</strong>
+          <span className="tg-reel-card__open"><ExternalLink size={12} /> {T('Ochish')}</span>
+        </div>
       </div>
     </div>
   );
@@ -205,8 +182,8 @@ function SharedListingMessageCard({ text }) {
   const [thumbFailed, setThumbFailed] = useState(false);
   const openListing = (event) => {
     event.stopPropagation();
-    if (url.startsWith('/') && !url.startsWith('//')) navigate(url);
-    else if (url.startsWith(window.location.origin)) navigate(url.slice(window.location.origin.length));
+    const path = internalPath(url);
+    if (path) navigate(path);
     else if (url.startsWith('https://') || url.startsWith('http://')) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -229,6 +206,57 @@ function SharedListingMessageCard({ text }) {
 /* ============================================================
    ASOSIY KOMPONENT
    ============================================================ */
+
+// Ilova ichidagi havolami? Eski xabarlarda to'liq manzil bo'ladi (https://localhost/..., sayt domeni) —
+// ularni ham ilova ichida ochamiz, faqat haqiqiy tashqi saytlar brauzerda ochiladi
+const APP_HOSTS = ['localhost', '127.0.0.1'];
+function internalPath(url) {
+  if (!url) return null;
+  if (url.startsWith('/') && !url.startsWith('//')) return url;
+  try {
+    const u = new URL(url);
+    const host = u.hostname;
+    if (APP_HOSTS.includes(host) || host === window.location.hostname || /(^|\.)(zumo\.uz|gru\.uz)$/.test(host)) {
+      return `${u.pathname}${u.search}${u.hash}`;
+    }
+  } catch { /* noto'g'ri manzil — tashqi deb hisoblaymiz */ }
+  return null;
+}
+
+// Chat foni (oboi) — tanlov shu qurilmada saqlanadi
+const DOODLE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%2300b4d8' stroke-opacity='.18' stroke-width='2'%3E%3Ccircle cx='14' cy='16' r='6'/%3E%3Cpath d='M50 10l8 8m0-8l-8 8M24 52q8-10 16 0t16 0M60 58h10M65 53v10'/%3E%3C/g%3E%3C/svg%3E\")";
+const WALLPAPERS = [
+  { id: 'default', label: () => T('Odatiy'), css: '' },
+  { id: 'sky', label: () => T('Osmon'), css: 'linear-gradient(160deg, #cfefff 0%, #e9f7ff 45%, #fdfcff 100%)' },
+  { id: 'night', label: () => T('Tun'), css: 'linear-gradient(160deg, #0b1a33 0%, #11284a 50%, #0a1426 100%)', dark: true },
+  { id: 'mint', label: () => T('Yalpiz'), css: 'linear-gradient(160deg, #d8f7ec 0%, #effcf7 55%, #ffffff 100%)' },
+  { id: 'peach', label: () => T('Shaftoli'), css: 'linear-gradient(160deg, #ffe3d6 0%, #fff1ea 50%, #fffaf7 100%)' },
+  { id: 'doodle', label: () => T('Naqsh'), css: `${DOODLE}, linear-gradient(160deg, #eaf8ff, #f7fbff)` },
+];
+const WALLPAPER_KEY = 'zumo_chat_wallpaper';
+const readWallpaper = () => {
+  try { return localStorage.getItem(WALLPAPER_KEY) || 'default'; } catch { return 'default'; }
+};
+
+// Server rasm/video bilan birga shu matnni yozadi — media ostida takrorlanmasin
+const AUTO_MEDIA_TEXT = /^📎 (Rasm|Video) yuborildi$/;
+// 1x1 shaffof GIF: Android WebView video yuklanguncha kulrang fon va katta "▶" chizmasin
+const TRANSPARENT_POSTER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+// Rasmi yo'q yoki buzilgan bo'lsa — ism bosh harflari bilan avatar
+const initialsAvatar = (name) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Z')}&background=00B4D8&color=fff&rounded=true&size=96`;
+function ChatAvatar({ src, name }) {
+  const fallback = initialsAvatar(name);
+  const usable = src && !src.includes('zumo-placeholder') ? src : fallback;
+  return (
+    <img
+      src={usable}
+      alt=""
+      onError={(e) => { if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback; }}
+    />
+  );
+}
 
 export default function ChatPage() {
   const { user } = useAuth();
@@ -268,6 +296,19 @@ export default function ChatPage() {
   const [onlineStatus, setOnlineStatus] = useState({});
   const [sendingMedia, setSendingMedia] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
+  const [wallpaper, setWallpaper] = useState(readWallpaper);
+  const [wallpaperOpen, setWallpaperOpen] = useState(false);
+  const activeWallpaper = WALLPAPERS.find((w) => w.id === wallpaper) || WALLPAPERS[0];
+  const chooseWallpaper = (id) => {
+    setWallpaper(id);
+    setWallpaperOpen(false);
+    try { localStorage.setItem(WALLPAPER_KEY, id); } catch { /* faqat shu safar */ }
+  };
+
+  // Telegram uslubi: o'ngga surish — javob, uzoq bosish — menyu (telefonda "⋮" ko'rinmaydi)
+  const touchRef = useRef({ id: null, x: 0, y: 0, dx: 0, timer: 0, scrolling: false });
+  const [swipe, setSwipe] = useState({ id: null, dx: 0 });
+  const [flashId, setFlashId] = useState(null);
   const [editingMessage, setEditingMessage] = useState(null);
   const [showEmoji, setShowEmoji] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -734,8 +775,16 @@ export default function ChatPage() {
     const handler = (e) => {
       if (!e.target.closest('.tg-msg-menu-wrap')) setOpenMenuId(null);
     };
+    // Telefonda ham: tashqariga tegish yoki "orqaga" (Escape) menyuni yopadi
+    const onKey = (e) => { if (e.key === 'Escape') { setOpenMenuId(null); setWallpaperOpen(false); } };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler, { passive: true });
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+      document.removeEventListener('keydown', onKey);
+    };
   }, []);
 
   useEffect(() => {
@@ -836,6 +885,59 @@ export default function ChatPage() {
       },
       () => toast.error(T('Joylashuv olinmadi'))
     );
+  };
+
+  const onBubbleTouchStart = (e, menuId) => {
+    const t = e.touches[0];
+    const state = touchRef.current;
+    clearTimeout(state.timer);
+    Object.assign(state, { id: menuId, x: t.clientX, y: t.clientY, dx: 0, scrolling: false });
+    state.timer = window.setTimeout(() => {
+      if (state.id === menuId && state.dx < 8 && !state.scrolling) {
+        setOpenMenuId(menuId);
+        navigator.vibrate?.(15);
+      }
+    }, 380);
+  };
+
+  const onBubbleTouchMove = (e, menuId) => {
+    const state = touchRef.current;
+    if (state.id !== menuId || state.scrolling) return;
+    const t = e.touches[0];
+    const dx = t.clientX - state.x;
+    const dy = t.clientY - state.y;
+    if (Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) {
+      state.scrolling = true;
+      clearTimeout(state.timer);
+      setSwipe({ id: null, dx: 0 });
+      return;
+    }
+    if (dx > 8) {
+      clearTimeout(state.timer);
+      state.dx = Math.min(dx, 90);
+      setSwipe({ id: menuId, dx: state.dx });
+    }
+  };
+
+  const onBubbleTouchEnd = (msg, menuId) => {
+    const state = touchRef.current;
+    clearTimeout(state.timer);
+    if (menuId !== null && state.id === menuId && state.dx >= 56) {
+      navigator.vibrate?.(10);
+      handleReply(msg);
+    }
+    state.id = null;
+    state.dx = 0;
+    setSwipe({ id: null, dx: 0 });
+  };
+
+  // Iqtibos bosilganda asl xabarga o'tib, uni qisqa yoritadi
+  const jumpToMessage = (id) => {
+    const el = id && document.querySelector(`[data-msg-id="${id}"]`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setFlashId(String(id));
+    window.setTimeout(() => setFlashId(null), 1400);
   };
 
   const handleReply = (msg) => {
@@ -998,7 +1100,7 @@ export default function ChatPage() {
                       }}
                     >
                       <div className="tg-avatar">
-                        <img src={u.avatar_url || '/images/zumo-placeholder.svg'} alt="" />
+                        <ChatAvatar src={u.avatar_url} name={u.fullName || u.email} />
                         {onlineStatus[uid]?.isOnline && <span className="tg-online-dot" />}
                       </div>
                       <div className="tg-chatitem__body">
@@ -1029,7 +1131,7 @@ export default function ChatPage() {
                   onClick={() => setActiveChat(conv)}
                 >
                   <div className="tg-avatar">
-                    <img src={conv.avatar} alt="" />
+                    <ChatAvatar src={conv.avatar} name={conv.fullName} />
                     {(onlineStatus[conv.userId]?.isOnline ?? conv.isOnline) && (
                       <span className="tg-online-dot" />
                     )}
@@ -1089,7 +1191,7 @@ export default function ChatPage() {
                 </button>
 
                 <div className="tg-avatar tg-avatar--sm">
-                  <img src={activeChat.avatar} alt="" />
+                  <ChatAvatar src={activeChat.avatar} name={activeChat.fullName} />
                   {activeIsOnline && <span className="tg-online-dot" />}
                 </div>
 
@@ -1117,12 +1219,15 @@ export default function ChatPage() {
                 >
                   {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </button>
-                <button type="button" className="tg-icon-btn">
+                <button type="button" className="tg-icon-btn" onClick={() => setWallpaperOpen(true)} aria-label={T('Chat foni')}>
                   <MoreVertical size={20} />
                 </button>
               </header>
 
-              <div className="tg-messages">
+              <div
+                className={`tg-messages ${activeWallpaper.css ? 'tg-messages--wallpaper' : ''} ${activeWallpaper.dark ? 'tg-messages--dark' : ''}`}
+                style={activeWallpaper.css ? { background: activeWallpaper.css, backgroundAttachment: 'local' } : undefined}
+              >
                 {messages.length === 0 ? (
                   <div className="tg-empty">
                     <MessageSquare size={40} />
@@ -1154,9 +1259,10 @@ export default function ChatPage() {
                     return (
                       <div
                         key={menuId}
+                        data-msg-id={msg._id}
                         className={`tg-message-row ${isSent ? 'sent' : 'received'} ${
                           isGrouped ? 'grouped' : ''
-                        }`}
+                        } ${flashId && flashId === String(msg._id) ? 'tg-flash' : ''}`}
                       >
                         <div className="tg-message-wrapper">
                           <div
@@ -1164,9 +1270,29 @@ export default function ChatPage() {
                               isLastOfGroup ? (isSent ? 'tail-right' : 'tail-left') : ''
                             } ${isReel ? 'tg-bubble--reel' : ''} ${isSharedListing ? 'tg-bubble--listing' : ''}`}
                             onDoubleClick={() => handleReply(msg)}
+                            onTouchStart={(e) => onBubbleTouchStart(e, menuId)}
+                            onTouchMove={(e) => onBubbleTouchMove(e, menuId)}
+                            onTouchEnd={() => onBubbleTouchEnd(msg, menuId)}
+                            onTouchCancel={() => onBubbleTouchEnd(msg, null)}
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={swipe.id === menuId ? { transform: `translateX(${swipe.dx}px)`, transition: 'none' } : undefined}
                           >
+                            {swipe.id === menuId && (
+                              <span className="tg-swipe-reply" style={{ opacity: Math.min(1, swipe.dx / 56) }}>
+                                <Reply size={16} />
+                              </span>
+                            )}
                             {isReply && (
-                              <div className="tg-reply-preview">
+                              <div
+                                className="tg-reply-preview"
+                                onClick={(e) => { e.stopPropagation(); jumpToMessage(toIdStr(msg.replyTo?._id)); }}
+                              >
+                                {msg.replyTo?.mediaUrl && msg.replyTo?.mediaType === 'image' && (
+                                  <img className="tg-reply-thumb" src={getImageUrl(msg.replyTo.mediaUrl)} alt="" />
+                                )}
+                                {msg.replyTo?.mediaUrl && msg.replyTo?.mediaType === 'video' && (
+                                  <video className="tg-reply-thumb" src={`${getImageUrl(msg.replyTo.mediaUrl)}#t=0.1`} muted playsInline preload="metadata" poster={TRANSPARENT_POSTER} />
+                                )}
                                 <span className="tg-reply-bar" />
                                 <div className="tg-reply-body">
                                   <span className="tg-reply-name">
@@ -1181,7 +1307,9 @@ export default function ChatPage() {
                                       ? '🎬 Video'
                                       : isLocationMessage(msg.replyTo?.message)
                                       ? '📍 Joylashuv'
-                                      : msg.replyTo?.message || T('Xabar')}
+                                      : msg.replyTo?.mediaType
+                                        ? previewOf(msg.replyTo)
+                                        : msg.replyTo?.message || T('Xabar')}
                                   </span>
                                 </div>
                               </div>
@@ -1209,13 +1337,17 @@ export default function ChatPage() {
                                   setLightbox({ url: getImageUrl(msg.mediaUrl), type: 'video' })
                                 }
                               >
+                                {/* #t=0.1 — birinchi kadr muqova bo'lib ko'rinadi */}
                                 <video
-                                  src={getImageUrl(msg.mediaUrl)}
+                                  src={`${getImageUrl(msg.mediaUrl)}#t=0.1`}
                                   muted
+                                  playsInline
+                                  preload="metadata"
+                                  poster={TRANSPARENT_POSTER}
                                   className="tg-media-img"
                                 />
                                 <div className="tg-play-overlay">
-                                  <PlayCircle size={48} />
+                                  <span className="tg-play-btn"><PlayCircle size={30} /></span>
                                 </div>
                               </div>
                             )}
@@ -1240,7 +1372,9 @@ export default function ChatPage() {
                             ) : isReel ? (
                               <ReelMessageCard text={msg.message} />
                             ) : (
-                              msg.message && <p className="tg-text">{msg.message}</p>
+                              msg.message && !(msg.mediaUrl && AUTO_MEDIA_TEXT.test(msg.message)) && (
+                                <p className="tg-text">{msg.message}</p>
+                              )
                             )}
 
                             <div className="tg-meta">
@@ -1321,7 +1455,9 @@ export default function ChatPage() {
                         ? '🎬 Video'
                         : isLocationMessage(replyTo.message)
                         ? '📍 Joylashuv'
-                        : replyTo.message?.substring(0, 60)}
+                        : replyTo.mediaType
+                          ? previewOf(replyTo)
+                          : replyTo.message?.substring(0, 60)}
                     </span>
                   </div>
                   <button
@@ -1470,24 +1606,67 @@ export default function ChatPage() {
         </main>
       </div>
 
-      {lightbox && (
-        <div className="tg-lightbox" onClick={() => setLightbox(null)}>
-          <button
-            type="button"
-            className="tg-lightbox__close"
-            onClick={() => setLightbox(null)}
-          >
-            <X size={24} />
-          </button>
-          <div className="tg-lightbox__body" onClick={(e) => e.stopPropagation()}>
-            {lightbox.type === 'image' ? (
-              <img src={lightbox.url} alt="" />
-            ) : (
-              <video src={lightbox.url} controls autoPlay />
-            )}
+      {lightbox && <MediaLightbox media={lightbox} onClose={() => setLightbox(null)} />}
+
+      {wallpaperOpen && (
+        <div className="tg-wall-sheet" role="dialog" aria-modal="true" onClick={() => setWallpaperOpen(false)}>
+          <div className="tg-wall-sheet__card" onClick={(e) => e.stopPropagation()}>
+            <div className="tg-wall-sheet__head">
+              <strong>{T('Chat foni')}</strong>
+              <button type="button" onClick={() => setWallpaperOpen(false)} aria-label={T('Yopish')}><X size={18} /></button>
+            </div>
+            <div className="tg-wall-grid">
+              {WALLPAPERS.map((w) => (
+                <button
+                  key={w.id}
+                  type="button"
+                  className={`tg-wall-opt ${w.id === wallpaper ? 'is-active' : ''}`}
+                  onClick={() => chooseWallpaper(w.id)}
+                >
+                  <span className="tg-wall-opt__swatch" style={{ background: w.css || 'var(--tg-bg)' }}>
+                    <i className="tg-wall-opt__b1" /><i className="tg-wall-opt__b2" />
+                  </span>
+                  <span>{w.label()}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
     </>
+  );
+}
+
+// To'liq ekranli rasm/video ko'rish. role="dialog" — Android "orqaga" tugmasi Escape yuboradi va oyna yopiladi
+function MediaLightbox({ media, onClose }) {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div className="tg-lightbox" role="dialog" aria-modal="true" onClick={onClose}>
+      <button type="button" className="tg-lightbox__close" onClick={onClose} aria-label={T('Yopish')}>
+        <X size={24} />
+      </button>
+      {loading && <Loader2 className="tg-lightbox__spinner" size={36} aria-hidden="true" />}
+      <div className="tg-lightbox__body" onClick={(e) => e.stopPropagation()}>
+        {media.type === 'image' ? (
+          <img src={media.url} alt="" onLoad={() => setLoading(false)} onError={() => setLoading(false)} />
+        ) : (
+          <video
+            src={media.url}
+            controls
+            autoPlay
+            playsInline
+            controlsList="nodownload noplaybackrate"
+            onLoadedData={() => setLoading(false)}
+            onError={() => setLoading(false)}
+          />
+        )}
+      </div>
+    </div>
   );
 }

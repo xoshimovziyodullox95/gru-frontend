@@ -6,7 +6,7 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 const ROOT_PATHS = ['/', '/home'];
 const EXIT_WINDOW_MS = 2000;
 // Ochiq bo'lsa, "orqaga" avval shularni yopadi (komponentlar Escape tugmasini tinglaydi)
-const OVERLAYS = '.reel-modal-overlay, .rv-viewer, .rv-sheet, .st-sheet, .pf-sheet, .ImageViewerOverlay, [role="dialog"][aria-modal="true"]';
+const OVERLAYS = '.tg-msg-menu, .tg-lightbox, .tg-wall-sheet, .reel-modal-overlay, .rv-viewer, .rv-sheet, .st-sheet, .pf-sheet, .ImageViewerOverlay, [role="dialog"][aria-modal="true"]';
 let lastBackAt = 0;
 
 // Android ilovani fonda yopib qo'ysa ham, qayta ochilganda oxirgi sahifadan davom etamiz

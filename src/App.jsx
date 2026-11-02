@@ -166,6 +166,7 @@ const HIDE_AI_CHAT_PATHS = [
   '/ai-assistant', // to'liq sahifa AI allaqachon bor
   '/request',
   '/become-provider',
+  '/chat', // yozish maydoni va yuborish tugmasini to'smasin
 ];
 
 /* Pastida asosiy amal tugmasi bor oqimlar — AI tugmasi uni to'sib qo'ymasin */

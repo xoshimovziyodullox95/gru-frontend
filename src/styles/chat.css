@@ -1579,13 +1579,14 @@ html:not(.dark) .tg-loading {
 }
 
 @media (max-width: 768px) {
+  /* Chat sahifasida pastki menyu yo'q — to'liq balandlik (oldin 60px kulrang bo'shliq qolardi) */
   .tg-chat {
-    height: calc(100vh - 60px);
+    height: 100vh;
   }
 
   @supports (height: 100dvh) {
     .tg-chat {
-      height: calc(100dvh - 60px);
+      height: 100dvh;
     }
   }
 
@@ -1731,5 +1732,156 @@ html:not(.dark) .tg-loading {
   .tg-chat *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   MEDIA: video muqovasi va to'liq ekranli ko'rish
+   ============================================================ */
+.tg-media-video { position: relative; background: #0b1220; min-height: 140px; }
+.tg-media-video .tg-media-img { background: #0b1220; }
+.tg-play-overlay { pointer-events: none; }
+.tg-play-btn {
+  display: grid; place-items: center;
+  width: 54px; height: 54px; border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55); color: #fff;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+.tg-lightbox { z-index: 10050; background: #000; }
+.tg-lightbox__close {
+  top: calc(12px + env(safe-area-inset-top));
+  right: 12px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.16);
+}
+.tg-lightbox__body {
+  display: grid; place-items: center;
+  width: 100vw; height: 100dvh; max-width: none; max-height: none;
+  padding: calc(64px + env(safe-area-inset-top)) 0 calc(24px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+.tg-lightbox__body img,
+.tg-lightbox__body video {
+  max-width: 100vw;
+  max-height: 100%;
+  width: auto;
+  border-radius: 0;
+  background: #000;
+}
+.tg-lightbox__spinner {
+  position: absolute; top: 50%; left: 50%;
+  margin: -18px 0 0 -18px; color: #fff; opacity: 0.8;
+  animation: tgSpin 0.9s linear infinite;
+}
+@keyframes tgSpin { to { transform: rotate(360deg); } }
+
+/* iPhone: sarlavhalar soat/orolcha ostida qolmasin (Android'da env() = 0) */
+.tg-header,
+.tg-sidebar__header { padding-top: calc(8px + env(safe-area-inset-top)); }
+
+/* ============================================================
+   REELS kartochkasi — tik (9:16), nom pastda (Instagram uslubi)
+   ============================================================ */
+.tg-reel-card { width: 200px; max-width: 62vw; padding: 0; overflow: hidden; border-radius: 16px; }
+.tg-reel-card__thumb { position: relative; aspect-ratio: 9 / 16; width: 100%; height: auto; background: #0b1220; }
+.tg-reel-card__thumb img,
+.tg-reel-card__thumb video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tg-reel-card__placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #7fdcff; }
+.tg-reel-card__badge {
+  position: absolute; top: 8px; left: 8px; z-index: 1;
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.5); color: #fff; font-size: 11px; font-weight: 700;
+}
+.tg-reel-card__play-icon { color: #fff; filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5)); }
+.tg-reel-card__thumb .tg-reel-card__info {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+  padding: 28px 10px 10px; background: linear-gradient(transparent, rgba(0, 0, 0, 0.75)); color: #fff;
+}
+.tg-reel-card__thumb .tg-reel-card__info strong { color: #fff; -webkit-line-clamp: 2; }
+.tg-reel-card__thumb .tg-reel-card__open { color: #bfefff; }
+
+/* O'zi yuklagan video — asl nisbatda, tik video ham to'liq ko'rinadi */
+.tg-media-video .tg-media-img { width: 100%; height: auto; max-height: 340px; object-fit: contain; display: block; }
+.tg-media-wrap.tg-media-video { width: 240px; max-width: 66vw; }
+
+/* ============================================================
+   JAVOB: surish belgisi, iqtibosdagi muqova, yoritish
+   ============================================================ */
+.tg-bubble { position: relative; touch-action: pan-y; }
+.tg-swipe-reply {
+  position: absolute; left: -40px; top: 50%; margin-top: -14px;
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(0, 180, 216, 0.18); color: #0096c7;
+}
+.tg-reply-preview { cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.tg-reply-thumb { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex: 0 0 auto; background: #0b1220; }
+.tg-message-row.tg-flash .tg-bubble { animation: tgFlash 1.4s ease; }
+@keyframes tgFlash {
+  0%, 60% { box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.55); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+}
+
+/* Telefonda xabar menyusi — pastdan chiqadigan panel (uzoq bosish bilan ochiladi) */
+@media (hover: none) {
+  .tg-msg-menu-btn { display: none; }
+  .tg-msg-menu {
+    position: fixed; left: 12px !important; right: 12px !important; top: auto;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 10040; min-width: 0; padding: 8px; border-radius: 18px;
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.35);
+  }
+  .tg-msg-menu button { min-height: 48px; font-size: 15px; }
+}
+
+/* ============================================================
+   CHAT FONI
+   ============================================================ */
+.tg-messages--dark .tg-empty,
+.tg-messages--dark .tg-date-divider { color: #cfe3ff; }
+.tg-wall-sheet {
+  position: fixed; inset: 0; z-index: 10045; display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(0, 0, 0, 0.45); animation: tgFadeIn 0.2s ease;
+}
+.tg-wall-sheet__card {
+  width: min(520px, 100%); padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0; background: var(--tg-menu-bg, #fff); color: var(--tg-text);
+}
+.tg-wall-sheet__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.tg-wall-sheet__head strong { font-size: 17px; }
+.tg-wall-sheet__head button { border: 0; background: transparent; color: inherit; padding: 6px; cursor: pointer; }
+.tg-wall-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tg-wall-opt {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0;
+  border: 0; background: transparent; color: inherit; font: inherit; font-size: 13px; cursor: pointer;
+}
+.tg-wall-opt__swatch {
+  position: relative; display: block; width: 100%; aspect-ratio: 3 / 4; border-radius: 14px;
+  border: 2px solid var(--tg-border, rgba(0,0,0,.1)); overflow: hidden; background-size: 80px 80px, cover !important;
+}
+.tg-wall-opt.is-active .tg-wall-opt__swatch { border-color: #00a6d6; box-shadow: 0 0 0 2px rgba(0, 166, 214, 0.35); }
+.tg-wall-opt__b1, .tg-wall-opt__b2 { position: absolute; height: 12px; border-radius: 8px; }
+.tg-wall-opt__b1 { left: 8px; top: 28%; width: 55%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.tg-wall-opt__b2 { right: 8px; top: 52%; width: 45%; background: #2aa9e0; }
+
+/* .tg-reply-bar ikki joyda ishlatilgan: iqtibosdagi ingichka chiziq (span) va yozish maydoni
+   ustidagi javob paneli (div) — bir-birining uslubini buzmasin */
+div.tg-reply-bar { width: auto; }
+.tg-reply-preview .tg-reply-bar {
+  display: block; align-self: stretch; width: 3px; padding: 0; border: 0;
+  background: var(--tg-accent-2); animation: none;
+}
+
+/* Telefonda uzoq bosganda tizimning matn tanlash menyusi chiqib, menyuni bekor qilmasin */
+@media (hover: none) {
+  .tg-bubble { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+}
+
+/* Telefondagi xabar menyusi yozish maydoni ostida qolmasin: menyu ochiqligida xabarlar qatlami yuqorida */
+@media (hover: none) {
+  .tg-messages:has(.tg-msg-menu) { position: relative; z-index: 10040; }
+  .tg-messages:has(.tg-msg-menu)::after {
+    content: ''; position: fixed; inset: 0; z-index: 10030; background: rgba(0, 0, 0, 0.35);
   }
 }

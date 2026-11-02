@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Check, ChevronRight, X } from 'lucide-react';
+import { ArrowLeft, Building2, Check, ChevronRight, User, X } from 'lucide-react';
 
 import LocationMapPicker from '../forms/LocationMapPicker';
 import RequestTrackerModal from '../client/RequestTrackerModal';  // ✅ YANGI
@@ -317,6 +317,23 @@ export default function RequestPage({ defaultCategory = '' }) {
 
         {step === 1 && (
           <section>
+            {/* Buyurtmachi turi: hozircha faqat jismoniy shaxs; yuridik (shartnoma, hisob-faktura) — tez kunda */}
+            <div className="rq-who" role="radiogroup" aria-label={T('Buyurtmachi')}>
+              <button type="button" role="radio" aria-checked="true" className="rq-who__opt is-active">
+                <User size={18} /> {T('Jismoniy shaxs')}
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked="false"
+                className="rq-who__opt rq-who__opt--soon"
+                onClick={() => toast(T('Yuridik shaxslar uchun buyurtma (shartnoma va hisob-faktura bilan) tez kunda!'), { icon: '🏢', id: 'legal-soon' })}
+              >
+                <Building2 size={18} /> {T('Yuridik shaxs')}
+                <span className="rq-who__badge">{T('Tez kunda')}</span>
+              </button>
+            </div>
+
             {!loading && flat.length > 0 && (
               <>
                 <div className="rq-search">

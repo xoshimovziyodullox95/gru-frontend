@@ -224,7 +224,7 @@ function ReelThumb({ reel, onOpen, isPriority, t }) {
           // Muqova bo'lmasa — birinchi (ko'pincha qora) kadr emas, 0.5-soniyadagi kadr ko'rinsin
           src={`${getImageUrl(reel.videoUrl)}${reel?.thumbnailUrl ? '' : '#t=0.5'}`}
           poster={
-            reel?.thumbnailUrl ? getImageUrl(reel.thumbnailUrl) : undefined
+            reel?.thumbnailUrl ? getImageUrl(reel.thumbnailUrl) : TRANSPARENT_POSTER
           }
           className="reel-card__media"
           muted

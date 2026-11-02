@@ -84,13 +84,17 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
   };
 
   const buildMessage = () => {
-    const url = buildUrl();
+    // Chat xabarida ichki yo'l saqlanadi (/posts/ID) — ilovada origin "https://localhost",
+    // to'liq manzil qabul qiluvchida tashqi sayt bo'lib, brauzerda ochilib ketardi
+    const url = shareItem.itemType === 'youtube-external' ? buildUrl() : (shareItem.link || buildUrl());
     const title = encodeURIComponent(shareItem.title || (isListing ? 'E’lon' : 'Video'));
     const thumb = shareItem.thumbnailUrl ? encodeURIComponent(shareItem.thumbnailUrl) : '';
     if (isListing) {
       return `LISTING::${encodeURIComponent(listing.listingType || 'listing')}::${encodeURIComponent(url)}::${title}::${thumb}::${encodeURIComponent(listing.price || '')}`;
     }
-    return `REEL::${url}::${title}::${thumb}`;
+    // 4-qism — video manzili: muqovasi yo'q reels chatda videoning o'z kadri bilan ko'rinadi
+    const video = !shareItem.isYoutube && shareItem.videoUrl ? encodeURIComponent(shareItem.videoUrl) : '';
+    return `REEL::${url}::${title}::${thumb}::${video}`;
   };
 
   const handleCopy = async () => {

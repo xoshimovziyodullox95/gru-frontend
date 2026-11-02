@@ -22,7 +22,10 @@ import '../../styles/post-detail.css';
 
 import { T } from '../utils/T';
 const AVATAR_PLACEHOLDER = '/images/zumo-placeholder.svg';
+
 import { BACKEND_ORIGIN } from '../utils/imageUrl';
+// 1x1 shaffof GIF: muqovasi yo'q video yuklanguncha Android kulrang "▶" chizmasin
+const TRANSPARENT_POSTER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 // Backend manzili .env dan (ilova va serverda ham ishlaydi)
 const MEDIA_BASE = BACKEND_ORIGIN;
 
@@ -85,7 +88,8 @@ function VideoPlayer({ src, poster }) {
       <video
         ref={videoRef}
         src={getImageUrl(src)}
-        poster={poster ? getImageUrl(poster) : undefined}
+        // Muqova yo'q bo'lsa — shaffof 1x1: Android video yuklanguncha kulrang "▶" chizmasin
+        poster={poster ? getImageUrl(poster) : TRANSPARENT_POSTER}
         className="pd-player__video"
         autoPlay
         muted
