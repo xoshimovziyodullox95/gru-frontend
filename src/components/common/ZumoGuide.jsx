@@ -195,7 +195,7 @@ export default function ZumoGuide() {
           <button type="button" className="zumo-tour-welcome__close" onClick={close} aria-label={T('Yopish')}><X size={19} /></button>
           <div className="zumo-tour-welcome__bot"><ZumoBot size={92} /></div>
           <span className="zumo-tour-welcome__eyebrow">{T('ZUMO · 1 daqiqalik tanishtiruv')}</span>
-          <h2 id="zumo-tour-welcome-title">Salom, {displayName}!</h2>
+          <h2 id="zumo-tour-welcome-title">{T('Salom, {{name}}!', { name: displayName })}</h2>
           <p>{T('Men Zumik — ZUMO yordamchisiman. Bu yerda tovar va xizmat topish, ustaga buyurtma berish hamda o‘z e’loningizni joylash mumkin. Hozir asosiy tugmalarni qo‘lim bilan ko‘rsatib beraman.')}</p>
           <div className="zumo-tour-welcome__actions"><button type="button" onClick={close} className="zumo-tour-welcome__skip">{T('Keyinroq')}</button><button type="button" onClick={startTour} className="zumo-tour-welcome__start">{T('Ko‘rsatishni boshlash')} <ChevronRight size={18} /></button></div>
           <div className="zumo-tour-welcome__dots"><i /><i /><i /><i /><i /></div>
@@ -240,7 +240,7 @@ export default function ZumoGuide() {
         >
           <ZumoBot size={BOT_SIZE} angle={rect ? armAngle : null} />
         </span>
-        <div className="zumo-tour-card__top"><span>{isContextual ? T('XIZMAT SO‘ROVI') : isPageGuide ? T('SAHIFA YO‘RIQNOMASI') : `QADAM ${currentIndex + 1} / ${TOUR_STEPS.length}`}</span><button type="button" onClick={close} aria-label={T('Tanishtiruvni yopish')}><X size={17} /></button></div>
+        <div className="zumo-tour-card__top"><span>{isContextual ? T('XIZMAT SO‘ROVI') : isPageGuide ? T('SAHIFA YO‘RIQNOMASI') : T('QADAM {{n}} / {{total}}', { n: currentIndex + 1, total: TOUR_STEPS.length })}</span><button type="button" onClick={close} aria-label={T('Tanishtiruvni yopish')}><X size={17} /></button></div>
         <h2 id="zumo-tour-title">{currentStep?.title || T('Bu bo‘lim hozir ko‘rinmayapti')}</h2>
         <p>{currentStep?.text || T('Bosh sahifaga o‘ting, shunda ilovaning asosiy tugmalarini ko‘rsataman.')}</p>
         {!rect && <p className="zumo-tour-card__loading">{T('Kerakli tugmani topyapman…')}</p>}

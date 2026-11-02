@@ -16,7 +16,8 @@ import {
 
 import api from '../services/api';
 import { getUserProfile } from '../services/user';
-import { registerPush } from '../services/push';
+import { Capacitor } from '@capacitor/core';
+import { registerPush, getPushPermission } from '../services/push';
 import { isChatMuted, setChatMuted } from '../services/chatSound';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -63,7 +64,9 @@ const LOCALES = { uz: 'uz-UZ', ru: 'ru-RU', en: 'en-US' };
 const formatDate = (value, lang) =>
   value ? new Date(value).toLocaleDateString(LOCALES[lang] || 'uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
 
+// Birinchi chizish uchun (brauzer); ilovada aniq holat getPushPermission() bilan keyin keladi
 function pushState() {
+  if (Capacitor.isNativePlatform()) return 'default';
   if (typeof window === 'undefined' || !('Notification' in window) || !('serviceWorker' in navigator)) return 'unsupported';
   return Notification.permission; // granted | denied | default
 }
@@ -150,6 +153,12 @@ export default function SettingsPage() {
   const [sound, setSound] = useState(() => !isChatMuted());
   const [push, setPush] = useState(pushState);
   const [pushBusy, setPushBusy] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    getPushPermission().then((state) => { if (alive) setPush(state); });
+    return () => { alive = false; };
+  }, []);
   const [sheet, setSheet] = useState(null); // 'qr' | 'delete' | 'devices'
   const [confirmText, setConfirmText] = useState('');
   const [busy, setBusy] = useState(false);
@@ -202,9 +211,10 @@ export default function SettingsPage() {
     setPushBusy(true);
     try {
       const ok = await registerPush();
-      setPush(pushState());
+      const state = await getPushPermission();
+      setPush(state);
       if (ok) toast.success(t('settingsPage.pushOn', 'Push-bildirishnomalar yoqildi'));
-      else if (pushState() === 'denied') toast.info(t('settingsPage.pushAllow', 'Brauzer sozlamalaridan ruxsat bering'));
+      else if (state === 'denied') toast.info(t('settingsPage.pushAllow', 'Brauzer sozlamalaridan ruxsat bering'));
     } finally {
       setPushBusy(false);
     }

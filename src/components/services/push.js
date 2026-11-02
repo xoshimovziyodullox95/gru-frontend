@@ -163,6 +163,27 @@ export const registerPush = async () => {
 };
 
 /* ============================================================
+   RUXSAT HOLATI — 'granted' | 'denied' | 'default' | 'unsupported'
+   Ilovada (Android/iOS) Firebase orqali, brauzerda Notification API orqali
+   ============================================================ */
+
+export const getPushPermission = async () => {
+  if (detectPlatform() !== 'web') {
+    try {
+      const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
+      const { receive } = await FirebaseMessaging.checkPermissions();
+      if (receive === 'granted') return 'granted';
+      if (receive === 'denied') return 'denied';
+      return 'default';
+    } catch {
+      return 'unsupported';
+    }
+  }
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return 'unsupported';
+  return Notification.permission;
+};
+
+/* ============================================================
    UNREGISTER
    ============================================================ */
 
