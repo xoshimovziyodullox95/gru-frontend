@@ -54,3 +54,12 @@
 .co-submit:disabled { opacity: 0.6; }
 @keyframes coFade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes coUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.co-phone-saved { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(0, 200, 120, 0.08); color: #00895a; }
+.co-phone-saved span { flex: 1; display: flex; flex-direction: column; gap: 2px; color: var(--text); }
+.co-phone-saved small { color: var(--textMuted, #5b6b80); font-size: 0.74rem; line-height: 1.35; }
+.co-phone-saved button { border: 0; background: transparent; color: #0089b3; font: inherit; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+.co-field-hint { margin: 8px 2px 0; font-size: 0.75rem; line-height: 1.45; color: var(--textMuted, #6b7a8f); }
+.co-line { align-items: center; }
+.co-line__img { width: 40px; height: 40px; flex: 0 0 auto; border-radius: 10px; object-fit: cover; background: #eef3f8; }
+.co-line__title { flex: 1; min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.co-line--total .co-line__img { display: none; }

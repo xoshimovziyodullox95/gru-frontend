@@ -244,3 +244,29 @@
 }
 /* .cart-item-actions button rangidan kuchliroq bo'lsin — o'chirish tugmasi qizil */
 .cart-item-actions .remove-btn { color: #ff6b6b; }
+
+/* ============================================================
+   TELEFON: ixcham sarlavha va pastda doim ko'rinadigan "jami + buyurtma" paneli
+   ============================================================ */
+@media (max-width: 640px) {
+  .cart-header {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .cart-header h1 { margin: 0; font-size: 1.25rem; text-align: left; }
+  .cart-back-btn { width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: 50%; font-size: 0; gap: 0; }
+  .cart-back-btn svg { width: 20px; height: 20px; }
+  .cart-clear-btn { padding: 6px 10px; font-size: 0.8rem; border-radius: 10px; }
+
+  /* Xulosa pastki menyu ustida yopishib turadi — tugmani qidirib aylantirish shart emas */
+  .cart-summary {
+    position: sticky; bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 5;
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px;
+    padding: 12px 14px; border-radius: 18px; box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.12);
+  }
+  .cart-summary h3,
+  .cart-summary .summary-row:not(.total) { display: none; }
+  .cart-summary .summary-row.total { grid-column: 1; margin: 0; padding: 0; border: 0; flex-direction: column; align-items: flex-start; gap: 0; }
+  .cart-summary .summary-row.total span:first-child { font-size: 0.75rem; font-weight: 600; opacity: 0.7; }
+  .cart-summary .checkout-btn { grid-column: 2; grid-row: 1; width: auto; margin: 0; padding: 12px 18px; white-space: nowrap; }
+}

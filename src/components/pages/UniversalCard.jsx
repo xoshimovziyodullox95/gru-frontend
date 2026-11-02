@@ -7,7 +7,7 @@ import { useCart } from '../hooks/useCart';
 import CartStepper from '../CartStepper';
 import '../../styles/universalCard.css';
 import { formatPrice } from '../utils/formatPrice';
-import { getImageUrl } from '../utils/imageUrl';
+import { getImageUrl, resolveMediaUrl } from '../utils/imageUrl';
 export default function UniversalCard({
   id,
   type = 'location',
@@ -30,7 +30,8 @@ export default function UniversalCard({
     typeof price === 'number' ? price : parseFloat(String(price || '').replace(/[^\d.]/g, '')) || 0;
 
   const quantity = getQuantity(id);
-  const cartItem = { id, title, price: numericPrice, currency, image, link, type, itemType: type };
+  // Savatga to'liq manzil saqlanadi — ilovada xom /uploads/... yo'li rasmni ochmasdi
+  const cartItem = { id, title, price: numericPrice, currency, image: resolveMediaUrl(image), link, type, itemType: type };
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();

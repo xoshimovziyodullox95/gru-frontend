@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../hooks/useCart';
 import api from '../services/api';
 import { formatPrice } from '../utils/formatPrice';
+import { resolveMediaUrl } from '../utils/imageUrl';
 import CheckoutSheet from '../cart/CheckoutSheet';
 import toast from 'react-hot-toast';
 import OrderWaitingModal from '../common/OrderWaitingModal';
@@ -154,7 +155,8 @@ export default function CartPage() {
             {cart.map((item) => (
               <div key={item.id} className="cart-item">
                 <img
-                  src={item.image || '/images/zumo-placeholder.svg'}
+                  src={resolveMediaUrl(item.image)}
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/zumo-placeholder.svg'; }}
                   alt={item.title}
                   className="cart-item-img"
                 />

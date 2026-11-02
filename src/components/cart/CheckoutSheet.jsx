@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Banknote, CreditCard, MapPin, Phone, Store, Truck, X } from 'lucide-react';
 import LocationMapPicker from '../forms/LocationMapPicker';
-import { getUserProfile } from '../services/user';
+import { getUserProfile, updateUserProfile } from '../services/user';
+import { resolveMediaUrl } from '../utils/imageUrl';
 import { formatPrice } from '../utils/formatPrice';
 import { T } from '../utils/T';
 import '../../styles/checkout.css';
@@ -20,6 +21,9 @@ export default function CheckoutSheet({ items, totals, submitting, onClose, onSu
   const [location, setLocation] = useState(null);
   const [mapOpen, setMapOpen] = useState(false);
   const [phone, setPhone] = useState('');
+  // Profilda raqam bo'lsa — so'ramaymiz, faqat ko'rsatamiz ("O'zgartirish" bilan)
+  const [profilePhone, setProfilePhone] = useState('');
+  const [editingPhone, setEditingPhone] = useState(false);
   const [payment, setPayment] = useState('cash');
   const [note, setNote] = useState('');
   const [error, setError] = useState('');
@@ -27,7 +31,13 @@ export default function CheckoutSheet({ items, totals, submitting, onClose, onSu
   // Telefon profildan avtomatik
   useEffect(() => {
     getUserProfile()
-      .then((res) => { if (res.data?.phone) setPhone((current) => current || formatUzPhone(res.data.phone)); })
+      .then((res) => {
+        const saved = formatUzPhone(res.data?.phone);
+        if (saved.replace(/\D/g, '').length === 9) {
+          setProfilePhone(saved);
+          setPhone((current) => current || saved);
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -49,6 +59,8 @@ export default function CheckoutSheet({ items, totals, submitting, onClose, onSu
       return;
     }
     setError('');
+    // Keyingi safar so'ramaslik uchun — profilda raqam bo'lmasa saqlab qo'yamiz
+    if (!profilePhone) updateUserProfile({ phone: `+998${phoneDigits}` }).catch(() => {});
     onSubmit({
       deliveryMethod: method,
       buyerLocation: method === 'delivery' ? location : null,
@@ -100,18 +112,29 @@ export default function CheckoutSheet({ items, totals, submitting, onClose, onSu
 
           <section className="co-section">
             <h3>{T('Aloqa uchun telefon')}</h3>
-            <label className="co-phone">
-              <Phone size={18} />
-              <span className="co-phone__code">+998</span>
-              <input
-                type="tel"
-                inputMode="numeric"
-                autoComplete="tel"
-                placeholder="90 123 45 67"
-                value={phone}
-                onChange={(e) => setPhone(formatUzPhone(e.target.value))}
-              />
-            </label>
+            {profilePhone && !editingPhone ? (
+              <div className="co-phone-saved">
+                <Phone size={18} />
+                <span><strong>+998 {phone}</strong><small>{T('Sotuvchi buyurtmani tasdiqlash uchun shu raqamga qo‘ng‘iroq qiladi')}</small></span>
+                <button type="button" onClick={() => setEditingPhone(true)}>{T('O‘zgartirish')}</button>
+              </div>
+            ) : (
+              <>
+                <label className="co-phone">
+                  <Phone size={18} />
+                  <span className="co-phone__code">+998</span>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    placeholder="90 123 45 67"
+                    value={phone}
+                    onChange={(e) => setPhone(formatUzPhone(e.target.value))}
+                  />
+                </label>
+                <p className="co-field-hint">{T('Sotuvchi buyurtmani tasdiqlash va yetkazish vaqtini kelishish uchun qo‘ng‘iroq qiladi. Raqam faqat shu sotuvchiga ko‘rinadi va profilingizga saqlanadi.')}</p>
+              </>
+            )}
           </section>
 
           <section className="co-section">
@@ -142,7 +165,8 @@ export default function CheckoutSheet({ items, totals, submitting, onClose, onSu
             <h3>{T('Buyurtmangiz')}</h3>
             {items.map((item) => (
               <div key={item.id} className="co-line">
-                <span>{item.title} <em>× {item.quantity || 1}</em></span>
+                <img className="co-line__img" src={resolveMediaUrl(item.image)} alt="" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/zumo-placeholder.svg'; }} />
+                <span className="co-line__title">{item.title} <em>× {item.quantity || 1}</em></span>
                 <span>{formatPrice((item.price || 0) * (item.quantity || 1), item.currency)}</span>
               </div>
             ))}
