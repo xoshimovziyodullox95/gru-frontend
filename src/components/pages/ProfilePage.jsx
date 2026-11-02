@@ -13,13 +13,14 @@ import {
   ArrowLeft, Settings, Camera, BadgeCheck, Wrench, Briefcase, Store, Phone, Mail,
   Pencil, Share2, Crown, UserPlus, UserCheck, MessageCircle, MapPin, Package, Play,
   Eye, Heart, Trash2, Star, Inbox, Clock, ChevronRight, Hammer, BarChart3, Truck,
-  Send, Boxes, Users, UserMinus, X, Loader2, Building2, Plus,
+  Send, Boxes, Users, UserMinus, X, Loader2, Building2, Plus, Clapperboard,
 } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
 import BusinessSummaryWidget from '../business/BusinessSummaryWidget';
 import SupplierStatsWidget from '../business/SupplierStatsWidget';
-import ReelsStrip from '../common/Reelsstrip';
+import MarketplaceReels from '../marketplace/MarketplaceReels';
+import { REEL_SOURCES, buildReels } from '../utils/reelBuilder';
 import QRCodeGenerator from './QRCodeGenerator';
 import { safeGoBack } from '../utils/navigation.js';
 import { formatPrice } from '../utils/formatPrice';
@@ -457,12 +458,14 @@ export default function ProfilePage() {
     isCompany && { icon: Building2, label: t('profile.role.company', 'Kompaniya') },
   ].filter(Boolean);
 
-  const myReels = [
-    ...myPosts.map((post) => ({ id: `post-${post._id}`, videoUrl: post.videoUrl, title: post.title, typeLabel: t('profile.post', 'Post'), link: `/posts/${post._id}` })),
-    ...myLocations.flatMap((item) => (item.media || []).map((m, idx) => ({ id: `loc-${item._id}-${idx}`, videoUrl: m.url || m, title: item.title, typeLabel: t('profile.tabs.locations', 'Joylar'), link: `/location/${item._id}` }))),
-    ...myEquipment.flatMap((item) => (item.media || []).map((m, idx) => ({ id: `eq-${item._id}-${idx}`, videoUrl: m.url || m, title: item.title, typeLabel: t('profile.tabs.equipment', 'Tovarlar'), link: `/equipment/${item._id}` }))),
-    ...myServices.flatMap((item) => (item.media || []).map((m, idx) => ({ id: `svc-${item._id}-${idx}`, videoUrl: m.url || m, title: item.name, typeLabel: t('profile.tabs.services', 'Xizmatlar'), link: `/service-provider/${item._id}` }))),
-  ];
+  // Bosh sahifadagi kabi reels obyektlari: faqat haqiqiy videolar, layk/izoh uchun turi va id bilan
+  const ownSources = { posts: myPosts, locations: myLocations, equipment: myEquipment, services: myServices };
+  const myReels = REEL_SOURCES.flatMap((source) => buildReels(
+    (ownSources[source.key] || []).map((item) => (typeof item.userId === 'object' && item.userId ? item : { ...item, userId: profile })),
+    source,
+    profile?._id,
+    t,
+  ));
 
   const tabs = [
     { id: 'equipment', icon: Package, label: t('profile.tabs.equipment', 'Tovarlar'), count: myEquipment.length },
@@ -759,7 +762,21 @@ export default function ProfilePage() {
           </div>
 
           {activeTab === 'videos' ? (
-            <ReelsStrip reels={myReels} showHeader={false} showProfileLink={false} emptyText={t('profile.emptyVideos', 'Hozircha videolar yo‘q')} />
+            myReels.length > 0 ? (
+              // Bosilganda bosh sahifadagi to'liq ekranli reels pleyeri ochiladi (layk, izoh, surish)
+              <MarketplaceReels reels={myReels} variant="grid2" showHeader={false} currentUser={user} />
+            ) : (
+              <div className="pf-empty-videos">
+                <span className="pf-empty-videos__icon"><Clapperboard size={30} /></span>
+                <strong>{t('profile.emptyVideos', 'Hozircha videolar yo‘q')}</strong>
+                <p>{T('Qisqa video joylang — e’loningiz va xizmatingiz ko‘proq odamga ko‘rinadi.')}</p>
+                {isOwnProfile && (
+                  <button type="button" className="pf-empty-videos__btn" onClick={() => navigate('/add-video')}>
+                    <Plus size={16} /> {T('Video qo‘shish')}
+                  </button>
+                )}
+              </div>
+            )
           ) : (
             renderItems()
           )}

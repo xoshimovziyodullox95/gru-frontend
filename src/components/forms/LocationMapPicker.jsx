@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+import { LocateFixed, Loader2 } from 'lucide-react';
+import '../../styles/mapPicker.css';
 import { T } from '../utils/T';
 // Toshkent markazi - default nuqta
 const DEFAULT_LAT = 41.311081;
@@ -177,12 +179,16 @@ export default function LocationMapPicker({ lat, lng, onSelect }) {
           {searching ? '...' : T('Qidirish')}
         </button>
       </div>
-      <button type="button" className="map-locate-btn" onClick={handleLocate} disabled={locating}>
-        {locating ? T('Aniqlanmoqda...') : `📍 ${T('Mening joylashuvim')}`}
-      </button>
       {searchError && <div className="map-search-error" role="status">{searchError}</div>}
 
-      <div ref={mapRef} className="map-container" />
+      {/* Xarita ustida suzuvchi "Joylashuvimni aniqlash" (Google Maps kabi) */}
+      <div className="map-wrap">
+        <div ref={mapRef} className="map-container" />
+        <button type="button" className="map-locate-btn" onClick={handleLocate} disabled={locating} aria-label={T('Mening joylashuvim')}>
+          {locating ? <Loader2 size={18} className="map-locate-spin" /> : <LocateFixed size={18} />}
+          <span>{locating ? T('Aniqlanmoqda...') : T('Mening joylashuvim')}</span>
+        </button>
+      </div>
       {!ready && <div className="map-loading">{T('Xarita yuklanmoqda...')}</div>}
       {tileError && ready && (
         <div className="map-error" role="status">

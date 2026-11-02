@@ -1063,6 +1063,8 @@ export default function MarketplaceReels({
   // Chat va boshqa joylardan: lentasiz, darhol to'liq ekranli pleyer (bosh sahifadagi bilan bir xil)
   viewerOnly = false,
   onViewerClose,
+  // Profil kabi joylarda sahifaning o'z sarlavhasi bor — "Videolar" sarlavhasi takrorlanmasin
+  showHeader = true,
 }) {
   const { t } = useTranslation();
 
@@ -1302,12 +1304,14 @@ export default function MarketplaceReels({
         .filter(Boolean)
         .join(' ')}
     >
-      <header className="reels-header">
-        <h2>
-          <Clapperboard size={22} aria-hidden="true" />
-          <span>{t('marketplaceReels.title', 'Videolar')}</span>
-        </h2>
-      </header>
+      {showHeader && (
+        <header className="reels-header">
+          <h2>
+            <Clapperboard size={22} aria-hidden="true" />
+            <span>{t('marketplaceReels.title', 'Videolar')}</span>
+          </h2>
+        </header>
+      )}
 
       <div className="reels-track">
         {orderedReels.map((reel, index) => (

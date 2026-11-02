@@ -94,6 +94,8 @@ export default function AIChat() {
     const timers = [];
     if (!seen) {
       timers.push(setTimeout(() => {
+        // Bo'lim maslahati (ZumikPageTips) ko'rinib turgan bo'lsa — ikki Zumik bir vaqtda gapirmasin
+        if (document.querySelector('.zumik-tip')) return;
         setIntroVisible(true);
         setWaving(true);
         try { sessionStorage.setItem('zumik_intro_seen', '1'); } catch { /* faqat shu safar */ }

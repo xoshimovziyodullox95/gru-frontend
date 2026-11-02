@@ -631,3 +631,20 @@ body:has(.pf-page) { padding-top: 0 !important; }
 body:has(.gru-navbar) .pf-top { top: 70px; height: 56px; padding-top: 0; }
 @media (max-width: 768px) { body:has(.gru-navbar) .pf-top { top: 60px; } }
 @media (max-width: 480px) { body:has(.gru-navbar) .pf-top { top: 56px; } }
+
+/* Videolar bo'sh holati */
+.pf-empty-videos {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  margin: 8px 0; padding: 28px 20px; border-radius: 20px; text-align: center;
+  border: 1.5px dashed rgba(0, 180, 216, 0.35); background: rgba(0, 180, 216, 0.05);
+}
+.pf-empty-videos__icon {
+  display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px;
+  background: linear-gradient(140deg, #05c8d4, #087ce1); color: #fff; box-shadow: 0 10px 24px rgba(0, 150, 220, 0.3);
+}
+.pf-empty-videos strong { font-size: 1.02rem; color: var(--text); }
+.pf-empty-videos p { margin: 0; max-width: 300px; font-size: 0.86rem; line-height: 1.5; color: var(--textMuted, #5b6b80); }
+.pf-empty-videos__btn {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 10px 18px; border: 0; border-radius: 12px;
+  background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff; font: inherit; font-weight: 700; cursor: pointer;
+}

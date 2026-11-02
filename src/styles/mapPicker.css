@@ -1,0 +1,30 @@
+/* LocationMapPicker — hamma joyda bir xil (savat, usta chaqirish, e'lon joylash) */
+.map-wrap { position: relative; }
+.map-wrap .map-locate-btn {
+  position: absolute; z-index: 500; right: 10px; bottom: 10px; left: auto;
+  display: inline-flex; align-items: center; gap: 6px; width: auto; min-height: 42px; margin: 0; padding: 0 14px;
+  border: 0; border-radius: 999px; background: #fff; color: #0089b3;
+  font: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 40, 80, 0.25);
+}
+.map-wrap .map-locate-btn:active { transform: scale(0.97); }
+.map-wrap .map-locate-btn:disabled { opacity: 0.85; cursor: wait; }
+.map-locate-spin { animation: mapSpin 0.9s linear infinite; }
+@keyframes mapSpin { to { transform: rotate(360deg); } }
+
+/* Manzil qidirish qatori va xarita — boshqa sahifalarning CSS'iga bog'liq bo'lmasin */
+.map-picker .map-search-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.map-picker .map-search-row input {
+  flex: 1; min-width: 0; height: 44px; padding: 0 12px; border-radius: 12px;
+  border: 1.5px solid var(--border, rgba(0, 0, 0, 0.12)); background: var(--card, #fff); color: var(--text);
+  font: inherit; font-size: 14px; outline: none;
+}
+.map-picker .map-search-row input:focus { border-color: #00a6d6; }
+.map-picker .map-search-row button {
+  flex: 0 0 auto; min-width: 84px; height: 44px; padding: 0 14px; border: 0; border-radius: 12px; cursor: pointer;
+  background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff; font: inherit; font-size: 14px; font-weight: 700;
+}
+.map-picker .map-search-row button:disabled { opacity: 0.65; cursor: wait; }
+.map-picker .map-container { height: 300px; border-radius: 14px; overflow: hidden; }
+.map-picker .map-hint { margin: 8px 2px 0; font-size: 0.78rem; color: var(--textMuted, #6b7a8f); }
+.map-picker .map-search-error { margin: 0 0 8px; color: #e5484d; font-size: 0.82rem; }
