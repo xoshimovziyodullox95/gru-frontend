@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Bell, Heart, MessageCircle as CommentIcon, ShoppingBag, CheckCheck, Send, Wrench, BadgeDollarSign, CircleCheck, CircleX, Star } from 'lucide-react';
+import { ArrowLeft, Bell, Heart, MessageCircle as CommentIcon, ShoppingBag, CheckCheck, Send, Wrench, BadgeDollarSign, CircleCheck, CircleX, Star, UserPlus } from 'lucide-react';
 import { formatPrice } from '../utils/formatPrice';
 import { serviceLabel } from '../utils/i18nHelpers';
 import { getNotifications, markOneRead, markAllRead } from '../services/notifications';
@@ -27,6 +27,9 @@ function NotificationRow({ notif, onClick, t }) {
     icon = <CommentIcon size={16} color="#0095f6" />;
     const commentText = notif.commentText || '';
     text = t('notifications.commented') + (commentText ? `: "${commentText}"` : '');
+  } else if (notif.type === 'follow') {
+    icon = <UserPlus size={16} color="#00b4d8" />;
+    text = T('sizga obuna bo‘ldi');
   } else if (notif.type === 'reply') {
     icon = <CommentIcon size={16} color="#0095f6" />;
     const replyText = notif.replyText || '';
@@ -140,6 +143,8 @@ export default function NotificationsPage() {
       navigate(`/service-provider/${notif.itemId}`);
     } else if (notif.itemType === 'post') {
       navigate(`/posts/${notif.itemId}`);
+    } else if (notif.itemType === 'user') {
+      navigate(`/profile/${notif.itemId}`);
     } else if (notif.itemType === 'broadcast_ad') {
       navigate(notif.fromUserId?._id ? `/profile/${notif.fromUserId._id}` : '/business-directions');
     } else {

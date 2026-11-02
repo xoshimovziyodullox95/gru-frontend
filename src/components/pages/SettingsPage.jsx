@@ -11,13 +11,14 @@ import { toast } from 'react-toastify';
 import {
   ArrowLeft, ChevronRight, Pencil, QrCode, Crown, Copy, Package, Wrench, Heart, Inbox,
   MessageCircle, ShoppingBag, MessageSquare, ThumbsUp, Megaphone, BellRing, Volume2,
-  Globe, Sparkles, Bot, Palette, LogOut, MonitorSmartphone, Trash2, X, Loader2, LogIn, UserPlus, ShieldCheck,
+  Globe, Sparkles, Bot, Palette, LogOut, MonitorSmartphone, Trash2, X, Loader2, LogIn, UserPlus, ShieldCheck, FileText, Shield,
 } from 'lucide-react';
 
 import api from '../services/api';
 import { getUserProfile } from '../services/user';
 import { Capacitor } from '@capacitor/core';
 import { registerPush, getPushPermission } from '../services/push';
+import { T } from '../utils/T';
 import { isChatMuted, setChatMuted } from '../services/chatSound';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -437,6 +438,11 @@ export default function SettingsPage() {
         <Group title={t('settingsPage.group.help', 'Yordam')}>
           <Row icon={Sparkles} label={t('settingsPage.guide', 'ZUMO bilan tanishuv')} hint={t('settingsPage.guideHint', 'Ilova imkoniyatlari qisqacha')} onClick={() => openZumoGuide('welcome')} />
           <Row icon={Bot} label={t('settingsPage.ai', 'ZUMO AI yordamchi')} hint={t('settingsPage.aiHint', 'Savolingizni yozing')} onClick={() => navigate('/ai-assistant')} />
+        </Group>
+
+        <Group title={T('Huquqiy ma’lumotlar')}>
+          <Row icon={FileText} label={T('Foydalanish shartlari')} onClick={() => navigate('/terms')} />
+          <Row icon={Shield} label={T('Maxfiylik siyosati')} hint={T('Qanday ma’lumot yig‘amiz va qanday himoya qilamiz')} onClick={() => navigate('/privacy')} />
         </Group>
 
         {!isGuest && (<>

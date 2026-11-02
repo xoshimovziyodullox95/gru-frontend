@@ -6,7 +6,7 @@ import { ZUMO_GUIDE_EVENT } from './zumoGuideEvents.js';
 import api from '../services/api';
 import { getUserProfile } from '../services/user';
 import ZumoBot from './ZumoBot.jsx';
-import ZumoWelcomeChat from './ZumoWelcomeChat.jsx';
+import ZumoWelcomeChat, { TOUR_RESUME_KEY } from './ZumoWelcomeChat.jsx';
 import useTypewriter from '../hooks/useTypewriter';
 import '../../styles/zumoGuide.css';
 
@@ -22,7 +22,7 @@ const STEP = {
   chat: { target: '[data-tour="chat"]', title: T('Chat'), text: T('Xaridor, sotuvchi yoki usta bilan shu yerda yozishasiz. Yangi xabarlar haqida bildirishnoma keladi.') },
   profile: { target: '[data-tour="profile"]', title: T('Profil'), text: T('Buyurtmalaringiz, e’lonlaringiz, saqlanganlar va sozlamalar shu yerda.') },
   menu: { target: '.zumo-topbar__menu', title: T('Tezkor menyu'), text: T('Qidiruv, e’lon joylash, video qo‘shish va sozlamalarga shu menyudan tez kirasiz.') },
-  ai: { target: '.ai-chat-toggle:not(.ai-chat-toggle--hidden)', title: T('Savol bormi?'), text: T('AI yordamchiga yozing — ilovadan foydalanish bo‘yicha istalgan vaqtda javob beradi.') },
+  ai: { target: '.ai-chat-toggle', title: T('Savol bormi?'), text: T('AI yordamchiga yozing — ilovadan foydalanish bo‘yicha istalgan vaqtda javob beradi.') },
   // Usta va sotuvchi uchun
   addService: { target: '[data-tour="add"], .gru-bottom-add', title: T('Xizmatingizni joylang'), text: T('«Qo‘shish» → «E’lon joylash» → xizmat turini tanlang. Yaqin atrofdagi mijozlar sizni ko‘radi.') },
   providerOrders: { target: '[data-tour="profile"]', title: T('Buyurtmalar shu yerda'), text: T('Profil → «Xizmat so‘rovlari»: mijoz so‘rovi kelganda telefoningizga baland ovozli xabar keladi.') },
@@ -66,12 +66,23 @@ export default function ZumoGuide() {
   const { user, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [flow, setFlow] = useState(null);
+  // Tanishuvda til tanlangan va sahifa qayta yuklangan bo'lsa — suhbat shu tildan davom etadi
+  const [resumeLang] = useState(() => {
+    try { return sessionStorage.getItem(TOUR_RESUME_KEY); } catch { return null; }
+  });
+  const [flow, setFlow] = useState(() => (resumeLang ? 'welcome' : null));
+  useEffect(() => {
+    try { sessionStorage.removeItem(TOUR_RESUME_KEY); } catch { /* belgi qolsa ham zarari yo'q */ }
+  }, []);
   const [step, setStep] = useState(-1);
   const [rect, setRect] = useState(null);
   const [pageGuide, setPageGuide] = useState(null);
   const [armAngle, setArmAngle] = useState(null);
   const [tourSteps, setTourSteps] = useState(ROLE_STEPS.client);
+  const [missingTarget, setMissingTarget] = useState(false);
+
+  const [prevStep, setPrevStep] = useState(step);
+  if (prevStep !== step) { setPrevStep(step); setMissingTarget(false); }
   const botRef = useRef(null);
   const storageKey = useMemo(() => user?.id ? `zumo_guide_seen_v3_${user.id}` : null, [user?.id]);
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.fullName || user?.email?.split('@')[0] || T('do‘st');
@@ -165,7 +176,8 @@ export default function ZumoGuide() {
     // Tugma bu ekranda yo'q bo'lsa — keyingi qadamga o'tamiz (oxirgisi bo'lsa yopamiz)
     const skipTimer = flow === 'welcome' ? window.setTimeout(() => {
       if (found) return;
-      if (step >= tourSteps.length - 1) { markSeen(); setFlow(null); setRect(null); }
+      // Oxirgi qadam o'zi yopilmaydi — karta tugmasiz markazda qoladi, foydalanuvchi "Tugatish"ni bosadi
+      if (step >= tourSteps.length - 1) setMissingTarget(true);
       else setStep((current) => current + 1);
     }, 1200) : 0;
     return () => {
@@ -189,7 +201,9 @@ export default function ZumoGuide() {
   useEffect(() => {
     const hide = Boolean(flow) && activeStep !== STEP.ai;
     document.body.classList.toggle('zumo-tour-open', hide);
-    return () => document.body.classList.remove('zumo-tour-open');
+    // AI qadamida tugma aylantirish sabab yashiringan bo'lsa ham ko'rsatiladi
+    document.body.classList.toggle('zumo-tour-ai', Boolean(flow) && activeStep === STEP.ai);
+    return () => document.body.classList.remove('zumo-tour-open', 'zumo-tour-ai');
   }, [flow, activeStep]);
 
   // Robot qo'li: yelkadan yoritilgan tugma markaziga burchak
@@ -236,7 +250,7 @@ export default function ZumoGuide() {
       <div className="zumo-tour-welcome" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
         <section className="zumo-tour-welcome__card zumo-tour-welcome__card--chat" role="dialog" aria-modal="true" aria-labelledby="zumo-tour-welcome-title">
           <button type="button" className="zumo-tour-welcome__close" onClick={close} aria-label={T('Yopish')}><X size={19} /></button>
-          <ZumoWelcomeChat name={displayName} onChoose={startTour} onLater={close} />
+          <ZumoWelcomeChat name={displayName} onChoose={startTour} onLater={close} initialLang={resumeLang} />
         </section>
       </div>
     );
@@ -281,7 +295,7 @@ export default function ZumoGuide() {
         <div className="zumo-tour-card__top"><span>{isContextual ? T('XIZMAT SO‘ROVI') : isPageGuide ? T('SAHIFA YO‘RIQNOMASI') : T('QADAM {{n}} / {{total}}', { n: currentIndex + 1, total: tourSteps.length })}</span><button type="button" onClick={close} aria-label={T('Tanishtiruvni yopish')}><X size={17} /></button></div>
         <h2 id="zumo-tour-title">{currentStep?.title || T('Bu bo‘lim hozir ko‘rinmayapti')}</h2>
         <p><ZumoSays typed={typed} full={sayText} /></p>
-        {!rect && <p className="zumo-tour-card__loading">{T('Kerakli tugmani topyapman…')}</p>}
+        {!rect && !missingTarget && <p className="zumo-tour-card__loading">{T('Kerakli tugmani topyapman…')}</p>}
         <div className="zumo-tour-card__bottom"><button type="button" className="zumo-tour-card__skip" onClick={close}>{isPageGuide ? T('Keyinroq') : T('O‘tkazib yuborish')}</button><div className="zumo-tour-card__controls">{!isContextual && !isPageGuide && currentIndex > 0 && <button type="button" className="zumo-tour-card__back" onClick={() => setStep((value) => value - 1)} aria-label={T('Orqaga')}><ArrowLeft size={17} /></button>}<button type="button" className="zumo-tour-card__next" onClick={() => (typed.typing ? typed.skip() : advance())}>{isContextual ? T('So‘rovni boshlash') : isPageGuide ? T('Tushunarli') : currentIndex === tourSteps.length - 1 ? T('Tugatish') : T('Keyingi')} {currentIndex === tourSteps.length - 1 && !isContextual && !isPageGuide ? <Check size={16} /> : <ArrowRight size={16} />}</button></div></div>
       </aside>
     </div>

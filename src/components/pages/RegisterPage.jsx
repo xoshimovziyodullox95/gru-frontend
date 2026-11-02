@@ -8,6 +8,7 @@ import { markAccountCreated } from '../../hooks/useGuestMode';
 import AuthBackButton from '../common/AuthBackButton';
 import { signInWithGoogle, authRedirectUrl } from '../utils/googleAuth';
 import AppleSignInButton from '../common/AppleSignInButton';
+import ConsentNote from '../common/ConsentNote';
 import '../../styles/auth.css';
 
 import { T } from '../utils/T';
@@ -36,12 +37,20 @@ export default function RegisterPage() {
   const [debugInfo, setDebugInfo] = useState('');
   const navigate = useNavigate();
 
+  // Foydalanish shartlari va Maxfiylik siyosatiga rozilik (email bilan ro'yxatdan o'tishda majburiy)
+  const [agreed, setAgreed] = useState(false);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     setDebugInfo('');
 
     // Validatsiya
+    if (!agreed) {
+      setError(T('Davom etish uchun shartlarga rozilik bildiring'));
+      toast.error(T('Davom etish uchun shartlarga rozilik bildiring'));
+      return;
+    }
     if (password !== confirmPassword) {
       setError(T('Parollar mos emas'));
       toast.error(T('Parollar mos emas'));
@@ -78,6 +87,7 @@ export default function RegisterPage() {
           data: {
             full_name: fullName,
             role: role,
+            accepted_terms_at: new Date().toISOString(),
             company_name: companyName || '',
             direction: direction || '',
           }
@@ -155,6 +165,7 @@ export default function RegisterPage() {
         </button>
 
         <AppleSignInButton />
+        <ConsentNote />
 
         <div className="divider"><span>{T('yoki email orqali')}</span></div>
 
@@ -289,7 +300,15 @@ export default function RegisterPage() {
             </label>
           </div>
 
-          <button type="submit" className="auth-button" disabled={loading}>
+          <label className="auth-consent">
+            <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+            <span>
+              {T('Men')} <Link to="/terms">{T('Foydalanish shartlari')}</Link> {T('va')}{' '}
+              <Link to="/privacy">{T('Maxfiylik siyosati')}</Link>{T('ga roziman')}
+            </span>
+          </label>
+
+          <button type="submit" className="auth-button" disabled={loading || !agreed}>
             {loading ? T('Yuklanmoqda...') : <><UserPlus size={18} /> {T('Ro‘yxatdan o‘tish')}</>}
           </button>
         </form>

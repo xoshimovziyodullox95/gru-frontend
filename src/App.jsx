@@ -59,6 +59,7 @@ const SupplierStatsPage = lazy(() => import('./components/pages/SupplierStatsPag
 const MyOrdersPage = lazy(() => import('./components/pages/MyOrdersPage'));
 const ReceivedOrdersPage = lazy(() => import('./components/pages/ReceivedOrdersPage'));
 const PhysicPage = lazy(() => import('./components/pages/PhysicPage'));
+const LegalPage = lazy(() => import('./components/pages/LegalPage'));
 const PhysicCategoryPage = lazy(() => import('./components/pages/PhysicCategoryPage'));
 const BroadcastAdPage = lazy(() => import('./components/pages/BroadcastAdPage'));
 const BecomeProviderPage = lazy(() => import('./components/pages/BecomeProviderPage.jsx'));
@@ -121,6 +122,8 @@ const AUTH_PATHS = [
 /* Global navbar ko‘rsatilmaydigan sahifalar */
 const HIDE_CHROME_PATHS = [
   '/home',
+  '/terms',
+  '/privacy',
   '/chat',
   '/notifications',
   '/profile',
@@ -428,6 +431,8 @@ function MainRoutes() {
 
       {/* ===== PHYSIC ===== */}
       <Route path="/physic" element={open(<PhysicPage />)} />
+      <Route path="/terms" element={open(<LegalPage doc="terms" />)} />
+      <Route path="/privacy" element={open(<LegalPage doc="privacy" />)} />
       <Route
         path="/physic/:categoryKey"
         element={open(<PhysicCategoryPage />)}

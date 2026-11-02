@@ -11,6 +11,7 @@ import { getUserProfile } from '../services/user';
 import AuthBackButton from '../common/AuthBackButton';
 import { signInWithGoogle, authRedirectUrl } from '../utils/googleAuth';
 import AppleSignInButton from '../common/AppleSignInButton';
+import ConsentNote from '../common/ConsentNote';
 import '../../styles/auth.css';
 
 import { T } from '../utils/T';
@@ -156,6 +157,7 @@ navigate(target, { replace: true });
         </button>
 
         <AppleSignInButton />
+        <ConsentNote />
 
         <div className="auth-method-switch" role="tablist" aria-label={T('Kirish usulini tanlang')}>
           <button

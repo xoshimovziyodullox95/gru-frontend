@@ -67,3 +67,7 @@
 .zwc-choice span { font-size: 18px; }
 .zwc-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 body.zumo-tour-open .ai-chat-toggle { opacity: 0; pointer-events: none; }
+body.zumo-tour-ai .ai-chat-toggle--hidden { transform: none; opacity: 1; pointer-events: auto; }
+.zumo-tour__shade { pointer-events: auto; }
+.zwc-choices--row { flex-direction: row; flex-wrap: wrap; }
+.zwc-choices--row .zwc-choice { flex: 1 1 30%; justify-content: center; min-width: 96px; }

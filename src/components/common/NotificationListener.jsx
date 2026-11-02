@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../context/AuthContext';
-import { playDing } from '../services/chatSound';
+import { playDing, playSocial } from '../services/chatSound';
 import { getUserProfile } from '../services/user';
 import { getSocket, registerSocketUser } from '../lib/socket';
 import { registerPush } from '../services/push';
@@ -197,6 +197,7 @@ export default function NotificationListener() {
             dislike: 'likes',
             comment: 'comments',
             reply: 'comments',
+            follow: 'likes',
             order: 'orders',
             service_request: 'orders',
             new_offer: 'orders',
@@ -216,8 +217,14 @@ export default function NotificationListener() {
 
           console.log('📥 Notification:', notif);
 
-          playDing();
-          navigator.vibrate?.([200, 100, 200]);
+          // Layk/izoh/obuna — o'z yengil ovozi, buyurtma va boshqalar — odatiy "ding"
+          if (['like', 'dislike', 'comment', 'reply', 'follow'].includes(notif?.type)) {
+            playSocial();
+            navigator.vibrate?.([60, 90, 60]);
+          } else {
+            playDing();
+            navigator.vibrate?.([200, 100, 200]);
+          }
 
           const fromName =
             notif.fromUserId?.fullName ||

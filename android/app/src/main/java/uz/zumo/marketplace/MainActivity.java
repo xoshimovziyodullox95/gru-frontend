@@ -13,5 +13,6 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(BackgroundPlugin.class);
         super.onCreate(savedInstanceState);
         OrderAlertChannel.ensure(this);
+        SocialChannel.ensure(this);
     }
 }

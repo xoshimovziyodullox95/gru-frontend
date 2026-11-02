@@ -1,10 +1,21 @@
-// Tanishuv boshidagi suhbat: Zumik salomlashadi, "ZUMO'dan nima uchun foydalanasiz?" deb so'raydi,
+// Tanishuv boshidagi suhbat: Zumik avval tilni so'raydi, keyin salomlashadi, "ZUMO'dan nima uchun foydalanasiz?" deb so'raydi,
 // javobga qarab shu odamga mos tanishtiruvni boshlaydi (onChoose(role)).
 import { useEffect, useRef, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import ZumoBot from './ZumoBot.jsx';
 import useTypewriter from '../hooks/useTypewriter';
 import { T } from '../utils/T';
+import i18n from '../utils/i18n';
+
+// Til tanlanmaguncha qaysi tilda yozishni bilmaymiz — savol uch tilda birdan
+const LANGS = [
+  { code: 'uz', flag: '🇺🇿', label: 'O‘zbekcha' },
+  { code: 'ru', flag: '🇷🇺', label: 'Русский' },
+  { code: 'en', flag: '🇬🇧', label: 'English' },
+];
+const LANG_QUESTION = 'Tilni tanlang · Выберите язык · Choose a language';
+// Til almashganda ilova sahifani qayta yuklaydi (i18n.js) — tanishuv shu belgi bilan davom etadi
+export const TOUR_RESUME_KEY = 'zumo_tour_resume_lang';
 
 const ROLES = [
   { id: 'client', emoji: '🛒', label: () => T('Xarid qilish yoki usta chaqirish') },
@@ -18,8 +29,8 @@ const REPLIES = {
   seller: () => T('Ajoyib! Tovar joylash va kelgan buyurtmalarni qayerda ko‘rishni ko‘rsataman.'),
 };
 
-function BotBubble({ text, onDone, onTalk }) {
-  const typed = useTypewriter(text);
+function BotBubble({ text, onDone, onTalk, instant = false }) {
+  const typed = useTypewriter(text, { enabled: !instant });
   useEffect(() => { onTalk?.(typed.typing && !typed.thinking); }, [typed.typing, typed.thinking, onTalk]);
   useEffect(() => { if (typed.done) onDone?.(); }, [typed.done, onDone]);
   return (
@@ -31,14 +42,26 @@ function BotBubble({ text, onDone, onTalk }) {
   );
 }
 
-export default function ZumoWelcomeChat({ name, onChoose, onLater }) {
-  // greet → ask → choose → reply
-  const [phase, setPhase] = useState('greet');
+export default function ZumoWelcomeChat({ name, onChoose, onLater, initialLang = null }) {
+  // lang → pickLang → greet → ask → choose → reply → ready
+  const [phase, setPhase] = useState(initialLang ? 'greet' : 'lang');
+  const [langCode, setLangCode] = useState(initialLang);
   const [role, setRole] = useState(null);
   const [talking, setTalking] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' }); }, [phase, role]);
+
+  const pickLanguage = (code) => {
+    const current = (i18n.resolvedLanguage || i18n.language || 'uz').split('-')[0];
+    if (code !== current) {
+      try { sessionStorage.setItem(TOUR_RESUME_KEY, code); } catch { /* qayta yuklangach tanishuv boshidan */ }
+      i18n.changeLanguage(code); // sahifa qayta yuklanadi
+      return;
+    }
+    setLangCode(code);
+    setPhase('greet');
+  };
 
   const choose = (id) => {
     setRole(id);
@@ -57,12 +80,37 @@ export default function ZumoWelcomeChat({ name, onChoose, onLater }) {
 
       <div className="zwc-thread" aria-live="polite">
         <BotBubble
+          text={LANG_QUESTION}
+          instant={Boolean(initialLang)}
+          onTalk={phase === 'lang' ? setTalking : undefined}
+          onDone={() => setPhase((p) => (p === 'lang' ? 'pickLang' : p))}
+        />
+
+        {phase === 'pickLang' && (
+          <div className="zwc-choices zwc-choices--row">
+            {LANGS.map((l) => (
+              <button key={l.code} type="button" className="zwc-choice" onClick={() => pickLanguage(l.code)}>
+                <span aria-hidden="true">{l.flag}</span> {l.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {langCode && (
+          <div className="zwc-msg zwc-msg--me">
+            {LANGS.find((l) => l.code === langCode).flag} {LANGS.find((l) => l.code === langCode).label}
+          </div>
+        )}
+
+        {langCode && (
+        <BotBubble
           text={T('Salom, {{name}}! 👋 Men Zumik — ZUMO yordamchisiman. Ilovani 1 daqiqada ko‘rsatib beraman.', { name })}
           onTalk={phase === 'greet' ? setTalking : undefined}
           onDone={() => setPhase((p) => (p === 'greet' ? 'ask' : p))}
         />
+        )}
 
-        {phase !== 'greet' && (
+        {['ask', 'choose', 'reply', 'ready'].includes(phase) && (
           <BotBubble
             text={T('Avval ayting-chi, ZUMO’dan nima uchun foydalanmoqchisiz?')}
             onTalk={phase === 'ask' ? setTalking : undefined}

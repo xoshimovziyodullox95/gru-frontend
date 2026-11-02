@@ -398,3 +398,13 @@
   border-color: #000;
 }
 .apple-btn:hover { background: #1a1a1a; }
+
+/* Shartlarga rozilik */
+.auth-consent {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin: 4px 0 14px; font-size: 0.85rem; line-height: 1.45; color: var(--textMuted, #5b6b80);
+  cursor: pointer; text-align: left;
+}
+.auth-consent input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; accent-color: #00a6d6; }
+.auth-consent a, .auth-consent-note a { color: #00a6d6; font-weight: 600; text-decoration: none; }
+.auth-consent-note { margin: 8px 0 0; font-size: 0.75rem; line-height: 1.45; color: var(--textMuted, #7a8799); text-align: center; }
