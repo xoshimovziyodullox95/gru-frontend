@@ -8,6 +8,7 @@ import { serviceLabel } from '../utils/i18nHelpers';
 import { getNotifications, markOneRead, markAllRead } from '../services/notifications';
 import '../../styles/notificationsPage.css';
 
+import EmptyState from '../common/EmptyState';
 import { T } from '../utils/T';
 // ============================================================
 // Bitta notification qatori
@@ -178,10 +179,13 @@ export default function NotificationsPage() {
       {loading ? (
         <div className="notifications-loading"><span className="loader" /></div>
       ) : notifs.length === 0 ? (
-        <div className="notifications-empty">
-          <Bell size={40} className="empty-icon" />
-          <p>{t('notifications.empty')}</p>
-        </div>
+        <EmptyState
+          icon={Bell}
+          title={t('notifications.empty')}
+          text={T('Buyurtma, xabar, layk va obunalar haqidagi xabarlar shu yerda paydo bo‘ladi.')}
+          actionLabel={T('Bozorga o‘tish')}
+          onAction={() => navigate('/marketplace')}
+        />
       ) : (
         <div className="notifications-list">
           {notifs.map((notif) => (

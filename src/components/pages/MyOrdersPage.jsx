@@ -6,6 +6,8 @@ import { getMyOrders, cancelOrder, getMyBankApplications } from '../services/ord
 import '../../styles/myOrders.css';
 import { formatPrice } from '../utils/formatPrice';
 
+import EmptyState from '../common/EmptyState';
+import toast from 'react-hot-toast';
 import { T } from '../utils/T';
 const STATUS_INFO = {
   yangi: { label: T('Sotuvchi javobini kutmoqda'), tone: 'wait', icon: Clock },
@@ -69,7 +71,7 @@ export default function MyOrdersPage() {
       const res = await cancelOrder(order._id);
       setOrders((prev) => prev.map((o) => (o._id === order._id ? res.data.order : o)));
     } catch (err) {
-      alert(err.response?.data?.error || T('Bekor qilib bo‘lmadi'));
+      toast.error(err.response?.data?.error || T('Bekor qilib bo‘lmadi'));
     } finally {
       setCancellingId(null);
     }
@@ -79,10 +81,12 @@ export default function MyOrdersPage() {
 
   return (
     <div className="mo-page">
-      <button className="BackActionBtn" onClick={() => safeGoBack(navigate)}>
-        <ArrowLeft size={16} /> {T('Orqaga')}
-      </button>
-      <h1 className="mo-title">{T('Buyurtmalarim')}</h1>
+      <header className="mo-head">
+        <button type="button" className="mo-head__back" onClick={() => safeGoBack(navigate)} aria-label={T('Orqaga')}>
+          <ArrowLeft size={20} />
+        </button>
+        <h1 className="mo-title">{T('Buyurtmalarim')}</h1>
+      </header>
 
       <div className="mo-tabs" role="tablist">
         <button
@@ -108,12 +112,13 @@ export default function MyOrdersPage() {
 
       {tab === 'orders' && (
         orders.length === 0 ? (
-          <div className="mo-empty">
-            {T('Hozircha buyurtma yo‘q')}
-            <button type="button" className="mo-advance-btn" onClick={() => navigate('/marketplace')}>
-              {T('Bozorga o‘tish')}
-            </button>
-          </div>
+          <EmptyState
+            icon={Package}
+            title={T('Hozircha buyurtma yo‘q')}
+            text={T('Bozordan yoqqan tovarni savatga qo‘shing — buyurtma holati shu yerda ko‘rinadi.')}
+            actionLabel={T('Bozorga o‘tish')}
+            onAction={() => navigate('/marketplace')}
+          />
         ) : (
           <div className="mo-list">
             {orders.map((o) => {

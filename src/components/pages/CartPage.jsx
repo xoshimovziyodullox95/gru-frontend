@@ -8,6 +8,7 @@ import api from '../services/api';
 import { formatPrice } from '../utils/formatPrice';
 import { resolveMediaUrl } from '../utils/imageUrl';
 import CheckoutSheet from '../cart/CheckoutSheet';
+import { setReturnPath } from '../../hooks/useGuestMode';
 import toast from 'react-hot-toast';
 import OrderWaitingModal from '../common/OrderWaitingModal';
 import SuccessModal from '../common/SuccessModal';
@@ -65,6 +66,7 @@ export default function CartPage() {
   const handleCheckout = () => {
     if (!user) {
       toast(t('cartPage.loginRequired'));
+      setReturnPath('/cart'); // kirgandan keyin savatga qaytsin, buyurtmani davom ettirsin
       navigate('/login');
       return;
     }

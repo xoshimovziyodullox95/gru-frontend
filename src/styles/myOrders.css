@@ -601,3 +601,11 @@
 .mo-chip--phone { background: rgba(0, 200, 120, 0.12); color: #00895a; }
 .mo-buyer-note { display: block; margin-top: 4px; font-size: 0.8rem; color: var(--textMuted, #5b6b80); font-style: italic; }
 .mo-wait-hint { display: block; margin-top: 4px; font-size: 0.74rem; color: var(--textMuted, #6b7a8f); }
+
+/* Ixcham sarlavha (savat kabi) */
+.mo-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.mo-head .mo-title { margin: 0; font-size: 1.3rem; }
+.mo-head__back {
+  display: grid; place-items: center; flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(0, 180, 216, 0.3); background: rgba(0, 180, 216, 0.12); color: #0096c7; cursor: pointer;
+}

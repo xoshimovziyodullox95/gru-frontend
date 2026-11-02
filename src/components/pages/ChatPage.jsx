@@ -8,6 +8,7 @@ import { lazy, Suspense, useEffect, useState, useRef, useCallback } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
+import EmptyState from '../common/EmptyState';
 import { REEL_SOURCES, buildReels } from '../utils/reelBuilder';
 // Reels pleyeri og'ir — faqat chatda reels bosilganda yuklanadi
 const MarketplaceReels = lazy(() => import('../marketplace/MarketplaceReels'));
@@ -1182,10 +1183,13 @@ export default function ChatPage() {
                 })
               )
             ) : conversations.length === 0 ? (
-              <div className="tg-empty">
-                <Inbox size={36} />
-                <span>{T('Hozircha suhbat yo\'q')}</span>
-              </div>
+              <EmptyState
+                icon={Inbox}
+                title={T('Hozircha suhbat yo‘q')}
+                text={T('E’lon sahifasida «Sotuvchiga yozish» yoki usta sahifasida chat tugmasini bosing — suhbat shu yerda boshlanadi.')}
+                actionLabel={T('Bozorga o‘tish')}
+                onAction={() => navigate('/marketplace')}
+              />
             ) : (
               conversations.map((conv) => (
                 <button

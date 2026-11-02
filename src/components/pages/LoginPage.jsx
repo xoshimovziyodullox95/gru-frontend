@@ -1,5 +1,5 @@
 // src/components/pages/LoginPage.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
@@ -38,10 +38,13 @@ export default function LoginPage() {
 
   // 🔥 Agar user allaqachon login bo'lsa (masalan sahifani to'g'ridan-to'g'ri
   //    ochib qo'ygan bo'lsa) — kerakli manzilga yo'naltiramiz
+// Kirish formasi o'zi yo'naltirgan bo'lsa, bu effekt ikkinchi marta (qaytish manzili o'chgach "/home"ga)
+// yo'naltirmasin — aks holda savatdan kirgan mehmon savatga qaytmay qolardi
+const redirectedRef = useRef(false);
 useEffect(() => {
   let cancelled = false;
   const redirectAuthenticatedUser = async () => {
-    if (!user) return;
+    if (!user || redirectedRef.current) return;
     let role = user.user_metadata?.role || 'user';
 
     // SMS bilan kirgan foydalanuvchining import qilingan roli backendda
@@ -54,7 +57,8 @@ useEffect(() => {
         // Backend vaqtincha javob bermasa, Supabase metadata bo‘yicha davom etamiz.
       }
     }
-    if (cancelled) return;
+    if (cancelled || redirectedRef.current) return;
+    redirectedRef.current = true;
 
     let fallback = '/home';
     if (role === 'company' || role === 'business') fallback = '/dashboard';
@@ -101,6 +105,7 @@ if (role === 'bank_employee') fallback = '/bank-dashboard';
 if (role === 'admin') fallback = '/admin-dashboard';
 const target = getTarget(fallback);
 clearReturnPath();
+redirectedRef.current = true;
 navigate(target, { replace: true });
     } catch (err) {
       setError(T('Tizimda xatolik yuz berdi'));
