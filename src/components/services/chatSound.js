@@ -38,27 +38,52 @@ export function setChatMuted(muted) {
   }
 }
 
+// Haqiqiy ovoz fayllari (push'dagi bilan bir xil): baland va jarangdor. Fayl o'ynamasa — sintez.
+const SAMPLES = { message: '/sounds/zumo_message.wav', social: '/sounds/zumo_social.wav' };
+const sampleCache = {};
+function playSample(name) {
+  try {
+    const audio = sampleCache[name] || (sampleCache[name] = new Audio(SAMPLES[name]));
+    audio.volume = 1;
+    audio.currentTime = 0;
+    const played = audio.play();
+    return played && typeof played.then === 'function' ? played.then(() => true, () => false) : Promise.resolve(true);
+  } catch {
+    return Promise.resolve(false);
+  }
+}
+
+// Chat va umumiy bildirishnoma ovozi — jarangdor qo'ng'iroqcha "tiling-ling"
 export function playDing() {
   // Sozlamalardagi "Ovozli signal" o'chirilgan bo'lsa hech qayerda chalinmaydi
   if (isChatMuted()) return;
+  playSample('message').then((ok) => { if (!ok) synthBell([1760, 2217.5, 2637], 0.09, 0.32); });
+}
+
+// Zaxira: brauzer faylni o'ynata olmasa — qo'ng'iroqcha sintezi
+function synthBell(freqs, gap, vol) {
   try {
     const c = getCtx();
     if (!c) return;
     if (c.state === 'suspended') c.resume();
-
-    const osc = c.createOscillator();
-    const gain = c.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, c.currentTime);
-    osc.frequency.setValueAtTime(660, c.currentTime + 0.09);
-    gain.gain.setValueAtTime(0.18, c.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.35);
-    osc.connect(gain);
-    gain.connect(c.destination);
-    osc.start();
-    osc.stop(c.currentTime + 0.35);
+    freqs.forEach((freq, k) => {
+      const t0 = c.currentTime + k * gap;
+      [[1, 1], [2.76, 0.45], [5.4, 0.2]].forEach(([mul, amp]) => {
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq * mul, t0);
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.exponentialRampToValueAtTime(vol * amp, t0 + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.0005, t0 + 0.6);
+        osc.connect(gain);
+        gain.connect(c.destination);
+        osc.start(t0);
+        osc.stop(t0 + 0.62);
+      });
+    });
   } catch {
-    // Ignore unsupported or blocked audio playback.
+    // Ovoz ixtiyoriy
   }
 }
 
@@ -66,6 +91,10 @@ export function playDing() {
 // (telefondagi push ovozi res/raw/zumo_social bilan bir xil ohang: E6 → B5)
 export function playSocial() {
   if (isChatMuted()) return;
+  playSample('social').then((ok) => { if (!ok) synthSocial(); });
+}
+
+function synthSocial() {
   try {
     const c = getCtx();
     if (!c) return;

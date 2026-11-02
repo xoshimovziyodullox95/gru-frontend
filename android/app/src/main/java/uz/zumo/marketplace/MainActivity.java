@@ -14,5 +14,6 @@ public class MainActivity extends BridgeActivity {
         super.onCreate(savedInstanceState);
         OrderAlertChannel.ensure(this);
         SocialChannel.ensure(this);
+        MessageChannel.ensure(this);
     }
 }
