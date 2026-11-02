@@ -6,7 +6,8 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../hooks/useCart';
 import api from '../services/api';
 import { formatPrice } from '../utils/formatPrice';
-import LocationMapPicker from '../forms/LocationMapPicker';
+import CheckoutSheet from '../cart/CheckoutSheet';
+import toast from 'react-hot-toast';
 import OrderWaitingModal from '../common/OrderWaitingModal';
 import SuccessModal from '../common/SuccessModal';
 import {
@@ -15,8 +16,6 @@ import {
   Minus,
   ArrowLeft,
   ShoppingBag,
-  MapPin,
-  X,
 } from 'lucide-react';
 import '../../styles/cart.css';
 
@@ -40,8 +39,7 @@ export default function CartPage() {
   const [waitingOrderId, setWaitingOrderId] = useState(null);
   // Checkout natijasi: savat tozalangandan keyin ham modal to'g'ri matnni ko'rsatsin
   const [submitted, setSubmitted] = useState(null); // { orderCount, hadPhysical, hadBank }
-  const [showMapPicker, setShowMapPicker] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [bankSuccess, setBankSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -65,29 +63,20 @@ export default function CartPage() {
   // === CHECKOUT – xarita yoki to‘g‘ridan-to‘g‘ri yuborish ===
   const handleCheckout = () => {
     if (!user) {
-      alert(t('cartPage.loginRequired'));
+      toast(t('cartPage.loginRequired'));
       navigate('/login');
       return;
     }
+    // Tovar bo'lsa — to'liq rasmiylashtirish oynasi; faqat bank arizasi bo'lsa — darhol yuboriladi
     if (hasPhysicalItems) {
-      setShowMapPicker(true);
+      setShowCheckout(true);
     } else {
-      confirmOrderWithLocation();
+      confirmOrder();
     }
   };
 
   // === ASOSIY YUBORISH (buyurtma / ariza) ===
-  const confirmOrderWithLocation = async () => {
-    if (hasPhysicalItems && !selectedLocation) {
-      alert(
-        t(
-          'cartPage.locationRequired',
-          'Iltimos, xaritadan yetkazib berish manzilini tanlang'
-        )
-      );
-      return;
-    }
-
+  const confirmOrder = async (details = {}) => {
     setIsSubmitting(true);
 
     const payload = {
@@ -100,7 +89,11 @@ export default function CartPage() {
         ...(item.provider && { provider: item.provider }),
         ...(item.currency && { currency: item.currency }),
       })),
-      buyerLocation: hasPhysicalItems ? selectedLocation : null,
+      buyerLocation: hasPhysicalItems ? details.buyerLocation || null : null,
+      deliveryMethod: details.deliveryMethod,
+      phone: details.phone,
+      paymentMethod: details.paymentMethod,
+      note: details.note,
     };
 
     try {
@@ -108,7 +101,7 @@ export default function CartPage() {
 
       const orderCount = res.data.orders?.length || 0;
       setSubmitted({ orderCount, hadPhysical: hasPhysicalItems, hadBank: hasBankItems });
-      setShowMapPicker(false);
+      setShowCheckout(false);
 
       if (hasPhysicalItems) {
         setWaitingOrderId(res.data.orders?.[0]?._id || res.data.orderId);
@@ -120,7 +113,7 @@ export default function CartPage() {
       clearCart();
     } catch (err) {
       console.error('Order error:', err.response?.data || err.message);
-      alert(err.response?.data?.error || t('cartPage.orderError'));
+      toast.error(err.response?.data?.error || t('cartPage.orderError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -268,47 +261,15 @@ export default function CartPage() {
         />
       )}
 
-      {/* Xarita modal */}
-      {showMapPicker && (
-        <div
-          className="cart-map-overlay"
-          onClick={() => setShowMapPicker(false)}
-        >
-          <div className="cart-map-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="cart-map-header">
-              <h3>
-                <MapPin size={18} />{' '}
-                {t(
-                  'cartPage.selectLocation',
-                  'Yetkazib berish manzilini tanlang'
-                )}
-              </h3>
-              <button onClick={() => setShowMapPicker(false)}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <LocationMapPicker
-              lat={selectedLocation?.lat}
-              lng={selectedLocation?.lng}
-              onSelect={(loc) => setSelectedLocation(loc)}
-            />
-
-            {selectedLocation?.address && (
-              <p className="cart-map-address">📍 {selectedLocation.address}</p>
-            )}
-
-            <button
-              className="checkout-btn cart-map-confirm"
-              onClick={confirmOrderWithLocation}
-              disabled={isSubmitting}
-            >
-              {isSubmitting
-                ? t('cartPage.submitting', 'Yuborilmoqda...')
-                : buttonText}
-            </button>
-          </div>
-        </div>
+      {/* Rasmiylashtirish: usul, manzil, telefon, to'lov, izoh, xulosa */}
+      {showCheckout && (
+        <CheckoutSheet
+          items={cart.filter((item) => item.itemType !== 'bank_service')}
+          totals={Object.entries(totalsByCurrency).map(([cur, sum]) => formatPrice(sum, cur)).join(' + ')}
+          submitting={isSubmitting}
+          onClose={() => setShowCheckout(false)}
+          onSubmit={confirmOrder}
+        />
       )}
     </div>
   );

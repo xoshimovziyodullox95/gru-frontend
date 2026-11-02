@@ -2,7 +2,7 @@
 // src/components/pages/ReceivedOrdersPage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Loader2, MapPin, Clock, X, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Banknote, CheckCircle2, CreditCard, Loader2, MapPin, Clock, Phone, Store, Truck, X, MessageCircle } from 'lucide-react';
 import { getReceivedOrders, updateOrderStatus, rejectOrder } from '../services/orders';
 import '../../styles/myOrders.css';
 import OrderAlertTip from '../common/OrderAlertTip';
@@ -122,6 +122,24 @@ export default function ReceivedOrdersPage() {
             <img src={o.buyerId?.avatar_url || '/images/zumo-placeholder.svg'} alt="" className="mo-buyer-avatar" />
             <span className="mo-item-seller">{o.buyerId?.fullName || o.buyerId?.full_name || T('Mijoz')}</span>
           </div>
+
+          {/* RASMIYLASHTIRISH: qabul usuli, telefon (bosib qo'ng'iroq), to'lov, izoh */}
+          <div className="mo-checkout-info">
+            <span className={`mo-chip ${o.deliveryMethod === 'pickup' ? 'mo-chip--pickup' : ''}`}>
+              {o.deliveryMethod === 'pickup' ? <Store size={12} /> : <Truck size={12} />}
+              {o.deliveryMethod === 'pickup' ? T('O‘zi olib ketadi') : T('Yetkazib berish')}
+            </span>
+            <span className="mo-chip">
+              {o.paymentMethod === 'card' ? <CreditCard size={12} /> : <Banknote size={12} />}
+              {o.paymentMethod === 'card' ? T('Karta orqali') : T('Naqd')}
+            </span>
+            {(o.buyerPhone || o.buyerId?.phone) && (
+              <a className="mo-chip mo-chip--phone" href={`tel:${o.buyerPhone || o.buyerId.phone}`} onClick={(e) => e.stopPropagation()}>
+                <Phone size={12} /> {o.buyerPhone || o.buyerId.phone}
+              </a>
+            )}
+          </div>
+          {o.buyerNote && <span className="mo-buyer-note">“{o.buyerNote}”</span>}
 
           {/* TUMAN */}
           {o.district && (

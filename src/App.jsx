@@ -167,6 +167,7 @@ const HIDE_AI_CHAT_PATHS = [
   '/request',
   '/become-provider',
   '/chat', // yozish maydoni va yuborish tugmasini to'smasin
+  '/cart', // rasmiylashtirish tugmasini to'smasin
 ];
 
 /* Pastida asosiy amal tugmasi bor oqimlar — AI tugmasi uni to'sib qo'ymasin */
