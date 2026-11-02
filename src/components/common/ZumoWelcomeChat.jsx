@@ -1,7 +1,7 @@
 // Tanishuv boshidagi suhbat: Zumik avval tilni so'raydi, keyin salomlashadi, "ZUMO'dan nima uchun foydalanasiz?" deb so'raydi,
 // javobga qarab shu odamga mos tanishtiruvni boshlaydi (onChoose(role)).
 import { useEffect, useRef, useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Send } from 'lucide-react';
 import ZumoBot from './ZumoBot.jsx';
 import useTypewriter from '../hooks/useTypewriter';
 import { T } from '../utils/T';
@@ -22,6 +22,14 @@ const ROLES = [
   { id: 'provider', emoji: '🔧', label: () => T('Men ustaman — buyurtma olmoqchiman') },
   { id: 'seller', emoji: '🏪', label: () => T('Men sotuvchiman — tovar sotmoqchiman') },
 ];
+
+// "Boshqa" — odam o'zi yozadi; matndan mos tanishuvni taxmin qilamiz (uz/ru/en kalit so'zlar)
+const guessRole = (text) => {
+  const t = text.toLowerCase();
+  if (/usta|ishla|ish qidir|ishchi|xizmat|buyurtma ol|elektrik|santexnik|ta.?mir|quruvchi|haydovchi|repetitor|enaga|мастер|работ|услуг|plumber|electrician|\bpro\b|work/.test(t)) return 'provider';
+  if (/sot|do[‘'`]?kon|магазин|прода|sell|shop|store/.test(t)) return 'seller';
+  return 'client';
+};
 
 const REPLIES = {
   client: () => T('Zo‘r! Usta chaqirish, tovar topish va sotuvchi bilan yozishishni ko‘rsataman.'),
@@ -63,8 +71,24 @@ export default function ZumoWelcomeChat({ name, onChoose, onLater, initialLang =
     setPhase('greet');
   };
 
+  const [customText, setCustomText] = useState('');
+  const [draft, setDraft] = useState('');
+
   const choose = (id) => {
+    if (id === 'other') {
+      setPhase('typing');
+      return;
+    }
     setRole(id);
+    setPhase('reply');
+  };
+
+  const submitCustom = (e) => {
+    e.preventDefault();
+    const text = draft.trim();
+    if (!text) return;
+    setCustomText(text.slice(0, 200));
+    setRole(guessRole(text));
     setPhase('reply');
   };
 
@@ -125,16 +149,33 @@ export default function ZumoWelcomeChat({ name, onChoose, onLater, initialLang =
                 <span aria-hidden="true">{r.emoji}</span> {r.label()}
               </button>
             ))}
+            <button type="button" className="zwc-choice zwc-choice--other" onClick={() => choose('other')}>
+              <span aria-hidden="true">✍️</span> {T('Boshqa — o‘zim yozaman')}
+            </button>
           </div>
+        )}
+
+        {phase === 'typing' && (
+          <form className="zwc-input" onSubmit={submitCustom}>
+            <input
+              autoFocus
+              value={draft}
+              maxLength={200}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder={T('Masalan: kvartiram uchun mebel qidiryapman')}
+              aria-label={T('Javobingiz')}
+            />
+            <button type="submit" disabled={!draft.trim()} aria-label={T('Yuborish')}><Send size={18} /></button>
+          </form>
         )}
 
         {role && (
           <>
             <div className="zwc-msg zwc-msg--me">
-              {ROLES.find((r) => r.id === role).emoji} {ROLES.find((r) => r.id === role).label()}
+              {customText || `${ROLES.find((r) => r.id === role).emoji} ${ROLES.find((r) => r.id === role).label()}`}
             </div>
             <BotBubble
-              text={REPLIES[role]()}
+              text={customText ? `${T('Tushundim!')} ${REPLIES[role]()}` : REPLIES[role]()}
               onTalk={setTalking}
               onDone={() => setPhase('ready')}
             />

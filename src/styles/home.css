@@ -1073,3 +1073,30 @@ html:has(.home-container) body,
 
 /* Bosh sahifadagi aylanuvchi rol banneri */
 .home-role-carousel { max-width: 1180px; margin: 24px auto; padding: 0 16px; }
+
+/* "Tez kunda" bo'limlari ikkinchi darajali: asosiy ikki tugma (Usta, Bozor) katta,
+   tez kundalar ixcham va xira — ishlamaydigan tugma asosiy joyni egallamasin */
+.hero-cta-btn.cta-request,
+.hero-cta-btn.cta-marketplace { min-height: 78px; }
+.hero-cta-btn.cta-digitalize,
+.hero-cta-btn.cta-bank {
+  min-height: 46px; padding: 6px 10px; gap: 8px;
+  border-style: dashed; opacity: 0.82; box-shadow: none;
+}
+.hero-cta-btn.cta-digitalize .hero-cta-btn__icon,
+.hero-cta-btn.cta-bank .hero-cta-btn__icon { width: 28px; height: 28px; border-radius: 8px; }
+.hero-cta-btn.cta-digitalize .hero-cta-btn__icon svg,
+.hero-cta-btn.cta-bank .hero-cta-btn__icon svg { width: 16px; height: 16px; }
+.hero-cta-btn.cta-digitalize strong,
+.hero-cta-btn.cta-bank strong { font-size: 0.74rem; -webkit-line-clamp: 1; }
+.hero-cta-btn.cta-digitalize small,
+.hero-cta-btn.cta-bank small {
+  align-self: flex-start; padding: 1px 6px; border-radius: 999px;
+  background: rgba(255, 176, 32, 0.22); color: #ffd27a; font-size: 0.58rem; font-weight: 800;
+}
+@media (max-width: 600px) {
+  .hero-cta-btn.cta-request,
+  .hero-cta-btn.cta-marketplace { min-height: 74px; }
+  .hero-cta-btn.cta-request strong,
+  .hero-cta-btn.cta-marketplace strong { font-size: 0.95rem; }
+}

@@ -71,3 +71,15 @@ body.zumo-tour-ai .ai-chat-toggle--hidden { transform: none; opacity: 1; pointer
 .zumo-tour__shade { pointer-events: auto; }
 .zwc-choices--row { flex-direction: row; flex-wrap: wrap; }
 .zwc-choices--row .zwc-choice { flex: 1 1 30%; justify-content: center; min-width: 96px; }
+.zwc-choice--other { border-style: dashed; background: transparent; }
+.zwc-input { display: flex; gap: 8px; margin-top: 4px; animation: zumoTourCardIn .25s ease; }
+.zwc-input input {
+  flex: 1; min-width: 0; min-height: 48px; padding: 0 14px; border-radius: 14px;
+  border: 1px solid rgba(31, 225, 231, .4); background: rgba(255, 255, 255, .08); color: #fff; font: inherit; font-size: 15px; outline: none;
+}
+.zwc-input input::placeholder { color: #8fa6bf; }
+.zwc-input button {
+  display: grid; place-items: center; width: 48px; border: 0; border-radius: 14px; cursor: pointer;
+  background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff;
+}
+.zwc-input button:disabled { opacity: .45; }

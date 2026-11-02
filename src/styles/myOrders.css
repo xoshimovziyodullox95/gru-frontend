@@ -600,3 +600,4 @@
 .mo-chip--pickup { background: rgba(255, 176, 32, 0.15); color: #a86a00; }
 .mo-chip--phone { background: rgba(0, 200, 120, 0.12); color: #00895a; }
 .mo-buyer-note { display: block; margin-top: 4px; font-size: 0.8rem; color: var(--textMuted, #5b6b80); font-style: italic; }
+.mo-wait-hint { display: block; margin-top: 4px; font-size: 0.74rem; color: var(--textMuted, #6b7a8f); }

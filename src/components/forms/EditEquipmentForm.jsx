@@ -12,7 +12,9 @@ import { T } from '../utils/T';
 export default function EditEquipmentForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isBusiness } = useAuth();
+  // Do'kon rejimi faqat biznesga; eski do'kon e'loni bo'lgan oddiy odam uni oddiy e'longa o'tkaza oladi
+  const canSellAsStore = isBusiness();
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -129,16 +131,18 @@ export default function EditEquipmentForm() {
           </div>
         )}
 
+        {(canSellAsStore || formData.saleMode === 'store') && (
         <div className="form-group">
           <label>{T('Sotuv turi')}</label>
           <select name="saleMode" value={formData.saleMode} onChange={handleChange}>
             <option value="classified">{T('Oddiy e’lon')}</option>
-            <option value="store">{T('Do‘kon mahsuloti')}</option>
+            <option value="store" disabled={!canSellAsStore}>{T('Do‘kon mahsuloti')}</option>
           </select>
           <small>{formData.saleMode === 'store'
             ? T('Xaridor savatga qo‘shib buyurtma beradi; narx va qoldiq ko‘rinadi.')
             : T('Narx e’londa ko‘rinadi. Xaridor sotuvchi bilan chat yoki telefon orqali kelishadi.')}</small>
         </div>
+        )}
         
         <div className="form-group">
           <label>Tavsif *</label>

@@ -29,12 +29,12 @@ const statusLabel = (o) => (o.deliveryMethod === 'pickup' && PICKUP_LABELS[o.sta
 const CLOSED_STATUSES = ['yetkazildi', 'rad_etildi', 'bekor_qilindi'];
 
 const STATUS_LABELS = {
-  yangi: 'Yangi',
-  qabul_qilindi: 'Qabul qilindi',
-  yetkazilmoqda: 'Yetkazilmoqda',
-  yetkazildi: 'Yetkazildi',
-  rad_etildi: 'Rad etildi',
-  bekor_qilindi: 'Xaridor bekor qildi',
+  yangi: T('Yangi'),
+  qabul_qilindi: T('Qabul qilindi'),
+  yetkazilmoqda: T('Yetkazilmoqda'),
+  yetkazildi: T('Yetkazildi'),
+  rad_etildi: T('Rad etildi'),
+  bekor_qilindi: T('Xaridor bekor qildi'),
 };
 
 export default function ReceivedOrdersPage() {

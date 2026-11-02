@@ -1403,5 +1403,12 @@
   "Topshirildi deb belgilash": "Mark as handed over",
   "Olib ketishga tayyor": "Ready for pickup",
   "Topshirildi": "Handed over",
-  "Tayyor — olib ketishingiz mumkin": "Ready — you can pick it up"
+  "Tayyor — olib ketishingiz mumkin": "Ready — you can pick it up",
+  "Xaridor bekor qildi": "Buyer cancelled",
+  "Sotuvchi 24 soat ichida javob bermadi": "The seller didn’t respond within 24 hours",
+  "Sotuvchi 24 soat ichida javob bermasa, buyurtma avtomatik bekor bo‘ladi": "If the seller doesn’t respond within 24 hours, the order is cancelled automatically",
+  "Boshqa — o‘zim yozaman": "Other — I’ll type it",
+  "Masalan: kvartiram uchun mebel qidiryapman": "E.g. looking for furniture for my flat",
+  "Javobingiz": "Your answer",
+  "Tushundim!": "Got it!"
 }

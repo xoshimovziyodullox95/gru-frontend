@@ -1420,5 +1420,12 @@
   "Topshirildi deb belgilash": "Отметить как выдано",
   "Olib ketishga tayyor": "Готов к выдаче",
   "Topshirildi": "Выдано",
-  "Tayyor — olib ketishingiz mumkin": "Готово — можете забирать"
+  "Tayyor — olib ketishingiz mumkin": "Готово — можете забирать",
+  "Xaridor bekor qildi": "Покупатель отменил",
+  "Sotuvchi 24 soat ichida javob bermadi": "Продавец не ответил в течение 24 часов",
+  "Sotuvchi 24 soat ichida javob bermasa, buyurtma avtomatik bekor bo‘ladi": "Если продавец не ответит за 24 часа, заказ отменится автоматически",
+  "Boshqa — o‘zim yozaman": "Другое — напишу сам",
+  "Masalan: kvartiram uchun mebel qidiryapman": "Например: ищу мебель для квартиры",
+  "Javobingiz": "Ваш ответ",
+  "Tushundim!": "Понял!"
 }

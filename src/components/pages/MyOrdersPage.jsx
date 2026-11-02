@@ -135,8 +135,11 @@ export default function MyOrdersPage() {
                         <Clock size={12} /> {o.deliveryEstimate.value} {o.deliveryEstimate.unit === 'soat' ? 'soatda' : 'kunda'} {T('yetkaziladi')}
                       </span>
                     )}
-                    {o.closeReason && <span className="mo-close-reason">{T('Sabab:')} {o.closeReason}</span>}
+                    {o.closeReason && <span className="mo-close-reason">{T('Sabab:')} {T(o.closeReason)}</span>}
                     <StatusBadge info={info} />
+                    {o.status === 'yangi' && (
+                      <span className="mo-wait-hint">{T('Sotuvchi 24 soat ichida javob bermasa, buyurtma avtomatik bekor bo‘ladi')}</span>
+                    )}
                   </div>
                   <div className="mo-item-actions-col">
                     {o.sellerId?._id && (

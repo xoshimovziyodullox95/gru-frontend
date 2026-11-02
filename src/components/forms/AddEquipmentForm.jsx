@@ -20,7 +20,9 @@ const TITLE_MAX = 70;
 const DESC_MAX = 3000;
 
 export default function AddEquipmentForm() {
-  const { user } = useAuth();
+  const { user, isBusiness } = useAuth();
+  // Oddiy odamga sotuv turi tanlovi ko'rsatilmaydi — e'lon OLX kabi (chat/qo'ng'iroq); do'kon rejimi biznesga
+  const canSellAsStore = isBusiness();
   const navigate = useNavigate();
   const { categories } = useProductCategories();
 
@@ -129,6 +131,7 @@ export default function AddEquipmentForm() {
       </FormSection>
 
       <FormSection title={T('Asosiy ma’lumot')}>
+        {canSellAsStore && (
         <div className="lf-field">
           <span className="lf-field__label">{T('Sotuv turi')}</span>
           <Segmented
@@ -144,6 +147,7 @@ export default function AddEquipmentForm() {
             ? T('Xaridor savatga qo‘shib buyurtma beradi; narx va qoldiq ko‘rinadi.')
             : T('Narx e’londa ko‘rinadi. Xaridor sotuvchi bilan chat yoki telefon orqali kelishadi.')}</span>
         </div>
+        )}
         <Field label={T('Sarlavha')} counter={`${form.title.length}/${TITLE_MAX}`} error={errors.title}>
           <input
             value={form.title}
