@@ -1410,5 +1410,8 @@
   "Boshqa — o‘zim yozaman": "Other — I’ll type it",
   "Masalan: kvartiram uchun mebel qidiryapman": "E.g. looking for furniture for my flat",
   "Javobingiz": "Your answer",
-  "Tushundim!": "Got it!"
+  "Tushundim!": "Got it!",
+  "Sotuvchi buyurtmani tasdiqlash va yetkazish vaqtini kelishish uchun qo‘ng‘iroq qiladi. Raqam faqat shu sotuvchiga ko‘rinadi va profilingizga saqlanadi.": "The seller will call to confirm the order and agree on delivery. Only this seller sees the number; it’s saved to your profile.",
+  "Sotuvchi buyurtmani tasdiqlash uchun shu raqamga qo‘ng‘iroq qiladi": "The seller will call this number to confirm",
+  "O‘zgartirish": "Change"
 }

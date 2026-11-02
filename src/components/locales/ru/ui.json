@@ -1427,5 +1427,8 @@
   "Boshqa — o‘zim yozaman": "Другое — напишу сам",
   "Masalan: kvartiram uchun mebel qidiryapman": "Например: ищу мебель для квартиры",
   "Javobingiz": "Ваш ответ",
-  "Tushundim!": "Понял!"
+  "Tushundim!": "Понял!",
+  "Sotuvchi buyurtmani tasdiqlash va yetkazish vaqtini kelishish uchun qo‘ng‘iroq qiladi. Raqam faqat shu sotuvchiga ko‘rinadi va profilingizga saqlanadi.": "Продавец позвонит, чтобы подтвердить заказ и договориться о доставке. Номер увидит только этот продавец, он сохранится в профиле.",
+  "Sotuvchi buyurtmani tasdiqlash uchun shu raqamga qo‘ng‘iroq qiladi": "Продавец позвонит на этот номер для подтверждения",
+  "O‘zgartirish": "Изменить"
 }
