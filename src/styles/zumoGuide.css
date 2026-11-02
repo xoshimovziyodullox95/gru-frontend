@@ -17,3 +17,8 @@
   height: 92px;
   margin: -6px 0 16px -6px;
 }
+
+/* Zumik yozayotgan matn: ko'rinmas to'liq matn joy band qiladi */
+.zumo-say { display: grid; }
+.zumo-say > * { grid-area: 1 / 1; }
+.zumo-say__ghost { visibility: hidden; }

@@ -6,6 +6,7 @@ import { ZUMO_GUIDE_EVENT } from './zumoGuideEvents.js';
 import api from '../services/api';
 import { getUserProfile } from '../services/user';
 import ZumoBot from './ZumoBot.jsx';
+import useTypewriter from '../hooks/useTypewriter';
 import '../../styles/zumoGuide.css';
 
 import { T } from '../utils/T';
@@ -24,6 +25,21 @@ const TOUR_STEPS = [
 ];
 
 const BOT_SIZE = 74;
+
+// Zumik "gapiradi": avval uch nuqta, keyin matn harfma-harf. To'liq matn ko'rinmas holda
+// joy band qiladi — yozilayotganda karta balandligi sakramaydi.
+function ZumoSays({ typed, full }) {
+  return (
+    <span className="zumo-say">
+      <span className="zumo-say__ghost" aria-hidden="true">{full}</span>
+      <span className="zumo-say__live">
+        {typed.thinking
+          ? <span className="zumo-typing-dots" aria-label={T('Yozmoqda...')}><i /><i /><i /></span>
+          : <span className={typed.typing ? 'zumo-caret' : ''}>{typed.shown}</span>}
+      </span>
+    </span>
+  );
+}
 // Bir nechta selektordan ekranda haqiqatan ko'rinib turganini olamiz (display:none — o'lchami 0)
 const findVisible = (selector) => [...document.querySelectorAll(selector)]
   .find((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; }) || null;
@@ -99,6 +115,10 @@ export default function ZumoGuide() {
   }, [flow, markSeen, pageStorageKey]);
 
   const activeStep = flow === 'service-request' ? TOUR_STEPS[1] : flow === 'page' ? { target: 'main h1, h1', ...pageGuide } : TOUR_STEPS[step];
+  const sayText = !flow ? '' : (flow === 'welcome' && step < 0)
+    ? T('Men Zumik — ZUMO yordamchisiman. Bu yerda tovar va xizmat topish, ustaga buyurtma berish hamda o‘z e’loningizni joylash mumkin. Hozir asosiy tugmalarni qo‘lim bilan ko‘rsatib beraman.')
+    : (activeStep?.text || T('Bosh sahifaga o‘ting, shunda ilovaning asosiy tugmalarini ko‘rsataman.'));
+  const typed = useTypewriter(sayText, { enabled: Boolean(flow) });
 
   useEffect(() => {
     if (!flow || !activeStep) { setRect(null); return undefined; }
@@ -193,10 +213,10 @@ export default function ZumoGuide() {
       <div className="zumo-tour-welcome" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
         <section className="zumo-tour-welcome__card" role="dialog" aria-modal="true" aria-labelledby="zumo-tour-welcome-title">
           <button type="button" className="zumo-tour-welcome__close" onClick={close} aria-label={T('Yopish')}><X size={19} /></button>
-          <div className="zumo-tour-welcome__bot"><ZumoBot size={92} /></div>
+          <div className="zumo-tour-welcome__bot"><ZumoBot size={92} talking={typed.typing && !typed.thinking} /></div>
           <span className="zumo-tour-welcome__eyebrow">{T('ZUMO · 1 daqiqalik tanishtiruv')}</span>
           <h2 id="zumo-tour-welcome-title">{T('Salom, {{name}}!', { name: displayName })}</h2>
-          <p>{T('Men Zumik — ZUMO yordamchisiman. Bu yerda tovar va xizmat topish, ustaga buyurtma berish hamda o‘z e’loningizni joylash mumkin. Hozir asosiy tugmalarni qo‘lim bilan ko‘rsatib beraman.')}</p>
+          <p><ZumoSays typed={typed} full={sayText} /></p>
           <div className="zumo-tour-welcome__actions"><button type="button" onClick={close} className="zumo-tour-welcome__skip">{T('Keyinroq')}</button><button type="button" onClick={startTour} className="zumo-tour-welcome__start">{T('Ko‘rsatishni boshlash')} <ChevronRight size={18} /></button></div>
           <div className="zumo-tour-welcome__dots"><i /><i /><i /><i /><i /></div>
         </section>
@@ -238,13 +258,13 @@ export default function ZumoGuide() {
           className={`zumo-tour-card__bot ${placeAbove ? 'zumo-tour-card__bot--below' : ''}`}
           style={{ left: botLeft }}
         >
-          <ZumoBot size={BOT_SIZE} angle={rect ? armAngle : null} />
+          <ZumoBot size={BOT_SIZE} angle={rect ? armAngle : null} talking={typed.typing && !typed.thinking} />
         </span>
         <div className="zumo-tour-card__top"><span>{isContextual ? T('XIZMAT SO‘ROVI') : isPageGuide ? T('SAHIFA YO‘RIQNOMASI') : T('QADAM {{n}} / {{total}}', { n: currentIndex + 1, total: TOUR_STEPS.length })}</span><button type="button" onClick={close} aria-label={T('Tanishtiruvni yopish')}><X size={17} /></button></div>
         <h2 id="zumo-tour-title">{currentStep?.title || T('Bu bo‘lim hozir ko‘rinmayapti')}</h2>
-        <p>{currentStep?.text || T('Bosh sahifaga o‘ting, shunda ilovaning asosiy tugmalarini ko‘rsataman.')}</p>
+        <p><ZumoSays typed={typed} full={sayText} /></p>
         {!rect && <p className="zumo-tour-card__loading">{T('Kerakli tugmani topyapman…')}</p>}
-        <div className="zumo-tour-card__bottom"><button type="button" className="zumo-tour-card__skip" onClick={close}>{isPageGuide ? T('Keyinroq') : T('O‘tkazib yuborish')}</button><div className="zumo-tour-card__controls">{!isContextual && !isPageGuide && currentIndex > 0 && <button type="button" className="zumo-tour-card__back" onClick={() => setStep((value) => value - 1)} aria-label={T('Orqaga')}><ArrowLeft size={17} /></button>}<button type="button" className="zumo-tour-card__next" onClick={advance}>{isContextual ? T('So‘rovni boshlash') : isPageGuide ? T('Tushunarli') : currentIndex === TOUR_STEPS.length - 1 ? T('Tugatish') : T('Keyingi')} {currentIndex === TOUR_STEPS.length - 1 && !isContextual && !isPageGuide ? <Check size={16} /> : <ArrowRight size={16} />}</button></div></div>
+        <div className="zumo-tour-card__bottom"><button type="button" className="zumo-tour-card__skip" onClick={close}>{isPageGuide ? T('Keyinroq') : T('O‘tkazib yuborish')}</button><div className="zumo-tour-card__controls">{!isContextual && !isPageGuide && currentIndex > 0 && <button type="button" className="zumo-tour-card__back" onClick={() => setStep((value) => value - 1)} aria-label={T('Orqaga')}><ArrowLeft size={17} /></button>}<button type="button" className="zumo-tour-card__next" onClick={() => (typed.typing ? typed.skip() : advance())}>{isContextual ? T('So‘rovni boshlash') : isPageGuide ? T('Tushunarli') : currentIndex === TOUR_STEPS.length - 1 ? T('Tugatish') : T('Keyingi')} {currentIndex === TOUR_STEPS.length - 1 && !isContextual && !isPageGuide ? <Check size={16} /> : <ArrowRight size={16} />}</button></div></div>
       </aside>
     </div>
   );

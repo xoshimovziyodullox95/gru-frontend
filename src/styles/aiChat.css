@@ -339,3 +339,18 @@
 .ai-md table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
 .ai-md th, .ai-md td { padding: 6px 8px; border: 1px solid rgba(var(--text-rgb), 0.12); text-align: left; vertical-align: top; }
 .ai-md th { background: rgba(var(--text-rgb), 0.05); font-weight: 700; }
+
+/* ---------- Zumik: robot avatar, holat, harfma-harf javob ---------- */
+.ai-chat-toggle { overflow: visible; }
+.ai-chat-toggle .zumo-bot { margin-top: -6px; }
+.ai-chat-title { display: flex; align-items: center; gap: 10px; }
+.ai-chat-title__bot {
+  display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(var(--cyan-rgb), 0.12);
+}
+.ai-chat-title h3 { margin: 0; line-height: 1.1; }
+.ai-chat-status { font-size: 0.72rem; color: var(--textMuted); }
+.ai-message.assistant { align-items: flex-end; gap: 6px; }
+.ai-avatar { flex: 0 0 auto; display: grid; place-items: center; width: 30px; height: 30px; }
+.ai-message.assistant .ai-message-bubble { max-width: calc(80% - 36px); }

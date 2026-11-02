@@ -1321,5 +1321,8 @@
   "«Batareya» bo‘limida «Cheklovsiz» ni tanlang": "In \"Battery\", choose \"Unrestricted\"",
   "Avtozapusk": "Autostart",
   "Batareya sozlamasi": "Battery settings",
-  "Salom, {{name}}!": "Hi, {{name}}!"
+  "Salom, {{name}}!": "Hi, {{name}}!",
+  "yozmoqda…": "typing…",
+  "javob yozyapti…": "writing a reply…",
+  "ZUMO yordamchi · onlayn": "ZUMO assistant · online"
 }

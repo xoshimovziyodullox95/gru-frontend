@@ -55,3 +55,43 @@
     animation: none;
   }
 }
+
+/* Gapirayotgan og'iz */
+.zumo-bot__mouth--talk {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: zumoBotTalk 0.22s ease-in-out infinite alternate;
+}
+@keyframes zumoBotTalk {
+  from { transform: scaleY(0.35); }
+  to { transform: scaleY(1.25); }
+}
+
+/* "Yozmoqda…" uch nuqta */
+.zumo-typing-dots { display: inline-flex; gap: 4px; align-items: center; height: 1em; }
+.zumo-typing-dots i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; opacity: 0.35;
+  animation: zumoDot 1s infinite;
+}
+.zumo-typing-dots i:nth-child(2) { animation-delay: 0.15s; }
+.zumo-typing-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes zumoDot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+/* Yozilayotgan matn oxiridagi kursor */
+.zumo-caret::after {
+  content: '';
+  display: inline-block;
+  width: 2px; height: 1em;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: currentColor;
+  animation: zumoCaret 0.8s steps(1) infinite;
+}
+@keyframes zumoCaret { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .zumo-bot__mouth--talk, .zumo-typing-dots i, .zumo-caret::after { animation: none; }
+}

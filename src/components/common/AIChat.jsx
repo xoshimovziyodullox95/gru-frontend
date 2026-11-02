@@ -1,17 +1,68 @@
 // Suzuvchi "ZUMO yordamchi" — FAQAT ZUMO bazasi bo'yicha: tovar, usta/xizmat, joy topib beradi
 // va ilovadan foydalanishda yordam beradi. Umumiy savollar uchun — ZUMO AI sahifasi (/ai-assistant).
-import { lazy, Suspense, useState, useRef, useEffect } from 'react';
+import { lazy, Suspense, useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MessageCircle, X, Send, Sparkles } from 'lucide-react';
+import { X, Send, Sparkles } from 'lucide-react';
 import { sendAIMessage } from '../services/aiChat';
 import { formatPrice } from '../utils/formatPrice';
 import { getImageUrl } from '../utils/imageUrl';
 // Markdown kutubxonasi og'ir — chat ochilib, birinchi javob chiqqanda yuklanadi
 const AiMarkdown = lazy(() => import('./AiMarkdown'));
 import { T } from '../utils/T';
+import ZumoBot from './ZumoBot.jsx';
+import useTypewriter from '../hooks/useTypewriter';
 import '../../styles/aiChat.css';
 
 const MAX_INPUT = 1500;
+const NOOP = () => {};
+
+// Zumik javobi: yangi javob harfma-harf yoziladi (fresh), tugagach Markdown va kartalar chiqadi
+function AssistantMessage({ msg, onTyped, onGrow, onTalk, onCardClick }) {
+  const typed = useTypewriter(msg.content, { enabled: Boolean(msg.fresh), delay: 0, speed: 16 });
+  useEffect(() => { onGrow(); }, [typed.shown, onGrow]);
+  useEffect(() => {
+    onTalk(typed.typing);
+    if (typed.done && msg.fresh) onTyped();
+  }, [typed.typing, typed.done, msg.fresh, onTyped, onTalk]);
+
+  return (
+    <div>
+      <div className="ai-message assistant">
+        <span className="ai-avatar"><ZumoBot size={28} still talking={typed.typing} /></span>
+        <div className="ai-message-bubble" onClick={typed.typing ? typed.skip : undefined}>
+          {typed.typing
+            ? <span className="ai-md zumo-caret">{typed.shown}</span>
+            : <Suspense fallback={<span className="ai-md">{msg.content}</span>}><AiMarkdown>{msg.content}</AiMarkdown></Suspense>}
+        </div>
+      </div>
+
+      {!typed.typing && msg.cards?.length > 0 && (
+        <div className="ai-suggestions-grid">
+          {msg.cards.map((card) => (
+            <Link key={`${card.type}-${card.id}`} to={card.link} className="ai-suggestion-card" onClick={onCardClick}>
+              <img
+                src={card.image ? getImageUrl(card.image) : '/images/zumo-placeholder.svg'}
+                alt=""
+                loading="lazy"
+                onError={(e) => { e.currentTarget.src = '/images/zumo-placeholder.svg'; }}
+              />
+              <div className="ai-suggestion-info">
+                <h4>{card.title}</h4>
+                {card.price != null && card.price !== '' && (
+                  <span className="price">
+                    {typeof card.price === 'number' ? formatPrice(card.price, card.currency) : card.price}
+                  </span>
+                )}
+                {(card.region || card.address) && <span className="address">{card.region || card.address}</span>}
+                <span className="ai-suggestion-btn">{T('Batafsil')}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 const SUGGESTIONS = [
   'Menda 3 mln so‘m bor, muzlatgich kerak',
   'Uyimga santexnik kerak',
@@ -27,11 +78,18 @@ export default function AIChat() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
+      fresh: true,
       content: T('Salom! Men ZUMO yordamchisiman. Nima izlayotganingizni va byudjetingizni yozing — ZUMO’dan eng mosini topib beraman.'),
     },
   ]);
 
   const messagesEndRef = useRef(null);
+  const [talking, setTalking] = useState(false);
+  const scrollToEnd = useCallback(() => messagesEndRef.current?.scrollIntoView({ block: 'end' }), []);
+  // Yozib bo'lingan javob qayta ochilganda yana yozilmasin
+  const markTyped = useCallback((index) => {
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, fresh: false } : m)));
+  }, []);
 
   // Pastga o'qiyotganda tugma matnni yopmasin — yashirinadi, yuqoriga
   // aylantirganda yoki sahifa oxirida qayta chiqadi.
@@ -65,12 +123,12 @@ export default function AIChat() {
     try {
       // Serverga faqat matn yuboriladi (kartalar emas); birinchi salomlashuv kerak emas
       const data = await sendAIMessage(updated.slice(1).map(({ role, content: c }) => ({ role, content: c })));
-      setMessages((prev) => [...prev, { role: 'assistant', content: data?.reply || T('Javob topilmadi.'), cards: data?.cards || [] }]);
+      setMessages((prev) => [...prev, { role: 'assistant', fresh: true, content: data?.reply || T('Javob topilmadi.'), cards: data?.cards || [] }]);
     } catch (error) {
       // Limit yoki boshqa xatoda server tushunarli matn qaytaradi
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: error.response?.data?.reply || error.response?.data?.error || T('Server bilan bog\'lanishda xatolik yuz berdi.') },
+        { role: 'assistant', fresh: true, content: error.response?.data?.reply || error.response?.data?.error || T('Server bilan bog\'lanishda xatolik yuz berdi.') },
       ]);
     } finally {
       setLoading(false);
@@ -86,55 +144,41 @@ export default function AIChat() {
         onClick={() => setIsOpen(true)}
         aria-label={T('ZUMO yordamchi')}
       >
-        <MessageCircle size={24} />
+        <ZumoBot size={44} still />
       </button>
 
       {isOpen && (
         <div className="ai-chat-modal" role="dialog" aria-label={T('ZUMO yordamchi')}>
           <div className="ai-chat-header">
-            <h3>{T('ZUMO yordamchi')}</h3>
+            <div className="ai-chat-title">
+              <span className="ai-chat-title__bot"><ZumoBot size={38} still talking={talking} /></span>
+              <div>
+                <h3>Zumik</h3>
+                <span className="ai-chat-status">
+                  {loading ? T('yozmoqda…') : talking ? T('javob yozyapti…') : T('ZUMO yordamchi · onlayn')}
+                </span>
+              </div>
+            </div>
             <button className="ai-chat-close" onClick={() => setIsOpen(false)} aria-label={T('Yopish')}>
               <X size={20} />
             </button>
           </div>
 
           <div className="ai-chat-messages">
-            {messages.map((msg, index) => (
-              <div key={index}>
-                <div className={`ai-message ${msg.role === 'user' ? 'user' : 'assistant'}`}>
-                  <div className="ai-message-bubble">
-                    {msg.role === 'assistant'
-                      ? <Suspense fallback={<span className="ai-md">{msg.content}</span>}><AiMarkdown>{msg.content}</AiMarkdown></Suspense>
-                      : msg.content}
-                  </div>
-                </div>
-
-                {msg.cards?.length > 0 && (
-                  <div className="ai-suggestions-grid">
-                    {msg.cards.map((card) => (
-                      <Link key={`${card.type}-${card.id}`} to={card.link} className="ai-suggestion-card" onClick={() => setIsOpen(false)}>
-                        <img
-                          src={card.image ? getImageUrl(card.image) : '/images/zumo-placeholder.svg'}
-                          alt=""
-                          loading="lazy"
-                          onError={(e) => { e.currentTarget.src = '/images/zumo-placeholder.svg'; }}
-                        />
-                        <div className="ai-suggestion-info">
-                          <h4>{card.title}</h4>
-                          {card.price != null && card.price !== '' && (
-                            <span className="price">
-                              {typeof card.price === 'number' ? formatPrice(card.price, card.currency) : card.price}
-                            </span>
-                          )}
-                          {(card.region || card.address) && <span className="address">{card.region || card.address}</span>}
-                          <span className="ai-suggestion-btn">{T('Batafsil')}</span>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
+            {messages.map((msg, index) => (msg.role === 'user' ? (
+              <div key={index} className="ai-message user">
+                <div className="ai-message-bubble">{msg.content}</div>
               </div>
-            ))}
+            ) : (
+              <AssistantMessage
+                key={index}
+                msg={msg}
+                onTyped={() => markTyped(index)}
+                onGrow={scrollToEnd}
+                onTalk={index === messages.length - 1 ? setTalking : NOOP}
+                onCardClick={() => setIsOpen(false)}
+              />
+            )))}
 
             {onlyGreeting && (
               <div className="ai-chips">
@@ -151,6 +195,7 @@ export default function AIChat() {
 
             {loading && (
               <div className="ai-message assistant">
+                <span className="ai-avatar"><ZumoBot size={28} still /></span>
                 <div className="ai-message-bubble ai-typing" aria-label={T('Yozmoqda...')}>
                   <span /><span /><span />
                 </div>
