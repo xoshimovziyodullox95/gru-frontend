@@ -1029,13 +1029,13 @@
     "bankServices": "Bank services"
   },
   "aiAssistant": {
-    "title": "ZUMO AI",
+    "title": "Zumik — ZUMO AI",
     "backHome": "Home",
     "newChat": "New chat",
     "loadingChats": "Loading...",
     "noChats": "No chats yet",
     "newChatTitle": "New chat",
-    "placeholder": "Ask ZUMO AI...",
+    "placeholder": "Ask Zumik...",
     "welcomeTitle": "Welcome{{name}}!",
     "welcomeSub": "How can I help you?",
     "errorMessage": "Sorry, an error occurred. Please try again.",

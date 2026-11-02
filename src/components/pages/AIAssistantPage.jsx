@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Plus, Send, Paperclip, Sparkles, Menu, Settings } from 'lucide-react';
+import { ArrowLeft, Plus, Send, Paperclip, Menu, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import AiMarkdown from '../common/AiMarkdown';
@@ -20,6 +20,7 @@ const STARTERS = [
   'Rasmdagi narsa nima? (rasm biriktiring)',
 ];
 
+import ZumoBot from '../common/ZumoBot.jsx';
 import { T } from '../utils/T';
 export default function AIAssistantPage() {
   const navigate = useNavigate();
@@ -302,7 +303,7 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
           </button>
 
           <div className="gru-ai-header-title">
-            <Sparkles size={18} />
+            <ZumoBot size={26} still />
             <span>{t('aiAssistant.title')}</span>
           </div>
 
@@ -314,7 +315,8 @@ const API_BASE = `${import.meta.env.VITE_API_URL}/gru-ai`;
           /* ===== BO'SH HOLAT ===== */
           <div className="gru-ai-landing">
             <div className="gru-ai-landing-glow" />
-            <Sparkles size={40} className="gru-ai-landing-icon" />
+            {/* Personaj: Zumik qo'l silkitib kutib oladi */}
+            <ZumoBot size={88} className="gru-ai-landing-icon" />
             <h1 className="gru-ai-landing-title">
               {userName
                 ? t('aiAssistant.welcomeTitle', { name: `, ${userName}` })

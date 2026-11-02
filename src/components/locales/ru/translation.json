@@ -1029,13 +1029,13 @@
     "bankServices": "Банковские услуги"
   },
   "aiAssistant": {
-    "title": "ZUMO AI",
+    "title": "Зумик — ZUMO AI",
     "backHome": "Главная",
     "newChat": "Новый чат",
     "loadingChats": "Загрузка...",
     "noChats": "Чатов пока нет",
     "newChatTitle": "Новый чат",
-    "placeholder": "Спросите ZUMO AI...",
+    "placeholder": "Спросите Зумика...",
     "welcomeTitle": "Добро пожаловать{{name}}!",
     "welcomeSub": "Чем я могу вам помочь?",
     "errorMessage": "Извините, произошла ошибка. Пожалуйста, попробуйте снова.",

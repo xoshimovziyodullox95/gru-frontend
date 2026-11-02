@@ -1069,13 +1069,13 @@
     "bankServices": "Bank xizmatlari"
   },
   "aiAssistant": {
-    "title": "ZUMO AI",
+    "title": "Zumik — ZUMO AI",
     "backHome": "Bosh sahifa",
     "newChat": "Yangi chat",
     "loadingChats": "Yuklanmoqda...",
     "noChats": "Hali chatlar yo'q",
     "newChatTitle": "Yangi chat",
-    "placeholder": "ZUMO AI'dan so'rang...",
+    "placeholder": "Zumik'dan so'rang...",
     "welcomeTitle": "Xush kelibsiz{{name}}!",
     "welcomeSub": "Sizga qanday yordam bera olaman?",
     "errorMessage": "Kechirasiz, xatolik yuz berdi. Qayta urinib ko'ring.",

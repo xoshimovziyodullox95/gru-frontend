@@ -79,11 +79,33 @@ export default function AIChat() {
     {
       role: 'assistant',
       fresh: true,
-      content: T('Salom! Men ZUMO yordamchisiman. Nima izlayotganingizni va byudjetingizni yozing — ZUMO’dan eng mosini topib beraman.'),
+      content: T('Salom! Men Zumik — sizning ZUMO yordamchingizman 🤖 Nima izlayotganingizni va byudjetingizni yozing, eng mosini topib beraman.'),
     },
   ]);
 
   const messagesEndRef = useRef(null);
+
+  // Personaj: Zumik seansda bir marta o'zini tanishtiradi, vaqti-vaqti bilan qo'l silkitadi
+  const [introVisible, setIntroVisible] = useState(false);
+  const [waving, setWaving] = useState(false);
+  useEffect(() => {
+    let seen = false;
+    try { seen = sessionStorage.getItem('zumik_intro_seen') === '1'; } catch { /* har safar ko'rsatamiz */ }
+    const timers = [];
+    if (!seen) {
+      timers.push(setTimeout(() => {
+        setIntroVisible(true);
+        setWaving(true);
+        try { sessionStorage.setItem('zumik_intro_seen', '1'); } catch { /* faqat shu safar */ }
+      }, 3500));
+      timers.push(setTimeout(() => { setIntroVisible(false); setWaving(false); }, 11000));
+    }
+    const waveLoop = setInterval(() => {
+      setWaving(true);
+      timers.push(setTimeout(() => setWaving(false), 2400));
+    }, 20000);
+    return () => { timers.forEach(clearTimeout); clearInterval(waveLoop); };
+  }, []);
   const [talking, setTalking] = useState(false);
   const scrollToEnd = useCallback(() => messagesEndRef.current?.scrollIntoView({ block: 'end' }), []);
   // Yozib bo'lingan javob qayta ochilganda yana yozilmasin
@@ -139,16 +161,22 @@ export default function AIChat() {
 
   return (
     <>
+      {introVisible && !isOpen && !hideToggle && (
+        <button type="button" className="zumik-intro" onClick={() => { setIntroVisible(false); setIsOpen(true); }}>
+          <strong>{T('Salom! Men Zumik 👋')}</strong>
+          <span>{T('Sizning yordamchingizman. Savolingiz bormi?')}</span>
+        </button>
+      )}
       <button
         className={`ai-chat-toggle ${hideToggle && !isOpen ? 'ai-chat-toggle--hidden' : ''}`}
-        onClick={() => setIsOpen(true)}
-        aria-label={T('ZUMO yordamchi')}
+        onClick={() => { setIntroVisible(false); setIsOpen(true); }}
+        aria-label={T('Zumik — yordamchi')}
       >
-        <ZumoBot size={44} still />
+        <ZumoBot size={44} still={!waving} />
       </button>
 
       {isOpen && (
-        <div className="ai-chat-modal" role="dialog" aria-label={T('ZUMO yordamchi')}>
+        <div className="ai-chat-modal" role="dialog" aria-label={T('Zumik — yordamchi')}>
           <div className="ai-chat-header">
             <div className="ai-chat-title">
               <span className="ai-chat-title__bot"><ZumoBot size={38} still talking={talking} /></span>
