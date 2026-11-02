@@ -16,6 +16,12 @@ const STATUS_INFO = {
   bekor_qilindi: { label: T('Bekor qilindi'), tone: 'closed', icon: XCircle },
 };
 
+// O'zi olib ketadigan buyurtma uchun holat nomlari
+const PICKUP_STATUS_INFO = {
+  yetkazilmoqda: { label: T('Tayyor — olib ketishingiz mumkin'), tone: 'active', icon: Package },
+  yetkazildi: { label: T('Topshirildi'), tone: 'done', icon: CheckCircle2 },
+};
+
 const BANK_STATUS_INFO = {
   new: { label: T('Yuborildi'), tone: 'wait', icon: Clock },
   in_progress: { label: T('Ko‘rib chiqilmoqda'), tone: 'active', icon: Loader2 },
@@ -111,7 +117,7 @@ export default function MyOrdersPage() {
         ) : (
           <div className="mo-list">
             {orders.map((o) => {
-              const info = STATUS_INFO[o.status] || STATUS_INFO.yangi;
+              const info = (o.deliveryMethod === 'pickup' && PICKUP_STATUS_INFO[o.status]) || STATUS_INFO[o.status] || STATUS_INFO.yangi;
               return (
                 <div key={o._id} className={`mo-item ${info.tone === 'closed' ? 'mo-item-archived' : ''}`}>
                   <img

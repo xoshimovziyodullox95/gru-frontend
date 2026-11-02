@@ -21,8 +21,10 @@ import {
   ChevronLeft, ChevronRight, MessageCircle,
   Share2, Layers,
   Cpu, UtensilsCrossed, Sofa, Palette,
-  ShoppingCart, Check
+  ShoppingCart, Check, BadgeCheck, RotateCcw, ShieldAlert
 } from 'lucide-react';
+import api from '../services/api';
+import toast from 'react-hot-toast';
 import ReelsStrip from '../marketplace/MarketplaceReels';
 import EquipmentRelatedListings from '../marketplace/EquipmentRelatedListings.jsx';
 import { likePost, commentPost } from '../services/videos';
@@ -378,6 +380,17 @@ export default function EquipmentDetailPage() {
   const owner = equipment.userId && typeof equipment.userId === 'object' ? equipment.userId : null;
   const ownerName = owner?.fullName || owner?.full_name || owner?.companyName || equipment.supplier || '';
   const isOwner = sameId(owner?._id || equipment.userId, myId);
+  const isSold = Boolean(equipment.isSold);
+  // Oddiy sotuvchi narsasini sotgach e'lonni yopadi (ro'yxatlardan chiqadi), xohlasa qaytaradi
+  const toggleSold = async () => {
+    try {
+      const { data } = await api.patch(`/equipment/${equipment._id}/sold`, { sold: !isSold });
+      setEquipment((prev) => ({ ...prev, isSold: data.isSold, soldAt: data.soldAt }));
+      toast.success(data.isSold ? T('E’lon "Sotildi" deb belgilandi') : T('E’lon yana sotuvda'));
+    } catch (err) {
+      toast.error(err.response?.data?.error || T('Saqlab bo‘lmadi'));
+    }
+  };
   const priceText = formatPrice(equipment.price, equipment.currency);
   const facts = [
     { label: T('Holati'), value: equipment.condition === 'new' ? t('equipment.conditionNew') : t('equipment.conditionUsed') },
@@ -400,6 +413,20 @@ export default function EquipmentDetailPage() {
             />
 
             {/* SARLAVHA, BAHO, NARX */}
+            {isSold && (
+              <div className="dp-sold-banner"><BadgeCheck size={18} /> {T('Bu tovar sotilgan')}</div>
+            )}
+
+            {/* E'lon egasi uchun: sotildi / qayta sotuvga */}
+            {isOwner && (
+              <section className="dp-card dp-owner-sold">
+                <span>{isSold ? T('E’lon yopilgan — boshqalar ro‘yxatda ko‘rmaydi') : T('Sotib bo‘ldingizmi? E’lonni yoping — xaridorlar bezovta qilmaydi')}</span>
+                <button type="button" className={`dp-btn ${isSold ? 'dp-btn--ghost' : 'dp-btn--primary'}`} onClick={toggleSold}>
+                  {isSold ? <><RotateCcw size={16} /> {T('Qayta sotuvga qo‘yish')}</> : <><BadgeCheck size={16} /> {T('Sotildi deb belgilash')}</>}
+                </button>
+              </section>
+            )}
+
             <section className="dp-card dp-head">
               <h1 className="dp-title">{equipment.title}</h1>
               {isStoreProduct && <RatingLink type="equipment" id={equipment._id} title={equipment.title} />}
@@ -424,6 +451,17 @@ export default function EquipmentDetailPage() {
               </div>
               {!isStoreProduct && <p className="dp-note">{T('Bu oddiy e’lon. Narxni sotuvchi bilan kelishing.')}</p>}
             </section>
+
+            {!isOwner && !isStoreProduct && !isSold && (
+              <section className="dp-card dp-safety">
+                <strong><ShieldAlert size={18} /> {T('Xavfsiz bitim')}</strong>
+                <ul>
+                  <li>{T('Oldindan pul o‘tkazmang — tovarni ko‘rib, qo‘lingizga olib to‘lang')}</li>
+                  <li>{T('Odamlar ko‘p joyda uchrashing, qimmat narsani tekshirib oling')}</li>
+                  <li>{T('SMS kod, karta ma’lumotlari yoki parolni hech kimga aytmang')}</li>
+                </ul>
+              </section>
+            )}
 
             {/* TAVSIF */}
             <section className="dp-card">
@@ -542,12 +580,13 @@ export default function EquipmentDetailPage() {
 
           </main>
 
+
           {/* KOMPYUTERDA: O'NG USTUN */}
           <aside className="dp-aside">
             <div className="dp-card dp-aside__box">
               <span className="dp-aside__label">{t('equipment.price')}</span>
               <strong className="dp-aside__price">{priceText}</strong>
-              {isStoreProduct && !isOwner && (
+              {isStoreProduct && !isOwner && !isSold && (
                 <button type="button" className={`dp-btn ${inCart ? 'dp-btn--done' : 'dp-btn--primary'}`} onClick={handleCartClick}>
                   {inCart ? <><Check size={17} /> {t('equipment.inCart') || T('Savatda')}</> : <><ShoppingCart size={17} /> {t('equipment.addToCart') || T('Savatga qo‘shish')}</>}
                 </button>
@@ -569,7 +608,7 @@ export default function EquipmentDetailPage() {
         <EquipmentRelatedListings currentId={equipment._id} />
 
         {/* TELEFONDA: PASTKI PANEL */}
-        {!isOwner && (
+        {!isOwner && !isSold && (
           <div className="dp-actionbar">
             {isStoreProduct ? (
               <>

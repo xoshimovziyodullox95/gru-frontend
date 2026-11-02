@@ -1386,5 +1386,22 @@
   "Buyurtmani tasdiqlash": "Confirm order",
   "Yetkazib berish manzilini xaritadan tanlang": "Choose the delivery address on the map",
   "Telefon raqamini to‘liq kiriting": "Enter the full phone number",
-  "O‘zi olib ketadi": "Picks up"
+  "O‘zi olib ketadi": "Picks up",
+  "E’lon \"Sotildi\" deb belgilandi": "Listing marked as sold",
+  "E’lon yana sotuvda": "Listing is on sale again",
+  "Saqlab bo‘lmadi": "Could not save",
+  "Bu tovar sotilgan": "This item is sold",
+  "E’lon yopilgan — boshqalar ro‘yxatda ko‘rmaydi": "Listing closed — others won’t see it in lists",
+  "Sotib bo‘ldingizmi? E’lonni yoping — xaridorlar bezovta qilmaydi": "Sold it? Close the listing so buyers stop contacting you",
+  "Qayta sotuvga qo‘yish": "Put back on sale",
+  "Sotildi deb belgilash": "Mark as sold",
+  "Xavfsiz bitim": "Safe deal",
+  "Oldindan pul o‘tkazmang — tovarni ko‘rib, qo‘lingizga olib to‘lang": "Don’t pay in advance — pay once the item is in your hands",
+  "Odamlar ko‘p joyda uchrashing, qimmat narsani tekshirib oling": "Meet in busy places and check expensive items",
+  "SMS kod, karta ma’lumotlari yoki parolni hech kimga aytmang": "Never share SMS codes, card details or passwords",
+  "Tayyor — olib ketishi mumkin": "Ready for pickup",
+  "Topshirildi deb belgilash": "Mark as handed over",
+  "Olib ketishga tayyor": "Ready for pickup",
+  "Topshirildi": "Handed over",
+  "Tayyor — olib ketishingiz mumkin": "Ready — you can pick it up"
 }

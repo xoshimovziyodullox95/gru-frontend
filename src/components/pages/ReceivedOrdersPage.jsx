@@ -18,6 +18,14 @@ const STATUS_FLOW = {
   bekor_qilindi: { next: null, label: null },
 };
 
+// O'zi olib ketadigan buyurtma: "yetkazish" o'rniga "tayyor" va "topshirildi"
+const PICKUP_FLOW = {
+  qabul_qilindi: { next: 'yetkazilmoqda', label: T('Tayyor — olib ketishi mumkin') },
+  yetkazilmoqda: { next: 'yetkazildi', label: T('Topshirildi deb belgilash') },
+};
+const PICKUP_LABELS = { yetkazilmoqda: T('Olib ketishga tayyor'), yetkazildi: T('Topshirildi') };
+const statusLabel = (o) => (o.deliveryMethod === 'pickup' && PICKUP_LABELS[o.status]) || STATUS_LABELS[o.status];
+
 const CLOSED_STATUSES = ['yetkazildi', 'rad_etildi', 'bekor_qilindi'];
 
 const STATUS_LABELS = {
@@ -105,7 +113,7 @@ export default function ReceivedOrdersPage() {
   const archived = orders.filter((o) => CLOSED_STATUSES.includes(o.status));
 
   const renderOrderCard = (o, archived = false) => {
-    const flow = STATUS_FLOW[o.status];
+    const flow = (o.deliveryMethod === 'pickup' && PICKUP_FLOW[o.status]) || STATUS_FLOW[o.status];
     return (
       <div key={o._id} className={`mo-item ${archived ? 'mo-item-archived' : ''}`}>
         <img
@@ -168,7 +176,7 @@ export default function ReceivedOrdersPage() {
             </a>
           )}
 
-          {!archived && <span className="mo-current-status">{T('Holat:')} {STATUS_LABELS[o.status]}</span>}
+          {!archived && <span className="mo-current-status">{T('Holat:')} {statusLabel(o)}</span>}
           {o.closeReason && <span className="mo-close-reason">{T('Sabab:')} {o.closeReason}</span>}
         </div>
 
@@ -193,7 +201,7 @@ export default function ReceivedOrdersPage() {
           </div>
         ) : (
           <span className={`mo-status-badge ${o.status === 'yetkazildi' ? 'mo-tone-done' : 'mo-tone-closed'}`}>
-            {o.status === 'yetkazildi' ? <CheckCircle2 size={13} /> : <X size={13} />} {STATUS_LABELS[o.status]}
+            {o.status === 'yetkazildi' ? <CheckCircle2 size={13} /> : <X size={13} />} {statusLabel(o)}
           </span>
         )}
       </div>

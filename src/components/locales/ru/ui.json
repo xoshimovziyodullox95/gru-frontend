@@ -1403,5 +1403,22 @@
   "Buyurtmani tasdiqlash": "Подтвердить заказ",
   "Yetkazib berish manzilini xaritadan tanlang": "Выберите адрес доставки на карте",
   "Telefon raqamini to‘liq kiriting": "Введите номер телефона полностью",
-  "O‘zi olib ketadi": "Заберёт сам"
+  "O‘zi olib ketadi": "Заберёт сам",
+  "E’lon \"Sotildi\" deb belgilandi": "Объявление отмечено как «Продано»",
+  "E’lon yana sotuvda": "Объявление снова в продаже",
+  "Saqlab bo‘lmadi": "Не удалось сохранить",
+  "Bu tovar sotilgan": "Этот товар продан",
+  "E’lon yopilgan — boshqalar ro‘yxatda ko‘rmaydi": "Объявление закрыто — другие его не видят в списке",
+  "Sotib bo‘ldingizmi? E’lonni yoping — xaridorlar bezovta qilmaydi": "Уже продали? Закройте объявление — покупатели не будут беспокоить",
+  "Qayta sotuvga qo‘yish": "Снова выставить на продажу",
+  "Sotildi deb belgilash": "Отметить как продано",
+  "Xavfsiz bitim": "Безопасная сделка",
+  "Oldindan pul o‘tkazmang — tovarni ko‘rib, qo‘lingizga olib to‘lang": "Не переводите деньги заранее — платите, когда товар у вас в руках",
+  "Odamlar ko‘p joyda uchrashing, qimmat narsani tekshirib oling": "Встречайтесь в людных местах, дорогие вещи проверяйте",
+  "SMS kod, karta ma’lumotlari yoki parolni hech kimga aytmang": "Никому не сообщайте SMS-коды, данные карты и пароли",
+  "Tayyor — olib ketishi mumkin": "Готово — можно забирать",
+  "Topshirildi deb belgilash": "Отметить как выдано",
+  "Olib ketishga tayyor": "Готов к выдаче",
+  "Topshirildi": "Выдано",
+  "Tayyor — olib ketishingiz mumkin": "Готово — можете забирать"
 }
