@@ -22,3 +22,48 @@
 .zumo-say { display: grid; }
 .zumo-say > * { grid-area: 1 / 1; }
 .zumo-say__ghost { visibility: hidden; }
+
+/* ---------- Salomlashuv suhbati (ZumoWelcomeChat) ---------- */
+.zumo-tour-welcome__card--chat { padding: 22px 20px 18px; }
+.zwc { position: relative; display: flex; flex-direction: column; gap: 14px; }
+.zwc-head { display: flex; align-items: center; gap: 12px; padding-right: 40px; }
+.zwc-head__bot {
+  display: grid; place-items: center; flex: 0 0 auto;
+  width: 72px; height: 72px; border-radius: 22px;
+  background: radial-gradient(circle at 50% 40%, rgba(0, 207, 255, .22), rgba(0, 207, 255, .04) 70%);
+}
+.zwc-head strong { display: block; font-size: 20px; letter-spacing: -.02em; }
+.zwc-head span { font-size: 12px; color: #52dbe6; }
+.zwc-thread {
+  display: flex; flex-direction: column; gap: 8px;
+  max-height: min(46vh, 340px); overflow-y: auto; padding: 2px 2px 4px;
+}
+.zwc-msg {
+  max-width: 88%; padding: 10px 14px; border-radius: 18px;
+  font-size: 14px; line-height: 1.55;
+  animation: zumoTourCardIn .25s cubic-bezier(.2, .8, .2, 1);
+}
+.zwc-msg--bot {
+  align-self: flex-start; border-bottom-left-radius: 6px;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .1); color: #e6f1fb;
+}
+.zwc-msg--me {
+  align-self: flex-end; border-bottom-right-radius: 6px;
+  background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff; font-weight: 600;
+}
+.zwc-choices { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.zwc-choice {
+  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px;
+  border: 1px solid rgba(31, 225, 231, .35); border-radius: 14px;
+  background: rgba(0, 207, 255, .07); color: #eaf7ff;
+  font: inherit; font-size: 14px; font-weight: 650; text-align: left; cursor: pointer;
+  animation: zumoTourCardIn .3s cubic-bezier(.2, .8, .2, 1) both;
+  transition: background .2s, transform .15s;
+}
+.zwc-choice:nth-child(2) { animation-delay: .08s; }
+.zwc-choice:nth-child(3) { animation-delay: .16s; }
+.zwc-choice:active { transform: scale(.98); }
+.zwc-choice:hover { background: rgba(0, 207, 255, .16); }
+.zwc-choice span { font-size: 18px; }
+.zwc-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+body.zumo-tour-open .ai-chat-toggle { opacity: 0; pointer-events: none; }

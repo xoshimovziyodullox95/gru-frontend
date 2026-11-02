@@ -1,28 +1,43 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Check, ChevronRight, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { ZUMO_GUIDE_EVENT } from './zumoGuideEvents.js';
 import api from '../services/api';
 import { getUserProfile } from '../services/user';
 import ZumoBot from './ZumoBot.jsx';
+import ZumoWelcomeChat from './ZumoWelcomeChat.jsx';
 import useTypewriter from '../hooks/useTypewriter';
 import '../../styles/zumoGuide.css';
 
 import { T } from '../utils/T';
 // Robot Zumik har qadamda shu tugmani qo'li bilan ko'rsatadi. Ekranda ko'rinmagani
 // (masalan, kompyuterda pastki menyu yo'q) avtomatik o'tkazib yuboriladi.
-const TOUR_STEPS = [
-  { target: '.hero-search', title: T('Qidiruv'), text: T('Usta, tovar yoki joy nomini yozing — hammasi bitta qidiruvda topiladi.') },
-  { target: '.cta-request', title: T('Usta kerakmi?'), text: T('Kerakli xizmatni tanlab, muammo va manzilingizni yozing. Ustalar taklif yuboradi, siz mosini tanlaysiz.'), action: 'request' },
-  { target: '.cta-marketplace', title: T('Bozor'), text: T('Tovarlar, joylar va xizmat e’lonlarini ko‘ring. E’lonni ochib, egasiga bevosita yozishingiz mumkin.') },
-  { target: '.pcg-grid', title: T('Kategoriyalar'), text: T('Kerakli bo‘limni tanlang: elektronika, maishiy texnika, mebel, kiyim va boshqalar.') },
-  { target: '[data-tour="add"], .gru-bottom-add', title: T('E’lon yoki video qo‘shish'), text: T('Sotadigan narsangiz bormi? Shu tugma orqali bepul e’lon yoki video joylang.') },
-  { target: '[data-tour="chat"]', title: T('Chat'), text: T('Xaridor, sotuvchi yoki usta bilan shu yerda yozishasiz. Yangi xabarlar haqida bildirishnoma keladi.') },
-  { target: '[data-tour="profile"]', title: T('Profil'), text: T('Buyurtmalaringiz, e’lonlaringiz, saqlanganlar va sozlamalar shu yerda.') },
-  { target: '.zumo-topbar__menu', title: T('Tezkor menyu'), text: T('Qidiruv, e’lon joylash, video qo‘shish va sozlamalarga shu menyudan tez kirasiz.') },
-  { target: '.ai-chat-toggle:not(.ai-chat-toggle--hidden)', title: T('Savol bormi?'), text: T('AI yordamchiga yozing — ilovadan foydalanish bo‘yicha istalgan vaqtda javob beradi.') },
-];
+const STEP = {
+  search: { target: '.hero-search', title: T('Qidiruv'), text: T('Usta, tovar yoki joy nomini yozing — hammasi bitta qidiruvda topiladi.') },
+  request: { target: '.cta-request', title: T('Usta kerakmi?'), text: T('Kerakli xizmatni tanlab, muammo va manzilingizni yozing. Ustalar taklif yuboradi, siz mosini tanlaysiz.'), action: 'request' },
+  market: { target: '.cta-marketplace', title: T('Bozor'), text: T('Tovarlar, joylar va xizmat e’lonlarini ko‘ring. E’lonni ochib, egasiga bevosita yozishingiz mumkin.') },
+  cats: { target: '.pcg-grid', title: T('Kategoriyalar'), text: T('Kerakli bo‘limni tanlang: elektronika, maishiy texnika, mebel, kiyim va boshqalar.') },
+  add: { target: '[data-tour="add"], .gru-bottom-add', title: T('E’lon yoki video qo‘shish'), text: T('Sotadigan narsangiz bormi? Shu tugma orqali bepul e’lon yoki video joylang.') },
+  chat: { target: '[data-tour="chat"]', title: T('Chat'), text: T('Xaridor, sotuvchi yoki usta bilan shu yerda yozishasiz. Yangi xabarlar haqida bildirishnoma keladi.') },
+  profile: { target: '[data-tour="profile"]', title: T('Profil'), text: T('Buyurtmalaringiz, e’lonlaringiz, saqlanganlar va sozlamalar shu yerda.') },
+  menu: { target: '.zumo-topbar__menu', title: T('Tezkor menyu'), text: T('Qidiruv, e’lon joylash, video qo‘shish va sozlamalarga shu menyudan tez kirasiz.') },
+  ai: { target: '.ai-chat-toggle:not(.ai-chat-toggle--hidden)', title: T('Savol bormi?'), text: T('AI yordamchiga yozing — ilovadan foydalanish bo‘yicha istalgan vaqtda javob beradi.') },
+  // Usta va sotuvchi uchun
+  addService: { target: '[data-tour="add"], .gru-bottom-add', title: T('Xizmatingizni joylang'), text: T('«Qo‘shish» → «E’lon joylash» → xizmat turini tanlang. Yaqin atrofdagi mijozlar sizni ko‘radi.') },
+  providerOrders: { target: '[data-tour="profile"]', title: T('Buyurtmalar shu yerda'), text: T('Profil → «Xizmat so‘rovlari»: mijoz so‘rovi kelganda telefoningizga baland ovozli xabar keladi.') },
+  providerChat: { target: '[data-tour="chat"]', title: T('Mijoz bilan yozishuv'), text: T('Narx va vaqtni mijoz bilan chatda kelishasiz. Rasm ham yuborish mumkin.') },
+  addProduct: { target: '[data-tour="add"], .gru-bottom-add', title: T('Tovar joylash'), text: T('«Qo‘shish» → «E’lon joylash»: rasm, narx va kategoriyani tanlang — 1 daqiqa, bepul.') },
+  sellerOrders: { target: '[data-tour="profile"]', title: T('Kelgan buyurtmalar'), text: T('Profil → «Kelgan buyurtmalar»: xaridor buyurtma bersa, shu yerda qabul qilasiz va holatini yangilaysiz.') },
+  sellerChat: { target: '[data-tour="chat"]', title: T('Xaridor bilan yozishuv'), text: T('Xaridorlar savollarini shu yerda yozadi — tez javob bersangiz, ko‘proq sotasiz.') },
+};
+
+// Zumik suhbatda so'raydi: kim sifatida foydalanasiz — shunga mos qadamlar
+const ROLE_STEPS = {
+  client: [STEP.search, STEP.request, STEP.market, STEP.cats, STEP.chat, STEP.profile, STEP.ai],
+  provider: [STEP.addService, STEP.providerOrders, STEP.providerChat, STEP.menu, STEP.ai],
+  seller: [STEP.addProduct, STEP.sellerOrders, STEP.sellerChat, STEP.cats, STEP.ai],
+};
 
 const BOT_SIZE = 74;
 
@@ -56,6 +71,7 @@ export default function ZumoGuide() {
   const [rect, setRect] = useState(null);
   const [pageGuide, setPageGuide] = useState(null);
   const [armAngle, setArmAngle] = useState(null);
+  const [tourSteps, setTourSteps] = useState(ROLE_STEPS.client);
   const botRef = useRef(null);
   const storageKey = useMemo(() => user?.id ? `zumo_guide_seen_v3_${user.id}` : null, [user?.id]);
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.fullName || user?.email?.split('@')[0] || T('do‘st');
@@ -114,10 +130,9 @@ export default function ZumoGuide() {
     setFlow(null);
   }, [flow, markSeen, pageStorageKey]);
 
-  const activeStep = flow === 'service-request' ? TOUR_STEPS[1] : flow === 'page' ? { target: 'main h1, h1', ...pageGuide } : TOUR_STEPS[step];
-  const sayText = !flow ? '' : (flow === 'welcome' && step < 0)
-    ? T('Men Zumik — ZUMO yordamchisiman. Bu yerda tovar va xizmat topish, ustaga buyurtma berish hamda o‘z e’loningizni joylash mumkin. Hozir asosiy tugmalarni qo‘lim bilan ko‘rsatib beraman.')
-    : (activeStep?.text || T('Bosh sahifaga o‘ting, shunda ilovaning asosiy tugmalarini ko‘rsataman.'));
+  const activeStep = flow === 'service-request' ? STEP.request : flow === 'page' ? { target: 'main h1, h1', ...pageGuide } : tourSteps[step];
+  // Salomlashuv suhbati (ZumoWelcomeChat) o'z matnlarini o'zi yozadi
+  const sayText = (!flow || (flow === 'welcome' && step < 0)) ? '' : (activeStep?.text || T('Bosh sahifaga o‘ting, shunda ilovaning asosiy tugmalarini ko‘rsataman.'));
   const typed = useTypewriter(sayText, { enabled: Boolean(flow) });
 
   useEffect(() => {
@@ -150,7 +165,7 @@ export default function ZumoGuide() {
     // Tugma bu ekranda yo'q bo'lsa — keyingi qadamga o'tamiz (oxirgisi bo'lsa yopamiz)
     const skipTimer = flow === 'welcome' ? window.setTimeout(() => {
       if (found) return;
-      if (step >= TOUR_STEPS.length - 1) { markSeen(); setFlow(null); setRect(null); }
+      if (step >= tourSteps.length - 1) { markSeen(); setFlow(null); setRect(null); }
       else setStep((current) => current + 1);
     }, 1200) : 0;
     return () => {
@@ -161,7 +176,7 @@ export default function ZumoGuide() {
       window.removeEventListener('resize', measure);
       window.removeEventListener('scroll', measure, true);
     };
-  }, [flow, activeStep, location.pathname, step, markSeen]);
+  }, [flow, activeStep, location.pathname, step, markSeen, tourSteps]);
 
   useEffect(() => {
     if (!flow) return undefined;
@@ -169,6 +184,13 @@ export default function ZumoGuide() {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [flow, close]);
+
+  // Tanishuv paytida AI tugmasi oynalar ustida turmasin — faqat o'zi ko'rsatilayotgan qadamda chiqadi
+  useEffect(() => {
+    const hide = Boolean(flow) && activeStep !== STEP.ai;
+    document.body.classList.toggle('zumo-tour-open', hide);
+    return () => document.body.classList.remove('zumo-tour-open');
+  }, [flow, activeStep]);
 
   // Robot qo'li: yelkadan yoritilgan tugma markaziga burchak
   useLayoutEffect(() => {
@@ -181,7 +203,8 @@ export default function ZumoGuide() {
     setArmAngle((prev) => (prev !== null && Math.abs(prev - angle) < 0.5 ? prev : angle));
   }, [rect, step, flow]);
 
-  const startTour = () => {
+  const startTour = (role = 'client') => {
+    setTourSteps(ROLE_STEPS[role] || ROLE_STEPS.client);
     markSeen();
     if (location.pathname !== '/home') navigate('/home');
     setStep(0);
@@ -197,7 +220,7 @@ export default function ZumoGuide() {
       setRect(null);
       return;
     }
-    if (flow === 'service-request' || step >= TOUR_STEPS.length - 1) {
+    if (flow === 'service-request' || step >= tourSteps.length - 1) {
       if (flow === 'welcome') markSeen();
       setFlow(null);
       setRect(null);
@@ -211,14 +234,9 @@ export default function ZumoGuide() {
   if (step < 0 && flow === 'welcome') {
     return (
       <div className="zumo-tour-welcome" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
-        <section className="zumo-tour-welcome__card" role="dialog" aria-modal="true" aria-labelledby="zumo-tour-welcome-title">
+        <section className="zumo-tour-welcome__card zumo-tour-welcome__card--chat" role="dialog" aria-modal="true" aria-labelledby="zumo-tour-welcome-title">
           <button type="button" className="zumo-tour-welcome__close" onClick={close} aria-label={T('Yopish')}><X size={19} /></button>
-          <div className="zumo-tour-welcome__bot"><ZumoBot size={92} talking={typed.typing && !typed.thinking} /></div>
-          <span className="zumo-tour-welcome__eyebrow">{T('ZUMO · 1 daqiqalik tanishtiruv')}</span>
-          <h2 id="zumo-tour-welcome-title">{T('Salom, {{name}}!', { name: displayName })}</h2>
-          <p><ZumoSays typed={typed} full={sayText} /></p>
-          <div className="zumo-tour-welcome__actions"><button type="button" onClick={close} className="zumo-tour-welcome__skip">{T('Keyinroq')}</button><button type="button" onClick={startTour} className="zumo-tour-welcome__start">{T('Ko‘rsatishni boshlash')} <ChevronRight size={18} /></button></div>
-          <div className="zumo-tour-welcome__dots"><i /><i /><i /><i /><i /></div>
+          <ZumoWelcomeChat name={displayName} onChoose={startTour} onLater={close} />
         </section>
       </div>
     );
@@ -226,7 +244,7 @@ export default function ZumoGuide() {
 
   const isContextual = flow === 'service-request';
   const isPageGuide = flow === 'page';
-  const currentStep = isContextual ? TOUR_STEPS[1] : activeStep;
+  const currentStep = isContextual ? STEP.request : activeStep;
   const currentIndex = isContextual ? 1 : step;
   const cardWidth = Math.min(360, window.innerWidth - 28);
   let cardLeft = rect ? rect.left + rect.width / 2 - cardWidth / 2 : (window.innerWidth - cardWidth) / 2;
@@ -260,11 +278,11 @@ export default function ZumoGuide() {
         >
           <ZumoBot size={BOT_SIZE} angle={rect ? armAngle : null} talking={typed.typing && !typed.thinking} />
         </span>
-        <div className="zumo-tour-card__top"><span>{isContextual ? T('XIZMAT SO‘ROVI') : isPageGuide ? T('SAHIFA YO‘RIQNOMASI') : T('QADAM {{n}} / {{total}}', { n: currentIndex + 1, total: TOUR_STEPS.length })}</span><button type="button" onClick={close} aria-label={T('Tanishtiruvni yopish')}><X size={17} /></button></div>
+        <div className="zumo-tour-card__top"><span>{isContextual ? T('XIZMAT SO‘ROVI') : isPageGuide ? T('SAHIFA YO‘RIQNOMASI') : T('QADAM {{n}} / {{total}}', { n: currentIndex + 1, total: tourSteps.length })}</span><button type="button" onClick={close} aria-label={T('Tanishtiruvni yopish')}><X size={17} /></button></div>
         <h2 id="zumo-tour-title">{currentStep?.title || T('Bu bo‘lim hozir ko‘rinmayapti')}</h2>
         <p><ZumoSays typed={typed} full={sayText} /></p>
         {!rect && <p className="zumo-tour-card__loading">{T('Kerakli tugmani topyapman…')}</p>}
-        <div className="zumo-tour-card__bottom"><button type="button" className="zumo-tour-card__skip" onClick={close}>{isPageGuide ? T('Keyinroq') : T('O‘tkazib yuborish')}</button><div className="zumo-tour-card__controls">{!isContextual && !isPageGuide && currentIndex > 0 && <button type="button" className="zumo-tour-card__back" onClick={() => setStep((value) => value - 1)} aria-label={T('Orqaga')}><ArrowLeft size={17} /></button>}<button type="button" className="zumo-tour-card__next" onClick={() => (typed.typing ? typed.skip() : advance())}>{isContextual ? T('So‘rovni boshlash') : isPageGuide ? T('Tushunarli') : currentIndex === TOUR_STEPS.length - 1 ? T('Tugatish') : T('Keyingi')} {currentIndex === TOUR_STEPS.length - 1 && !isContextual && !isPageGuide ? <Check size={16} /> : <ArrowRight size={16} />}</button></div></div>
+        <div className="zumo-tour-card__bottom"><button type="button" className="zumo-tour-card__skip" onClick={close}>{isPageGuide ? T('Keyinroq') : T('O‘tkazib yuborish')}</button><div className="zumo-tour-card__controls">{!isContextual && !isPageGuide && currentIndex > 0 && <button type="button" className="zumo-tour-card__back" onClick={() => setStep((value) => value - 1)} aria-label={T('Orqaga')}><ArrowLeft size={17} /></button>}<button type="button" className="zumo-tour-card__next" onClick={() => (typed.typing ? typed.skip() : advance())}>{isContextual ? T('So‘rovni boshlash') : isPageGuide ? T('Tushunarli') : currentIndex === tourSteps.length - 1 ? T('Tugatish') : T('Keyingi')} {currentIndex === tourSteps.length - 1 && !isContextual && !isPageGuide ? <Check size={16} /> : <ArrowRight size={16} />}</button></div></div>
       </aside>
     </div>
   );
