@@ -4,9 +4,13 @@
    CHAT PAGE — Telegram uslubida (REEL SHARE + POST DETAIL)
    ============================================================ */
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { lazy, Suspense, useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import api from '../services/api';
+import { REEL_SOURCES, buildReels } from '../utils/reelBuilder';
+// Reels pleyeri og'ir — faqat chatda reels bosilganda yuklanadi
+const MarketplaceReels = lazy(() => import('../marketplace/MarketplaceReels'));
 import { useAuth } from '../context/AuthContext';
 import { getSocket, registerSocketUser } from '../services/socket';
 import { playDing, unlockAudio } from '../services/chatSound';
@@ -25,7 +29,7 @@ import { getAllUsers } from '../services/user';
 import {
   Send, ArrowLeft, Search, X, MapPin,
   Smile, Reply, Check, CheckCheck, Paperclip,
-  MoreVertical, MessageSquare, Loader2, Inbox,
+  MoreVertical, MessageSquare, Loader2, Inbox, Palette, Image as ImageIcon,
   Pencil, Trash2, Copy, Volume2, VolumeX, PlayCircle,
   ExternalLink, Film, Package,
 } from 'lucide-react';
@@ -134,7 +138,7 @@ function previewOf(msg) {
    REEL MESSAGE CARD — YouTube uslubida (FIXED navigate)
    ============================================================ */
 
-function ReelMessageCard({ text }) {
+function ReelMessageCard({ text, onOpenReel }) {
   const navigate = useNavigate();
   const { url, title, thumbnail, video } = parseReelMessage(text);
   const [thumbFailed, setThumbFailed] = useState(false);
@@ -144,7 +148,8 @@ function ReelMessageCard({ text }) {
     if (!url) return;
     // Ichki havola — ilova ichida (reels/post sahifasi); faqat YouTube va boshqa saytlar brauzerda
     const path = internalPath(url);
-    if (path) navigate(path);
+    if (path && onOpenReel) onOpenReel({ path, video, title, thumbnail });
+    else if (path) navigate(path);
     else if (/^https?:\/\//.test(url)) window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -223,19 +228,39 @@ function internalPath(url) {
   return null;
 }
 
-// Chat foni (oboi) — tanlov shu qurilmada saqlanadi
-const DOODLE = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%2300b4d8' stroke-opacity='.18' stroke-width='2'%3E%3Ccircle cx='14' cy='16' r='6'/%3E%3Cpath d='M50 10l8 8m0-8l-8 8M24 52q8-10 16 0t16 0M60 58h10M65 53v10'/%3E%3C/g%3E%3C/svg%3E\")";
+// Chat foni (oboi) — tanlov shu qurilmada saqlanadi. Sukut bo'yicha Telegram kabi naqsh
+// (ZUMO ikonkalari: chat, yurak, kalit, uy, savat, yulduz) — fon rangi mavzudan olinadi
+const PATTERN_SVG = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%2300a6d6' stroke-opacity='.16' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 16h22a5 5 0 0 1 5 5v12a5 5 0 0 1-5 5H24l-7 6v-6h-3a5 5 0 0 1-5-5V21a5 5 0 0 1 5-5z'/%3E%3Cpath d='M101 22c-3-6-13-6-13 2 0 7 13 13 13 13s13-6 13-13c0-8-10-8-13-2z'/%3E%3Cpath d='M62 60l9 9m-3-14a7 7 0 0 0-9 9l-14 14 5 5 14-14a7 7 0 0 0 9-9l-4 4-4-1-1-4z'/%3E%3Cpath d='M122 66l12-10 12 10v14h-24z'/%3E%3Cpath d='M14 100h6l5 20h20l5-14H24'/%3E%3Ccircle cx='29' cy='126' r='2'/%3E%3Ccircle cx='43' cy='126' r='2'/%3E%3Cpath d='M98 104l4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z'/%3E%3Ccircle cx='140' cy='132' r='5'/%3E%3Cpath d='M60 140h14M67 133v14'/%3E%3C/g%3E%3C/svg%3E\")";
 const WALLPAPERS = [
-  { id: 'default', label: () => T('Odatiy'), css: '' },
+  { id: 'zumo', label: () => T('ZUMO naqsh'), css: `${PATTERN_SVG}, var(--tg-bg)`, size: '160px 160px, cover' },
+  { id: 'plain', label: () => T('Oddiy'), css: '' },
   { id: 'sky', label: () => T('Osmon'), css: 'linear-gradient(160deg, #cfefff 0%, #e9f7ff 45%, #fdfcff 100%)' },
-  { id: 'night', label: () => T('Tun'), css: 'linear-gradient(160deg, #0b1a33 0%, #11284a 50%, #0a1426 100%)', dark: true },
+  { id: 'night', label: () => T('Tun'), css: `${PATTERN_SVG}, linear-gradient(160deg, #0b1a33 0%, #11284a 50%, #0a1426 100%)`, size: '160px 160px, cover', dark: true },
   { id: 'mint', label: () => T('Yalpiz'), css: 'linear-gradient(160deg, #d8f7ec 0%, #effcf7 55%, #ffffff 100%)' },
   { id: 'peach', label: () => T('Shaftoli'), css: 'linear-gradient(160deg, #ffe3d6 0%, #fff1ea 50%, #fffaf7 100%)' },
-  { id: 'doodle', label: () => T('Naqsh'), css: `${DOODLE}, linear-gradient(160deg, #eaf8ff, #f7fbff)` },
 ];
 const WALLPAPER_KEY = 'zumo_chat_wallpaper';
+const WALLPAPER_IMG_KEY = 'zumo_chat_wallpaper_img';
+const readWallpaperImage = () => {
+  try { return localStorage.getItem(WALLPAPER_IMG_KEY) || ''; } catch { return ''; }
+};
+// Galereyadan tanlangan rasm — 1280px gacha kichraytirib JPEG (localStorage sig'sin)
+const compressWallpaper = (file) => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.onload = () => {
+    const scale = Math.min(1, 1280 / Math.max(img.width, img.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(img.width * scale);
+    canvas.height = Math.round(img.height * scale);
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(img.src);
+    resolve(canvas.toDataURL('image/jpeg', 0.72));
+  };
+  img.onerror = reject;
+  img.src = URL.createObjectURL(file);
+});
 const readWallpaper = () => {
-  try { return localStorage.getItem(WALLPAPER_KEY) || 'default'; } catch { return 'default'; }
+  try { return localStorage.getItem(WALLPAPER_KEY) || 'zumo'; } catch { return 'zumo'; }
 };
 
 // Server rasm/video bilan birga shu matnni yozadi — media ostida takrorlanmasin
@@ -298,7 +323,25 @@ export default function ChatPage() {
   const [replyTo, setReplyTo] = useState(null);
   const [wallpaper, setWallpaper] = useState(readWallpaper);
   const [wallpaperOpen, setWallpaperOpen] = useState(false);
-  const activeWallpaper = WALLPAPERS.find((w) => w.id === wallpaper) || WALLPAPERS[0];
+  const [wallpaperImage, setWallpaperImage] = useState(readWallpaperImage);
+  const [headerMenuOpen, setHeaderMenuOpen] = useState(false);
+  const wallpaperInputRef = useRef(null);
+  const activeWallpaper = wallpaper === 'photo' && wallpaperImage
+    ? { id: 'photo', css: `url("${wallpaperImage}") center / cover`, photo: true }
+    : WALLPAPERS.find((w) => w.id === wallpaper) || WALLPAPERS[0];
+  const pickWallpaperPhoto = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    try {
+      const dataUrl = await compressWallpaper(file);
+      localStorage.setItem(WALLPAPER_IMG_KEY, dataUrl);
+      setWallpaperImage(dataUrl);
+      chooseWallpaper('photo');
+    } catch {
+      toast.error(T('Rasmni fon qilib bo‘lmadi'));
+    }
+  };
   const chooseWallpaper = (id) => {
     setWallpaper(id);
     setWallpaperOpen(false);
@@ -309,6 +352,29 @@ export default function ChatPage() {
   const touchRef = useRef({ id: null, x: 0, y: 0, dx: 0, timer: 0, scrolling: false });
   const [swipe, setSwipe] = useState({ id: null, dx: 0 });
   const [flashId, setFlashId] = useState(null);
+
+  // Chatdagi reels — bosh sahifadagi to'liq ekranli pleyerning o'zida ochiladi (layk, izoh, surish bilan)
+  const [reelViewer, setReelViewer] = useState(null);
+  const ROUTE_SOURCE = { posts: 'posts', equipment: 'equipment', location: 'locations', 'service-provider': 'services' };
+  const API_PATH = { posts: 'posts', equipment: 'equipment', locations: 'locations', services: 'service-providers' };
+  const openReel = async ({ path, video, title, thumbnail }) => {
+    const match = path.match(/^\/(posts|equipment|location|service-provider)\/([a-f0-9]{24})/i);
+    const sourceKey = match && ROUTE_SOURCE[match[1]];
+    const source = REEL_SOURCES.find((src) => src.key === sourceKey);
+    let reels = [];
+    if (source) {
+      try {
+        const { data } = await api.get(`/${API_PATH[sourceKey]}/${match[2]}`);
+        const item = data?.post || data?.item || data?.data || data;
+        reels = buildReels([item], source, currentUserId, t);
+      } catch { /* e'lon o'chirilgan bo'lishi mumkin — quyida xabardagi videoga tayanamiz */ }
+    }
+    if (!reels.length && video) {
+      reels = [{ id: `chat-${path}`, originalId: match?.[2], videoUrl: video, thumbnailUrl: thumbnail || null, title, typeLabel: 'Reels', link: path, itemType: source?.itemType || 'post', likesCount: 0, comments: [] }];
+    }
+    if (reels.length) setReelViewer(reels);
+    else navigate(path);
+  };
   const [editingMessage, setEditingMessage] = useState(null);
   const [showEmoji, setShowEmoji] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -1219,14 +1285,29 @@ export default function ChatPage() {
                 >
                   {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
                 </button>
-                <button type="button" className="tg-icon-btn" onClick={() => setWallpaperOpen(true)} aria-label={T('Chat foni')}>
-                  <MoreVertical size={20} />
-                </button>
+                <div className="tg-head-menu">
+                  <button type="button" className="tg-icon-btn" onClick={() => setHeaderMenuOpen((v) => !v)} aria-label={T('Menyu')} aria-expanded={headerMenuOpen}>
+                    <MoreVertical size={20} />
+                  </button>
+                  {headerMenuOpen && (
+                    <>
+                      <button type="button" className="tg-head-menu__backdrop" aria-label={T('Yopish')} onClick={() => setHeaderMenuOpen(false)} />
+                      <div className="tg-head-menu__list" role="menu">
+                        <button type="button" role="menuitem" onClick={() => { setHeaderMenuOpen(false); setWallpaperOpen(true); }}>
+                          <Palette size={18} /> {T('Chat foni')}
+                        </button>
+                        <button type="button" role="menuitem" onClick={() => { setHeaderMenuOpen(false); toggleMute(); }}>
+                          {isMuted ? <Volume2 size={18} /> : <VolumeX size={18} />} {isMuted ? T('Ovozni yoqish') : T('Ovozni o‘chirish')}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
               </header>
 
               <div
                 className={`tg-messages ${activeWallpaper.css ? 'tg-messages--wallpaper' : ''} ${activeWallpaper.dark ? 'tg-messages--dark' : ''}`}
-                style={activeWallpaper.css ? { background: activeWallpaper.css, backgroundAttachment: 'local' } : undefined}
+                style={activeWallpaper.css ? { background: activeWallpaper.css, backgroundSize: activeWallpaper.size, backgroundAttachment: activeWallpaper.photo ? 'fixed' : 'local' } : undefined}
               >
                 {messages.length === 0 ? (
                   <div className="tg-empty">
@@ -1370,7 +1451,7 @@ export default function ChatPage() {
                             ) : isSharedListing ? (
                               <SharedListingMessageCard text={msg.message} />
                             ) : isReel ? (
-                              <ReelMessageCard text={msg.message} />
+                              <ReelMessageCard text={msg.message} onOpenReel={openReel} />
                             ) : (
                               msg.message && !(msg.mediaUrl && AUTO_MEDIA_TEXT.test(msg.message)) && (
                                 <p className="tg-text">{msg.message}</p>
@@ -1608,6 +1689,12 @@ export default function ChatPage() {
 
       {lightbox && <MediaLightbox media={lightbox} onClose={() => setLightbox(null)} />}
 
+      {reelViewer && (
+        <Suspense fallback={null}>
+          <MarketplaceReels reels={reelViewer} currentUser={user} viewerOnly onViewerClose={() => setReelViewer(null)} />
+        </Suspense>
+      )}
+
       {wallpaperOpen && (
         <div className="tg-wall-sheet" role="dialog" aria-modal="true" onClick={() => setWallpaperOpen(false)}>
           <div className="tg-wall-sheet__card" onClick={(e) => e.stopPropagation()}>
@@ -1623,12 +1710,26 @@ export default function ChatPage() {
                   className={`tg-wall-opt ${w.id === wallpaper ? 'is-active' : ''}`}
                   onClick={() => chooseWallpaper(w.id)}
                 >
-                  <span className="tg-wall-opt__swatch" style={{ background: w.css || 'var(--tg-bg)' }}>
+                  <span className="tg-wall-opt__swatch" style={{ background: w.css || 'var(--tg-bg)', backgroundSize: w.size }}>
                     <i className="tg-wall-opt__b1" /><i className="tg-wall-opt__b2" />
                   </span>
                   <span>{w.label()}</span>
                 </button>
               ))}
+              <button
+                type="button"
+                className={`tg-wall-opt ${wallpaper === 'photo' ? 'is-active' : ''}`}
+                onClick={() => wallpaperInputRef.current?.click()}
+              >
+                <span
+                  className="tg-wall-opt__swatch tg-wall-opt__swatch--photo"
+                  style={wallpaperImage ? { background: `url("${wallpaperImage}") center / cover` } : undefined}
+                >
+                  {!wallpaperImage && <ImageIcon size={26} />}
+                </span>
+                <span>{T('Galereyadan')}</span>
+              </button>
+              <input ref={wallpaperInputRef} type="file" accept="image/*" hidden onChange={pickWallpaperPhoto} />
             </div>
           </div>
         </div>

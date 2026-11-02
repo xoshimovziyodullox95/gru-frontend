@@ -67,7 +67,7 @@ export default function ZumoGuide() {
   const location = useLocation();
   const navigate = useNavigate();
   // Tanishuvda til tanlangan va sahifa qayta yuklangan bo'lsa — suhbat shu tildan davom etadi
-  const [resumeLang] = useState(() => {
+  const [resumeLang, setResumeLang] = useState(() => {
     try { return sessionStorage.getItem(TOUR_RESUME_KEY); } catch { return null; }
   });
   const [flow, setFlow] = useState(() => (resumeLang ? 'welcome' : null));
@@ -89,9 +89,13 @@ export default function ZumoGuide() {
 
   // Tanishuv bir marta: avval shu qurilma xotirasi, keyin serverdagi belgi (boshqa qurilmada ko'rgan bo'lsa)
   const checkedFor = useRef(null);
+  // Tanishuv allaqachon ochiq (masalan, til tanlab qayta yuklangach davom etyapti) — server javobi uni boshidan ochmasin
+  const flowRef = useRef(flow);
+  useEffect(() => { flowRef.current = flow; }, [flow]);
   useEffect(() => {
     if (loading || !user || !storageKey || checkedFor.current === storageKey || AUTH_PATHS.includes(location.pathname)) return;
     checkedFor.current = storageKey;
+    if (resumeLang) return;
     try {
       if (localStorage.getItem(storageKey)) return;
     } catch {
@@ -103,11 +107,12 @@ export default function ZumoGuide() {
           try { localStorage.setItem(storageKey, '1'); } catch { /* storage can be blocked */ }
           return;
         }
+        if (flowRef.current) return;
         setFlow('welcome');
         setStep(-1);
       })
       .catch(() => {});
-  }, [loading, user, storageKey, location.pathname]);
+  }, [loading, user, storageKey, location.pathname, resumeLang]);
 
   const pageStorageKey = useMemo(() => pageGuide && user?.id ? `zumo_page_guide_v1_${user.id}_${pageGuide.id}` : null, [pageGuide, user?.id]);
 
@@ -132,6 +137,7 @@ export default function ZumoGuide() {
   }, [markSeen]);
 
   const close = useCallback(() => {
+    setResumeLang(null);
     if (flow === 'welcome') markSeen();
     if (flow === 'page' && pageStorageKey) {
       try { localStorage.setItem(pageStorageKey, '1'); } catch { /* storage can be blocked */ }
@@ -218,6 +224,7 @@ export default function ZumoGuide() {
   }, [rect, step, flow]);
 
   const startTour = (role = 'client') => {
+    setResumeLang(null); // keyingi safar tanishuv yana til so'rashdan boshlanadi
     setTourSteps(ROLE_STEPS[role] || ROLE_STEPS.client);
     markSeen();
     if (location.pathname !== '/home') navigate('/home');

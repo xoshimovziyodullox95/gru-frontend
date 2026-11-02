@@ -1060,13 +1060,16 @@ export default function MarketplaceReels({
   currentUser,
   variant = 'row',
   priorityId = null,
+  // Chat va boshqa joylardan: lentasiz, darhol to'liq ekranli pleyer (bosh sahifadagi bilan bir xil)
+  viewerOnly = false,
+  onViewerClose,
 }) {
   const { t } = useTranslation();
 
   const [reels, setReels] = useState(
     Array.isArray(initialReels) ? initialReels : []
   );
-  const [activeIndex, setActiveIndex] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(viewerOnly ? 0 : null);
   const [shareReelData, setShareReelData] = useState(null);   // ✅ YANGI
 
   useEffect(() => {
@@ -1265,6 +1268,30 @@ export default function MarketplaceReels({
   if (!orderedReels.length) return null;
 
   const isHomeVariant = variant === 'grid2';
+
+  if (viewerOnly) {
+    return (
+      <>
+        {activeIndex !== null && (
+          <ReelViewer
+            reels={orderedReels}
+            index={activeIndex}
+            t={t}
+            onClose={() => { closeViewer(); onViewerClose?.(); }}
+            onNavigateIndex={navigateViewer}
+            onToggleLike={toggleLike}
+            onToggleDislike={toggleDislike}
+            onAddComment={addComment}
+            onAddReply={addReply}
+            onShare={shareReel}
+          />
+        )}
+        {shareReelData && (
+          <ShareSheet isOpen={true} onClose={() => setShareReelData(null)} reel={shareReelData} />
+        )}
+      </>
+    );
+  }
 
   return (
     <section
