@@ -39,7 +39,7 @@ export function setChatMuted(muted) {
 }
 
 // Haqiqiy ovoz fayllari (push'dagi bilan bir xil): baland va jarangdor. Fayl o'ynamasa — sintez.
-const SAMPLES = { message: '/sounds/zumo_message.wav', social: '/sounds/zumo_social.wav' };
+const SAMPLES = { message: '/sounds/zumo_message.wav', social: '/sounds/zumo_social.wav', service: '/sounds/zumo_service.wav' };
 const sampleCache = {};
 function playSample(name) {
   try {
@@ -58,6 +58,12 @@ export function playDing() {
   // Sozlamalardagi "Ovozli signal" o'chirilgan bo'lsa hech qayerda chalinmaydi
   if (isChatMuted()) return;
   playSample('message').then((ok) => { if (!ok) synthBell([1760, 2217.5, 2637], 0.09, 0.32); });
+}
+
+// Usta chaqirish jarayoni (taklif, qabul, yo'lda, yetib keldi, tugadi) — uzunroq jarangdor qo'ng'iroq
+export function playService() {
+  if (isChatMuted()) return;
+  playSample('service').then((ok) => { if (!ok) synthBell([1046.5, 1318.5, 1568, 2093], 0.14, 0.32); });
 }
 
 // Zaxira: brauzer faylni o'ynata olmasa — qo'ng'iroqcha sintezi

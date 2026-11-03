@@ -50,7 +50,7 @@ function NotificationRow({ notif, onClick, t }) {
     }
     text = orderText;
   } else if (notif.itemType === 'servicerequest') {
-    // Usta chaqirish oqimi: backend aniq matn yozadi, bu yerda faqat sarlavha va ikonka
+    // Mutaxassis chaqirish oqimi: backend aniq matn yozadi, bu yerda faqat sarlavha va ikonka
     const title = notif.orderInfo?.title ? serviceLabel(notif.orderInfo.title) : '';
     const price = notif.orderInfo?.price;
     if (notif.type === 'service_request') {
@@ -64,7 +64,7 @@ function NotificationRow({ notif, onClick, t }) {
       text = T('taklifingizni qabul qildi — manzilga yo‘l oling');
     } else if (notif.type === 'offer_declined') {
       icon = <CircleX size={16} color="#8a97ab" />;
-      text = T('boshqa ustani tanladi');
+      text = T('boshqa mutaxassisni tanladi');
     } else if (notif.type === 'request_declined') {
       icon = <CircleX size={16} color="#ff5c7a" />;
       text = notif.commentText || T('buyurtmani qabul qila olmadi');

@@ -33,7 +33,7 @@ const TABS = [
 
 const LISTING_TYPES = [
   { key: 'equipment', label: T('Tovarlar') },
-  { key: 'provider', label: T('Ustalar') },
+  { key: 'provider', label: T('Mutaxassislar') },
   { key: 'location', label: T('Joylar') },
   { key: 'post', label: T('Videolar') },
 ];
@@ -237,7 +237,7 @@ export default function AdminDashboard() {
                 <Stat icon={UserPlus} value={`+${num(o.newUsers)}`} label={T('Shu hafta yangi')} tone="green" />
                 <Stat icon={Crown} value={num(o.premium)} label={T('Premium')} tone="gold" />
                 <Stat icon={Wallet} value={`${num(o.revenue)}`} label={T('Tushum, so\'m ({{n}} to\'lov)', { n: o.payments })} tone="gold" />
-                <Stat icon={Wrench} value={num(o.providers)} label={T('Ustalar')} />
+                <Stat icon={Wrench} value={num(o.providers)} label={T('Mutaxassislar')} />
                 <Stat icon={Wrench} value={num(o.requests)} label={T('Xizmat so\'rovlari')} />
                 <Stat icon={Package} value={num(o.equipment)} label={T('Tovarlar')} />
                 <Stat icon={ShoppingBag} value={num(o.orders)} label={T('Buyurtmalar')} />

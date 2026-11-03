@@ -51,12 +51,12 @@ const DIRECTIONS = {
     color: '#00c8f8',
     categories: {
       konditsioner: 'Konditsionerchi',
-      'bir-soatga-usta': 'Bir soatga usta',
+      'bir-soatga-usta': 'Bir soatga mutaxassis',
       santexnik: 'Santexnik',
       elektrik: 'Elektrik',
       'maishiy-texnika': 'Maishiy texnika',
-      'lift-ustasi': 'Lift ustasi',
-      'qulf-ustasi': 'Qulf ustasi',
+      'lift-ustasi': 'Lift mutaxassissi',
+      'qulf-ustasi': 'Qulf mutaxassissi',
       'mebel-montaj-va-tamirlash': 'Mebel montaj / ta’mirlash',
       'akvarium-xizmatlari': 'Akvarium xizmatlari',
       ventilyatsiya: 'Ventilyatsiya',
@@ -148,7 +148,7 @@ const DIRECTIONS = {
     categories: {
       'shou-biznes': 'Shou-biznes',
       'bazm-xizmatlari': 'Bazm xizmatlari',
-      'gozallik-ustalari': 'Go‘zallik ustalari',
+      'gozallik-ustalari': 'Go‘zallik mutaxassislari',
       tikuvchilik: 'Tikuvchilik',
       modellar: 'Modellar',
       dizayn: 'Dizayn',
@@ -513,7 +513,7 @@ export default function BecomeProviderPage() {
           <span>
             {t(
               'becomeProvider.type.individualDesc',
-              'O‘zingiz mustaqil usta yoki mutaxassis sifatida'
+              'O‘zingiz mustaqil mutaxassis yoki mutaxassis sifatida'
             )}
           </span>
         </button>

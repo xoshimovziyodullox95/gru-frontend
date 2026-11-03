@@ -24,7 +24,7 @@ export default function MarketplaceFilters({
   const [serviceDirections, setServiceDirections] = useState([]);
 
   useEffect(() => {
-    // Xizmat yo'nalishlari backend taksonomiyasidan (ustalar shu bo'yicha ro'yxatdan o'tadi)
+    // Xizmat yo'nalishlari backend taksonomiyasidan (mutaxassislar shu bo'yicha ro'yxatdan o'tadi)
     getServiceTaxonomy()
       .then((res) => setServiceDirections(res.data?.directions || Object.keys(res.data?.taxonomy || {})))
       .catch(() => {});

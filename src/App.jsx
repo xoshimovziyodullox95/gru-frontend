@@ -25,7 +25,6 @@ import AIChat from './components/common/AIChat';
 import ActiveOrderBar from './components/common/ActiveOrderBar';
 import NotificationListener from './components/common/NotificationListener';
 import ZumoGuide from './components/common/ZumoGuide.jsx';
-import ZumikPageTips from './components/common/ZumikPageTips.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 import ScrollToTop from './components/common/ScrollToTop';
 import RequireRole from './components/RequireRole';
@@ -508,7 +507,7 @@ function App() {
 
               {/* ✅ GLOBAL AI CHAT — hamma sahifada ko'rinadi */}
               <ZumoGuide />
-              <ZumikPageTips />
+              {/* Bo'limlardagi Zumik maslahatlari (ZumikPageTips) hozircha o'chirilgan — aralashib qolayotgan edi */}
               <GlobalAIChat />
             </BrowserRouter>
 

@@ -1,4 +1,4 @@
-// Usta/sotuvchiga: Xiaomi, Oppo, Vivo, Huawei ilovani qatordan surib yopsa buyurtma push'i kelmaydi.
+// Mutaxassis/sotuvchiga: Xiaomi, Oppo, Vivo, Huawei ilovani qatordan surib yopsa buyurtma push'i kelmaydi.
 // Faqat Android ilovada va batareya cheklovi yoqilgan bo'lsa ko'rinadi.
 import { useEffect, useState } from 'react';
 import { Capacitor, registerPlugin } from '@capacitor/core';

@@ -1,4 +1,4 @@
-// Suzuvchi "ZUMO yordamchi" — FAQAT ZUMO bazasi bo'yicha: tovar, usta/xizmat, joy topib beradi
+// Suzuvchi "ZUMO yordamchi" — FAQAT ZUMO bazasi bo'yicha: tovar, mutaxassis/xizmat, joy topib beradi
 // va ilovadan foydalanishda yordam beradi. Umumiy savollar uchun — ZUMO AI sahifasi (/ai-assistant).
 import { lazy, Suspense, useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';

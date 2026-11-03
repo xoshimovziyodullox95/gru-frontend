@@ -1,6 +1,6 @@
 /* ============================================================
    INCOMING REQUEST MODAL
-   Usta uchun yangi so'rov: tepada mijoz manzili xaritada,
+   Mutaxassis uchun yangi so'rov: tepada mijoz manzili xaritada,
    pastda so'rov tafsilotlari. 30 soniyadan keyin o'zi yopiladi.
    ============================================================ */
 

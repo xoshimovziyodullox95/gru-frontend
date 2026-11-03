@@ -17,7 +17,7 @@ const TYPES = [
     to: '/add-service',
     icon: Wrench,
     title: 'Xizmat ko‘rsataman',
-    desc: 'Usta, tozalash, ta’mirlash, repetitor va boshqa xizmatlar — mijozlar so‘rov yuboradi',
+    desc: 'Mutaxassis, tozalash, ta’mirlash, repetitor va boshqa xizmatlar — mijozlar so‘rov yuboradi',
   },
   {
     to: '/add-location',

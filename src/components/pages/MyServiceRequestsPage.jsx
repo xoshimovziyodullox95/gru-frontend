@@ -10,9 +10,9 @@ import { serviceLabel } from '../utils/i18nHelpers';
 // Oddiy tilda: mijoz hozir nima bo'layotganini tushunsin
 const STATUS_LABELS = {
   open: 'Javob kutilmoqda',
-  accepted: 'Usta tanlandi',
-  on_way: 'Usta yo‘lda',
-  arrived: 'Usta yetib keldi',
+  accepted: 'Mutaxassis tanlandi',
+  on_way: 'Mutaxassis yo‘lda',
+  arrived: 'Mutaxassis yetib keldi',
   in_progress: 'Ish ketyapti',
   completed: 'Bajarildi',
   cancelled: 'Bekor qilindi',
@@ -76,7 +76,7 @@ export default function MyServiceRequestsPage() {
         </button>
         <div>
           <h1>{T('Mening so‘rovlarim')}</h1>
-          <p>{T('Ustaga yuborgan xizmat so‘rovlaringiz')}</p>
+          <p>{T('Mutaxassisga yuborgan xizmat so‘rovlaringiz')}</p>
         </div>
         <button
           type="button"
@@ -100,7 +100,7 @@ export default function MyServiceRequestsPage() {
         <div className="my-service-requests__empty">
           <ClipboardList size={36} />
           <h2>{T('Hozircha so‘rov yo‘q')}</h2>
-          <p>{T('Yangi so‘rov yuboring, mos ustalar siz bilan bog‘lanadi.')}</p>
+          <p>{T('Yangi so‘rov yuboring, mos mutaxassislar siz bilan bog‘lanadi.')}</p>
           <button type="button" onClick={() => navigate('/request')}>
             <Plus size={17} /> {T('So‘rov yuborish')}
           </button>

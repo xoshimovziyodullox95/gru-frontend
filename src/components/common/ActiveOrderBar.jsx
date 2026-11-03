@@ -1,7 +1,7 @@
 /* ============================================================
    ACTIVE ORDER BAR
    Yandex Taxi uslubi — tepada doim ko'rinadigan banner
-   Bosilganda → so'rov tafsilotlari sahifasi ochiladi (mijoz yoki usta)
+   Bosilganda → so'rov tafsilotlari sahifasi ochiladi (mijoz yoki mutaxassis)
    ============================================================ */
 
 import { useEffect, useState } from 'react';
@@ -31,7 +31,7 @@ import '../../styles/activeOrderBar.css';
    ============================================================ */
 
 const STATUS_INFO = {
-  // Ustaga: javob kutayotgan yangi buyurtmalar
+  // Mutaxassisga: javob kutayotgan yangi buyurtmalar
   incoming: {
     icon: BellRing,
     color: '#ff8a2a',
@@ -195,14 +195,14 @@ export default function ActiveOrderBar({ floating = false }) {
 
   const offersCount = (active.offers || []).length;
 
-  /* Sarlavha — mijozga taklif kelganini, ustaga yangi buyurtmani aniq aytadi */
+  /* Sarlavha — mijozga taklif kelganini, mutaxassisga yangi buyurtmani aniq aytadi */
   const getLabel = () => {
     if (active.status === 'incoming') {
       return t('activeOrder.incoming', 'Sizga {{count}} ta yangi buyurtma', { count: active.incomingCount || 1 });
     }
     if (active.viewer === 'client' && active.status === 'open') {
       if (offersCount > 0) return t('activeOrder.offersIn', '{{count}} ta taklif keldi', { count: offersCount });
-      if (active.isDirect) return t('activeOrder.sentToPro', 'So‘rov ustaga yuborildi');
+      if (active.isDirect) return t('activeOrder.sentToPro', 'So‘rov mutaxassisga yuborildi');
     }
     return t(`activeOrder.status.${active.status}`);
   };
@@ -218,14 +218,14 @@ export default function ActiveOrderBar({ floating = false }) {
     /* Client */
     if (active.viewer === 'client') {
       if (active.status === 'open') {
-        if (offersCount > 0) return t('activeOrder.chooseOffer', 'Ko‘rib chiqing va ustani tanlang');
-        if (active.isDirect) return t('activeOrder.waitingPro', 'Usta javobini kutyapmiz');
-        return t('activeOrder.sentTo', '{{count}} ta ustaga yuborildi', { count: active.notifiedCount || 0 });
+        if (offersCount > 0) return t('activeOrder.chooseOffer', 'Ko‘rib chiqing va mutaxassisni tanlang');
+        if (active.isDirect) return t('activeOrder.waitingPro', 'Mutaxassis javobini kutyapmiz');
+        return t('activeOrder.sentTo', '{{count}} ta mutaxassisga yuborildi', { count: active.notifiedCount || 0 });
       }
 
       if (active.status === 'accepted' && acceptedOffer) {
         return t('activeOrder.arrivesIn', '{{name}} · {{min}} daqiqada', {
-          name: acceptedOffer.provider?.name || t('activeOrder.pro', 'Usta'),
+          name: acceptedOffer.provider?.name || t('activeOrder.pro', 'Mutaxassis'),
           min: acceptedOffer.arrivalMinutes || active.arrivalMinutes || 30,
         });
       }

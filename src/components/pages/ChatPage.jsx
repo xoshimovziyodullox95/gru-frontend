@@ -1186,7 +1186,7 @@ export default function ChatPage() {
               <EmptyState
                 icon={Inbox}
                 title={T('Hozircha suhbat yo‘q')}
-                text={T('E’lon sahifasida «Sotuvchiga yozish» yoki usta sahifasida chat tugmasini bosing — suhbat shu yerda boshlanadi.')}
+                text={T('E’lon sahifasida «Sotuvchiga yozish» yoki mutaxassis sahifasida chat tugmasini bosing — suhbat shu yerda boshlanadi.')}
                 actionLabel={T('Bozorga o‘tish')}
                 onAction={() => navigate('/marketplace')}
               />

@@ -14,16 +14,16 @@ import { T } from '../utils/T';
 // Robot Zumik har qadamda shu tugmani qo'li bilan ko'rsatadi. Ekranda ko'rinmagani
 // (masalan, kompyuterda pastki menyu yo'q) avtomatik o'tkazib yuboriladi.
 const STEP = {
-  search: { target: '.hero-search', title: T('Qidiruv'), text: T('Usta, tovar yoki joy nomini yozing — hammasi bitta qidiruvda topiladi.') },
-  request: { target: '.cta-request', title: T('Usta kerakmi?'), text: T('Kerakli xizmatni tanlab, muammo va manzilingizni yozing. Ustalar taklif yuboradi, siz mosini tanlaysiz.'), action: 'request' },
+  search: { target: '.hero-search', title: T('Qidiruv'), text: T('Mutaxassis, tovar yoki joy nomini yozing — hammasi bitta qidiruvda topiladi.') },
+  request: { target: '.cta-request', title: T('Mutaxassis kerakmi?'), text: T('Kerakli xizmatni tanlab, muammo va manzilingizni yozing. Mutaxassislar taklif yuboradi, siz mosini tanlaysiz.'), action: 'request' },
   market: { target: '.cta-marketplace', title: T('Bozor'), text: T('Tovarlar, joylar va xizmat e’lonlarini ko‘ring. E’lonni ochib, egasiga bevosita yozishingiz mumkin.') },
   cats: { target: '.pcg-grid', title: T('Kategoriyalar'), text: T('Kerakli bo‘limni tanlang: elektronika, maishiy texnika, mebel, kiyim va boshqalar.') },
   add: { target: '[data-tour="add"], .gru-bottom-add', title: T('E’lon yoki video qo‘shish'), text: T('Sotadigan narsangiz bormi? Shu tugma orqali bepul e’lon yoki video joylang.') },
-  chat: { target: '[data-tour="chat"]', title: T('Chat'), text: T('Xaridor, sotuvchi yoki usta bilan shu yerda yozishasiz. Yangi xabarlar haqida bildirishnoma keladi.') },
+  chat: { target: '[data-tour="chat"]', title: T('Chat'), text: T('Xaridor, sotuvchi yoki mutaxassis bilan shu yerda yozishasiz. Yangi xabarlar haqida bildirishnoma keladi.') },
   profile: { target: '[data-tour="profile"]', title: T('Profil'), text: T('Buyurtmalaringiz, e’lonlaringiz, saqlanganlar va sozlamalar shu yerda.') },
   menu: { target: '.zumo-topbar__menu', title: T('Tezkor menyu'), text: T('Qidiruv, e’lon joylash, video qo‘shish va sozlamalarga shu menyudan tez kirasiz.') },
   ai: { target: '.ai-chat-toggle', title: T('Savol bormi?'), text: T('AI yordamchiga yozing — ilovadan foydalanish bo‘yicha istalgan vaqtda javob beradi.') },
-  // Usta va sotuvchi uchun
+  // Mutaxassis va sotuvchi uchun
   addService: { target: '[data-tour="add"], .gru-bottom-add', title: T('Xizmatingizni joylang'), text: T('«Qo‘shish» → «E’lon joylash» → xizmat turini tanlang. Yaqin atrofdagi mijozlar sizni ko‘radi.') },
   providerOrders: { target: '[data-tour="profile"]', title: T('Buyurtmalar shu yerda'), text: T('Profil → «Xizmat so‘rovlari»: mijoz so‘rovi kelganda telefoningizga baland ovozli xabar keladi.') },
   providerChat: { target: '[data-tour="chat"]', title: T('Mijoz bilan yozishuv'), text: T('Narx va vaqtni mijoz bilan chatda kelishasiz. Rasm ham yuborish mumkin.') },

@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useAuth } from '../context/AuthContext';
-import { playDing, playSocial } from '../services/chatSound';
+import { playDing, playService, playSocial } from '../services/chatSound';
 import { getUserProfile } from '../services/user';
 import { getSocket, registerSocketUser } from '../lib/socket';
 import { registerPush } from '../services/push';
@@ -41,7 +41,9 @@ export default function NotificationListener() {
      ✅ BARCHA HOOK'LAR ENG YUQORIDA — shart emas, callback emas
      ============================================================ */
 
-  const pushRegistered = useRef(false);
+  // Push qaysi foydalanuvchi uchun ro'yxatdan o'tgan — akkaunt almashsa (chiqib, boshqasiga kirsa)
+  // qayta ro'yxatdan o'tishi shart: chiqishda token o'chiriladi
+  const pushRegisteredFor = useRef(null);
   const openedFromUrl = useRef(null);
   const lastStatusEventRef = useRef(null);
 
@@ -154,7 +156,10 @@ export default function NotificationListener() {
      ============================================================ */
 
   useEffect(() => {
-    if (!user) return undefined;
+    if (!user) {
+      pushRegisteredFor.current = null; // chiqildi — keyingi kirishda push qayta ulanadi
+      return undefined;
+    }
 
     let cancelled = false;
 
@@ -171,16 +176,17 @@ export default function NotificationListener() {
         registerSocketUser(mongoUserId);
 
         /* Push register */
-        if (!pushRegistered.current) {
-          pushRegistered.current = true;
+        if (pushRegisteredFor.current !== mongoUserId) {
+          pushRegisteredFor.current = mongoUserId;
 
           registerPush()
             .then((ok) => {
               console.log('🔔 Push register:', ok ? 'OK' : 'FAIL');
+              if (!ok) pushRegisteredFor.current = null;
             })
             .catch((err) => {
               console.warn('Push register xato:', err);
-              pushRegistered.current = false;
+              pushRegisteredFor.current = null;
             });
         }
 
@@ -221,6 +227,10 @@ export default function NotificationListener() {
           if (['like', 'dislike', 'comment', 'reply', 'follow'].includes(notif?.type)) {
             playSocial();
             navigator.vibrate?.([60, 90, 60]);
+          } else if (notif?.itemType === 'servicerequest') {
+            // Mutaxassis chaqirish jarayoni — o'z, uzunroq jarangdor ovozi
+            playService();
+            navigator.vibrate?.([140, 120, 140, 120, 260]);
           } else {
             playDing();
             navigator.vibrate?.([200, 100, 200]);
@@ -256,7 +266,7 @@ export default function NotificationListener() {
               createdAt: notif.createdAt,
               provider: {
                 _id: notif.fromUserId?._id,
-                name: notif.fromUserId?.fullName || T('Usta'),
+                name: notif.fromUserId?.fullName || T('Mutaxassis'),
               },
             });
             setCurrentRequest({
@@ -317,7 +327,7 @@ export default function NotificationListener() {
             arrivalMinutes: data.offer.arrivalMinutes || 30,
             status: data.offer.status || 'pending',
             createdAt: data.offer.createdAt,
-            provider: data.offer.provider || { name: T('Usta') },
+            provider: data.offer.provider || { name: T('Mutaxassis') },
           });
           setCurrentRequest({ _id: data.requestId });
           setIsOfferModalOpen(true);
@@ -420,7 +430,7 @@ export default function NotificationListener() {
       if (!requestId) return;
 
       await acceptServiceRequestOffer(requestId, offer._id);
-      toast.success(T('🎉 Usta tanlandi!'), {
+      toast.success(T('🎉 Mutaxassis tanlandi!'), {
         toastId: `accept-${requestId}`,
       });
 

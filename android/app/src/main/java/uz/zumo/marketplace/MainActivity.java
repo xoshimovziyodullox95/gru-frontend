@@ -15,5 +15,6 @@ public class MainActivity extends BridgeActivity {
         OrderAlertChannel.ensure(this);
         SocialChannel.ensure(this);
         MessageChannel.ensure(this);
+        ServiceChannel.ensure(this);
     }
 }

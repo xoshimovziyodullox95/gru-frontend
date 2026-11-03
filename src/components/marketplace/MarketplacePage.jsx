@@ -159,7 +159,7 @@ const services = asArray(servRes).map(item => ({
       result = result.filter((item) => item.type === 'equipment' && selectedSubs.has(item.sub));
     }
 
-    // 3. Xizmat yo'nalishi bo'yicha (ustaning level1 si — yo'nalish slug'i)
+    // 3. Xizmat yo'nalishi bo'yicha (mutaxassisning level1 si — yo'nalish slug'i)
     if (selectedServiceCats.size > 0) {
       result = result.filter((item) => item.type === 'service' && selectedServiceCats.has(item.level1));
     }

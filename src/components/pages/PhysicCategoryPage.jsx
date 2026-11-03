@@ -9,7 +9,7 @@ const physicCategories = [
   { key: 'moliya', name: T('Bank va moliya xizmatlari'), emoji: '🏦', desc: T('Kredit, depozit, investitsiya va moliyaviy maslahat') },
   { key: 'kochmasmulk', name: T('Ko\'chmas mulk va ta\'mirlash'), emoji: '🏗️', desc: T('Uy-joy sotib olish, ijaraga berish, ta\'mirlash xizmatlari') },
   { key: 'talim', name: T('Ta\'lim va kurslar'), emoji: '🎓', desc: T('Kurslar, o\'quv markazlari, online ta\'lim') },
-  { key: 'shaxsiyxizmat', name: T('Shaxsiy xizmatlar'), emoji: '🔧', desc: T('Usta, tozalash, go\'zallik xizmatlari') },
+  { key: 'shaxsiyxizmat', name: T('Shaxsiy xizmatlar'), emoji: '🔧', desc: T('Mutaxassis, tozalash, go\'zallik xizmatlari') },
   { key: 'ish', name: T('Ish va frilans'), emoji: '💼', desc: T('Ish topish, frilans loyihalar, masofaviy ish') },
   { key: 'sugurta', name: T('Sug\'urta xizmatlari'), emoji: '🛡️', desc: T('Hayot, mulk, avtomobil sug\'urtasi') },
   { key: 'ikkilamchi', name: T('Ikkilamchi bozor'), emoji: '♻️', desc: T('Foydalanilgan tovarlar, antikvariat, komissiya do\'konlari') },

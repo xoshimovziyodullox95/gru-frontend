@@ -121,9 +121,9 @@ const imageMap = {
 
   // ==================== SERVICE (20 ta) ====================
   "Qurilish va ta'mirlash kompaniyasi": "/images/categories/level2/qurilish-tamirlash.jpg",
-  "Santexnika ustaxonasi": "/images/categories/level2/santexnika.jpg",
+  "Santexnika mutaxassisxonasi": "/images/categories/level2/santexnika.jpg",
   "Ijtimoiy tarmoqlarda reklama xizmati": "/images/categories/level2/smm-agentlik.jpg",
-  "Maishiy texnika ta'mirlash ustaxonasi": "/images/categories/level2/texnika-servisi.jpg",
+  "Maishiy texnika ta'mirlash mutaxassisxonasi": "/images/categories/level2/texnika-servisi.jpg",
   "Avtoservis / Detailing markazi": "/images/categories/level2/avtoservis.jpg",
   "Kimyoviy tozalash (Ximchistka)": "/images/categories/level2/ximchistka.jpg",
   "Klining (Cleaning) kompaniyasi": "/images/categories/level2/cleaning.jpg",

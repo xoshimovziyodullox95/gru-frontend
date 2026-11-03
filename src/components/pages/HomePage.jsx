@@ -71,8 +71,8 @@ function shareHomeRead(key, startRequest) {
 
 const HOW_STEPS = [
   { icon: ClipboardList, title: 'Muammoni yozing', text: 'Nima kerakligini va manzilni kiriting — 1 daqiqa.' },
-  { icon: MessageSquareText, title: 'Ustalar narx aytadi', text: 'Yaqin ustalar taklif yuboradi, siz solishtirasiz.' },
-  { icon: Star, title: 'Tanlang va baholang', text: 'Ish tugagach tasdiqlaysiz va ustaga baho berasiz.' },
+  { icon: MessageSquareText, title: 'Mutaxassislar narx aytadi', text: 'Yaqin mutaxassislar taklif yuboradi, siz solishtirasiz.' },
+  { icon: Star, title: 'Tanlang va baholang', text: 'Ish tugagach tasdiqlaysiz va mutaxassisga baho berasiz.' },
 ];
 
 // Fon videosi reduced-motion yoki data-saving yoqilgan bo'lsa o'ynamaydi;
@@ -325,14 +325,14 @@ export default function HomePage() {
       .map(({ item }) => item);
   }, [favorites, recentlyViewed, homeListings]);
 
-  // Eng yaxshi ustalar: tasdiqlangan/TOP oldinda, keyin reyting bo'yicha
+  // Eng yaxshi mutaxassislar: tasdiqlangan/TOP oldinda, keyin reyting bo'yicha
   const topProviders = useMemo(() => homeListings
     .filter((item) => item.type === 'service')
     .sort((a, b) => (Number(b.isVerified) + Number(b.isTop)) - (Number(a.isVerified) + Number(a.isTop))
       || b.rating - a.rating)
     .slice(0, 12), [homeListings]);
 
-  // "Sizga mos" yuqoridagi ustalarni takrorlamasin
+  // "Sizga mos" yuqoridagi mutaxassislarni takrorlamasin
   const forYouListings = useMemo(() => {
     const shown = new Set(topProviders.map((item) => `${item.type}-${item.id}`));
     return recommendedListings.filter((item) => !shown.has(`${item.type}-${item.id}`));
@@ -434,7 +434,7 @@ export default function HomePage() {
             </h1>
           </div>
 
-          {/* Qidiruv — usta, tovar va joy bir joydan */}
+          {/* Qidiruv — mutaxassis, tovar va joy bir joydan */}
           <form
             className="hero-search"
             role="search"
@@ -450,7 +450,7 @@ export default function HomePage() {
               value={heroQuery}
               maxLength={120}
               onChange={(event) => setHeroQuery(event.target.value)}
-              placeholder={T('Usta, tovar yoki joy qidiring')}
+              placeholder={T('Mutaxassis, tovar yoki joy qidiring')}
               aria-label={T('Qidirish')}
             />
             <button type="submit">{T('Qidirish')}</button>
@@ -466,7 +466,7 @@ export default function HomePage() {
                 <Wrench size={20} strokeWidth={2} />
               </span>
               <span className="hero-cta-btn__text">
-                <strong>{t('home.ctaRequest', 'Usta kerakmi?')}</strong>
+                <strong>{t('home.ctaRequest', 'Mutaxassis kerakmi?')}</strong>
                 <small>{t('home.ctaRequestSub', 'Xizmat so‘rovi yuborish')}</small>
               </span>
             </button>
@@ -544,12 +544,12 @@ export default function HomePage() {
       {homeContentLoaded && (
         <>
           <HomeListingCarousel
-            title={T('Eng yaxshi ustalar')}
-            subtitle={T('Tasdiqlangan va yuqori baholangan ustalar')}
+            title={T('Eng yaxshi mutaxassislar')}
+            subtitle={T('Tasdiqlangan va yuqori baholangan mutaxassislar')}
             items={topProviders}
-            emptyTitle={T('Hozircha usta yo‘q')}
+            emptyTitle={T('Hozircha mutaxassis yo‘q')}
             emptyText={T('Hunaringiz bo‘lsa, birinchi bo‘lib xizmatingizni joylang.')}
-            actionLabel={T('Barcha ustalar')}
+            actionLabel={T('Barcha mutaxassislar')}
             actionTo="/marketplace/all?type=service"
           />
           {/* Bo'sh bo'limlar sahifani "o'lik" ko'rsatadi — faqat e'lon bo'lsa chiqadi */}
@@ -596,7 +596,7 @@ export default function HomePage() {
       {/* ================= QANDAY ISHLAYDI ================= */}
 
       <section className="home-how" aria-labelledby="home-how-title">
-        <h2 id="home-how-title">{T('Usta chaqirish qanday ishlaydi?')}</h2>
+        <h2 id="home-how-title">{T('Mutaxassis chaqirish qanday ishlaydi?')}</h2>
         <ol className="home-how__steps">
           {HOW_STEPS.map(({ icon: Icon, title, text }, index) => (
             <li key={title}>
@@ -608,7 +608,7 @@ export default function HomePage() {
           ))}
         </ol>
         <button type="button" className="home-how__cta" onClick={() => navigate('/request')}>
-          <Wrench size={17} /> {T('Usta chaqirish')}
+          <Wrench size={17} /> {T('Mutaxassis chaqirish')}
         </button>
       </section>
 

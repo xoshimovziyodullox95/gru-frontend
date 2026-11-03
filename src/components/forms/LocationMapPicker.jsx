@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -19,6 +19,26 @@ export default function LocationMapPicker({ lat, lng, onSelect }) {
   const [tileError, setTileError] = useState(false);
   const [searchError, setSearchError] = useState('');
   const geocodeRequest = useRef(0);
+  const onSelectRef = useRef(onSelect);
+  useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
+
+  const reverseGeocode = useCallback(async (la, ln) => {
+    const requestId = ++geocodeRequest.current;
+    // Koordinatani darhol saqlaymiz; manzil nomi topilmasa ham nuqta yo'qolmaydi.
+    onSelectRef.current({ lat: la, lng: ln, address: null });
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${la}&lon=${ln}`
+      );
+      if (!res.ok) throw new Error('Manzil xizmati javob bermadi');
+      const data = await res.json();
+      if (requestId === geocodeRequest.current && data?.display_name) {
+        onSelectRef.current({ lat: la, lng: ln, address: data.display_name });
+      }
+    } catch (err) {
+      console.error('Reverse geocode xatosi:', err);
+    }
+  }, []);
 
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return undefined;
@@ -71,9 +91,19 @@ export default function LocationMapPicker({ lat, lng, onSelect }) {
     mapInstance.current = map;
     markerRef.current = marker;
     setReady(true);
+    // Konteyner animatsiya/transition ichida bo'lsa o'lchami kech aniqlanadi — bir necha bor yangilaymiz,
+    // aks holda Capacitor WebView'da xarita bo'sh (kulrang) qoladi
     requestAnimationFrame(() => map.invalidateSize({ pan: false }));
+    const sizeTimers = [120, 400, 800, 1500].map((ms) => setTimeout(() => { try { map.invalidateSize({ pan: false }); } catch { /* xarita yopilgan */ } }, ms));
+    let sizeObs = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      sizeObs = new ResizeObserver(() => { try { map.invalidateSize({ pan: false }); } catch { /* yopilgan */ } });
+      sizeObs.observe(mapRef.current);
+    }
 
     return () => {
+      sizeTimers.forEach(clearTimeout);
+      sizeObs?.disconnect();
       geocodeRequest.current += 1;
       window.clearTimeout(tileTimeout);
       map.off('click', onMapClick);
@@ -83,24 +113,6 @@ export default function LocationMapPicker({ lat, lng, onSelect }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const reverseGeocode = async (la, ln) => {
-    const requestId = ++geocodeRequest.current;
-    // Koordinatani darhol saqlaymiz; manzil nomi topilmasa ham nuqta yo'qolmaydi.
-    onSelect({ lat: la, lng: ln, address: null });
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${la}&lon=${ln}`
-      );
-      if (!res.ok) throw new Error('Manzil xizmati javob bermadi');
-      const data = await res.json();
-      if (requestId === geocodeRequest.current && data?.display_name) {
-        onSelect({ lat: la, lng: ln, address: data.display_name });
-      }
-    } catch (err) {
-      console.error('Reverse geocode xatosi:', err);
-    }
-  };
 
   // Telefon GPS'i orqali hozirgi joy (ilovada joylashuv ruxsati so'raladi)
   const [locating, setLocating] = useState(false);

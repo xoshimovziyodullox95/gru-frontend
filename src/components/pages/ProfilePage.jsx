@@ -1,7 +1,7 @@
 ﻿// src/components/pages/ProfilePage.jsx
 /* ============================================================
    PROFILE PAGE — /profile (o'zim), /profile/:userId (boshqa odam)
-   Rolga qarab: usta paneli, mijoz CTA, biznes/kompaniya paneli.
+   Rolga qarab: mutaxassis paneli, mijoz CTA, biznes/kompaniya paneli.
    Tahrirlash — pastdan chiqadigan oyna (?edit=1 bilan ham ochiladi).
    ============================================================ */
 
@@ -122,7 +122,7 @@ function ProviderPanel({ provider }) {
       <header className="pf-panel__head">
         <span className="pf-panel__icon"><Wrench size={18} /></span>
         <div>
-          <h3>{t('profile.provider.title', 'Usta paneli')}</h3>
+          <h3>{t('profile.provider.title', 'Mutaxassis paneli')}</h3>
           <p>{provider.company || provider.service_category || '—'}</p>
         </div>
         <span className="pf-rating"><Star size={15} /> {rating ? rating.toFixed(1) : t('profile.provider.new', 'Yangi')}</span>
@@ -227,8 +227,8 @@ export default function ProfilePage() {
           .then((res) => setMyPosts((Array.isArray(res.data) ? res.data : []).filter((p) => !p.isYoutube)))
           .catch(() => setMyPosts([]));
       }
-      // Usta paneli rolga bog'liq emas: biznes yoki kompaniya ham xizmat ko'rsatishi mumkin
-      // (bazadan import qilingan ustalar tasdiqlangach "business" rolini oladi)
+      // Mutaxassis paneli rolga bog'liq emas: biznes yoki kompaniya ham xizmat ko'rsatishi mumkin
+      // (bazadan import qilingan mutaxassislar tasdiqlangach "business" rolini oladi)
       if (!targetUserId) {
         setMyProvider(null);
       } else {
@@ -450,9 +450,9 @@ export default function ProfilePage() {
   const listingsCount = myLocations.length + myEquipment.length + myServices.length;
   const profileUrl = `${window.location.origin}/profile/${profile._id}`;
 
-  // Rollar bir-birini o'chirmaydi: har kim mijoz; usta, sotuvchi, biznes — qo'shimcha imkoniyat
+  // Rollar bir-birini o'chirmaydi: har kim mijoz; mutaxassis, sotuvchi, biznes — qo'shimcha imkoniyat
   const roleChips = [
-    isProvider && { icon: Wrench, label: t('profile.role.provider', 'Usta') },
+    isProvider && { icon: Wrench, label: t('profile.role.provider', 'Mutaxassis') },
     (isSeller || myEquipment.length > 0) && { icon: Store, label: t('profile.role.seller', 'Sotuvchi') },
     isBusiness && { icon: Briefcase, label: t('profile.role.business', 'Biznes') },
     isCompany && { icon: Building2, label: t('profile.role.company', 'Kompaniya') },
@@ -685,17 +685,17 @@ export default function ProfilePage() {
         {/* ---------- Rolga qarab panellar ---------- */}
         {isOwnProfile && isProvider && myProvider && <ProviderPanel provider={myProvider} />}
 
-        {/* Usta yoki sotuvchi bo'lsa ham o'zi usta chaqira oladi — mijoz paneli hammaga */}
+        {/* Mutaxassis yoki sotuvchi bo'lsa ham o'zi mutaxassis chaqira oladi — mijoz paneli hammaga */}
         {isOwnProfile && (
           <section className="pf-card pf-cta">
             <span className="pf-panel__icon"><Wrench size={18} /></span>
             <div className="pf-cta__text">
-              <h3>{t('profile.client.title', 'Usta kerakmi?')}</h3>
-              <p>{t('profile.client.text', 'So‘rov yuboring — ustalar o‘zi taklif beradi')}</p>
+              <h3>{t('profile.client.title', 'Mutaxassis kerakmi?')}</h3>
+              <p>{t('profile.client.text', 'So‘rov yuboring — mutaxassislar o‘zi taklif beradi')}</p>
             </div>
             <div className="pf-cta__actions">
               <button type="button" className="pf-btn pf-btn--primary" onClick={() => navigate('/request')}>
-                {t('profile.client.call', 'Usta chaqirish')}
+                {t('profile.client.call', 'Mutaxassis chaqirish')}
               </button>
               <button type="button" className="pf-btn pf-btn--ghost" onClick={() => navigate('/my-requests')}>
                 {t('profile.client.myRequests', 'So‘rovlarim')}
@@ -703,7 +703,7 @@ export default function ProfilePage() {
             </div>
             {!isProvider && (
               <button type="button" className="pf-become" onClick={() => navigate('/become-provider')}>
-                <Hammer size={15} /> {t('profile.becomeProvider', 'Usta bo‘lib ishlash')} <ChevronRight size={15} />
+                <Hammer size={15} /> {t('profile.becomeProvider', 'Mutaxassis bo‘lib ishlash')} <ChevronRight size={15} />
               </button>
             )}
           </section>

@@ -1,6 +1,6 @@
 /* ============================================================
    INCOMING OFFER MODAL — Client uchun
-   Usta taklif berganda (mijoz boshqa sahifada turganda) chiqadi.
+   Mutaxassis taklif berganda (mijoz boshqa sahifada turganda) chiqadi.
    Ko'rinishi RequestTrackerModal bilan bir xil (rt-* uslublari).
    ============================================================ */
 
@@ -27,7 +27,7 @@ export default function IncomingOfferModal({
   if (!isOpen || !offer) return null;
 
   const provider = offer.provider || {};
-  const name = provider.name || t('activeOrder.pro', 'Usta');
+  const name = provider.name || t('activeOrder.pro', 'Mutaxassis');
 
   const handleView = () => {
     onClose?.();

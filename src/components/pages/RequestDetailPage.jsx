@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   REQUEST DETAIL PAGE — /requests/:id (mijoz), /provider-requests/:id (usta)
+   REQUEST DETAIL PAGE — /requests/:id (mijoz), /provider-requests/:id (mutaxassis)
    Backend ko'ruvchiga qarab viewer: 'client' | 'provider' qaytaradi.
    ============================================================ */
 
@@ -38,7 +38,7 @@ const STEPS = [{ key: 'accepted' }, { key: 'on_way' }, { key: 'arrived' }, { key
 // in_progress ham "Yetib keldi" qadamida ko'rinadi
 const STEP_OF = { in_progress: 'arrived' };
 
-// Usta bosadigan keyingi qadam. "Ishni tugatdim" so'rovni yopmaydi —
+// Mutaxassis bosadigan keyingi qadam. "Ishni tugatdim" so'rovni yopmaydi —
 // mijoz tasdiqlagandan keyin "Tugadi" bo'ladi.
 const PROVIDER_NEXT = {
   accepted: { next: 'on_way', label: 'leftHome' },
@@ -75,7 +75,7 @@ function Avatar({ name, image, size = 44 }) {
 
 function Rating({ provider }) {
   const { t } = useTranslation();
-  if (!provider?.ratingsCount) return <span className="rt-rating rt-rating--new">{t('requestDetail.newPro', 'Yangi usta')}</span>;
+  if (!provider?.ratingsCount) return <span className="rt-rating rt-rating--new">{t('requestDetail.newPro', 'Yangi mutaxassis')}</span>;
   return (
     <span className="rt-rating">
       <Star size={12} /> {Number(provider.averageRating).toFixed(1)}
@@ -143,13 +143,13 @@ export default function RequestDetailPage() {
   const [busy, setBusy] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
-  // Usta taklif formasi
+  // Mutaxassis taklif formasi
   const [offerPrice, setOfferPrice] = useState('');
   const [offerMinutes, setOfferMinutes] = useState(30);
   const [offerMessage, setOfferMessage] = useState('');
   const [offerVisit, setOfferVisit] = useState('');
 
-  // Usta: joyida narxni o'zgartirish va ish rasmlari
+  // Mutaxassis: joyida narxni o'zgartirish va ish rasmlari
   const [priceFormOpen, setPriceFormOpen] = useState(false);
   const [newPrice, setNewPrice] = useState('');
   const [priceReason, setPriceReason] = useState('');
@@ -274,7 +274,7 @@ export default function RequestDetailPage() {
 
   const cancelRequest = () => {
     if (!window.confirm(t('requestDetail.cancelConfirm', 'So‘rovni bekor qilasizmi?'))) return;
-    const reason = isProvider ? t('requestDetail.cancelByPro', 'Usta bekor qildi') : t('tracker.cancelReason', 'Mijoz bekor qildi');
+    const reason = isProvider ? t('requestDetail.cancelByPro', 'Mutaxassis bekor qildi') : t('tracker.cancelReason', 'Mijoz bekor qildi');
     run(() => updateRequestStatus(id, 'cancelled', reason), t('requestDetail.cancelled', 'So‘rov bekor qilindi'));
   };
 
@@ -332,19 +332,19 @@ export default function RequestDetailPage() {
   let title = CLIENT_TITLES.includes(status) ? t(`requestDetail.title.${status}`) : t('requestDetail.title.request', 'So‘rov');
   if (isProvider) {
     if (status === 'open') title = myOffer ? t('providerRequests.status.offerSent') : t('requestDetail.title.makeOffer', 'Taklif bering');
-    else if (myOffer && !isMine) title = t('requestDetail.title.otherChosen', 'Mijoz boshqa ustani tanladi');
+    else if (myOffer && !isMine) title = t('requestDetail.title.otherChosen', 'Mijoz boshqa mutaxassisni tanladi');
     else if (awaitingConfirm) title = t('requestDetail.title.awaitingClient', 'Mijoz tasdiqlashi kutilmoqda');
     else if (isMine && status === 'accepted') title = t('requestDetail.title.proChosen', 'Sizni tanlashdi — yo‘lga chiqing');
     else if (isMine && status === 'on_way') title = t('requestDetail.title.proOnWay', 'Manzilga ketyapsiz');
     else if (isMine && ['arrived', 'in_progress'].includes(status)) title = t('requestDetail.title.proAtWork', 'Ishni bajaring');
   } else if (status === 'open' && request.isDirect && offers.length === 0) {
-    title = t('requestDetail.title.directWaiting', 'Usta javobini kutyapmiz');
+    title = t('requestDetail.title.directWaiting', 'Mutaxassis javobini kutyapmiz');
   } else if (status === 'cancelled' && request.declinedAt) {
-    title = t('requestDetail.title.declined', 'Usta qabul qila olmadi');
+    title = t('requestDetail.title.declined', 'Mutaxassis qabul qila olmadi');
   } else if (awaitingConfirm) {
     title = t('requestDetail.title.confirm', 'Ish bajarildimi?');
   }
-  // Xarita faqat ustaga kerak (manzilga borish uchun); mijoz o'z manzilini biladi
+  // Xarita faqat mutaxassisga kerak (manzilga borish uchun); mijoz o'z manzilini biladi
   const showMap = isProvider && !['completed', 'cancelled'].includes(status);
 
   return (
@@ -379,8 +379,8 @@ export default function RequestDetailPage() {
             offers.length === 0 ? (
               <ul className="rt-facts">
                 <li><Clock size={16} /><span>{request.isDirect
-                  ? t('requestDetail.waitingDirect', 'So‘rov faqat shu ustaga yuborildi. Narx taklif qilishi bilan shu yerda ko‘rinadi.')
-                  : t('requestDetail.waiting', 'Ustalar javobini kutyapmiz. Taklif kelishi bilan shu yerda ko‘rinadi.')}</span></li>
+                  ? t('requestDetail.waitingDirect', 'So‘rov faqat shu mutaxassisga yuborildi. Narx taklif qilishi bilan shu yerda ko‘rinadi.')
+                  : t('requestDetail.waiting', 'Mutaxassislar javobini kutyapmiz. Taklif kelishi bilan shu yerda ko‘rinadi.')}</span></li>
               </ul>
             ) : (
               <ul className="rt-list" role="radiogroup">
@@ -395,7 +395,7 @@ export default function RequestDetailPage() {
                     >
                       <Avatar name={offer.provider?.name} image={offer.provider?.image} size={42} />
                       <span className="rt-row__who">
-                        <strong>{offer.provider?.name || t('activeOrder.pro', 'Usta')}</strong>
+                        <strong>{offer.provider?.name || t('activeOrder.pro', 'Mutaxassis')}</strong>
                         <span className="rt-row__meta">
                           <Rating provider={offer.provider} />
                           <span>· {offer.visitAt ? formatVisit(offer.visitAt) : `${offer.arrivalMinutes || 30} ${t('common.min', 'daq')}`}</span>
@@ -422,10 +422,10 @@ export default function RequestDetailPage() {
             )
           )}
 
-          {/* ===== MIJOZ: usta joyida yangi narx taklif qildi ===== */}
+          {/* ===== MIJOZ: mutaxassis joyida yangi narx taklif qildi ===== */}
           {!isProvider && pricePending && (
             <div className="rd-confirm">
-              <span className="rd-confirm__label">{t('requestDetail.priceChangeLabel', 'Usta narxni o‘zgartirmoqchi')}</span>
+              <span className="rd-confirm__label">{t('requestDetail.priceChangeLabel', 'Mutaxassis narxni o‘zgartirmoqchi')}</span>
               <div className="rd-price-change">
                 <s>{price(request.priceChange.oldPrice)}</s>
                 <span>→</span>
@@ -435,11 +435,11 @@ export default function RequestDetailPage() {
             </div>
           )}
 
-          {/* ===== MIJOZ: usta tugatgan ishni tasdiqlash ===== */}
+          {/* ===== MIJOZ: mutaxassis tugatgan ishni tasdiqlash ===== */}
           {!isProvider && awaitingConfirm && (
             <div className="rd-confirm">
               <p>
-                {t('requestDetail.confirmText', 'Usta ishni tugatganini bildirdi. Hammasi joyidami? Tasdiqlaganingizdan keyin buyurtma yopiladi va ustani baholashingiz mumkin.')}
+                {t('requestDetail.confirmText', 'Mutaxassis ishni tugatganini bildirdi. Hammasi joyidami? Tasdiqlaganingizdan keyin buyurtma yopiladi va mutaxassisni baholashingiz mumkin.')}
               </p>
               {request.completionPhotos?.length > 0 && (
                 <div className="rd-photos">
@@ -463,12 +463,12 @@ export default function RequestDetailPage() {
             </ul>
           )}
 
-          {/* ===== MIJOZ: tanlangan usta ===== */}
+          {/* ===== MIJOZ: tanlangan mutaxassis ===== */}
           {!isProvider && acceptedOffer && status !== 'open' && (
             <div className="rt-master">
               <Avatar name={accProvider.name} image={accProvider.image} size={48} />
               <span className="rt-row__who">
-                <strong>{accProvider.name || t('activeOrder.pro', 'Usta')}</strong>
+                <strong>{accProvider.name || t('activeOrder.pro', 'Mutaxassis')}</strong>
                 <span className="rt-row__meta">
                   <Rating provider={accProvider} />
                   <span>· {price(acceptedOffer.price)} {t('common.sum', 'so‘m')}</span>
@@ -706,7 +706,7 @@ export default function RequestDetailPage() {
               type="button"
               className="rt-btn rt-btn--primary"
               disabled={busy}
-              onClick={() => run(() => acceptServiceRequestOffer(id, selectedOffer._id), t('requestDetail.proChosen', 'Usta tanlandi'))}
+              onClick={() => run(() => acceptServiceRequestOffer(id, selectedOffer._id), t('requestDetail.proChosen', 'Mutaxassis tanlandi'))}
             >
               {busy ? <Loader2 size={18} className="rt-spin" /> : null}
               {t('incomingOffer.choose', 'Tanlash · {{price}} so‘m', { price: price(selectedOffer.price) })}
@@ -728,7 +728,7 @@ export default function RequestDetailPage() {
 
           {!isProvider && status === 'cancelled' && request.declinedAt && (
             <button type="button" className="rt-btn rt-btn--primary" onClick={() => navigate(`/request?category=${encodeURIComponent(request.category)}`)}>
-              {t('requestDetail.findOther', 'Boshqa usta topish')}
+              {t('requestDetail.findOther', 'Boshqa mutaxassis topish')}
             </button>
           )}
 
@@ -789,7 +789,7 @@ export default function RequestDetailPage() {
                   className="rt-btn rt-btn--text"
                   onClick={() => navigate(`/chat?userId=${accProvider.userId}`)}
                 >
-                  {t('requestDetail.problem', 'Muammo bor — ustaga yozish')}
+                  {t('requestDetail.problem', 'Muammo bor — mutaxassisga yozish')}
                 </button>
               )}
             </>
@@ -797,7 +797,7 @@ export default function RequestDetailPage() {
 
           {!isProvider && status === 'completed' && !request.review && (
             <button type="button" className="rt-btn rt-btn--primary" onClick={() => navigate(`/requests/${id}/done`)}>
-              {t('requestDetail.rate', 'Ustani baholash')}
+              {t('requestDetail.rate', 'Mutaxassisni baholash')}
             </button>
           )}
 

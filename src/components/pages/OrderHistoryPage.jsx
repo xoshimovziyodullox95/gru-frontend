@@ -130,7 +130,7 @@ export default function OrderHistoryPage() {
               ? acceptedOffer?.provider
               : item.client;
 
-            const otherLabel = tab === 'client' ? T('Usta') : T('Mijoz');
+            const otherLabel = tab === 'client' ? T('Mutaxassis') : T('Mijoz');
             const hasReview = Boolean(item.review?.rating);
 
             return (

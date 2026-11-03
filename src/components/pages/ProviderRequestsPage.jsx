@@ -1,6 +1,6 @@
 /* ============================================================
    PROVIDER REQUESTS PAGE — /provider-requests
-   Ustaga kelgan so'rovlar ro'yxati. Har bir karta tafsilotlar
+   Mutaxassisga kelgan so'rovlar ro'yxati. Har bir karta tafsilotlar
    sahifasini ochadi (/provider-requests/:id) — taklif berish,
    yo'lga chiqish va ishni tugatish o'sha yerda.
    ============================================================ */
@@ -20,7 +20,7 @@ import '../../styles/providerRequests.css';
 
 const TABS = ['open', 'active', 'closed'];
 
-// Ustaning nuqtai nazaridan holat matni
+// Mutaxassisning nuqtai nazaridan holat matni
 function statusLabel(request) {
   const offer = request.myOffer;
   if (request.status === 'open') {

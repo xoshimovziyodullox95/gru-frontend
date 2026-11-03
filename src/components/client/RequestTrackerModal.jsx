@@ -1,7 +1,7 @@
 /* ============================================================
    REQUEST TRACKER MODAL
-   Mijoz so'rov yuborgandan keyin: ustalar javobini kutish,
-   takliflarni solishtirish va ustani tanlash.
+   Mijoz so'rov yuborgandan keyin: mutaxassislar javobini kutish,
+   takliflarni solishtirish va mutaxassisni tanlash.
    ============================================================ */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -180,14 +180,14 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
         setRequest((prev) => ({ ...prev, status: 'accepted', acceptedOfferId: offer._id }));
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || t('tracker.acceptError', 'Ustani tanlab bo‘lmadi'));
+      toast.error(err.response?.data?.error || t('tracker.acceptError', 'Mutaxassisni tanlab bo‘lmadi'));
     } finally {
       setAcceptingId(null);
     }
   };
 
   const handleCancel = async () => {
-    if (!window.confirm(t('tracker.cancelConfirm', 'So‘rovni bekor qilasizmi? Ustalar endi uni ko‘rmaydi.'))) return;
+    if (!window.confirm(t('tracker.cancelConfirm', 'So‘rovni bekor qilasizmi? Mutaxassislar endi uni ko‘rmaydi.'))) return;
     setCancelling(true);
     try {
       await updateRequestStatus(requestId, 'cancelled', t('tracker.cancelReason', 'Mijoz bekor qildi'));
@@ -214,10 +214,10 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
 
   const TITLES = {
     searching: request.isDirect
-      ? t('tracker.title.sentToPro', 'So‘rov ustaga yuborildi')
-      : t('tracker.title.searching', 'Usta qidirilmoqda'),
-    offers: t('tracker.title.offers', 'Ustani tanlang'),
-    accepted: t('tracker.title.accepted', 'Usta yo‘lda'),
+      ? t('tracker.title.sentToPro', 'So‘rov mutaxassisga yuborildi')
+      : t('tracker.title.searching', 'Mutaxassis qidirilmoqda'),
+    offers: t('tracker.title.offers', 'Mutaxassisni tanlang'),
+    accepted: t('tracker.title.accepted', 'Mutaxassis yo‘lda'),
     closed: status === 'completed' ? t('tracker.title.completed', 'Ish yakunlandi') : t('tracker.title.closed', 'So‘rov yopildi'),
   };
 
@@ -253,10 +253,10 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                   <Users size={16} />
                   <span>
                     {request.isDirect
-                      ? t('tracker.waitingPro', 'Usta narx taklif qilishi bilan shu yerda ko‘rinadi')
+                      ? t('tracker.waitingPro', 'Mutaxassis narx taklif qilishi bilan shu yerda ko‘rinadi')
                       : request.notifiedCount
-                        ? t('tracker.sentCount', '{{count}} ta yaqin ustaga yuborildi', { count: request.notifiedCount })
-                        : t('tracker.sent', 'Yaqin ustalarga yuborildi')}
+                        ? t('tracker.sentCount', '{{count}} ta yaqin mutaxassisga yuborildi', { count: request.notifiedCount })
+                        : t('tracker.sent', 'Yaqin mutaxassislarga yuborildi')}
                   </span>
                 </li>
                 {minutesLeft !== null && (
@@ -297,7 +297,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                         >
                           <ProviderAvatar provider={offer.provider} size={42} />
                           <span className="rt-row__who">
-                            <strong>{offer.provider?.name || t('activeOrder.pro', 'Usta')}</strong>
+                            <strong>{offer.provider?.name || t('activeOrder.pro', 'Mutaxassis')}</strong>
                             <span className="rt-row__meta">
                               <Rating provider={offer.provider} />
                               <span>· {offer.arrivalMinutes || 30} {t('common.min', 'daq')}</span>
@@ -328,7 +328,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                 <div className="rt-master">
                   <ProviderAvatar provider={provider} size={48} />
                   <span className="rt-row__who">
-                    <strong>{provider.name || t('activeOrder.pro', 'Usta')}</strong>
+                    <strong>{provider.name || t('activeOrder.pro', 'Mutaxassis')}</strong>
                     <span className="rt-row__meta">
                       <Rating provider={provider} />
                       <span>· {formatPrice(acceptedOffer.price)} {t('common.sum', 'so‘m')}</span>
@@ -340,7 +340,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
                         <Phone size={18} />
                       </a>
                     )}
-                    <button type="button" className="rt-round" onClick={openChat} aria-label={t('tracker.message', 'Ustaga yozish')}>
+                    <button type="button" className="rt-round" onClick={openChat} aria-label={t('tracker.message', 'Mutaxassisga yozish')}>
                       <MessageCircle size={18} />
                     </button>
                   </span>

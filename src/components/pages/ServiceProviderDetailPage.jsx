@@ -171,7 +171,7 @@ export default function ServiceProviderDetailPage() {
     }));
   };
 
-  // Buyurtma — usta chaqirish oqimi, so'rov faqat shu ustaga yuboriladi
+  // Buyurtma — mutaxassis chaqirish oqimi, so'rov faqat shu mutaxassisga yuboriladi
   const handleOrder = () => {
     if (!user) return navigate('/login');
     navigate(`/request?provider=${provider._id}`);

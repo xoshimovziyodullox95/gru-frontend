@@ -8,11 +8,11 @@ import { T } from '../utils/T';
 import '../../styles/zumikTips.css';
 
 const TIPS = {
-  '/marketplace': () => T('Bu — Bozor. Kategoriyani tanlang yoki qidiring: tovarlar, ustalar va joylar shu yerda.'),
+  '/marketplace': () => T('Bu — Bozor. Kategoriyani tanlang yoki qidiring: tovarlar, mutaxassislar va joylar shu yerda.'),
   '/marketplace/all': () => T('Filtrlar bilan narx, kategoriya va turini tanlang. Yoqqanini yurakcha bilan saqlab qo‘ying.'),
   '/cart': () => T('Savat: sonini o‘zgartiring va «Buyurtma berish»ni bosing. To‘lov — tovarni qo‘lingizga olganda.'),
   '/chat': () => T('Chat: xabarni o‘ngga sursangiz — javob, uzoq bossangiz — menyu. «⋮» orqali chat fonini o‘zgartiring.'),
-  '/request': () => T('Muammoni tanlang va yozing — yaqin ustalar narx taklif qiladi, siz eng mosini tanlaysiz.'),
+  '/request': () => T('Muammoni tanlang va yozing — yaqin mutaxassislar narx taklif qiladi, siz eng mosini tanlaysiz.'),
   '/add-listing': () => T('Nima joylaysiz: narsa sotish, xizmat yoki joy. 1–2 daqiqa, bepul. Yaxshi rasm — tez sotiladi!'),
   '/notifications': () => T('Bildirishnomalar: buyurtmalar, xabarlar, layk va obunalar shu yerda.'),
   '/marketplace/profile': () => T('Bu profilingiz: e’lonlar, videolar va buyurtmalar. Tahrirlash uchun qalamchani bosing.'),

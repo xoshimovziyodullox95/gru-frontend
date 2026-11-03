@@ -1,5 +1,5 @@
 /* ============================================================
-   REQUEST DONE PAGE — /requests/:id/done (mijoz), /provider-requests/:id/done (usta)
+   REQUEST DONE PAGE — /requests/:id/done (mijoz), /provider-requests/:id/done (mutaxassis)
    Ish yakunlangach: kvitansiya, ish rasmlari, mijoz uchun baholash.
    Avval bu RatingModal (oyna) edi.
    ============================================================ */
@@ -137,7 +137,7 @@ export default function RequestDonePage() {
     : null;
   const person = isProvider
     ? { name: request.client?.fullName || request.client?.full_name || t('requestDone.client', 'Mijoz'), image: request.client?.avatar_url, role: t('requestDone.client', 'Mijoz') }
-    : { name: accepted?.provider?.name || t('requestDone.provider', 'Usta'), image: accepted?.provider?.image, role: t('requestDone.provider', 'Usta') };
+    : { name: accepted?.provider?.name || t('requestDone.provider', 'Mutaxassis'), image: accepted?.provider?.image, role: t('requestDone.provider', 'Mutaxassis') };
   const total = isProvider ? request.myOffer?.price : accepted?.price;
   const workTime = duration(request.arrivedAt || request.startedAt || request.acceptedAt, request.completedAt, t);
   const priceChanged = request.priceChange?.status === 'accepted';
@@ -222,7 +222,7 @@ export default function RequestDonePage() {
         ) : (
           <section className="rdn-block rdn-rate">
             <h2>{t('requestDone.rateTitle', '{{name}}ni baholang', { name: person.name })}</h2>
-            <p className="rdn-hint">{t('requestDone.rateHint', 'Bahoingiz boshqa mijozlarga to‘g‘ri usta tanlashda yordam beradi')}</p>
+            <p className="rdn-hint">{t('requestDone.rateHint', 'Bahoingiz boshqa mijozlarga to‘g‘ri mutaxassis tanlashda yordam beradi')}</p>
             <Stars value={rating} onChange={pickRating} />
             <span className={`rdn-rate__label ${rating ? 'is-visible' : ''}`}>{rating ? t(`requestDone.rating.${rating}`) : '·'}</span>
 
@@ -264,7 +264,7 @@ export default function RequestDonePage() {
         )}
         {(!isProvider && review) && (
           <button type="button" className="rdn-btn rdn-btn--primary" onClick={() => navigate('/request')}>
-            <Wrench size={18} /> {t('requestDone.again', 'Yana usta chaqirish')}
+            <Wrench size={18} /> {t('requestDone.again', 'Yana mutaxassis chaqirish')}
           </button>
         )}
         {isProvider && (

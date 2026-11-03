@@ -39,7 +39,7 @@ export default function ServicePage() {
   const [loadedServices, setLoadedServices] = useState({ slug: null, providers: [] });
   const providers = loadedServices.slug === slug ? loadedServices.providers : [];
   const loading = loadedServices.slug !== slug;
-  // Filtrlar URL'da — ustaning sahifasidan orqaga qaytganda saqlanib qoladi
+  // Filtrlar URL'da — mutaxassisning sahifasidan orqaga qaytganda saqlanib qoladi
   const [query, setQuery] = useUrlParam('q');
   const [filterTop, setFilterTop] = useUrlFlag('top');
   const [filterVerified, setFilterVerified] = useUrlFlag('verified');

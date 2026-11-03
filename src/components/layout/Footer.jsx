@@ -72,7 +72,7 @@ export default function Footer() {
             <ul className="footer-links">
               <li><Link to="/add-listing"><FiFileText size={14} /> {t('footer.links.addListing')}</Link></li>
               <li><Link to="/profile"><FiShield size={14} /> {t('footer.links.profile')}</Link></li>
-              <li><Link to="/request"><FiFileText size={14} /> {t('footer.links.request', 'Usta chaqirish')}</Link></li>
+              <li><Link to="/request"><FiFileText size={14} /> {t('footer.links.request', 'Mutaxassis chaqirish')}</Link></li>
               <li><Link to="/my-orders"><FiShield size={14} /> {t('footer.links.orders', 'Buyurtmalarim')}</Link></li>
             </ul>
           </div>

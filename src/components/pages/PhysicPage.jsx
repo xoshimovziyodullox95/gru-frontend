@@ -11,7 +11,7 @@ const physicCategories = [
   { key: 'moliya', name: T('Bank va moliya xizmatlari'), emoji: '🏦' },
   { key: 'kochmasmulk', name: T('Ko\'chmas mulk va ta\'mirlash'), emoji: '🏗️' },
   { key: 'talim', name: T('Ta\'lim va kurslar'), emoji: '🎓' },
-  { key: 'shaxsiyxizmat', name: T('Shaxsiy xizmatlar (usta, tozalash)'), emoji: '🔧' },
+  { key: 'shaxsiyxizmat', name: T('Shaxsiy xizmatlar (mutaxassis, tozalash)'), emoji: '🔧' },
   { key: 'ish', name: T('Ish va frilans'), emoji: '💼' },
   { key: 'sugurta', name: T('Sug\'urta xizmatlari'), emoji: '🛡️' },
   { key: 'ikkilamchi', name: T('Ikkilamchi bozor (foydalanilgan tovarlar)'), emoji: '♻️' },

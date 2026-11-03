@@ -1,6 +1,6 @@
 ﻿import { safeGoBack } from '../utils/navigation.js';
 /* ============================================================
-   REQUEST PAGE — Usta kerak
+   REQUEST PAGE — Mutaxassis kerak
    3 qadamli wizard + RequestTrackerModal
    ============================================================ */
 
@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Building2, Check, ChevronRight, User, X } from 'lucide-react';
+import { ArrowLeft, Building2, CalendarClock, CalendarDays, Check, CheckCircle2, ChevronRight, ClipboardList, LayoutGrid, MapPin, Sun, Sunrise, User, Wrench, X, Zap } from 'lucide-react';
 
 import LocationMapPicker from '../forms/LocationMapPicker';
 import RequestTrackerModal from '../client/RequestTrackerModal';  // ✅ YANGI
@@ -16,6 +16,7 @@ import { getServiceTaxonomy, getServiceProviderById } from '../services/serviceP
 import { createServiceRequest } from '../services/serviceRequests';
 import { getUserProfile } from '../services/user';
 import { getServiceTaxonomyLabel } from '../utils/serviceTaxonomyLabels';
+import { serviceStyle, DIRECTION_STYLE } from '../utils/serviceIcons';
 
 import '../../styles/request.css';
 
@@ -31,10 +32,10 @@ import { T } from '../utils/T';
 export default function RequestPage({ defaultCategory = '' }) {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
-  // /request?category=santexnik — AI yordamchi yoki usta kartasidan kelganda xizmat turi tanlangan bo'ladi
+  // /request?category=santexnik — AI yordamchi yoki mutaxassis kartasidan kelganda xizmat turi tanlangan bo'ladi
   const [searchParams] = useSearchParams();
   const initialCategory = defaultCategory || searchParams.get('category') || '';
-  // /request?provider=ID — usta sahifasidagi "Buyurtma berish": so'rov faqat shu ustaga boradi
+  // /request?provider=ID — mutaxassis sahifasidagi "Buyurtma berish": so'rov faqat shu mutaxassisga boradi
   const targetProviderId = searchParams.get('provider') || '';
   const [targetProvider, setTargetProvider] = useState(null);
 
@@ -48,7 +49,7 @@ export default function RequestPage({ defaultCategory = '' }) {
   const [search, setSearch] = useState('');
   const [description, setDescription] = useState('');
   const [when, setWhen] = useState('now');
-  // Usta tanlangach siz bilan bog'lanishi uchun (profildan to'ldiriladi)
+  // Mutaxassis tanlangach siz bilan bog'lanishi uchun (profildan to'ldiriladi)
   const [phone, setPhone] = useState(() => {
     try { return localStorage.getItem('zumo_contact_phone') || ''; } catch { return ''; }
   });
@@ -94,7 +95,7 @@ export default function RequestPage({ defaultCategory = '' }) {
     };
   }, []);
 
-  // To'g'ridan-to'g'ri buyurtma: ustaning xizmat turi avtomatik, 1-qadam o'tkazib yuboriladi
+  // To'g'ridan-to'g'ri buyurtma: mutaxassisning xizmat turi avtomatik, 1-qadam o'tkazib yuboriladi
   useEffect(() => {
     if (!targetProviderId) return undefined;
     let mounted = true;
@@ -107,7 +108,7 @@ export default function RequestPage({ defaultCategory = '' }) {
         setStep((st) => (st === 1 ? 2 : st));
       })
       .catch(() => {
-        if (mounted) setError(T('Usta topilmadi. Xizmat turini o‘zingiz tanlang.'));
+        if (mounted) setError(T('Mutaxassis topilmadi. Xizmat turini o‘zingiz tanlang.'));
       });
     return () => { mounted = false; };
   }, [targetProviderId]);
@@ -152,16 +153,22 @@ export default function RequestPage({ defaultCategory = '' }) {
 
   const selected = flat.find((c) => c.slug === category) || null;
   const whenOptions = [
-    { key: 'now', label: T('Hozir') },
-    { key: 'today', label: T('Bugun') },
-    { key: 'tomorrow', label: T('Ertaga') },
-    { key: 'week', label: T('Shu hafta') },
+    { key: 'now', label: T('Hozir'), Icon: Zap },
+    { key: 'today', label: T('Bugun'), Icon: Sun },
+    { key: 'tomorrow', label: T('Ertaga'), Icon: Sunrise },
+    { key: 'week', label: T('Shu hafta'), Icon: CalendarDays },
   ];
   const whenText = whenOptions.find((w) => w.key === when)?.label || '';
   const phoneDigits = phone.replace(/\D/g, '');
   const phoneOk = phoneDigits.length >= 9;
   const quickPhrases = [T('Ishlamay qoldi'), T('Suv oqyapti'), T('Yangi o\'rnatish kerak'), T('Narxini bilmoqchiman')];
-  const stepTitles = [T('Nima kerak?'), T('Nima qilish kerak?'), T('Usta qayerga borsin?')];
+  const stepTitles = [T('Nima kerak?'), T('Nima qilish kerak?'), T('Mutaxassis qayerga borsin?')];
+  const stepDescriptions = [
+    T('Kerakli xizmat turini tanlang'),
+    T('Ish tafsilotlari va qachon kerakligini yozing'),
+    T('Xaritada manzilni belgilang va telefonni kiriting'),
+  ];
+  const stepIcons = [Wrench, ClipboardList, MapPin];
   const descLen = description.trim().length;
   const hasAddress = Boolean(location?.address || manualAddress.trim());
 
@@ -170,7 +177,7 @@ export default function RequestPage({ defaultCategory = '' }) {
       ? Boolean(category)
       : step === 2
       ? descLen >= 10
-      : hasAddress && !submitting;
+      : hasAddress && phoneOk && !submitting;
 
   /* ============ NAV ============ */
 
@@ -219,7 +226,7 @@ export default function RequestPage({ defaultCategory = '' }) {
       return;
     }
     if (!phoneOk) {
-      setError(T('Telefon raqamingizni yozing — usta siz bilan bog‘lanadi'));
+      setError(T('Telefon raqamingizni yozing — mutaxassis siz bilan bog‘lanadi'));
       return;
     }
 
@@ -245,8 +252,8 @@ export default function RequestPage({ defaultCategory = '' }) {
 
       toast.success(
         targetProvider
-          ? T('Buyurtma ustaga yuborildi')
-          : T('So\'rov yuborildi. {{v}} ta ustaga xabar ketdi', { v: res.data?.notifiedCount || 0 })
+          ? T('Buyurtma mutaxassisga yuborildi')
+          : T('So\'rov yuborildi. {{v}} ta mutaxassisga xabar ketdi', { v: res.data?.notifiedCount || 0 })
       );
 
       /* ✅ MODAL OCHISH (navigate o'rniga) */
@@ -302,21 +309,38 @@ export default function RequestPage({ defaultCategory = '' }) {
         </div>
       </header>
 
+      <nav className="rq-steps" aria-label={T('Buyurtma qadamlari')}>
+        {stepTitles.map((title, index) => {
+          const current = index + 1;
+          const StepIcon = stepIcons[index];
+          const complete = current < step;
+          return (
+            <div className={`rq-step ${current === step ? 'is-current' : ''} ${complete ? 'is-complete' : ''}`} key={title} aria-current={current === step ? 'step' : undefined}>
+              <span className="rq-step__icon">{complete ? <Check size={17} /> : <StepIcon size={17} />}</span>
+              <span className="rq-step__label">{[T('Xizmat'), T('Tafsilot'), T('Manzil')][index]}</span>
+            </div>
+          );
+        })}
+      </nav>
+
       {/* ============ MAIN ============ */}
 
       <main className="rq-main">
-        <h1 className="rq-title">{stepTitles[step - 1]}</h1>
+        <div className="rq-heading" key={step}>
+          <span className="rq-heading__icon">{(() => { const StepIcon = stepIcons[step - 1]; return <StepIcon size={23} />; })()}</span>
+          <div><h1 className="rq-title">{stepTitles[step - 1]}</h1><p className="rq-heading__hint">{stepDescriptions[step - 1]}</p></div>
+        </div>
         {targetProvider && (
           <p className="rq-target">
             {T('Buyurtma: {{name}}', { name: targetProvider.name })}
-            <span>{T('So‘rov faqat shu ustaga yuboriladi')}</span>
+            <span>{T('So‘rov faqat shu mutaxassisga yuboriladi')}</span>
           </p>
         )}
 
         {/* ============ STEP 1: KATEGORIYA ============ */}
 
         {step === 1 && (
-          <section>
+          <section className="rq-step-content" key="step-1">
             {/* Buyurtmachi turi: hozircha faqat jismoniy shaxs; yuridik (shartnoma, hisob-faktura) — tez kunda */}
             <div className="rq-who" role="radiogroup" aria-label={T('Buyurtmachi')}>
               <button type="button" role="radio" aria-checked="true" className="rq-who__opt is-active">
@@ -362,18 +386,22 @@ export default function RequestPage({ defaultCategory = '' }) {
                     {[
                       ['all', T('Hammasi')],
                       ...directions.map(([d]) => [d, getServiceTaxonomyLabel(d, i18n.language)]),
-                    ].map(([key, label]) => (
-                      <button
-                        key={key}
-                        type="button"
-                        role="tab"
-                        aria-selected={activeDir === key}
-                        className={`rq-tab ${activeDir === key ? 'is-on' : ''}`}
-                        onClick={() => setActiveDir(key)}
-                      >
-                        {label}
-                      </button>
-                    ))}
+                    ].map(([key, label]) => {
+                      const TabIcon = key === 'all' ? LayoutGrid : (DIRECTION_STYLE[key]?.Icon || LayoutGrid);
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          role="tab"
+                          aria-selected={activeDir === key}
+                          className={`rq-tab ${activeDir === key ? 'is-on' : ''}`}
+                          style={{ '--svc': key === 'all' ? '#0096c7' : (DIRECTION_STYLE[key]?.color || '#0096c7') }}
+                          onClick={() => setActiveDir(key)}
+                        >
+                          <TabIcon size={16} /> {label}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </>
@@ -403,6 +431,7 @@ export default function RequestPage({ defaultCategory = '' }) {
               <ul className="rq-list">
                 {visible.map((c) => {
                   const on = category === c.slug;
+                  const { Icon: SvcIcon, color } = serviceStyle(c.slug, c.direction);
 
                   return (
                     <li key={`${c.direction}-${c.slug}`}>
@@ -411,7 +440,9 @@ export default function RequestPage({ defaultCategory = '' }) {
                         className={`rq-row ${on ? 'is-on' : ''}`}
                         onClick={() => setCategory(c.slug)}
                         aria-pressed={on}
+                        style={{ '--svc': color }}
                       >
+                        <span className="rq-row__icon"><SvcIcon size={22} strokeWidth={2} /></span>
                         <span className="rq-row__text">
                           <strong>{c.label}</strong>
                           {(activeDir === 'all' || search) && (
@@ -436,7 +467,7 @@ export default function RequestPage({ defaultCategory = '' }) {
         {/* ============ STEP 2: TAVSIF ============ */}
 
         {step === 2 && (
-          <section>
+          <section className="rq-step-content" key="step-2">
             {selected && !targetProvider && (
               <p className="rq-chosen">
                 <span>
@@ -449,7 +480,7 @@ export default function RequestPage({ defaultCategory = '' }) {
             )}
 
             <fieldset className="rq-group">
-              <legend>{T('Qachon kerak?')}</legend>
+              <legend><CalendarClock size={17} /> {T('Qachon kerak?')}</legend>
               <div className="rq-seg">
                 {whenOptions.map((w) => (
                   <button
@@ -459,7 +490,7 @@ export default function RequestPage({ defaultCategory = '' }) {
                     aria-pressed={when === w.key}
                     onClick={() => setWhen(w.key)}
                   >
-                    {w.label}
+                    <w.Icon size={16} /> {w.label}
                   </button>
                 ))}
               </div>
@@ -497,7 +528,11 @@ export default function RequestPage({ defaultCategory = '' }) {
         {/* ============ STEP 3: MANZIL ============ */}
 
         {step === 3 && (
-          <section>
+          <section className="rq-step-content" key="step-3">
+            <div className={`rq-location-status ${location ? 'is-set' : ''}`} aria-live="polite">
+              <span className="rq-location-status__icon">{location ? <CheckCircle2 size={20} /> : <MapPin size={20} />}</span>
+              <span className="rq-location-status__copy"><strong>{location ? T('Manzil xaritada belgilandi') : T('Mutaxassis boradigan joyni belgilang')}</strong><small>{manualAddress || (location ? T('Aniq uy manzilini pastda tahrirlashingiz mumkin') : T('Xaritani bosing, manzilni qidiring yoki GPS’dan foydalaning'))}</small></span>
+            </div>
             <div className="rq-map">
               <LocationMapPicker
                 lat={location?.lat}
@@ -506,9 +541,7 @@ export default function RequestPage({ defaultCategory = '' }) {
               />
             </div>
 
-            <p className="rq-hint">
-              {T('Xaritada aniq joyni bosing yoki manzilni pastga yozing.')}
-            </p>
+            <p className="rq-hint"><MapPin size={15} /> {T('Xaritadagi belgini surib, kerakli joyga qo‘ying.')}</p>
 
             <label className="rq-group">
               <span className="rq-legend">{T('Manzil')}</span>
@@ -540,7 +573,7 @@ export default function RequestPage({ defaultCategory = '' }) {
                 placeholder="+998 90 123 45 67"
                 onChange={(e) => setPhone(e.target.value)}
               />
-              <span className="rq-count">{T('Faqat siz tanlagan ustaga ko‘rinadi')}</span>
+              <span className="rq-count">{T('Faqat siz tanlagan mutaxassisga ko‘rinadi')}</span>
             </label>
 
             {selected && (
@@ -586,7 +619,7 @@ export default function RequestPage({ defaultCategory = '' }) {
               disabled={!canNext}
               onClick={handleSubmit}
             >
-              {submitting ? T('Yuborilmoqda...') : targetProvider ? T('Ustaga yuborish') : T('Ustalarga yuborish')}
+              {submitting ? T('Yuborilmoqda...') : targetProvider ? T('Mutaxassisga yuborish') : T('Mutaxassislarga yuborish')}
             </button>
           )}
         </div>
