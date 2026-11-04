@@ -79,7 +79,7 @@ export default function AIChat() {
     {
       role: 'assistant',
       fresh: true,
-      content: T('Salom! Men Zumik — sizning ZUMO yordamchingizman 🤖 Nima izlayotganingizni va byudjetingizni yozing, eng mosini topib beraman.'),
+      content: T('Salom! Men Zumik — sizning ZUMO yordamchingizman 🤖 Tovar, usta yoki joy qidiryapsizmi — yozing, topib beraman. Boshqa savolingiz bo‘lsa ham bemalol so‘rang.'),
     },
   ]);
 

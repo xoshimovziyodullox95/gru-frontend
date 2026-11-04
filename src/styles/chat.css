@@ -755,6 +755,7 @@ html:not(.dark) .tg-loading {
 .tg-meta {
   display: inline-flex;
   align-items: center;
+  line-height: 1;
   gap: 4px;
   margin-top: 2px;
   float: right;
@@ -780,6 +781,10 @@ html:not(.dark) .tg-loading {
   align-items: center;
   color: var(--tg-meta-color);
   transition: color 0.2s;
+}
+
+.tg-check svg {
+  display: block;
 }
 
 .tg-check.read {
@@ -1901,3 +1906,43 @@ div.tg-reply-bar { width: auto; }
 .tg-head-menu__list button:hover { background: var(--tg-active, rgba(0,0,0,.05)); }
 .tg-wall-opt__swatch--photo { display: grid; place-items: center; color: #00a6d6; background: rgba(0, 166, 214, 0.08) !important; }
 .tg-wall-opt__swatch--photo[style] { background-size: cover !important; }
+
+/* Ovozli xabar pufakchasi */
+.tg-voice-msg { display: flex; align-items: center; gap: 8px; min-width: 200px; padding: 4px 0; }
+.tg-voice-msg audio { height: 36px; max-width: 220px; }
+.tg-voice-msg__dur { font-size: 12px; opacity: 0.7; white-space: nowrap; }
+
+/* Yozib olish paneli */
+.tg-input--recording { display: flex; align-items: center; gap: 12px; }
+.tg-recording-indicator { flex: 1; display: flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; font-size: 15px; }
+.tg-recording-dot { width: 10px; height: 10px; border-radius: 50%; background: #e53935; animation: tgRecPulse 1s ease-in-out infinite; }
+@keyframes tgRecPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.tg-input__icon.danger { color: #e53935; }
+
+/* Reaksiyalar */
+.tg-reactions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.tg-reaction {
+  display: inline-flex; align-items: center; gap: 2px; padding: 2px 7px; border-radius: 12px;
+  background: var(--tg-active, rgba(0,0,0,.06)); font-size: 13px; cursor: pointer; user-select: none;
+}
+.tg-reaction.mine { background: rgba(0, 166, 214, 0.22); }
+.tg-react-picker {
+  position: absolute; bottom: 100%; margin-bottom: 6px; display: flex; gap: 4px; padding: 6px 8px;
+  background: var(--tg-bg-elevated, #1c2733); border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  z-index: 5; animation: tgFadeIn 0.15s ease;
+}
+.tg-react-picker button { border: 0; background: transparent; font-size: 20px; cursor: pointer; padding: 2px; line-height: 1; }
+.tg-react-picker button:hover { transform: scale(1.2); }
+
+/* Forward (ulashish) oynasi */
+.tg-forward-search {
+  width: 100%; margin: 10px 0; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--tg-border, rgba(0,0,0,.1));
+  background: var(--tg-input-bg, rgba(0,0,0,.04)); color: inherit; font: inherit;
+}
+.tg-forward-list { max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+.tg-forward-item {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 6px; border: 0; background: transparent;
+  border-radius: 10px; cursor: pointer; text-align: left; color: inherit; font: inherit;
+}
+.tg-forward-item:hover { background: var(--tg-active, rgba(0,0,0,.05)); }
+.tg-forward-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }

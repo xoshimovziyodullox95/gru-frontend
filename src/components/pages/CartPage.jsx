@@ -155,7 +155,14 @@ export default function CartPage() {
         <div className="cart-grid">
           <div className="cart-items">
             {cart.map((item) => (
-              <div key={item.id} className="cart-item">
+              <div
+                key={item.id}
+                className="cart-item"
+                onClick={() => {
+                  if (item.itemType !== 'bank_service') navigate(`/equipment/${item.id}`);
+                }}
+                style={item.itemType !== 'bank_service' ? { cursor: 'pointer' } : undefined}
+              >
                 <img
                   src={resolveMediaUrl(item.image)}
                   onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/zumo-placeholder.svg'; }}
@@ -174,7 +181,7 @@ export default function CartPage() {
                     </p>
                   )}
                 </div>
-                <div className="cart-item-actions">
+                <div className="cart-item-actions" onClick={(e) => e.stopPropagation()}>
                   {item.itemType === 'bank_service' ? (
                     <button
                       onClick={() => removeItem(item.id)}

@@ -12,6 +12,18 @@ export const sendMedia = (userId, file) => {
   });
 };
 
+export const sendVoice = (userId, blob, duration) => {
+  const formData = new FormData();
+  formData.append('media', blob, 'voice.webm');
+  formData.append('duration', String(Math.round(duration || 0)));
+  return api.post(`/chat/media/${userId}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+};
+
+export const reactMessage = (messageId, emoji) => api.post(`/chat/messages/${messageId}/react`, { emoji });
+export const forwardMessage = (messageId, toUserId) => api.post(`/chat/messages/${messageId}/forward`, { toUserId });
+
 export const markAsRead = (messageId) => api.put(`/chat/messages/${messageId}/read`);
 export const replyMessage = (messageId, text) => api.post(`/chat/messages/${messageId}/reply`, { text });
 export const getUnreadCount = () => api.get('/chat/unread-count');

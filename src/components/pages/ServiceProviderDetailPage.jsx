@@ -278,14 +278,18 @@ export default function ServiceProviderDetailPage() {
 
             {/* USTA */}
             {(owner || provider.company) && (
-              <section className="dp-card dp-owner">
+              <section
+                className="dp-card dp-owner"
+                style={owner?._id ? { cursor: 'pointer' } : undefined}
+                onClick={() => owner?._id && navigate(`/profile/${owner._id}`)}
+              >
                 <Avatar className="dp-owner__avatar" src={owner?.avatar_url} name={ownerName} />
                 <div className="dp-owner__text">
                   <span>{t('serviceProvider.owner')}</span>
                   <strong>{ownerName || t('serviceProvider.fullName')}</strong>
                 </div>
                 {owner?._id && (
-                  <button type="button" className="dp-chip-btn" onClick={() => navigate(`/profile/${owner._id}`)}>
+                  <button type="button" className="dp-chip-btn" onClick={(e) => { e.stopPropagation(); navigate(`/profile/${owner._id}`); }}>
                     {T('Profil')} <ChevronRight size={15} />
                   </button>
                 )}

@@ -20,6 +20,9 @@ import {
   getMessages,
   sendMessage,
   sendMedia,
+  sendVoice,
+  reactMessage,
+  forwardMessage,
   markChatRead,
   replyMessage,
   editMessage,
@@ -32,7 +35,7 @@ import {
   Smile, Reply, Check, CheckCheck, Paperclip,
   MoreVertical, MessageSquare, Loader2, Inbox, Palette, Image as ImageIcon,
   Pencil, Trash2, Copy, Volume2, VolumeX, PlayCircle,
-  ExternalLink, Film, Package,
+  ExternalLink, Film, Package, Mic, Square, Forward, Pause,
 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import toast from 'react-hot-toast';
@@ -322,6 +325,15 @@ export default function ChatPage() {
   const [onlineStatus, setOnlineStatus] = useState({});
   const [sendingMedia, setSendingMedia] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordSeconds, setRecordSeconds] = useState(0);
+  const [reactPickerId, setReactPickerId] = useState(null);
+  const [forwardMsg, setForwardMsg] = useState(null);
+  const [forwardSearch, setForwardSearch] = useState('');
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
+  const recordTimerRef = useRef(null);
+  const REACTION_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
   const [wallpaper, setWallpaper] = useState(readWallpaper);
   const [wallpaperOpen, setWallpaperOpen] = useState(false);
   const [wallpaperImage, setWallpaperImage] = useState(readWallpaperImage);
@@ -634,16 +646,24 @@ export default function ChatPage() {
       );
     };
 
+    const onReacted = ({ _id, reactions }) => {
+      setMessages((prev) =>
+        prev.map((m) => (toIdStr(m._id) === String(_id) ? { ...m, reactions } : m))
+      );
+    };
+
     socket.on('message_edited', onEdited);
     socket.on('message_deleted', onDeleted);
     socket.on('message_read', onRead);
     socket.on('messages_read', onMessagesRead);
+    socket.on('message_reacted', onReacted);
 
     return () => {
       socket.off('message_edited', onEdited);
       socket.off('message_deleted', onDeleted);
       socket.off('message_read', onRead);
       socket.off('messages_read', onMessagesRead);
+      socket.off('message_reacted', onReacted);
     };
   }, [socket, currentUserId]);
 
@@ -841,9 +861,10 @@ export default function ChatPage() {
   useEffect(() => {
     const handler = (e) => {
       if (!e.target.closest('.tg-msg-menu-wrap')) setOpenMenuId(null);
+      if (!e.target.closest('.tg-react-picker') && !e.target.closest('.tg-msg-menu')) setReactPickerId(null);
     };
     // Telefonda ham: tashqariga tegish yoki "orqaga" (Escape) menyuni yopadi
-    const onKey = (e) => { if (e.key === 'Escape') { setOpenMenuId(null); setWallpaperOpen(false); } };
+    const onKey = (e) => { if (e.key === 'Escape') { setOpenMenuId(null); setReactPickerId(null); setWallpaperOpen(false); } };
     document.addEventListener('mousedown', handler);
     document.addEventListener('touchstart', handler, { passive: true });
     document.addEventListener('keydown', onKey);
@@ -952,6 +973,106 @@ export default function ChatPage() {
       },
       () => toast.error(T('Joylashuv olinmadi'))
     );
+  };
+
+  /* ============================================================
+     OVOZLI XABAR
+     ============================================================ */
+  const startRecording = async () => {
+    if (!activeChat || isRecording) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      recordedChunksRef.current = [];
+      mr.ondataavailable = (e) => { if (e.data.size > 0) recordedChunksRef.current.push(e.data); };
+      mr.onstop = () => stream.getTracks().forEach((t) => t.stop());
+      mr.start();
+      mediaRecorderRef.current = mr;
+      setIsRecording(true);
+      setRecordSeconds(0);
+      recordTimerRef.current = setInterval(() => setRecordSeconds((s) => s + 1), 1000);
+    } catch {
+      toast.error(T('Mikrofonga ruxsat berilmadi'));
+    }
+  };
+
+  const cancelRecording = () => {
+    clearInterval(recordTimerRef.current);
+    const mr = mediaRecorderRef.current;
+    if (mr && mr.state !== 'inactive') {
+      mr.onstop = () => mr.stream.getTracks().forEach((t) => t.stop());
+      mr.stop();
+    }
+    mediaRecorderRef.current = null;
+    recordedChunksRef.current = [];
+    setIsRecording(false);
+    setRecordSeconds(0);
+  };
+
+  const stopAndSendRecording = () => {
+    const mr = mediaRecorderRef.current;
+    if (!mr) return;
+    const duration = recordSeconds;
+    clearInterval(recordTimerRef.current);
+    mr.onstop = async () => {
+      mr.stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
+      recordedChunksRef.current = [];
+      if (blob.size > 0 && activeChat) {
+        try {
+          const res = await sendVoice(activeChat.userId, blob, duration);
+          setMessages((prev) => [...prev, res.data]);
+          bumpAfterSend(res.data);
+        } catch {
+          toast.error(T('Ovozli xabar yuborilmadi'));
+        }
+      }
+    };
+    mr.stop();
+    mediaRecorderRef.current = null;
+    setIsRecording(false);
+    setRecordSeconds(0);
+  };
+
+  /* ============================================================
+     REAKSIYA + FORWARD
+     ============================================================ */
+  const reactToMessage = async (msg, emoji) => {
+    setReactPickerId(null);
+    const mine = { userId: currentUserId, emoji };
+    setMessages((prev) =>
+      prev.map((m) => {
+        if (toIdStr(m._id) !== toIdStr(msg._id)) return m;
+        const already = (m.reactions || []).find((r) => toIdStr(r.userId) === currentUserId && r.emoji === emoji);
+        const rest = (m.reactions || []).filter((r) => toIdStr(r.userId) !== currentUserId);
+        return { ...m, reactions: already ? rest : [...rest, mine] };
+      })
+    );
+    try {
+      await reactMessage(msg._id, emoji);
+    } catch {
+      toast.error(T('Reaksiya yuborilmadi'));
+    }
+  };
+
+  const openForward = (msg) => {
+    setForwardMsg(msg);
+    setOpenMenuId(null);
+  };
+
+  const sendForwardTo = async (toUserId) => {
+    if (!forwardMsg) return;
+    try {
+      await forwardMessage(forwardMsg._id, toUserId);
+      toast.success(T('Yuborildi'));
+      setForwardMsg(null);
+      setForwardSearch('');
+      if (activeChat?.userId === toUserId) {
+        getMessages(toUserId).then((res) => setMessages(res.data || []));
+      }
+    } catch {
+      toast.error(T('Yuborilmadi'));
+    }
   };
 
   const onBubbleTouchStart = (e, menuId) => {
@@ -1437,6 +1558,17 @@ export default function ChatPage() {
                               </div>
                             )}
 
+                            {msg.mediaUrl && msg.mediaType === 'voice' && (
+                              <div className="tg-voice-msg">
+                                <audio src={getImageUrl(msg.mediaUrl)} controls preload="metadata" />
+                                {!!msg.mediaDuration && (
+                                  <span className="tg-voice-msg__dur">
+                                    {Math.floor(msg.mediaDuration / 60)}:{String(msg.mediaDuration % 60).padStart(2, '0')}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
                             {isLocation ? (
                               <a
                                 href={msg.message.replace(LOCATION_PREFIX, '')}
@@ -1462,6 +1594,25 @@ export default function ChatPage() {
                               )
                             )}
 
+                            {!!msg.reactions?.length && (
+                              <div className="tg-reactions">
+                                {Object.entries(
+                                  msg.reactions.reduce((acc, r) => {
+                                    acc[r.emoji] = (acc[r.emoji] || 0) + 1;
+                                    return acc;
+                                  }, {})
+                                ).map(([emoji, count]) => (
+                                  <span
+                                    key={emoji}
+                                    className={`tg-reaction ${msg.reactions.some((r) => toIdStr(r.userId) === currentUserId && r.emoji === emoji) ? 'mine' : ''}`}
+                                    onClick={() => reactToMessage(msg, emoji)}
+                                  >
+                                    {emoji} {count > 1 ? count : ''}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
                             <div className="tg-meta">
                               {msg.edited && <span className="tg-edited">{T('tahrirlandi')}</span>}
                               <span className="tg-time">{formatTime(msg.createdAt)}</span>
@@ -1471,6 +1622,14 @@ export default function ChatPage() {
                                 </span>
                               )}
                             </div>
+
+                            {reactPickerId === menuId && (
+                              <div className="tg-react-picker">
+                                {REACTION_EMOJIS.map((em) => (
+                                  <button key={em} type="button" onClick={() => reactToMessage(msg, em)}>{em}</button>
+                                ))}
+                              </div>
+                            )}
                           </div>
 
                           <div className="tg-msg-menu-wrap">
@@ -1483,8 +1642,14 @@ export default function ChatPage() {
                             </button>
                             {openMenuId === menuId && (
                               <div className="tg-msg-menu">
+                                <button onClick={() => { setOpenMenuId(null); setReactPickerId(menuId); }}>
+                                  <Smile size={14} /> {T('Reaksiya')}
+                                </button>
                                 <button onClick={() => handleReply(msg)}>
                                   <Reply size={14} /> {T('Javob berish')}
+                                </button>
+                                <button onClick={() => openForward(msg)}>
+                                  <Forward size={14} /> {T('Ulashish')}
                                 </button>
                                 {msg.message && !isLocation && (
                                   <button onClick={() => handleCopy(msg)}>
@@ -1594,6 +1759,20 @@ export default function ChatPage() {
                 </div>
               )}
 
+              {isRecording ? (
+                <div className="tg-input tg-input--recording">
+                  <button type="button" className="tg-input__icon danger" onClick={cancelRecording} aria-label={T('Bekor qilish')}>
+                    <Trash2 size={20} />
+                  </button>
+                  <div className="tg-recording-indicator">
+                    <span className="tg-recording-dot" />
+                    {Math.floor(recordSeconds / 60)}:{String(recordSeconds % 60).padStart(2, '0')}
+                  </div>
+                  <button type="button" className="tg-input__send" onClick={stopAndSendRecording} aria-label={T('Yuborish')}>
+                    <Send size={20} />
+                  </button>
+                </div>
+              ) : (
               <div className="tg-input">
                 <input
                   ref={fileInputRef}
@@ -1670,16 +1849,29 @@ export default function ChatPage() {
                   )}
                 </div>
 
-                <button
-                  type="button"
-                  className="tg-input__send"
-                  onClick={editingMessage ? handleEditSave : replyTo ? sendReply : send}
-                  disabled={!newMessage.trim()}
-                  aria-label={T('Yuborish')}
-                >
-                  {editingMessage ? <Check size={20} /> : <Send size={20} />}
-                </button>
+                {newMessage.trim() ? (
+                  <button
+                    type="button"
+                    className="tg-input__send"
+                    onClick={editingMessage ? handleEditSave : replyTo ? sendReply : send}
+                    aria-label={T('Yuborish')}
+                  >
+                    {editingMessage ? <Check size={20} /> : <Send size={20} />}
+                  </button>
+                ) : (
+                  !editingMessage && (
+                    <button
+                      type="button"
+                      className="tg-input__send"
+                      onClick={startRecording}
+                      aria-label={T('Ovozli xabar')}
+                    >
+                      <Mic size={20} />
+                    </button>
+                  )
+                )}
               </div>
+              )}
             </>
           ) : (
             <div className="tg-placeholder">
@@ -1692,6 +1884,34 @@ export default function ChatPage() {
       </div>
 
       {lightbox && <MediaLightbox media={lightbox} onClose={() => setLightbox(null)} />}
+
+      {forwardMsg && (
+        <div className="tg-wall-sheet" role="dialog" aria-modal="true" onClick={() => setForwardMsg(null)}>
+          <div className="tg-wall-sheet__card" onClick={(e) => e.stopPropagation()}>
+            <div className="tg-wall-sheet__head">
+              <strong>{T('Ulashish')}</strong>
+              <button type="button" onClick={() => setForwardMsg(null)} aria-label={T('Yopish')}><X size={18} /></button>
+            </div>
+            <input
+              type="text"
+              className="tg-forward-search"
+              placeholder={T('Qidirish...')}
+              value={forwardSearch}
+              onChange={(e) => setForwardSearch(e.target.value)}
+            />
+            <div className="tg-forward-list">
+              {conversations
+                .filter((c) => !forwardSearch.trim() || c.fullName?.toLowerCase().includes(forwardSearch.trim().toLowerCase()))
+                .map((c) => (
+                  <button key={c.userId} type="button" className="tg-forward-item" onClick={() => sendForwardTo(c.userId)}>
+                    <img src={getImageUrl(c.avatar) || '/images/zumo-placeholder.svg'} alt="" />
+                    <span>{c.fullName}</span>
+                  </button>
+                ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {reelViewer && (
         <Suspense fallback={null}>
