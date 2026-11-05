@@ -25,11 +25,17 @@ export default function CancelReasonModal({ isOpen, role, onClose, onConfirm }) 
         t('cancelReason.pro1', 'Band bo‘lib qoldim'),
         t('cancelReason.pro2', 'Manzil juda uzoq'),
         t('cancelReason.pro3', 'Narx kelishilmadi'),
+        t('cancelReason.pro4', 'Mijoz bilan bog‘lanib bo‘lmadi'),
+        t('cancelReason.pro5', 'Kerakli asbob-jihoz yo‘q'),
+        t('cancelReason.pro6', 'Bu ish mening sohamga to‘g‘ri kelmaydi'),
       ]
     : [
         t('cancelReason.cl1', 'Narx juda qimmat'),
         t('cancelReason.cl2', 'Boshqa usta topdim'),
         t('cancelReason.cl3', 'Fikrimni o‘zgartirdim'),
+        t('cancelReason.cl4', 'Juda uzoq kuttirdi'),
+        t('cancelReason.cl5', 'Muammo o‘z-o‘zidan hal bo‘ldi'),
+        t('cancelReason.cl6', 'Usta bilan bog‘lanib bo‘lmadi'),
       ];
 
   const reset = () => { setSelected(null); setCustomText(''); };
