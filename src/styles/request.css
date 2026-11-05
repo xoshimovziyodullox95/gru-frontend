@@ -368,19 +368,22 @@ html.dark .rq {
 .rq-map .map-picker { position: relative; width: 100%; height: 100%; overflow: hidden; }
 .rq-map .map-wrap { position: absolute; inset: 0; width: 100%; height: 100%; }
 .rq-map .map-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #dce9f0; z-index: 1; }
-.rq-map .map-search-row { position: absolute; z-index: 500; top: 12px; left: 12px; right: 12px; display: flex; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); box-shadow: 0 4px 18px rgba(11, 37, 64, .14); }
-.rq-map .map-search-row input { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); font: inherit; font-size: 14px; }
+/* OSM xaritasini ilova rangiga mos, yumshoq uslubga o'tkazish */
+.rq-map .leaflet-tile-pane { filter: saturate(0.5) brightness(1.05) sepia(0.14) hue-rotate(178deg) contrast(0.96); }
+.rq-map .map-search-row { position: absolute; z-index: 500; top: 12px; left: 12px; right: 12px; display: flex; gap: 8px; padding: 8px; border: 1px solid rgba(0,120,255,0.12); border-radius: 16px; background: var(--paper); box-shadow: 0 6px 22px rgba(11, 37, 64, .16); }
+.rq-map .map-search-row input { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 11px; background: var(--paper); color: var(--ink); font: inherit; font-size: 14px; }
 .rq-map .map-search-row input::placeholder { color: var(--faint); }
-.rq-map .map-search-row button { flex: 0 0 auto; min-width: 78px; height: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: var(--btn-bg); color: var(--btn-ink); font-size: 14px; font-weight: 700; }
-.rq-map .map-search-row button:disabled { opacity: .65; cursor: wait; }
+.rq-map .map-search-row button { flex: 0 0 auto; min-width: 78px; height: 44px; padding: 0 12px; border: 0; border-radius: 11px; background: linear-gradient(95deg, #0055b3, #0096ff); color: var(--btn-ink); font-size: 14px; font-weight: 700; box-shadow: 0 4px 14px rgba(0, 150, 255, 0.35); }
+.rq-map .map-search-row button:disabled { opacity: .65; cursor: wait; box-shadow: none; }
 .rq-map .map-search-error, .rq-map .map-loading, .rq-map .map-error { position: absolute; z-index: 500; left: 12px; right: 12px; padding: 9px 12px; border-radius: 10px; background: var(--paper); color: var(--muted); box-shadow: 0 2px 12px rgba(11, 37, 64, .12); font-size: 12px; line-height: 1.4; }
 .rq-map .map-search-error { top: 72px; color: var(--red); }
 .rq-map .map-loading, .rq-map .map-error { bottom: 12px; }
 .rq-map .map-hint { display: none; }
-.rq-map .rq-map-marker-wrap { border: 0; background: transparent; }
-.rq-map .rq-map-marker { position: absolute; left: 8px; top: 7px; width: 16px; height: 16px; border: 3px solid #fff; border-radius: 50% 50% 50% 0; background: var(--blue); box-shadow: 0 2px 8px rgba(0,0,0,.35); transform: rotate(-45deg); }
+.rq-map .map-locate-btn { box-shadow: 0 4px 16px rgba(0, 40, 80, 0.2); border: 1px solid rgba(0,120,255,0.12); }
+.rq-map .rq-map-marker-wrap { border: 0; background: transparent; filter: drop-shadow(0 3px 5px rgba(11,37,64,.3)); }
+.rq-map .rq-map-marker { position: absolute; left: 8px; top: 7px; width: 16px; height: 16px; border: 3px solid #fff; border-radius: 50% 50% 50% 0; background: linear-gradient(135deg, #3fe6ff, #0067c7); box-shadow: 0 2px 8px rgba(0,0,0,.35); transform: rotate(-45deg); }
 .rq-map .rq-map-marker::after { content: ''; position: absolute; inset: -8px; border: 2px solid var(--blue); border-radius: 50%; animation: rqPinPulse 1.8s ease-out infinite; }
-.rq-map .leaflet-control-attribution { font-size: 9px; }
+.rq-map .leaflet-control-attribution { font-size: 9px; background: rgba(255,255,255,0.75); }
 
 .rq-hint { display: flex; align-items: flex-start; gap: 7px; margin: 10px 0 24px; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .rq-hint svg { flex: 0 0 auto; margin-top: 1px; color: var(--blue); }
