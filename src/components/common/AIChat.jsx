@@ -24,11 +24,12 @@ function AssistantMessage({ msg, onTyped, onGrow, onTalk, onCardClick }) {
     onTalk(typed.typing);
     if (typed.done && msg.fresh) onTyped();
   }, [typed.typing, typed.done, msg.fresh, onTyped, onTalk]);
+  const emotion = (typed.done || !msg.fresh) ? (msg.emotion || 'neutral') : 'neutral';
 
   return (
     <div>
       <div className="ai-message assistant">
-        <span className="ai-avatar"><ZumoBot size={28} still talking={typed.typing} /></span>
+        <span className="ai-avatar"><ZumoBot size={28} still talking={typed.typing} emotion={emotion} /></span>
         <div className="ai-message-bubble" onClick={typed.typing ? typed.skip : undefined}>
           {typed.typing
             ? <span className="ai-md zumo-caret">{typed.shown}</span>
@@ -147,12 +148,12 @@ export default function AIChat() {
     try {
       // Serverga faqat matn yuboriladi (kartalar emas); birinchi salomlashuv kerak emas
       const data = await sendAIMessage(updated.slice(1).map(({ role, content: c }) => ({ role, content: c })));
-      setMessages((prev) => [...prev, { role: 'assistant', fresh: true, content: data?.reply || T('Javob topilmadi.'), cards: data?.cards || [] }]);
+      setMessages((prev) => [...prev, { role: 'assistant', fresh: true, content: data?.reply || T('Javob topilmadi.'), cards: data?.cards || [], emotion: data?.emotion }]);
     } catch (error) {
       // Limit yoki boshqa xatoda server tushunarli matn qaytaradi
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', fresh: true, content: error.response?.data?.reply || error.response?.data?.error || T('Server bilan bog\'lanishda xatolik yuz berdi.') },
+        { role: 'assistant', fresh: true, emotion: 'sad', content: error.response?.data?.reply || error.response?.data?.error || T('Server bilan bog\'lanishda xatolik yuz berdi.') },
       ]);
     } finally {
       setLoading(false);
@@ -174,14 +175,14 @@ export default function AIChat() {
         onClick={() => { setIntroVisible(false); setIsOpen(true); }}
         aria-label={T('Zumik — yordamchi')}
       >
-        <ZumoBot size={44} still={!waving} />
+        <ZumoBot size={44} still={!waving} emotion="happy" />
       </button>
 
       {isOpen && (
         <div className="ai-chat-modal" role="dialog" aria-label={T('Zumik — yordamchi')}>
           <div className="ai-chat-header">
             <div className="ai-chat-title">
-              <span className="ai-chat-title__bot"><ZumoBot size={38} still talking={talking} /></span>
+              <span className="ai-chat-title__bot"><ZumoBot size={38} still talking={talking} emotion={loading ? 'thinking' : 'happy'} /></span>
               <div>
                 <h3>Zumik</h3>
                 <span className="ai-chat-status">
@@ -225,7 +226,7 @@ export default function AIChat() {
 
             {loading && (
               <div className="ai-message assistant">
-                <span className="ai-avatar"><ZumoBot size={28} still /></span>
+                <span className="ai-avatar"><ZumoBot size={28} still emotion="thinking" /></span>
                 <div className="ai-message-bubble ai-typing" aria-label={T('Yozmoqda...')}>
                   <span /><span /><span />
                 </div>

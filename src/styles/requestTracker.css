@@ -313,6 +313,39 @@
 }
 
 /* ---------- Tugmalar ---------- */
+.rt-reason-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rt-reason-item {
+  text-align: left;
+  border: 1px solid var(--border, rgba(127,127,127,.25));
+  background: var(--card);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.rt-reason-item.is-selected {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 14%, var(--card));
+  color: var(--cyan);
+}
+.rt-reason-custom {
+  min-height: 70px;
+  border: 1px solid var(--border, rgba(127,127,127,.25));
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: var(--card);
+  color: var(--text);
+  resize: none;
+}
+
 .rt-foot {
   display: flex;
   flex-direction: column;

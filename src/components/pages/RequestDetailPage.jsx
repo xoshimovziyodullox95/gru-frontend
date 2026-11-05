@@ -13,6 +13,7 @@ import {
 import toast from 'react-hot-toast';
 
 import RequestMap from '../common/RequestMap';
+import CancelReasonModal from '../common/CancelReasonModal';
 import { getSocket } from '../lib/socket';
 import {
   getServiceRequestById,
@@ -151,6 +152,7 @@ export default function RequestDetailPage() {
 
   // Mutaxassis: joyida narxni o'zgartirish va ish rasmlari
   const [priceFormOpen, setPriceFormOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [newPrice, setNewPrice] = useState('');
   const [priceReason, setPriceReason] = useState('');
   const [photos, setPhotos] = useState([]);
@@ -272,10 +274,11 @@ export default function RequestDetailPage() {
     }, t('requestDetail.newPriceSent', 'Yangi narx mijozga yuborildi'));
   };
 
-  const cancelRequest = () => {
-    if (!window.confirm(t('requestDetail.cancelConfirm', 'So‘rovni bekor qilasizmi?'))) return;
-    const reason = isProvider ? t('requestDetail.cancelByPro', 'Mutaxassis bekor qildi') : t('tracker.cancelReason', 'Mijoz bekor qildi');
-    run(() => updateRequestStatus(id, 'cancelled', reason), t('requestDetail.cancelled', 'So‘rov bekor qilindi'));
+  const cancelRequest = () => setCancelModalOpen(true);
+
+  const confirmCancel = async (reason) => {
+    await run(() => updateRequestStatus(id, 'cancelled', reason), t('requestDetail.cancelled', 'So‘rov bekor qilindi'));
+    setCancelModalOpen(false);
   };
 
   const sendOffer = (e) => {
@@ -809,6 +812,12 @@ export default function RequestDetailPage() {
         </footer>
       </div>
 
+      <CancelReasonModal
+        isOpen={cancelModalOpen}
+        role={isProvider ? 'provider' : 'client'}
+        onClose={() => setCancelModalOpen(false)}
+        onConfirm={confirmCancel}
+      />
     </div>
   );
 }

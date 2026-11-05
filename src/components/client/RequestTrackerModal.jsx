@@ -20,6 +20,7 @@ import {
 } from '../services/serviceRequests';
 
 import { serviceLabel, formatSum } from '../utils/i18nHelpers';
+import CancelReasonModal from '../common/CancelReasonModal';
 import '../../styles/requestTracker.css';
 
 // Socket uzilsa ham holat yangilanib tursin
@@ -91,6 +92,7 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
   const [now, setNow] = useState(() => Date.now());
   const [acceptingId, setAcceptingId] = useState(null);
   const [cancelling, setCancelling] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
   const requestId = initialRequest?._id ? String(initialRequest._id) : null;
@@ -186,12 +188,14 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
     }
   };
 
-  const handleCancel = async () => {
-    if (!window.confirm(t('tracker.cancelConfirm', 'So‘rovni bekor qilasizmi? Mutaxassislar endi uni ko‘rmaydi.'))) return;
+  const handleCancel = () => setCancelModalOpen(true);
+
+  const confirmCancel = async (reason) => {
     setCancelling(true);
     try {
-      await updateRequestStatus(requestId, 'cancelled', t('tracker.cancelReason', 'Mijoz bekor qildi'));
+      await updateRequestStatus(requestId, 'cancelled', reason);
       setRequest((prev) => ({ ...prev, status: 'cancelled' }));
+      setCancelModalOpen(false);
     } catch (err) {
       toast.error(err.response?.data?.error || t('tracker.cancelError', 'Bekor qilib bo‘lmadi'));
     } finally {
@@ -401,6 +405,13 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
           </footer>
         </div>
       </div>
+
+      <CancelReasonModal
+        isOpen={cancelModalOpen}
+        role="client"
+        onClose={() => setCancelModalOpen(false)}
+        onConfirm={confirmCancel}
+      />
     </div>
   );
 }
