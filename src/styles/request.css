@@ -366,6 +366,7 @@ html.dark .rq {
 /* Leaflet map and its controls must have dimensions on the request flow itself;
    cart.css is lazy-loaded on another page and cannot be relied on here. */
 .rq-map .map-picker { position: relative; width: 100%; height: 100%; overflow: hidden; }
+.rq-map .map-wrap { position: absolute; inset: 0; width: 100%; height: 100%; }
 .rq-map .map-container { position: absolute; inset: 0; width: 100%; height: 100%; background: #dce9f0; z-index: 1; }
 .rq-map .map-search-row { position: absolute; z-index: 500; top: 12px; left: 12px; right: 12px; display: flex; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); box-shadow: 0 4px 18px rgba(11, 37, 64, .14); }
 .rq-map .map-search-row input { flex: 1; min-width: 0; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); font: inherit; font-size: 14px; }
