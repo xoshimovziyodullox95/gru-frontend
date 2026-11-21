@@ -1946,3 +1946,117 @@ div.tg-reply-bar { width: auto; }
 }
 .tg-forward-item:hover { background: var(--tg-active, rgba(0,0,0,.05)); }
 .tg-forward-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+
+/* ============================================================
+   TELEGRAM USLUBI — QO'SHIMCHALAR
+   ============================================================ */
+.tg-messages { scroll-behavior: auto; }
+
+/* Rangli bosh harfli avatar */
+.tg-avatar__initials {
+  display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%;
+  color: #fff; font-weight: 600; font-size: 19px; letter-spacing: .02em; user-select: none;
+}
+.tg-avatar--sm .tg-avatar__initials { font-size: 15px; }
+
+/* Sana ajratgichi */
+.tg-date-divider { display: flex; justify-content: center; margin: 12px 0 6px; pointer-events: none; }
+.tg-date-divider span {
+  padding: 4px 11px; border-radius: 14px; font-size: 13px; font-weight: 500;
+  color: #fff; background: rgba(0, 0, 0, 0.32); backdrop-filter: blur(6px);
+}
+
+/* Ro'yxat: o'zimning oxirgi xabarim */
+.tg-chatitem__check { display: inline-flex; color: var(--tg-accent-2); flex-shrink: 0; }
+.tg-chatitem__check:not(.read) { color: var(--tg-text-3); }
+.tg-chatitem__you { color: var(--tg-text); flex-shrink: 0; }
+
+/* Faqat rasm/video — vaqt rasm ustida, quyruqsiz */
+.tg-bubble--media { padding: 3px !important; }
+.tg-bubble--media::after { display: none; }
+.tg-bubble--media .tg-media-wrap { margin: 0; }
+.tg-bubble--media .tg-meta {
+  position: absolute; right: 9px; bottom: 9px; float: none; margin: 0;
+  padding: 2px 7px; border-radius: 10px; background: rgba(0, 0, 0, 0.45);
+}
+.tg-bubble--media .tg-time, .tg-bubble--media .tg-check, .tg-bubble--media .tg-edited { color: #fff; }
+
+/* Ovozli xabar */
+.tg-bubble--voice { min-width: 230px; }
+.tg-voice { display: flex; align-items: center; gap: 10px; padding: 2px 0 0; }
+.tg-voice audio { display: none; }
+.tg-voice__btn {
+  display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0;
+  border: 0; border-radius: 50%; background: var(--tg-accent); color: #fff; cursor: pointer;
+}
+.tg-bubble.sent .tg-voice__btn { background: #4fae4e; }
+html.dark .tg-bubble.sent .tg-voice__btn { background: #fff; color: var(--tg-bubble-out); }
+.tg-voice__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.tg-voice__wave { display: flex; align-items: center; gap: 2px; height: 24px; cursor: pointer; }
+.tg-voice__wave i { flex: 1; min-width: 2px; border-radius: 2px; background: var(--tg-text-3); opacity: .55; }
+.tg-voice__wave i.on { background: var(--tg-accent); opacity: 1; }
+.tg-bubble.sent .tg-voice__wave i.on { background: #4fae4e; }
+html.dark .tg-bubble.sent .tg-voice__wave i.on { background: #fff; }
+.tg-voice__time { font-size: 12px; color: var(--tg-meta-color); font-variant-numeric: tabular-nums; }
+
+/* Pastga tushish tugmasi */
+.tg-scroll-down {
+  position: absolute; right: 14px; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 4;
+  display: grid; place-items: center; width: 46px; height: 46px; border: 0; border-radius: 50%;
+  background: var(--tg-header); color: var(--tg-text-2); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  cursor: pointer; animation: tgFadeIn .15s ease;
+}
+.tg-scroll-down__badge {
+  position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px;
+  background: var(--tg-unread); color: #fff; font-size: 12px; font-weight: 700; line-height: 22px; text-align: center;
+}
+
+/* O'sadigan yozish maydoni */
+.tg-input__field { align-items: flex-end; }
+.tg-input__field textarea {
+  flex: 1; min-width: 0; resize: none; border: 0; outline: none; background: transparent;
+  color: var(--tg-text); font: inherit; font-size: 15px; line-height: 20px;
+  padding: 7px 0; max-height: 132px; overflow-y: auto;
+}
+.tg-input__field textarea::placeholder { color: var(--tg-text-3); }
+
+/* O'chirishni tasdiqlash */
+.tg-confirm { display: flex; flex-direction: column; gap: 8px; }
+.tg-confirm strong { font-size: 17px; }
+.tg-confirm p { margin: 0 0 6px; color: var(--tg-text-2); font-size: 14px; line-height: 1.4; }
+.tg-confirm__actions { display: flex; justify-content: flex-end; gap: 6px; }
+.tg-confirm__actions button {
+  min-height: 42px; padding: 0 16px; border: 0; border-radius: 10px; background: transparent;
+  color: var(--tg-accent); font: inherit; font-weight: 600; font-size: 15px; cursor: pointer;
+}
+.tg-confirm__actions button.danger { color: var(--tg-danger); }
+.tg-confirm__actions button:hover { background: var(--tg-hover); }
+
+/* Vaqt (float) pufakchadan tashqariga chiqib ketmasin */
+.tg-bubble { display: flow-root; }
+
+/* Vaqt matnning oxirgi qatoriga sig'sa — o'sha qatorda (Telegram kabi) */
+.tg-bubble--text .tg-text { padding-right: 0; }
+.tg-bubble--text .tg-text::after { content: ''; display: inline-block; width: 42px; height: 1px; }
+.tg-bubble--text.sent .tg-text::after { width: 60px; }
+.tg-bubble--text.tg-bubble--edited .tg-text::after { width: 112px; }
+.tg-bubble--text.sent.tg-bubble--edited .tg-text::after { width: 130px; }
+.tg-bubble--text .tg-meta { position: absolute; right: 10px; bottom: 6px; float: none; margin: 0; }
+.tg-messages { overflow-anchor: none; }
+
+/* Tasdiqlash oynasi chat qutisidan tashqarida — rang o'zgaruvchisiz ham to'g'ri */
+.tg-confirm__actions button { color: var(--tg-accent, #3390ec); }
+.tg-confirm__actions button.danger { color: var(--tg-danger, #e53935); }
+.tg-confirm p { color: var(--tg-text-2, #707579); }
+
+/* Menyu tepasida tezkor reaksiyalar (Telegram kabi) */
+.tg-msg-menu .tg-msg-menu__reactions {
+  display: flex; justify-content: space-between; gap: 2px;
+  padding: 4px 4px 8px; margin-bottom: 4px; border-bottom: 1px solid var(--tg-border, rgba(0,0,0,.08));
+}
+.tg-msg-menu .tg-msg-menu__reactions button {
+  width: auto; min-height: 0; padding: 6px; justify-content: center; border-radius: 50%;
+  font-size: 24px; line-height: 1;
+}
+.tg-msg-menu .tg-msg-menu__reactions button:active { transform: scale(1.25); }

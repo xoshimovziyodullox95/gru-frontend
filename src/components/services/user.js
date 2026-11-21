@@ -6,6 +6,7 @@ export const updateUserProfile = (data) => api.put('/user/profile', data);
 export const uploadUserAvatar = (formData) => api.post('/user/avatar', formData, {
   headers: { 'Content-Type': 'multipart/form-data' }
 });
+export const deleteUserAvatar = () => api.delete('/user/avatar');
 
 // ========== O'Z E'LONLARI ==========
 export const getMyLocations = () => api.get('/user/my-locations');

@@ -648,3 +648,102 @@ body:has(.gru-navbar) .pf-top { top: 70px; height: 56px; padding-top: 0; }
   display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 10px 18px; border: 0; border-radius: 12px;
   background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff; font: inherit; font-weight: 700; cursor: pointer;
 }
+
+/* ============================================================
+   PROFIL RASMI: menyu, kesish, ko'rish (Instagram uslubi)
+   ============================================================ */
+.pf-hero__avatar-btn { position: relative; display: block; padding: 0; border: 0; background: none; border-radius: 50%; cursor: pointer; }
+.pf-hero__avatar-busy {
+  position: absolute; inset: 4px; display: grid; place-items: center; border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45); color: #fff;
+}
+.pf-hero__camera { padding: 0; }
+
+.pf-menu { display: flex; flex-direction: column; gap: 2px; padding: 0 8px 12px; }
+.pf-menu button {
+  display: flex; align-items: center; gap: 14px; width: 100%; min-height: 52px; padding: 0 12px;
+  border: 0; border-radius: 12px; background: transparent; color: var(--text);
+  font: inherit; font-size: 1rem; font-weight: 600; text-align: left; cursor: pointer;
+}
+.pf-menu button:hover, .pf-menu button:active { background: rgba(var(--text-rgb), 0.06); }
+.pf-menu button svg { color: var(--cyan); flex-shrink: 0; }
+.pf-menu button.is-danger, .pf-menu button.is-danger svg { color: #e53935; }
+
+.pf-btn--danger { background: #e53935; color: #fff; }
+.pf-confirm__text { margin: 0 0 16px; color: var(--textMuted); line-height: 1.45; }
+.pf-confirm__actions { display: flex; gap: 10px; }
+.pf-confirm__actions .pf-btn { flex: 1; }
+.pf-sheet--confirm .pf-sheet__body { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+
+.pf-cropper {
+  position: fixed; inset: 0; z-index: 1200; display: flex; flex-direction: column;
+  background: #000; color: #fff; animation: pf-fade 0.2s ease;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.pf-cropper__head { display: flex; align-items: center; justify-content: space-between; height: 56px; padding: 0 8px; }
+.pf-cropper__head strong { font-size: 1.05rem; }
+.pf-cropper__head button {
+  display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%;
+  background: transparent; color: #fff; cursor: pointer;
+}
+.pf-cropper__head button.is-primary { color: #3fd2ff; }
+.pf-cropper__head button:disabled { opacity: 0.4; }
+.pf-cropper__stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+.pf-cropper__frame { position: relative; overflow: hidden; touch-action: none; cursor: grab; border-radius: 4px; }
+.pf-cropper__frame:active { cursor: grabbing; }
+.pf-cropper__frame img {
+  position: absolute; top: 50%; left: 50%; max-width: none; user-select: none; -webkit-user-drag: none; pointer-events: none;
+}
+.pf-cropper__mask {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6); border: 2px solid rgba(255, 255, 255, 0.85);
+}
+.pf-cropper__hint { margin: 0; font-size: 0.85rem; color: rgba(255, 255, 255, 0.65); }
+.pf-cropper__zoom { display: flex; align-items: center; gap: 12px; padding: 18px 28px 26px; color: rgba(255, 255, 255, 0.8); }
+.pf-cropper__zoom input { flex: 1; accent-color: #3fd2ff; }
+
+.pf-avatar-viewer {
+  position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center;
+  background: rgba(0, 0, 0, 0.92); animation: pf-fade 0.2s ease;
+}
+.pf-avatar-viewer img { width: min(86vw, 420px); aspect-ratio: 1; object-fit: cover; border-radius: 50%; }
+.pf-avatar-viewer__close {
+  position: absolute; top: calc(14px + env(safe-area-inset-top)); right: 14px;
+  display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer;
+}
+
+/* ============================================================
+   VIDEOLAR TO'RI (Instagram profil kabi)
+   ============================================================ */
+.pf-videos-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 10px; }
+.pf-videos-bar span { color: var(--textMuted); font-size: 0.88rem; font-weight: 600; }
+.pf-video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; border-radius: 14px; overflow: hidden; }
+.pf-video-tile { position: relative; aspect-ratio: 9 / 16; background: #0b1220; }
+.pf-video-tile__open { position: absolute; inset: 0; padding: 0; border: 0; background: none; cursor: pointer; }
+.pf-video-tile__open img, .pf-video-tile__open video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pf-video-tile__views {
+  position: absolute; left: 6px; bottom: 6px; display: inline-flex; align-items: center; gap: 3px;
+  color: #fff; font-size: 0.75rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.pf-video-tile__tag {
+  position: absolute; left: 6px; top: 6px; padding: 2px 7px; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.5); color: #fff; font-size: 0.66rem; font-weight: 700;
+}
+.pf-video-tile__more {
+  position: absolute; right: 4px; top: 4px; display: grid; place-items: center; width: 32px; height: 32px;
+  border: 0; border-radius: 50%; background: rgba(0, 0, 0, 0.45); color: #fff; cursor: pointer;
+}
+@media (min-width: 768px) { .pf-video-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* Pastki menyu (2000) va Zumik tugmasi (9999) ustida turishi uchun */
+.pf-sheet { z-index: 10020; }
+.pf-cropper, .pf-avatar-viewer { z-index: 10050; }
+
+/* Telefonda 4 ta bo'lim ekranga sig'sin: belgi tepada, nom pastda (Instagram kabi) */
+@media (max-width: 600px) {
+  .pf-tabs { overflow: visible; }
+  .pf-tabs button { position: relative; flex: 1 1 0; min-width: 0; flex-direction: column; gap: 3px; min-height: 54px; padding: 6px 2px; font-size: 0.74rem; }
+  .pf-tabs button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pf-tabs em { position: absolute; top: 4px; right: 6px; min-width: 18px; padding: 0 5px; font-size: 0.66rem; }
+}

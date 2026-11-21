@@ -4,7 +4,7 @@
    CHAT PAGE — Telegram uslubida (REEL SHARE + POST DETAIL)
    ============================================================ */
 
-import { lazy, Suspense, useEffect, useState, useRef, useCallback } from 'react';
+import { Fragment, lazy, Suspense, useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
@@ -35,7 +35,7 @@ import {
   Smile, Reply, Check, CheckCheck, Paperclip,
   MoreVertical, MessageSquare, Loader2, Inbox, Palette, Image as ImageIcon,
   Pencil, Trash2, Copy, Volume2, VolumeX, PlayCircle,
-  ExternalLink, Film, Package, Mic, Square, Forward, Pause,
+  ExternalLink, Film, Package, Mic, Square, Forward, Pause, Play, ChevronDown,
 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import toast from 'react-hot-toast';
@@ -132,6 +132,7 @@ function toIdStr(value) {
 function previewOf(msg) {
   if (msg.mediaType === 'image') return T('📷 Rasm yuborildi');
   if (msg.mediaType === 'video') return T('🎥 Video yuborildi');
+  if (msg.mediaType === 'voice') return T('🎤 Ovozli xabar');
   if (isLocationMessage(msg.message)) return '📍 Joylashuv';
   if (isReelMessage(msg.message)) return T('🎬 Video ulashildi');
   if (isSharedListingMessage(msg.message)) return T('📦 E’lon: {{title}}', { title: parseSharedListingMessage(msg.message).title });
@@ -268,22 +269,104 @@ const readWallpaper = () => {
 };
 
 // Server rasm/video bilan birga shu matnni yozadi — media ostida takrorlanmasin
-const AUTO_MEDIA_TEXT = /^📎 (Rasm|Video) yuborildi$/;
+const AUTO_MEDIA_TEXT = /^(📎 (Rasm|Video) yuborildi|🎤 Ovozli xabar)$/;
 // 1x1 shaffof GIF: Android WebView video yuklanguncha kulrang fon va katta "▶" chizmasin
 const TRANSPARENT_POSTER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-// Rasmi yo'q yoki buzilgan bo'lsa — ism bosh harflari bilan avatar
-const initialsAvatar = (name) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Z')}&background=00B4D8&color=fff&rounded=true&size=96`;
+// Rasmi yo'q yoki buzilgan bo'lsa — Telegram kabi rangli doirada bosh harflar (internetsiz ham chiqadi)
+const AVATAR_COLORS = [
+  ['#ff885e', '#ff516a'], ['#ffcd6a', '#ffa85c'], ['#82b1ff', '#665fff'], ['#a0de7e', '#54cb68'],
+  ['#53edd6', '#28c9b7'], ['#72d5fd', '#2a9ef1'], ['#e0a2f3', '#d669ed'],
+];
+const PLACEHOLDER_AVATAR = /zumo-placeholder|placeholder\.jpg/;
+function initialsOf(name) {
+  const parts = String(name || 'Z').trim().split(/\s+/).filter(Boolean);
+  return ((parts[0]?.[0] || 'Z') + (parts[1]?.[0] || '')).toUpperCase();
+}
 function ChatAvatar({ src, name }) {
-  const fallback = initialsAvatar(name);
-  const usable = src && !src.includes('zumo-placeholder') ? src : fallback;
+  const [failed, setFailed] = useState(false);
+  const usable = src && !PLACEHOLDER_AVATAR.test(src) && !failed;
+  if (usable) return <img src={getImageUrl(src)} alt="" onError={() => setFailed(true)} />;
+  const sum = [...String(name || 'Z')].reduce((n, c) => n + c.charCodeAt(0), 0);
+  const [from, to] = AVATAR_COLORS[sum % AVATAR_COLORS.length];
   return (
-    <img
-      src={usable}
-      alt=""
-      onError={(e) => { if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback; }}
-    />
+    <span className="tg-avatar__initials" style={{ background: `linear-gradient(180deg, ${from}, ${to})` }}>
+      {initialsOf(name)}
+    </span>
+  );
+}
+
+const dayKey = (date) => new Date(date).toDateString();
+function dayLabel(date) {
+  const d = new Date(date);
+  const today = new Date();
+  const yesterday = new Date(Date.now() - 86400000);
+  if (d.toDateString() === today.toDateString()) return T('Bugun');
+  if (d.toDateString() === yesterday.toDateString()) return T('Kecha');
+  return d.toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', ...(d.getFullYear() !== today.getFullYear() && { year: 'numeric' }) });
+}
+
+// Ovozli xabar — Telegram kabi: play tugmasi, to'lqin chiziqlari, davomiylik
+const WAVE_BARS = 32;
+function VoicePlayer({ src, duration, seed }) {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [metaDuration, setMetaDuration] = useState(0);
+  const bars = useMemo(() => {
+    let h = [...String(seed || src)].reduce((n, c) => (n * 31 + c.charCodeAt(0)) >>> 0, 7);
+    return Array.from({ length: WAVE_BARS }, () => {
+      h = (h * 1103515245 + 12345) >>> 0;
+      return 25 + (h % 75);
+    });
+  }, [seed, src]);
+  const total = duration || metaDuration;
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const toggle = (e) => {
+    e.stopPropagation();
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      document.querySelectorAll('.tg-voice audio').forEach((other) => { if (other !== a) other.pause(); });
+      a.play().catch(() => toast.error(T('Ovozni ijro etib bo‘lmadi')));
+    } else a.pause();
+  };
+  const seek = (e) => {
+    e.stopPropagation();
+    const a = audioRef.current;
+    if (!a || !Number.isFinite(a.duration)) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    a.currentTime = ((e.clientX - rect.left) / rect.width) * a.duration;
+  };
+  return (
+    <div className="tg-voice">
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        onLoadedMetadata={(e) => { if (Number.isFinite(e.currentTarget.duration)) setMetaDuration(e.currentTarget.duration); }}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => { setPlaying(false); setProgress(0); setCurrent(0); }}
+        onTimeUpdate={(e) => {
+          const a = e.currentTarget;
+          setCurrent(a.currentTime);
+          if (Number.isFinite(a.duration) && a.duration > 0) setProgress(a.currentTime / a.duration);
+        }}
+      />
+      <button type="button" className="tg-voice__btn" onClick={toggle} aria-label={playing ? T('To‘xtatish') : T('Tinglash')}>
+        {playing ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" style={{ marginLeft: 2 }} />}
+      </button>
+      <div className="tg-voice__body">
+        <div className="tg-voice__wave" onClick={seek}>
+          {bars.map((h, i) => (
+            <i key={i} style={{ height: `${h}%` }} className={i / WAVE_BARS < progress ? 'on' : ''} />
+          ))}
+        </div>
+        <span className="tg-voice__time">{fmt(playing || current ? current : total)}</span>
+      </div>
+    </div>
   );
 }
 
@@ -402,6 +485,15 @@ export default function ChatPage() {
   }, [listingAttachmentDraft]);
 
   const messagesEndRef = useRef(null);
+  const messagesBoxRef = useRef(null);
+  const inputRef = useRef(null);
+  const nearBottomRef = useRef(true);
+  const lastCountRef = useRef(0);
+  const openedChatRef = useRef(null);
+  const pinUntilRef = useRef(0);
+  const [showScrollDown, setShowScrollDown] = useState(false);
+  const [newBelow, setNewBelow] = useState(0);
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const fileInputRef = useRef(null);
   const typingTimeout = useRef(null);
   const isTypingRef = useRef(false);
@@ -445,14 +537,14 @@ export default function ChatPage() {
   };
 
   const formatTime = (date) =>
-    new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 
   const formatShortTime = (date) => {
     if (!date) return '';
     const d = new Date(date);
     const diff = (Date.now() - d.getTime()) / 1000;
     if (diff < 86400) {
-      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     }
     return d.toLocaleDateString('uz-UZ', { day: '2-digit', month: '2-digit' });
   };
@@ -481,6 +573,9 @@ export default function ChatPage() {
         ...base,
         lastMessage: info.lastMessage ?? base.lastMessage,
         lastMessageTime: info.lastMessageTime ?? base.lastMessageTime,
+        lastFromMe: info.lastFromMe ?? base.lastFromMe,
+        lastIsRead: info.lastIsRead ?? base.lastIsRead,
+        lastMediaType: 'lastMediaType' in info ? info.lastMediaType : base.lastMediaType,
         unread: Math.max(0, (base.unread || 0) + (info.unreadDelta || 0)),
       };
       return [updated, ...prev.filter((c) => c.userId !== info.userId)];
@@ -496,6 +591,9 @@ export default function ChatPage() {
       avatar: chat.avatar,
       lastMessage: msg.message || '',
       lastMessageTime: msg.createdAt,
+      lastFromMe: true,
+      lastIsRead: false,
+      lastMediaType: msg.mediaType || null,
     });
   };
 
@@ -644,6 +742,7 @@ export default function ChatPage() {
             : m
         )
       );
+      setConversations((prev) => prev.map((c) => (c.userId === String(by) && c.lastFromMe ? { ...c, lastIsRead: true } : c)));
     };
 
     const onReacted = ({ _id, reactions }) => {
@@ -721,6 +820,11 @@ export default function ChatPage() {
     setNewMessage(listingDraft);
 
     fetchStatuses([activeChat.userId]);
+    setMessages([]);
+    lastCountRef.current = 0;
+    nearBottomRef.current = true;
+    setNewBelow(0);
+    setShowScrollDown(false);
 
     getMessages(activeChat.userId)
       .then((res) => {
@@ -773,6 +877,8 @@ export default function ChatPage() {
         avatar: msg.senderAvatar,
         lastMessage: msg.message || '',
         lastMessageTime: msg.createdAt,
+        lastFromMe: false,
+        lastMediaType: msg.mediaType || null,
         unreadDelta: seenNow ? 0 : 1,
       });
 
@@ -854,9 +960,58 @@ export default function ChatPage() {
      SCROLL / MENU / ESC
      ============================================================ */
 
+  // Ochilganda darhol pastga; yangi xabar kelganda — faqat pastda turgan bo'lsa yoki o'zim yozgan bo'lsam
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, [messages]);
+    const box = messagesBoxRef.current;
+    if (!box) return;
+    const grew = messages.length - lastCountRef.current;
+    const lastMine = toIdStr(messages[messages.length - 1]?.from) === currentUserId;
+    if (messages.length && openedChatRef.current !== activeChat?.userId) {
+      openedChatRef.current = activeChat?.userId;
+      box.scrollTop = box.scrollHeight;
+      pinUntilRef.current = Date.now() + 3000;
+    } else if (grew > 0 && (nearBottomRef.current || lastMine)) {
+      box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+    } else if (grew > 0) {
+      setNewBelow((n) => n + grew);
+    }
+    lastCountRef.current = messages.length;
+  }, [messages, activeChat, currentUserId]);
+
+  // Rasm/video keyin yuklanib balandlik o'zgarsa ham, ochilgandan keyin bir necha soniya pastda turamiz
+  useEffect(() => {
+    if (!activeChat) return undefined;
+    const id = setInterval(() => {
+      const box = messagesBoxRef.current;
+      if (box && Date.now() < pinUntilRef.current) box.scrollTop = box.scrollHeight;
+    }, 120);
+    return () => clearInterval(id);
+  }, [activeChat]);
+  const stopPin = () => { pinUntilRef.current = 0; };
+
+  const onMessagesScroll = (e) => {
+    const b = e.currentTarget;
+    const near = b.scrollHeight - b.scrollTop - b.clientHeight < 140;
+    nearBottomRef.current = near;
+    setShowScrollDown(!near);
+    if (near) setNewBelow(0);
+  };
+  const scrollToBottom = () => {
+    messagesBoxRef.current?.scrollTo({ top: messagesBoxRef.current.scrollHeight, behavior: 'smooth' });
+    setNewBelow(0);
+  };
+  // Rasm keyin yuklanib balandlik o'zgarsa ham pastda qolamiz
+  const keepBottom = () => {
+    if (nearBottomRef.current && messagesBoxRef.current) messagesBoxRef.current.scrollTop = messagesBoxRef.current.scrollHeight;
+  };
+
+  // Yozish maydoni matnga qarab o'sadi (6 qatorgacha)
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 132)}px`;
+  }, [newMessage]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -874,6 +1029,19 @@ export default function ChatPage() {
       document.removeEventListener('keydown', onKey);
     };
   }, []);
+
+  // "Orqaga" / Escape: avval ochiq oyna va menyular, keyin suhbatdan ro'yxatga (Telegram kabi)
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape' || !activeChat) return;
+      if (document.querySelector('.tg-msg-menu, .tg-lightbox, .tg-wall-sheet, .tg-react-picker, .rv-viewer, [role="dialog"][aria-modal="true"]')) return;
+      if (showEmoji) { setShowEmoji(false); return; }
+      if (headerMenuOpen) { setHeaderMenuOpen(false); return; }
+      setActiveChat(null);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [activeChat, showEmoji, headerMenuOpen]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -1193,9 +1361,13 @@ export default function ChatPage() {
     }
   };
 
-  const handleDelete = async (msg) => {
+  const handleDelete = (msg) => {
     setOpenMenuId(null);
-    if (!window.confirm(T('O\'chirishni tasdiqlaysizmi?'))) return;
+    setConfirmDelete(msg);
+  };
+
+  const doDelete = async (msg) => {
+    setConfirmDelete(null);
     try {
       await deleteMessage(msg._id);
       setMessages((prev) => prev.filter((m) => m._id !== msg._id));
@@ -1341,7 +1513,15 @@ export default function ChatPage() {
                         <span className="tg-chatitem__last typing">yozmoqda...</span>
                       ) : (
                         <span className="tg-chatitem__last">
-                          {isLocationMessage(conv.lastMessage) ? (
+                          {conv.lastFromMe && (
+                            <span className={`tg-chatitem__check ${conv.lastIsRead ? 'read' : ''}`}>
+                              {conv.lastIsRead ? <CheckCheck size={15} /> : <Check size={15} />}
+                            </span>
+                          )}
+                          {conv.lastFromMe && <span className="tg-chatitem__you">{T('Siz')}:</span>}
+                          {conv.lastMediaType ? (
+                            previewOf({ mediaType: conv.lastMediaType })
+                          ) : isLocationMessage(conv.lastMessage) ? (
                             <>
                               <MapPin size={12} /> {T('Joylashuv')}
                             </>
@@ -1431,6 +1611,10 @@ export default function ChatPage() {
               </header>
 
               <div
+                ref={messagesBoxRef}
+                onScroll={onMessagesScroll}
+                onTouchStart={stopPin}
+                onWheel={stopPin}
                 className={`tg-messages ${activeWallpaper.css ? 'tg-messages--wallpaper' : ''} ${activeWallpaper.dark ? 'tg-messages--dark' : ''}`}
                 style={activeWallpaper.css ? { background: activeWallpaper.css, backgroundSize: activeWallpaper.size, backgroundAttachment: activeWallpaper.photo ? 'fixed' : 'local' } : undefined}
               >
@@ -1457,14 +1641,23 @@ export default function ChatPage() {
                     const menuId = msg._id || i;
 
                     const prevMsg = messages[i - 1];
-                    const isGrouped = toIdStr(prevMsg?.from) === senderId;
+                    const newDay = !prevMsg || dayKey(prevMsg.createdAt) !== dayKey(msg.createdAt);
+                    const isGrouped = !newDay && toIdStr(prevMsg?.from) === senderId;
 
                     const nextMsg = messages[i + 1];
-                    const isLastOfGroup = toIdStr(nextMsg?.from) !== senderId;
+                    const isLastOfGroup = !nextMsg || toIdStr(nextMsg.from) !== senderId || dayKey(nextMsg.createdAt) !== dayKey(msg.createdAt);
+
+                    const showsText = !isLocation && !isSharedListing && !isReel
+                      && msg.message && !(msg.mediaUrl && AUTO_MEDIA_TEXT.test(msg.message));
+                    const mediaOnly = msg.mediaUrl && (msg.mediaType === 'image' || msg.mediaType === 'video')
+                      && !showsText && !isReply && !msg.reactions?.length;
 
                     return (
+                      <Fragment key={menuId}>
+                      {newDay && (
+                        <div className="tg-date-divider"><span>{dayLabel(msg.createdAt)}</span></div>
+                      )}
                       <div
-                        key={menuId}
                         data-msg-id={msg._id}
                         className={`tg-message-row ${isSent ? 'sent' : 'received'} ${
                           isGrouped ? 'grouped' : ''
@@ -1474,7 +1667,7 @@ export default function ChatPage() {
                           <div
                             className={`tg-bubble ${isSent ? 'sent' : 'received'} ${
                               isLastOfGroup ? (isSent ? 'tail-right' : 'tail-left') : ''
-                            } ${isReel ? 'tg-bubble--reel' : ''} ${isSharedListing ? 'tg-bubble--listing' : ''}`}
+                            } ${isReel ? 'tg-bubble--reel' : ''} ${isSharedListing ? 'tg-bubble--listing' : ''} ${mediaOnly ? 'tg-bubble--media' : ''} ${msg.mediaType === 'voice' ? 'tg-bubble--voice' : ''} ${showsText && !msg.mediaUrl && !msg.reactions?.length ? 'tg-bubble--text' : ''} ${msg.edited ? 'tg-bubble--edited' : ''}`}
                             onDoubleClick={() => handleReply(msg)}
                             onTouchStart={(e) => onBubbleTouchStart(e, menuId)}
                             onTouchMove={(e) => onBubbleTouchMove(e, menuId)}
@@ -1532,6 +1725,7 @@ export default function ChatPage() {
                                   src={getImageUrl(msg.mediaUrl)}
                                   alt=""
                                   className="tg-media-img"
+                                  onLoad={keepBottom}
                                 />
                               </div>
                             )}
@@ -1551,6 +1745,7 @@ export default function ChatPage() {
                                   preload="metadata"
                                   poster={TRANSPARENT_POSTER}
                                   className="tg-media-img"
+                                  onLoadedMetadata={keepBottom}
                                 />
                                 <div className="tg-play-overlay">
                                   <span className="tg-play-btn"><PlayCircle size={30} /></span>
@@ -1559,14 +1754,7 @@ export default function ChatPage() {
                             )}
 
                             {msg.mediaUrl && msg.mediaType === 'voice' && (
-                              <div className="tg-voice-msg">
-                                <audio src={getImageUrl(msg.mediaUrl)} controls preload="metadata" />
-                                {!!msg.mediaDuration && (
-                                  <span className="tg-voice-msg__dur">
-                                    {Math.floor(msg.mediaDuration / 60)}:{String(msg.mediaDuration % 60).padStart(2, '0')}
-                                  </span>
-                                )}
-                              </div>
+                              <VoicePlayer src={getImageUrl(msg.mediaUrl)} duration={msg.mediaDuration} seed={msg._id} />
                             )}
 
                             {isLocation ? (
@@ -1589,9 +1777,7 @@ export default function ChatPage() {
                             ) : isReel ? (
                               <ReelMessageCard text={msg.message} onOpenReel={openReel} />
                             ) : (
-                              msg.message && !(msg.mediaUrl && AUTO_MEDIA_TEXT.test(msg.message)) && (
-                                <p className="tg-text">{msg.message}</p>
-                              )
+                              showsText && <p className="tg-text">{msg.message}</p>
                             )}
 
                             {!!msg.reactions?.length && (
@@ -1642,9 +1828,11 @@ export default function ChatPage() {
                             </button>
                             {openMenuId === menuId && (
                               <div className="tg-msg-menu">
-                                <button onClick={() => { setOpenMenuId(null); setReactPickerId(menuId); }}>
-                                  <Smile size={14} /> {T('Reaksiya')}
-                                </button>
+                                <div className="tg-msg-menu__reactions">
+                                  {REACTION_EMOJIS.map((em) => (
+                                    <button key={em} type="button" onClick={() => { setOpenMenuId(null); reactToMessage(msg, em); }}>{em}</button>
+                                  ))}
+                                </div>
                                 <button onClick={() => handleReply(msg)}>
                                   <Reply size={14} /> {T('Javob berish')}
                                 </button>
@@ -1672,11 +1860,19 @@ export default function ChatPage() {
                           </div>
                         </div>
                       </div>
+                      </Fragment>
                     );
                   })
                 )}
                 <div ref={messagesEndRef} />
               </div>
+
+              {showScrollDown && (
+                <button type="button" className="tg-scroll-down" onClick={scrollToBottom} aria-label={T('Pastga')}>
+                  <ChevronDown size={24} />
+                  {newBelow > 0 && <span className="tg-scroll-down__badge">{newBelow > 99 ? '99+' : newBelow}</span>}
+                </button>
+              )}
 
               {editingMessage && (
                 <div className="tg-reply-bar tg-reply-bar--edit">
@@ -1802,9 +1998,10 @@ export default function ChatPage() {
                 </button>
 
                 <div className="tg-input__field">
-                  <input
+                  <textarea
+                    ref={inputRef}
                     id="chat-input"
-                    type="text"
+                    rows={1}
                     placeholder={
                       editingMessage
                         ? T('Tahrirlash...')
@@ -1818,7 +2015,9 @@ export default function ChatPage() {
                       if (!editingMessage) handleTyping();
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
+                      // Telefonda Enter — yangi qator (Telegram kabi), yuborish — tugma bilan
+                      const touch = window.matchMedia?.('(hover: none)').matches;
+                      if (e.key === 'Enter' && !e.shiftKey && !touch) {
                         e.preventDefault();
                         if (editingMessage) handleEditSave();
                         else if (replyTo) sendReply();
@@ -1839,7 +2038,7 @@ export default function ChatPage() {
                   {showEmoji && (
                     <div className="tg-emoji-picker">
                       <EmojiPicker
-                        theme="dark"
+                        theme={document.documentElement.classList.contains('dark') || document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'}
                         onEmojiClick={(emoji) => {
                           setNewMessage((prev) => prev + emoji.emoji);
                           setShowEmoji(false);
@@ -1884,6 +2083,19 @@ export default function ChatPage() {
       </div>
 
       {lightbox && <MediaLightbox media={lightbox} onClose={() => setLightbox(null)} />}
+
+      {confirmDelete && (
+        <div className="tg-wall-sheet" role="dialog" aria-modal="true" onClick={() => setConfirmDelete(null)}>
+          <div className="tg-wall-sheet__card tg-confirm" onClick={(e) => e.stopPropagation()}>
+            <strong>{T('Xabarni o‘chirasizmi?')}</strong>
+            <p>{T('Xabar ikkala tomondan ham o‘chadi. Buni qaytarib bo‘lmaydi.')}</p>
+            <div className="tg-confirm__actions">
+              <button type="button" onClick={() => setConfirmDelete(null)}>{T('Bekor qilish')}</button>
+              <button type="button" className="danger" onClick={() => doDelete(confirmDelete)}>{T('O‘chirish')}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {forwardMsg && (
         <div className="tg-wall-sheet" role="dialog" aria-modal="true" onClick={() => setForwardMsg(null)}>

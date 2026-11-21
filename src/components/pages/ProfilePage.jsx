@@ -5,7 +5,7 @@
    Tahrirlash — pastdan chiqadigan oyna (?edit=1 bilan ham ochiladi).
    ============================================================ */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
@@ -14,7 +14,9 @@ import {
   Pencil, Share2, Crown, UserPlus, UserCheck, MessageCircle, MapPin, Package, Play,
   Eye, Heart, Trash2, Star, Inbox, Clock, ChevronRight, Hammer, BarChart3, Truck,
   Send, Boxes, Users, UserMinus, X, Loader2, Building2, Plus, Clapperboard,
+  ImagePlus, Image as ImageIcon, MoreHorizontal,
 } from 'lucide-react';
+import AvatarCropper from '../profile/AvatarCropper';
 
 import { useAuth } from '../context/AuthContext';
 import BusinessSummaryWidget from '../business/BusinessSummaryWidget';
@@ -26,7 +28,7 @@ import { safeGoBack } from '../utils/navigation.js';
 import { formatPrice } from '../utils/formatPrice';
 import { getImageUrl } from '../utils/imageUrl';
 import {
-  getUserProfile, updateUserProfile, uploadUserAvatar,
+  getUserProfile, updateUserProfile, uploadUserAvatar, deleteUserAvatar,
   getMyLocations, getMyEquipment, getMyServices,
   deleteLocation, deleteEquipment, deleteService,
   getUserById, getLocationsByUserId, getEquipmentByUserId, getServicesByUserId,
@@ -34,7 +36,7 @@ import {
   getDashboardStats, cancelSubscription,
 } from '../services/user';
 import { getServiceProviders } from '../services/serviceProviders';
-import { getPosts } from '../services/videos';
+import { getPosts, deletePost, updatePost } from '../services/videos';
 
 import '../../styles/profile.css';
 import '../../styles/profilePage.css';
@@ -90,14 +92,14 @@ function Avatar({ src, name, size = 96 }) {
   );
 }
 
-function Sheet({ title, onClose, children, footer }) {
+function Sheet({ title, onClose, children, footer, className = '' }) {
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
   return (
-    <div className="pf-sheet" onClick={onClose}>
+    <div className={`pf-sheet ${className}`} onClick={onClose}>
       <div className="pf-sheet__panel" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <div className="pf-sheet__head">
           <h3>{title}</h3>
@@ -107,6 +109,26 @@ function Sheet({ title, onClose, children, footer }) {
         {footer && <div className="pf-sheet__foot">{footer}</div>}
       </div>
     </div>
+  );
+}
+
+// Telegram/Instagram uslubidagi tasdiqlash (brauzerning confirm() oynasi o'rniga)
+function ConfirmSheet({ confirm, onClose }) {
+  const [busy, setBusy] = useState(false);
+  const run = async () => {
+    setBusy(true);
+    try { await confirm.action(); onClose(); } finally { setBusy(false); }
+  };
+  return (
+    <Sheet title={confirm.title} onClose={() => !busy && onClose()} className="pf-sheet--confirm">
+      {confirm.text && <p className="pf-confirm__text">{confirm.text}</p>}
+      <div className="pf-confirm__actions">
+        <button type="button" className="pf-btn pf-btn--ghost" onClick={onClose} disabled={busy}>{T('Bekor qilish')}</button>
+        <button type="button" className={`pf-btn ${confirm.danger ? 'pf-btn--danger' : 'pf-btn--primary'}`} onClick={run} disabled={busy}>
+          {busy && <Loader2 size={16} className="pf-spin" />} {confirm.label}
+        </button>
+      </div>
+    </Sheet>
   );
 }
 
@@ -165,8 +187,16 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarMenu, setAvatarMenu] = useState(false);
+  const [cropFile, setCropFile] = useState(null);
+  const [avatarViewer, setAvatarViewer] = useState(false);
+  const [confirm, setConfirm] = useState(null);
+  const [videoMenu, setVideoMenu] = useState(null);
+  const [videoEdit, setVideoEdit] = useState(null);
+  const [videoViewer, setVideoViewer] = useState(null);
+  const avatarInputRef = useRef(null);
 
-  const [activeTab, setActiveTab] = useState('equipment');
+  const [activeTab, setActiveTab] = useState(() => (searchParams.get('tab') === 'videos' ? 'videos' : 'equipment'));
   const [stats, setStats] = useState({ views: 0, locations: 0, equipment: 0, services: 0 });
 
   const [subscribers, setSubscribers] = useState([]);
@@ -218,7 +248,7 @@ export default function ProfilePage() {
 
       // Bo'sh bo'lmagan birinchi tabni ochamiz
       const counts = { equipment: (eqRes.data || []).length, services: (servRes.data || []).length, locations: (locRes.data || []).length };
-      setActiveTab((prev) => (counts[prev] ? prev : Object.keys(counts).find((k) => counts[k]) || 'equipment'));
+      setActiveTab((prev) => (prev === 'videos' || counts[prev] ? prev : Object.keys(counts).find((k) => counts[k]) || 'equipment'));
 
       const targetUserId = profileData._id || userId;
       // Foydalanuvchining o'zi qo'shgan video postlari (lentadagi reels)
@@ -267,7 +297,13 @@ export default function ProfilePage() {
      AMALLAR
      ============================================================ */
 
-  const handleAvatarChange = async (e) => {
+  // 1-qadam: rasm tanlash -> 2-qadam: kesish oynasi -> 3-qadam: yuklash
+  const pickAvatar = () => {
+    setAvatarMenu(false);
+    avatarInputRef.current?.click();
+  };
+
+  const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
@@ -275,25 +311,55 @@ export default function ProfilePage() {
       toast.error(t('profile.avatarOnlyImage', 'Faqat rasm yuklash mumkin'));
       return;
     }
-    const reader = new FileReader();
-    reader.onloadend = () => setAvatarPreview(reader.result);
-    reader.readAsDataURL(file);
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error(T('Rasm 15 MB dan katta bo‘lmasin'));
+      return;
+    }
+    setCropFile(file);
+  };
 
+  const uploadCropped = async (blob) => {
     const fd = new FormData();
-    fd.append('avatar', file);
+    fd.append('avatar', blob, 'avatar.jpg');
     setAvatarUploading(true);
     try {
       const res = await uploadUserAvatar(fd);
       setProfile((p) => ({ ...p, avatar_url: res.data.avatar_url }));
+      setAvatarPreview(null);
+      setCropFile(null);
       // Navbar va marketplace'dagi avatar ham darhol yangilansin
       window.dispatchEvent(new CustomEvent('zumo:avatar', { detail: res.data.avatar_url }));
       toast.success(t('profile.avatarUpdated', 'Rasm yangilandi'));
     } catch (err) {
-      setAvatarPreview(null);
       toast.error(err.response?.data?.error || t('profile.avatarError', 'Rasmni yuklab bo‘lmadi'));
     } finally {
       setAvatarUploading(false);
     }
+  };
+
+  const askRemoveAvatar = () => {
+    setAvatarMenu(false);
+    setConfirm({
+      title: T('Profil rasmini o‘chirasizmi?'),
+      text: T('Rasm o‘rniga ismingizning bosh harfi ko‘rinadi.'),
+      label: T('O‘chirish'),
+      danger: true,
+      action: async () => {
+        try {
+          await deleteUserAvatar();
+          setProfile((p) => ({ ...p, avatar_url: '' }));
+          window.dispatchEvent(new CustomEvent('zumo:avatar', { detail: '' }));
+          toast.success(T('Rasm o‘chirildi'));
+        } catch (err) {
+          toast.error(err.response?.data?.error || T('Rasmni o‘chirib bo‘lmadi'));
+        }
+      },
+    });
+  };
+
+  const onAvatarClick = () => {
+    if (isOwnProfile) setAvatarMenu(true);
+    else if (profile?.avatar_url) setAvatarViewer(true);
   };
 
   const openEdit = () => {
@@ -320,21 +386,74 @@ export default function ProfilePage() {
     }
   };
 
-  const handleDeleteItem = async (type, id) => {
-    if (!window.confirm(t('profile.deleteConfirm', 'Haqiqatan ham o‘chirmoqchimisiz?'))) return;
+  const handleDeleteItem = (type, id, title) => {
+    setConfirm({
+      title: T('E’lonni o‘chirasizmi?'),
+      text: title ? `«${title}» — ${T('buni qaytarib bo‘lmaydi.')}` : T('Buni qaytarib bo‘lmaydi.'),
+      label: T('O‘chirish'),
+      danger: true,
+      action: async () => {
+        try {
+          if (type === 'location') await deleteLocation(id);
+          else if (type === 'equipment') await deleteEquipment(id);
+          else await deleteService(id);
+          loadData();
+          toast.success(t('profile.deleted', 'O‘chirildi'));
+        } catch {
+          toast.error(t('profile.deleteError', 'O‘chirib bo‘lmadi'));
+        }
+      },
+    });
+  };
+
+  // O'z videolarini boshqarish (faqat alohida joylangan videolar; e'lon videosi e'lon orqali)
+  const askDeleteVideo = (reel) => {
+    setVideoMenu(null);
+    setConfirm({
+      title: T('Videoni o‘chirasizmi?'),
+      text: T('Video, uning laykleri va izohlari butunlay o‘chadi.'),
+      label: T('O‘chirish'),
+      danger: true,
+      action: async () => {
+        try {
+          await deletePost(reel.originalId);
+          setMyPosts((prev) => prev.filter((p) => String(p._id) !== String(reel.originalId)));
+          toast.success(T('Video o‘chirildi'));
+        } catch (err) {
+          toast.error(err.response?.data?.error || T('Videoni o‘chirib bo‘lmadi'));
+        }
+      },
+    });
+  };
+
+  const openVideoEdit = (reel) => {
+    setVideoMenu(null);
+    const post = myPosts.find((p) => String(p._id) === String(reel.originalId));
+    setVideoEdit({ id: reel.originalId, title: post?.title || '', description: post?.description || '', saving: false });
+  };
+
+  const saveVideoEdit = async () => {
+    if (!videoEdit) return;
+    setVideoEdit((v) => ({ ...v, saving: true }));
     try {
-      if (type === 'location') await deleteLocation(id);
-      else if (type === 'equipment') await deleteEquipment(id);
-      else await deleteService(id);
-      loadData();
-      toast.success(t('profile.deleted', 'O‘chirildi'));
-    } catch {
-      toast.error(t('profile.deleteError', 'O‘chirib bo‘lmadi'));
+      const res = await updatePost(videoEdit.id, { title: videoEdit.title.trim() || 'Video', description: videoEdit.description.trim() });
+      setMyPosts((prev) => prev.map((p) => (String(p._id) === String(videoEdit.id) ? { ...p, ...res.data, userId: p.userId } : p)));
+      setVideoEdit(null);
+      toast.success(T('Video yangilandi'));
+    } catch (err) {
+      toast.error(err.response?.data?.error || T('Saqlab bo‘lmadi'));
+      setVideoEdit((v) => v && { ...v, saving: false });
     }
   };
 
-  const handleCancelPremium = async () => {
-    if (!window.confirm(t('profile.cancelPremiumConfirm', 'Premium a’zolikni bekor qilmoqchimisiz?'))) return;
+  const handleCancelPremium = () => setConfirm({
+    title: t('profile.cancelPremiumConfirm', 'Premium a’zolikni bekor qilmoqchimisiz?'),
+    label: t('profile.cancelPremium', 'Bekor qilish'),
+    danger: true,
+    action: doCancelPremium,
+  });
+
+  const doCancelPremium = async () => {
     setCancelling(true);
     try {
       await cancelSubscription();
@@ -410,6 +529,14 @@ export default function ProfilePage() {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, user]);
+
+  // Telefonning "orqaga" tugmasi (Escape) rasm ko'rish oynasini yopsin
+  useEffect(() => {
+    if (!avatarViewer) return undefined;
+    const onKey = (e) => e.key === 'Escape' && setAvatarViewer(false);
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [avatarViewer]);
 
   // Sozlamalar endi alohida sahifa (/settings); eski ?settings=1 havolalari ham ishlasin
   useEffect(() => {
@@ -527,7 +654,7 @@ export default function ProfilePage() {
                     <button type="button" onClick={() => navigate(`/edit/${itemType}/${item._id}`)}>
                       <Pencil size={14} /> {t('profile.actions.edit', 'Tahrirlash')}
                     </button>
-                    <button type="button" className="is-danger" onClick={() => handleDeleteItem(itemType, item._id)} aria-label={t('profile.actions.delete', 'O‘chirish')}>
+                    <button type="button" className="is-danger" onClick={() => handleDeleteItem(itemType, item._id, title)} aria-label={t('profile.actions.delete', 'O‘chirish')}>
                       <Trash2 size={14} />
                     </button>
                   </div>
@@ -567,13 +694,16 @@ export default function ProfilePage() {
         <section className="pf-card pf-hero">
           <div className="pf-hero__cover" aria-hidden="true" />
           <div className="pf-hero__avatar">
-            <Avatar src={avatarPreview || profile.avatar_url} name={name} />
+            <button type="button" className="pf-hero__avatar-btn" onClick={onAvatarClick} aria-label={isOwnProfile ? t('profile.changePhoto', 'Rasmni o‘zgartirish') : T('Rasmni ko‘rish')}>
+              <Avatar key={profile.avatar_url || 'none'} src={avatarPreview || profile.avatar_url} name={name} />
+              {avatarUploading && <span className="pf-hero__avatar-busy"><Loader2 size={26} className="pf-spin" /></span>}
+            </button>
             {isOwnProfile && (
-              <label className="pf-hero__camera" aria-label={t('profile.changePhoto', 'Rasmni o‘zgartirish')}>
-                {avatarUploading ? <Loader2 size={16} className="pf-spin" /> : <Camera size={16} />}
-                <input type="file" accept="image/*" onChange={handleAvatarChange} hidden />
-              </label>
+              <button type="button" className="pf-hero__camera" onClick={() => setAvatarMenu(true)} aria-label={t('profile.changePhoto', 'Rasmni o‘zgartirish')}>
+                <Camera size={16} />
+              </button>
             )}
+            <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarChange} hidden />
           </div>
 
           <div className="pf-hero__name">
@@ -763,8 +893,35 @@ export default function ProfilePage() {
 
           {activeTab === 'videos' ? (
             myReels.length > 0 ? (
-              // Bosilganda bosh sahifadagi to'liq ekranli reels pleyeri ochiladi (layk, izoh, surish)
-              <MarketplaceReels reels={myReels} variant="grid2" showHeader={false} currentUser={user} />
+              <>
+                {isOwnProfile && (
+                  <div className="pf-videos-bar">
+                    <span>{T('{{n}} ta video', { n: myReels.length })}</span>
+                    <button type="button" className="pf-btn pf-btn--primary pf-btn--sm" onClick={() => navigate('/add-video')}>
+                      <Plus size={16} /> {T('Yangi video')}
+                    </button>
+                  </div>
+                )}
+                {/* Instagram kabi 3 ustunli to'r; bosilganda to'liq ekranli pleyer shu videodan boshlanadi */}
+                <div className="pf-video-grid">
+                  {myReels.map((reel, i) => (
+                    <div key={reel.id} className="pf-video-tile">
+                      <button type="button" className="pf-video-tile__open" onClick={() => setVideoViewer([...myReels.slice(i), ...myReels.slice(0, i)])}>
+                        {reel.thumbnailUrl
+                          ? <img src={getImageUrl(reel.thumbnailUrl)} alt="" loading="lazy" />
+                          : <video src={`${getImageUrl(reel.videoUrl)}#t=0.5`} muted playsInline preload="metadata" />}
+                        <span className="pf-video-tile__views"><Play size={12} fill="currentColor" /> {reel.views || 0}</span>
+                        {reel.itemType !== 'post' && <span className="pf-video-tile__tag">{reel.typeLabel}</span>}
+                      </button>
+                      {isOwnProfile && reel.itemType === 'post' && (
+                        <button type="button" className="pf-video-tile__more" onClick={() => setVideoMenu(reel)} aria-label={T('Video amallari')}>
+                          <MoreHorizontal size={18} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : (
               <div className="pf-empty-videos">
                 <span className="pf-empty-videos__icon"><Clapperboard size={30} /></span>
@@ -800,12 +957,11 @@ export default function ProfilePage() {
           )}
         >
           <div className="pf-edit-avatar">
-            <Avatar src={avatarPreview || profile.avatar_url} name={formData.fullName || name} size={84} />
-            <label className="pf-btn pf-btn--ghost pf-btn--sm">
+            <Avatar key={profile.avatar_url || 'none'} src={profile.avatar_url} name={formData.fullName || name} size={84} />
+            <button type="button" className="pf-btn pf-btn--ghost pf-btn--sm" onClick={() => setAvatarMenu(true)} disabled={avatarUploading}>
               {avatarUploading ? <Loader2 size={15} className="pf-spin" /> : <Camera size={15} />}
               {t('profile.changePhoto', 'Rasmni o‘zgartirish')}
-              <input type="file" accept="image/*" onChange={handleAvatarChange} hidden />
-            </label>
+            </button>
           </div>
 
           <label className="pf-field">
@@ -844,6 +1000,73 @@ export default function ProfilePage() {
           </label>
         </Sheet>
       )}
+
+      {/* ---------- Profil rasmi menyusi ---------- */}
+      {avatarMenu && (
+        <Sheet title={T('Profil rasmi')} onClose={() => setAvatarMenu(false)} className="pf-sheet--menu">
+          <div className="pf-menu">
+            <button type="button" onClick={pickAvatar}><ImagePlus size={20} /> {profile.avatar_url ? T('Yangi rasm tanlash') : T('Rasm qo‘shish')}</button>
+            {profile.avatar_url && (
+              <button type="button" onClick={() => { setAvatarMenu(false); setAvatarViewer(true); }}><ImageIcon size={20} /> {T('Rasmni ko‘rish')}</button>
+            )}
+            {profile.avatar_url && (
+              <button type="button" className="is-danger" onClick={askRemoveAvatar}><Trash2 size={20} /> {T('Rasmni o‘chirish')}</button>
+            )}
+          </div>
+        </Sheet>
+      )}
+
+      {cropFile && (
+        <AvatarCropper file={cropFile} busy={avatarUploading} onCancel={() => setCropFile(null)} onDone={uploadCropped} />
+      )}
+
+      {avatarViewer && profile.avatar_url && (
+        <div className="pf-avatar-viewer" role="dialog" aria-modal="true" onClick={() => setAvatarViewer(false)}>
+          <button type="button" className="pf-avatar-viewer__close" aria-label={T('Yopish')}><X size={24} /></button>
+          <img src={getImageUrl(profile.avatar_url)} alt={name} onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
+
+      {/* ---------- Video amallari ---------- */}
+      {videoMenu && (
+        <Sheet title={videoMenu.title} onClose={() => setVideoMenu(null)} className="pf-sheet--menu">
+          <div className="pf-menu">
+            <button type="button" onClick={() => { const r = videoMenu; setVideoMenu(null); setVideoViewer([r, ...myReels.filter((x) => x.id !== r.id)]); }}><Play size={20} /> {T('Ko‘rish')}</button>
+            <button type="button" onClick={() => openVideoEdit(videoMenu)}><Pencil size={20} /> {T('Sarlavha va tavsifni tahrirlash')}</button>
+            <button type="button" className="is-danger" onClick={() => askDeleteVideo(videoMenu)}><Trash2 size={20} /> {T('Videoni o‘chirish')}</button>
+          </div>
+        </Sheet>
+      )}
+
+      {videoEdit && (
+        <Sheet
+          title={T('Videoni tahrirlash')}
+          onClose={() => !videoEdit.saving && setVideoEdit(null)}
+          footer={(
+            <>
+              <button type="button" className="pf-btn pf-btn--ghost" onClick={() => setVideoEdit(null)} disabled={videoEdit.saving}>{t('profile.cancel', 'Bekor qilish')}</button>
+              <button type="button" className="pf-btn pf-btn--primary" onClick={saveVideoEdit} disabled={videoEdit.saving}>
+                {videoEdit.saving && <Loader2 size={16} className="pf-spin" />} {t('profile.save', 'Saqlash')}
+              </button>
+            </>
+          )}
+        >
+          <label className="pf-field">
+            <span>{T('Sarlavha')}<small>{videoEdit.title.length}/80</small></span>
+            <input value={videoEdit.title} maxLength={80} onChange={(e) => setVideoEdit((v) => ({ ...v, title: e.target.value }))} />
+          </label>
+          <label className="pf-field">
+            <span>{T('Tavsif')}<small>{videoEdit.description.length}/500</small></span>
+            <textarea rows={4} value={videoEdit.description} maxLength={500} onChange={(e) => setVideoEdit((v) => ({ ...v, description: e.target.value }))} />
+          </label>
+        </Sheet>
+      )}
+
+      {videoViewer && (
+        <MarketplaceReels reels={videoViewer} currentUser={user} viewerOnly onViewerClose={() => setVideoViewer(null)} />
+      )}
+
+      {confirm && <ConfirmSheet confirm={confirm} onClose={() => setConfirm(null)} />}
 
       {/* ---------- Ulashish ---------- */}
       {shareOpen && (
