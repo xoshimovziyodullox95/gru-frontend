@@ -24,9 +24,25 @@ function ProductCard({ item, onPress }) {
         <View style={[styles.productImage, styles.productPlaceholder]}><Text style={styles.placeholderGlyph}>Z</Text></View>
       )}
       <View style={styles.productBody}>
-        <Text numberOfLines={2} style={styles.productTitle}>{item.title || item.name || 'E’lon'}</Text>
+        <Text numberOfLines={2} style={styles.productTitle}>{item.title || item.name || ‘E’lon’}</Text>
         <Text style={styles.productPrice}>{money(item.price, item.currency)}</Text>
-        <Text numberOfLines={1} style={styles.productMeta}>{item.location || item.city || 'O‘zbekiston'}</Text>
+        <Text numberOfLines={1} style={styles.productMeta}>{item.location || item.city || ‘O’zbekiston’}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+function ProductCardGrid({ item, onPress }) {
+  const image = absoluteMediaUrl(item.images?.[0] || item.image || item.media?.[0]);
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.productGrid, pressed && styles.pressed]}>
+      {image ? <Image source={{ uri: image }} style={styles.productGridImage} resizeMode="cover" /> : (
+        <View style={[styles.productGridImage, styles.productPlaceholder]}><Text style={styles.placeholderGlyph}>Z</Text></View>
+      )}
+      <View style={styles.productGridBody}>
+        <Text numberOfLines={2} style={styles.productGridTitle}>{item.title || item.name || ‘E’lon’}</Text>
+        <Text style={styles.productGridPrice}>{money(item.price, item.currency)}</Text>
+        <Text numberOfLines={1} style={styles.productGridMeta}>{item.location || item.city || ‘O’zbekiston’}</Text>
       </View>
     </Pressable>
   );
@@ -111,10 +127,10 @@ export default function HomeScreen({ categories, listings, loading, error, onRet
       <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Yangi e’lonlar</Text><Text style={styles.sectionSub}>Siz uchun tanlangan takliflar</Text></View><Pressable onPress={() => onTab('catalog')}><View style={styles.linkRow}><Text style={styles.link}>Hammasi</Text><ChevronRight color={colors.cyanDark} size={15} strokeWidth={2.4} /></View></Pressable></View>
       {loading ? <ActivityIndicator color={colors.cyan} style={{ marginVertical: 26 }} /> : null}
       {error ? <Pressable onPress={onRetry} style={styles.retry}><Text style={styles.retryText}>{error}  ·  Qayta urinish</Text></Pressable> : null}
-      {!loading && !freshListings.length ? <View style={styles.empty}><Text style={styles.emptyTitle}>Hozircha e’lonlar yo‘q</Text><Text style={styles.emptyHint}>Keyinroq yana ko‘rib chiqing.</Text></View> : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.products}>
-          {freshListings.map((item) => <ProductCard key={item._id || item.id} item={item} onPress={() => onListing(item)} />)}
-        </ScrollView>
+      {!loading && !freshListings.length ? <View style={styles.empty}><Text style={styles.emptyTitle}>Hozircha e’lonlar yo’q</Text><Text style={styles.emptyHint}>Keyinroq yana ko’rib chiqing.</Text></View> : (
+        <View style={styles.productsGrid}>
+          {freshListings.map((item) => <ProductCardGrid key={item._id || item.id} item={item} onPress={() => onListing(item)} />)}
+        </View>
       )}
       <View style={{ height: 20 }} />
     </ScrollView>
@@ -132,8 +148,9 @@ const styles = StyleSheet.create({
   actionsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginTop: 15 }, actionCard: { width: '47%', minHeight: 64, borderRadius: 15, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, gap: 7, borderWidth: 1, borderColor: 'rgba(0, 201, 245, .35)', backgroundColor: 'rgba(5, 33, 58, .82)' }, actionService: { borderColor: 'rgba(255, 145, 66, .7)' }, actionMarket: { borderColor: 'rgba(0, 201, 176, .55)' }, actionIcon: { fontSize: 21, color: '#00D3FF', width: 25, textAlign: 'center' }, actionText: { flex: 1 }, actionTitle: { color: colors.white, fontSize: 13, fontWeight: '800' }, actionHint: { color: '#BCD1DF', fontSize: 11, marginTop: 3 }, actionArrow: { color: '#98B7C9', fontSize: 20 }, futureRow: { flexDirection: 'row', gap: 9, marginTop: 9 }, futureCard: { flex: 1, minHeight: 60, flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 9, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(122, 188, 238, .55)', backgroundColor: 'rgba(14, 39, 68, .86)' }, futureIcon: { color: '#B6D4E9', fontSize: 18 }, futureTitle: { color: colors.white, fontSize: 13, fontWeight: '800' }, futureHint: { color: '#9BB8CC', fontSize: 11, marginTop: 2 }, sellCard: { borderColor: 'rgba(170, 130, 255, .55)', backgroundColor: 'rgba(60, 30, 130, .55)' }, businessCard: { borderColor: 'rgba(255, 186, 0, .5)', backgroundColor: 'rgba(80, 60, 10, .55)' },
   promoBanner: { height: 118, marginHorizontal: 18, marginTop: 18, flexDirection: 'row', alignItems: 'center', backgroundColor: '#E4F9FC', borderWidth: 1, borderColor: '#B9EBF4', borderRadius: 20, overflow: 'hidden' }, promoImage: { width: 118, height: 112, alignSelf: 'flex-end' }, promoCopy: { flex: 1, paddingLeft: 4 }, promoTitle: { color: colors.ink, fontSize: 14, fontWeight: '900' }, promoSubtitle: { color: colors.muted, fontSize: 12, marginTop: 5 }, promoDots: { flexDirection: 'row', gap: 6, marginTop: 16 }, promoDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#A8B6C2' }, promoDotActive: { width: 23, backgroundColor: colors.cyan }, promoArrow: { color: colors.cyanDark, fontSize: 27, paddingHorizontal: 14 }, shortcuts: { flexDirection: 'row', gap: 9, marginHorizontal: 18, marginTop: 20 }, videoShortcut: { flex: 1, minHeight: 60, flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 9, borderRadius: 16, backgroundColor: colors.white, ...shadow }, aiShortcut: { flex: 1, minHeight: 60, flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 9, borderRadius: 16, backgroundColor: '#E6F8FA' }, aiIcon: { color: colors.cyanDark, fontSize: 21 }, videoShortcutIcon: { color: colors.cyanDark, fontSize: 17 }, videoShortcutTitle: { color: colors.ink, fontSize: 14, fontWeight: '800' }, videoShortcutHint: { color: colors.muted, fontSize: 11, marginTop: 3 },
   sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 18, marginTop: 25, marginBottom: 12 }, sectionTitle: { color: colors.ink, fontSize: 18, fontWeight: '800' }, sectionSub: { color: colors.muted, fontSize: 12, marginTop: 3 }, link: { color: colors.cyanDark, fontSize: 13, fontWeight: '700' }, linkRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  categories: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12, paddingHorizontal: 18 }, category: { width: '18.8%', alignItems: 'center' }, categoryImageWrap: { width: 61, height: 61, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white, overflow: 'hidden', ...shadow }, categoryImage: { width: '100%', height: '100%' }, categoryFallback: { color: colors.cyan, fontSize: 25 }, categoryName: { color: colors.ink, fontSize: 11, lineHeight: 14, fontWeight: '700', textAlign: 'center', marginTop: 6, minHeight: 24 },
+  categories: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14, paddingHorizontal: 18 }, category: { width: '18.8%', alignItems: 'center' }, categoryImageWrap: { width: 62, height: 62, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white, overflow: 'hidden', ...shadow }, categoryImage: { width: '100%', height: '100%' }, categoryFallback: { color: colors.cyan, fontSize: 25 }, categoryName: { color: colors.ink, fontSize: 11, lineHeight: 14, fontWeight: '700', textAlign: 'center', marginTop: 6, minHeight: 24 },
   products: { flexDirection: 'row', gap: 11, paddingHorizontal: 18 }, product: { width: 190, backgroundColor: colors.white, borderRadius: 17, overflow: 'hidden', ...shadow }, productImage: { width: '100%', height: 128, backgroundColor: '#E6EEF4' }, productPlaceholder: { alignItems: 'center', justifyContent: 'center', backgroundColor: '#E6F7FA' }, placeholderGlyph: { color: colors.cyan, fontSize: 36, fontWeight: '900' }, productBody: { padding: 11 }, productTitle: { color: colors.ink, fontSize: 13, lineHeight: 17, fontWeight: '700', minHeight: 34 }, productPrice: { color: colors.cyanDark, fontSize: 13, fontWeight: '900', marginTop: 8 }, productMeta: { color: colors.muted, fontSize: 11, marginTop: 5 },
+  productsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 18 }, productGrid: { width: '47%', backgroundColor: colors.white, borderRadius: 18, overflow: 'hidden', ...shadow }, productGridImage: { width: '100%', height: 148, backgroundColor: '#E6EEF4' }, productGridBody: { padding: 12 }, productGridTitle: { color: colors.ink, fontSize: 13, lineHeight: 18, fontWeight: '700', minHeight: 36 }, productGridPrice: { color: colors.cyanDark, fontSize: 14, fontWeight: '900', marginTop: 7 }, productGridMeta: { color: colors.muted, fontSize: 11, marginTop: 4 },
   videoList: { flexDirection: 'row', gap: 10, paddingHorizontal: 18 }, videoCard: { width: 138, height: 194, backgroundColor: '#071629', borderRadius: 17, overflow: 'hidden' }, videoImage: { width: '100%', height: '100%' }, videoPlaceholder: { alignItems: 'center', justifyContent: 'center' }, videoPlay: { color: colors.white, fontSize: 32 }, videoCaption: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: 10, paddingTop: 28, backgroundColor: 'rgba(4, 13, 26, .55)' }, videoTitle: { color: colors.white, fontSize: 11, fontWeight: '800' }, videoEmpty: { minHeight: 76, marginHorizontal: 18, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#0B2037', borderRadius: 16 }, videoEmptyText: { color: colors.white, flex: 1, fontSize: 12, fontWeight: '700' },
   empty: { backgroundColor: colors.white, padding: 20, borderRadius: 16, alignItems: 'center' }, emptyTitle: { color: colors.ink, fontWeight: '700' }, emptyHint: { color: colors.muted, fontSize: 12, marginTop: 5 }, retry: { borderRadius: 12, backgroundColor: '#FFF0F1', padding: 12 }, retryText: { color: colors.red, fontSize: 12, textAlign: 'center' }, pressed: { opacity: 0.8, transform: [{ scale: 0.98 }] },
 });

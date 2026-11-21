@@ -11,12 +11,14 @@ export default function ZumoBot({ angle = null, size = 72, className = '', talki
   const isSad = emotion === 'sad';
   const isSurprised = emotion === 'surprised';
   const isLove = emotion === 'love';
+  const isAngry = emotion === 'angry';
   // Sahifada bir nechta robot bo'lsa gradient id to'qnashmasin
   const shell = `zumoBotShell-${useId().replace(/:/g, '')}`;
   const fill = `url(#${shell})`;
+  const eye = isAngry ? '#ff8a8a' : '#7ff3ff';
   return (
     <svg
-      className={`zumo-bot ${className}`}
+      className={`zumo-bot zumo-bot--${emotion} ${className}`}
       width={size}
       height={size}
       viewBox="0 0 80 80"
@@ -55,6 +57,13 @@ export default function ZumoBot({ angle = null, size = 72, className = '', talki
               <path d="M28 35q3.5-3.2 7 0" fill="none" stroke="#7ff3ff" strokeWidth="2.4" strokeLinecap="round" />
               <path d="M45 35q3.5-3.2 7 0" fill="none" stroke="#7ff3ff" strokeWidth="2.4" strokeLinecap="round" />
             </>
+          ) : isAngry ? (
+            <>
+              <path d="M26 27.5l9 3" stroke={eye} strokeWidth="2.6" strokeLinecap="round" />
+              <path d="M54 27.5l-9 3" stroke={eye} strokeWidth="2.6" strokeLinecap="round" />
+              <circle cx="31.5" cy="34" r="3" fill={eye} />
+              <circle cx="48.5" cy="34" r="3" fill={eye} />
+            </>
           ) : isSurprised ? (
             <>
               <circle cx="31.5" cy="33" r="4.6" fill="#7ff3ff" />
@@ -62,17 +71,20 @@ export default function ZumoBot({ angle = null, size = 72, className = '', talki
             </>
           ) : (
             <>
-              <circle cx="31.5" cy={isThinking ? 31.5 : 33} r="3.6" fill="#7ff3ff" />
-              <circle cx="48.5" cy={isThinking ? 31.5 : 33} r="3.6" fill="#7ff3ff" />
+              <circle cx={isThinking ? 30 : 31.5} cy={isThinking ? 30.5 : 33} r="3.6" fill="#7ff3ff" />
+              <circle cx={isThinking ? 47 : 48.5} cy={isThinking ? 30.5 : 33} r="3.6" fill="#7ff3ff" />
             </>
           )}
         </g>
+        {isSad && <path className="zumo-bot__tear" d="M30 38.5q-2 3.2 0 4.6q2-1.4 0-4.6Z" fill="#9be7ff" />}
         {talking
           ? <ellipse className="zumo-bot__mouth--talk" cx="40" cy="40" rx="4" ry="2.4" fill="#7ff3ff" />
           : isHappy || isLove
           ? <path d="M33 38.5q7 6 14 0" fill="none" stroke="#7ff3ff" strokeWidth="2.4" strokeLinecap="round" />
           : isSad
           ? <path d="M34 42q6-4 12 0" fill="none" stroke="#7ff3ff" strokeWidth="2" strokeLinecap="round" />
+          : isAngry
+          ? <path d="M34 42.5q6-3.4 12 0" fill="none" stroke={eye} strokeWidth="2.4" strokeLinecap="round" />
           : isSurprised
           ? <ellipse cx="40" cy="40.5" rx="2.6" ry="3.2" fill="#7ff3ff" />
           : isThinking
@@ -85,9 +97,28 @@ export default function ZumoBot({ angle = null, size = 72, className = '', talki
           </>
         ) : (
           <>
-            <circle cx="22" cy="40" r="2.4" fill="#ff8fb1" opacity={isHappy ? .9 : .55} />
-            <circle cx="58" cy="40" r="2.4" fill="#ff8fb1" opacity={isHappy ? .9 : .55} />
+            <circle cx="22" cy="40" r="2.4" fill={isAngry ? '#ff5c5c' : '#ff8fb1'} opacity={isHappy || isAngry ? .9 : .55} />
+            <circle cx="58" cy="40" r="2.4" fill={isAngry ? '#ff5c5c' : '#ff8fb1'} opacity={isHappy || isAngry ? .9 : .55} />
           </>
+        )}
+        {isLove && (
+          <g className="zumo-bot__hearts">
+            <path d="M66 14c-1.2-1.2-3.1-.3-3.1 1.1 0 1.3 1.8 2.3 3.1 3.3 1.3-1 3.1-2 3.1-3.3 0-1.4-1.9-2.3-3.1-1.1Z" fill="#ff6f9c" />
+            <path d="M72 6c-.9-.9-2.3-.2-2.3.8 0 1 1.3 1.7 2.3 2.5 1-.8 2.3-1.5 2.3-2.5 0-1-1.4-1.7-2.3-.8Z" fill="#ff8fb1" />
+          </g>
+        )}
+        {isAngry && (
+          <g className="zumo-bot__steam" fill="none" stroke="#ff9a9a" strokeWidth="2" strokeLinecap="round">
+            <path d="M10 18q-3-3 0-6" />
+            <path d="M70 18q3-3 0-6" />
+          </g>
+        )}
+        {isThinking && (
+          <g className="zumo-bot__think">
+            <circle cx="64" cy="13" r="1.6" fill="#bfefff" />
+            <circle cx="69" cy="8" r="2.2" fill="#bfefff" />
+            <circle cx="75" cy="2.5" r="2.8" fill="#bfefff" />
+          </g>
         )}
 
         {/* o'ng qo'l — ishora qiluvchi (yelka: 58,58) */}

@@ -56,6 +56,34 @@
   }
 }
 
+/* Kayfiyat animatsiyalari */
+.zumo-bot--happy { animation: zumoBotHop 0.9s ease-in-out 2; }
+.zumo-bot--angry { animation: zumoBotShake 0.45s ease-in-out 3; filter: drop-shadow(0 8px 18px rgba(255, 80, 80, 0.4)); }
+.zumo-bot--sad { animation: zumoBotDroop 2.4s ease-in-out infinite; }
+.zumo-bot--surprised { animation: zumoBotPop 0.4s cubic-bezier(0.34, 1.6, 0.64, 1); }
+.zumo-bot--love { animation: zumoBotPulse 1.2s ease-in-out infinite; }
+
+.zumo-bot__tear { animation: zumoBotTear 1.8s ease-in infinite; }
+.zumo-bot__hearts { animation: zumoBotHearts 1.8s ease-out infinite; }
+.zumo-bot__steam path { animation: zumoBotSteam 0.9s ease-out infinite; }
+.zumo-bot__steam path:nth-child(2) { animation-delay: 0.3s; }
+.zumo-bot__think circle { animation: zumoDot 1.2s infinite; }
+.zumo-bot__think circle:nth-child(2) { animation-delay: 0.2s; }
+.zumo-bot__think circle:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes zumoBotHop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-5px) scale(1.04); } }
+@keyframes zumoBotShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px) rotate(-3deg); } 75% { transform: translateX(2px) rotate(3deg); } }
+@keyframes zumoBotDroop { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(2px) rotate(-4deg); } }
+@keyframes zumoBotPop { from { transform: scale(0.85); } to { transform: scale(1); } }
+@keyframes zumoBotPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes zumoBotTear { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(9px); opacity: 0; } }
+@keyframes zumoBotHearts { 0% { transform: translateY(4px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-6px); opacity: 0; } }
+@keyframes zumoBotSteam { 0% { transform: translateY(3px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(-5px); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .zumo-bot, .zumo-bot__tear, .zumo-bot__hearts, .zumo-bot__steam path, .zumo-bot__think circle { animation: none; }
+}
+
 /* Gapirayotgan og'iz */
 .zumo-bot__mouth--talk {
   transform-box: fill-box;

@@ -15,6 +15,11 @@ import '../../styles/aiChat.css';
 
 const MAX_INPUT = 1500;
 const NOOP = () => {};
+const MATCH_LABELS = {
+  region: 'Bu hududda topilmadi — boshqa hududlardagi variantlar',
+  budget: 'Byudjetga mosi yo‘q — narxi eng yaqin variantlar',
+  similar: 'Aynan shunisi topilmadi — eng o‘xshash e’lonlar',
+};
 
 // Zumik javobi: yangi javob harfma-harf yoziladi (fresh), tugagach Markdown va kartalar chiqadi
 function AssistantMessage({ msg, onTyped, onGrow, onTalk, onCardClick }) {
@@ -37,6 +42,9 @@ function AssistantMessage({ msg, onTyped, onGrow, onTalk, onCardClick }) {
         </div>
       </div>
 
+      {!typed.typing && msg.cards?.length > 0 && MATCH_LABELS[msg.match] && (
+        <div className="ai-match-note">{T(MATCH_LABELS[msg.match])}</div>
+      )}
       {!typed.typing && msg.cards?.length > 0 && (
         <div className="ai-suggestions-grid">
           {msg.cards.map((card) => (
@@ -148,7 +156,7 @@ export default function AIChat() {
     try {
       // Serverga faqat matn yuboriladi (kartalar emas); birinchi salomlashuv kerak emas
       const data = await sendAIMessage(updated.slice(1).map(({ role, content: c }) => ({ role, content: c })));
-      setMessages((prev) => [...prev, { role: 'assistant', fresh: true, content: data?.reply || T('Javob topilmadi.'), cards: data?.cards || [], emotion: data?.emotion }]);
+      setMessages((prev) => [...prev, { role: 'assistant', fresh: true, content: data?.reply || T('Javob topilmadi.'), cards: data?.cards || [], match: data?.match, emotion: data?.emotion }]);
     } catch (error) {
       // Limit yoki boshqa xatoda server tushunarli matn qaytaradi
       setMessages((prev) => [
@@ -161,6 +169,9 @@ export default function AIChat() {
   };
 
   const onlyGreeting = messages.length === 1;
+  // Sarlavhadagi Zumik oxirgi javob kayfiyatini saqlaydi (javob yozib bo'lingach)
+  const lastReply = [...messages].reverse().find((m) => m.role === 'assistant');
+  const headerEmotion = loading ? 'thinking' : (lastReply && !lastReply.fresh && lastReply.emotion) || 'happy';
 
   return (
     <>
@@ -182,7 +193,7 @@ export default function AIChat() {
         <div className="ai-chat-modal" role="dialog" aria-label={T('Zumik — yordamchi')}>
           <div className="ai-chat-header">
             <div className="ai-chat-title">
-              <span className="ai-chat-title__bot"><ZumoBot size={38} still talking={talking} emotion={loading ? 'thinking' : 'happy'} /></span>
+              <span className="ai-chat-title__bot"><ZumoBot size={38} still talking={talking} emotion={headerEmotion} /></span>
               <div>
                 <h3>Zumik</h3>
                 <span className="ai-chat-status">
