@@ -24,6 +24,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { supabase } from '../lib/supabase';
 import { IS_IOS_APP } from '../utils/platform';
+import { safeGoBack } from '../utils/navigation.js';
 import { getImageUrl } from '../utils/imageUrl';
 import { openZumoGuide } from '../common/zumoGuideEvents.js';
 import QRCodeGenerator from './QRCodeGenerator';
@@ -287,7 +288,7 @@ export default function SettingsPage() {
   return (
     <div className="st-page">
       <header className="st-top">
-        <button type="button" className="st-back" onClick={() => navigate(-1)} aria-label={t('settingsPage.back', 'Orqaga')}>
+        <button type="button" className="st-back" onClick={() => safeGoBack(navigate)} aria-label={t('settingsPage.back', 'Orqaga')}>
           <ArrowLeft size={20} />
         </button>
         <h1>{t('settingsPage.title', 'Sozlamalar')}</h1>

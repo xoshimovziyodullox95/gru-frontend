@@ -1,3 +1,4 @@
+import { safeGoBack } from '../utils/navigation.js';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -204,7 +205,7 @@ export default function AdminDashboard() {
   return (
     <div className="ad-page">
       <header className="ad-top">
-        <button type="button" className="ad-back" onClick={() => navigate(-1)} aria-label={T('Orqaga')}>
+        <button type="button" className="ad-back" onClick={() => safeGoBack(navigate)} aria-label={T('Orqaga')}>
           <ArrowLeft size={22} />
         </button>
         <h1>{T('Admin panel')}</h1>

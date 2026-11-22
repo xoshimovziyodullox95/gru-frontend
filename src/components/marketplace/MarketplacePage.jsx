@@ -7,20 +7,29 @@ import { getLocations } from '../services/locations';
 import { getEquipment } from '../services/equipment';
 import { getServiceProviders } from '../services/serviceProviders';
 import { useProductCategories } from '../utils/productCategories';
-import ServiceProviderCard from '../marketplace/ServiceProviderCard';
 import { formatPrice } from '../utils/formatPrice';
+import { safeGoBack } from '../utils/navigation';
+import useEscapeClose from '../hooks/useEscapeClose';
 
 import {
-  MapPin, Ruler, Tag, ArrowLeft,
-  Search, Store, Loader2, Inbox, SlidersHorizontal, X
+  MapPin, Ruler, Tag, ArrowLeft, ArrowUpDown,
+  Search, Loader2, Inbox, SlidersHorizontal, X
 } from 'lucide-react';
 import UniversalCard from '../pages/UniversalCard';
 import MarketplaceFilters from '../marketplace/MarketplaceFilters';
 import SearchOverlay from '../common/SearchOverlay';
 import '../../styles/marketplace.css';
+import '../../styles/marketplaceResults.css';
 
 import { T } from '../utils/T';
 const searchableText = (value) => (typeof value === 'string' ? value.toLocaleLowerCase('uz-UZ') : '');
+// Saralash uchun narxning birinchi sonini olamiz ("100 000 - 300 000 so'm" → 100000)
+const priceNumber = (value) => {
+  if (typeof value === 'number') return value;
+  const match = String(value || '').replace(/\s/g, '').match(/\d+(?:[.,]\d+)?/);
+  return match ? parseFloat(match[0].replace(',', '.')) : null;
+};
+const SORTS = ['new', 'cheap', 'expensive'];
 
 export default function MarketplacePage() {
   const { t } = useTranslation();
@@ -37,6 +46,8 @@ export default function MarketplacePage() {
   const [selectedServiceCats, setSelectedServiceCats] = useUrlSet('svc');
   const [selectedSubs, setSelectedSubs] = useUrlSet('sub');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [sort, setSort] = useUrlParam('sort');
+  useEscapeClose(showMobileFilters, () => setShowMobileFilters(false));
   const [isSearchOpen, setIsSearchOpen] = useState(() => searchParams.get('openSearch') === '1');
 
   // ?openSearch=1 bir martalik: URL'dan olib tashlaymiz, aks holda e'londan "orqaga"
@@ -73,6 +84,8 @@ export default function MarketplacePage() {
           title: item.title,
           description: item.description || T('Joy haqida ma\'lumot'),
           price: item.price_range || item.price_per_month || 'Narxi mavjud emas',
+          priceValue: priceNumber(item.price_per_month ?? item.price_range),
+          subtitle: item.address || '',
           image: item.images?.[0] || '/images/zumo-placeholder.svg',
           link: `/location/${item._id}`,
           createdAt: item.createdAt,
@@ -90,6 +103,7 @@ export default function MarketplacePage() {
           title: item.title,
           description: item.description || T('Texnika haqida ma\'lumot'),
           price: formatPrice(item.price, item.currency) || 'Narxi mavjud emas',
+          priceValue: priceNumber(item.price),
           image: item.images?.[0] || '/images/zumo-placeholder.svg',
           link: `/equipment/${item._id}`,
           createdAt: item.createdAt,
@@ -107,12 +121,16 @@ const services = asArray(servRes).map(item => ({
   company: item.company,
   description: item.description || T('Xizmat haqida ma\'lumot'),
   price: item.price_range || 'Narxi mavjud emas',
+  priceValue: priceNumber(item.price_range),
+  subtitle: item.company || item.speciality || '',
   image: item.image || '/images/service-providers/default.jpg',
   link: `/service-provider/${item._id}`,
   createdAt: item.createdAt,
   isTop: item.is_top,
   isVerified: item.is_verified,
-  rating: item.rating,
+  rating: Array.isArray(item.ratings) && item.ratings.length
+    ? item.ratings.reduce((sum, r) => sum + Number(r.value || 0), 0) / item.ratings.length
+    : Number(item.rating || item.averageRating) || 0,
   meta: item.speciality ? [{ icon: Tag, text: item.speciality }] : [],
 }));
 
@@ -181,8 +199,41 @@ const services = asArray(servRes).map(item => ({
       });
     }
 
+    // 5. Saralash — narxi yo'qlar oxirida
+    if (sort === 'cheap' || sort === 'expensive') {
+      const dir = sort === 'cheap' ? 1 : -1;
+      result = [...result].sort((a, b) => {
+        if (a.priceValue == null) return 1;
+        if (b.priceValue == null) return -1;
+        return (a.priceValue - b.priceValue) * dir;
+      });
+    }
+
     return result;
-  }, [items, searchTerm, selectedTypes, selectedLevel1s, selectedSubs, selectedServiceCats, categoryNames]);
+  }, [items, searchTerm, selectedTypes, selectedLevel1s, selectedSubs, selectedServiceCats, categoryNames, sort]);
+
+  const activeFilterCount = selectedTypes.size + selectedLevel1s.size + selectedSubs.size + selectedServiceCats.size;
+  const sortLabels = {
+    new: t('marketplacePage.sortNew', 'Avval yangilari'),
+    cheap: t('marketplacePage.sortCheap', 'Avval arzonlari'),
+    expensive: t('marketplacePage.sortExpensive', 'Avval qimmatlari'),
+  };
+  const currentSort = SORTS.includes(sort) ? sort : 'new';
+  const cycleSort = () => {
+    const next = SORTS[(SORTS.indexOf(currentSort) + 1) % SORTS.length];
+    setSort(next === 'new' ? '' : next);
+  };
+  const typeChips = [
+    { value: '', label: t('marketplacePage.all', 'Hammasi') },
+    { value: 'equipment', label: t('marketplaceFilters.typeEquipment') },
+    { value: 'service', label: t('marketplaceFilters.typeService') },
+    { value: 'location', label: t('marketplaceFilters.typeLocation') },
+  ];
+  const singleType = selectedTypes.size === 1 ? [...selectedTypes][0] : '';
+  const pickType = (value) => setSelectedTypes(value ? new Set([value]) : new Set());
+  const pageTitle = activeCategory?.name
+    || (singleType ? typeChips.find((c) => c.value === singleType)?.label : null)
+    || t('marketplacePage.title');
 
   useScrollRestore(!loading);
 
@@ -241,42 +292,48 @@ const services = asArray(servRes).map(item => ({
   // ========== RENDER ==========
   return (
     <div className="marketplace-page">
-      <div className="marketplace-page-header">
-        <h1 className="marketplace-page-title">
-          <Store size={24} />
-          {t('marketplacePage.title')}
-        </h1>
-
-        <button type="button" className="marketplace-back-btn" onClick={() => navigate('/marketplace')}>
-          <ArrowLeft size={18} />
-          <span>{t('common.back', 'Orqaga')}</span>
+      <div className="mpx-top">
+        <button type="button" className="mpx-icon-btn" onClick={() => safeGoBack(navigate)} aria-label={t('common.back', 'Orqaga')}>
+          <ArrowLeft size={20} />
         </button>
-
-        <div className="marketplace-search-bar">
-          <Search size={18} className="marketplace-search-icon" />
-          <input
-            type="text"
-            placeholder={t('marketplacePage.searchPlaceholder')}
-            value={searchTerm}
-            onClick={() => setIsSearchOpen(true)}
-            readOnly
-            className="marketplace-search-input"
-          />
+        <div className="mpx-search" role="button" tabIndex={0} onClick={() => setIsSearchOpen(true)} onKeyDown={(e) => e.key === 'Enter' && setIsSearchOpen(true)}>
+          <Search size={17} className="mpx-search__icon" />
+          <span className={`mpx-search__text ${searchTerm ? 'has-value' : ''}`}>
+            {searchTerm || t('marketplacePage.searchPlaceholder')}
+          </span>
           {searchTerm && (
             <button
-              className="marketplace-search-clear"
-              onClick={() => setSearchTerm('')}
+              type="button"
+              className="mpx-search__clear"
+              onClick={(e) => { e.stopPropagation(); setSearchTerm(''); }}
               aria-label={t('marketplacePage.clearSearch')}
             >
-              ✕
+              <X size={15} />
             </button>
           )}
         </div>
-
-        <button type="button" className="mp-mobile-filter-btn" onClick={() => setShowMobileFilters(true)}>
-          <SlidersHorizontal size={16} /> {t('marketplacePage.filterButton')}
+        <button type="button" className={`mpx-icon-btn ${activeFilterCount ? 'is-on' : ''}`} onClick={() => setShowMobileFilters(true)} aria-label={t('marketplacePage.filterButton')}>
+          <SlidersHorizontal size={19} />
+          {activeFilterCount > 0 && <span className="mpx-icon-btn__badge">{activeFilterCount}</span>}
         </button>
       </div>
+
+      <div className="mpx-chips">
+        {typeChips.map((chip) => {
+          const on = chip.value ? singleType === chip.value : selectedTypes.size === 0;
+          return (
+            <button key={chip.value || 'all'} type="button" aria-pressed={on} className={`mpx-chip ${on ? 'is-on' : ''}`} onClick={() => pickType(chip.value)}>
+              {chip.label}
+            </button>
+          );
+        })}
+        {[...selectedLevel1s].map((id) => (
+          <button key={id} type="button" className="mpx-chip is-on mpx-chip--removable" onClick={() => toggleLevel1(id)}>
+            {categoryNames.get(id) || id} <X size={13} />
+          </button>
+        ))}
+      </div>
+
       <SearchOverlay
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
@@ -323,11 +380,16 @@ const services = asArray(servRes).map(item => ({
         />
 
         <div className="marketplace-content">
-          {activeCategory && (
+          <div className="mpx-bar">
+            <h1 className="mpx-title">
+              {pageTitle} <span className="mpx-count">{filteredItems.length}</span>
+            </h1>
+            <button type="button" className="mpx-sort" onClick={cycleSort}>
+              <ArrowUpDown size={14} /> {sortLabels[currentSort]}
+            </button>
+          </div>
+          {activeCategory && activeCategory.subs.length > 0 && (
             <div className="mp-subcats" role="group" aria-label={activeCategory.name}>
-              <h2 className="mp-subcats__title">
-                <activeCategory.icon size={18} /> {activeCategory.name}
-              </h2>
               <div className="mp-subcats__chips">
                 <button
                   type="button"
@@ -364,37 +426,23 @@ const services = asArray(servRes).map(item => ({
             </div>
           ) : (
             <div className="uc-grid">
-             {filteredItems.map(item => {
-  if (item.type === 'service') {
-    return (
-      <ServiceProviderCard
-        key={`service-${item.id}`}
-        id={item.id}
-        name={item.title}
-        company={item.company}
-        image={item.image}
-        price_range={item.price}
-        description={item.description}
-      />
-    );
-  }
-
-  return (
-    <UniversalCard
-      key={`${item.type}-${item.id}`}
-      id={item.id}
-      type={item.type}
-      title={item.title}
-      image={item.image}
-      price={item.price}
-      link={item.link}
-      isTop={item.isTop}
-      isVerified={item.isVerified}
-      maxQuantity={item.maxQuantity}
-      saleMode={item.saleMode}
-    />
-  );
-})}
+              {filteredItems.map((item) => (
+                <UniversalCard
+                  key={`${item.type}-${item.id}`}
+                  id={item.id}
+                  type={item.type}
+                  title={item.title}
+                  image={item.image}
+                  price={item.price}
+                  link={item.link}
+                  isTop={item.isTop}
+                  isVerified={item.isVerified}
+                  maxQuantity={item.maxQuantity}
+                  saleMode={item.saleMode}
+                  rating={item.rating}
+                  subtitle={item.subtitle}
+                />
+              ))}
             </div>
           )}
         </div>

@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { X, Star, Loader2 } from 'lucide-react';
+import useEscapeClose from '../hooks/useEscapeClose';
 
 import { serviceLabel, formatSum } from '../utils/i18nHelpers';
 import '../../styles/requestTracker.css';
@@ -23,6 +24,7 @@ export default function IncomingOfferModal({
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [accepting, setAccepting] = useState(false);
+  useEscapeClose(isOpen && Boolean(offer), onClose);
 
   if (!isOpen || !offer) return null;
 

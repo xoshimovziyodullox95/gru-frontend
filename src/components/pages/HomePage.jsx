@@ -41,6 +41,7 @@ import '../../styles/home.css';
 
 import { T } from '../utils/T';
 import { useMyMongoId } from '../hooks/useMyMongoId';
+import { rememberHomeRoot } from '../utils/homeRoot';
 /* ============================================================
    CONSTANTS
    ============================================================ */
@@ -217,6 +218,7 @@ export default function HomePage() {
   // Pastki menyu uchun joy: sahifa oxiri va AI chat tugmasi menyu ostida qolmasin
   useEffect(() => {
     document.body.classList.add('has-bottom-tabbar');
+    rememberHomeRoot('/home');
     return () => document.body.classList.remove('has-bottom-tabbar');
   }, []);
 

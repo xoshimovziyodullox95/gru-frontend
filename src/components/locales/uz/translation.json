@@ -1109,7 +1109,11 @@
       "serviceTags": "Xizmat teglari"
     },
     "noResults": "Mos kategoriya yoki e’lon topilmadi",
-    "search": "Qidirish"
+    "search": "Qidirish",
+    "all": "Hammasi",
+    "sortNew": "Avval yangilari",
+    "sortCheap": "Avval arzonlari",
+    "sortExpensive": "Avval qimmatlari"
   },
   "marketplaceFilters": {
     "types": "Turi",

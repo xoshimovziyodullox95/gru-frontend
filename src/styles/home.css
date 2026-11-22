@@ -159,11 +159,45 @@
   letter-spacing: -0.03em;
 }
 
-/* ---------- O'ng: bo'sh joy (kelajakda profil/bildirishnoma uchun) ---------- */
+/* ---------- O'ng: saqlanganlar + bildirishnomalar (Instagram uslubi) ---------- */
 .zumo-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.zumo-topbar__icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 38px;
   height: 38px;
-  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #c3f5ff;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.zumo-topbar__icon:hover { color: #fff; }
+.zumo-topbar__icon:active { transform: scale(0.9); }
+.zumo-topbar__badge {
+  position: absolute;
+  top: 3px;
+  right: 1px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ff3b5c;
+  border: 2px solid #041326;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 13px;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 @media (max-width: 600px) {
@@ -180,9 +214,9 @@
   .zumo-topbar__umo {
     font-size: 1.12rem;
   }
-  .zumo-topbar__actions {
-    width: 34px;
-    height: 34px;
+  .zumo-topbar__icon {
+    width: 36px;
+    height: 36px;
   }
 }
 

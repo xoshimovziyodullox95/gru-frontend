@@ -1069,7 +1069,11 @@
       "serviceTags": "Service tags"
     },
     "noResults": "No matching categories or listings",
-    "search": "Search"
+    "search": "Search",
+    "all": "All",
+    "sortNew": "Newest first",
+    "sortCheap": "Cheapest first",
+    "sortExpensive": "Most expensive"
   },
   "marketplaceFilters": {
     "types": "Type",

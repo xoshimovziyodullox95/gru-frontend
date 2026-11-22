@@ -6,7 +6,7 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 const ROOT_PATHS = ['/', '/home'];
 const EXIT_WINDOW_MS = 2000;
 // Ochiq bo'lsa, "orqaga" avval shularni yopadi (komponentlar Escape tugmasini tinglaydi)
-const OVERLAYS = '.tg-msg-menu, .tg-lightbox, .tg-wall-sheet, .reel-modal-overlay, .rv-viewer, .rv-sheet, .st-sheet, .pf-sheet, .ImageViewerOverlay, [role="dialog"][aria-modal="true"], .tg-chat--mobile-open, [data-back-handler]';
+const OVERLAYS = '.tg-msg-menu, .tg-lightbox, .tg-wall-sheet, .reel-modal-overlay, .rv-viewer, .rv-sheet, .st-sheet, .pf-sheet, .ImageViewerOverlay, [role="dialog"][aria-modal="true"], .tg-chat--mobile-open, [data-back-handler], .mkt-add-menu, .mp-mobile-filter-overlay, .zumo-quick-menu';
 let lastBackAt = 0;
 
 // Android ilovani fonda yopib qo'ysa ham, qayta ochilganda oxirgi sahifadan davom etamiz
@@ -87,7 +87,10 @@ export async function setupNativeShell() {
       return;
     }
     const atRoot = ROOT_PATHS.includes(window.location.pathname);
-    if (!atRoot && canGoBack) return window.history.back();
+    // WebView'ning canGoBack'i pushState yozuvlarini ba'zan hisobga olmaydi va sahifa "o'tkazib yuboriladi" —
+    // React Router'ning o'z tarix indeksiga ham qaraymiz
+    const routerIdx = window.history.state?.idx;
+    if (!atRoot && (canGoBack || (Number.isInteger(routerIdx) && routerIdx > 0))) return window.history.back();
     if (!atRoot) {
       // Tarix yo'q (masalan, havola orqali ochilgan) — chiqib ketmasdan bosh sahifaga
       window.history.replaceState(null, '', '/home');

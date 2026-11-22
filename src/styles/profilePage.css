@@ -747,3 +747,35 @@ body:has(.gru-navbar) .pf-top { top: 70px; height: 56px; padding-top: 0; }
   .pf-tabs button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pf-tabs em { position: absolute; top: 4px; right: 6px; min-width: 18px; padding: 0 5px; font-size: 0.66rem; }
 }
+
+/* Tezkor kirish: saqlanganlar / buyurtmalar */
+.pf-shortcuts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pf-shortcut > span:last-child { min-width: 0; line-height: 1.2; overflow-wrap: anywhere; }
+.pf-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 2px 10px var(--shadow);
+}
+.pf-shortcut:active { transform: scale(0.98); }
+.pf-shortcut__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--cyan) 12%, transparent);
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+.pf-shortcut__icon--fav { background: rgba(255, 59, 92, 0.12); color: #ff3b5c; }

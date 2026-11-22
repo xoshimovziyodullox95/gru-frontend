@@ -1,12 +1,38 @@
 // src/components/marketplace/MarketplaceFilters.jsx
 // Filtrlar: e'lon turi, tovar kategoriyasi (+ ichki bo'lim) va xizmat yo'nalishi.
-// Bank xizmatlari olib tashlangan — bo'lim "Tez kunda".
+// Katakchalar o'rniga chiplar — Uzum/Ozon kabi bir bosishda tanlanadi.
 import { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useProductCategories } from '../utils/productCategories';
 import { getServiceTaxonomy } from '../services/serviceProviders';
 import { directionLabel } from '../utils/i18nHelpers';
+
+function ChipGroup({ title, options, selected, onToggle }) {
+  if (!options.length) return null;
+  return (
+    <div className="mp-filters-section mpf-section">
+      <h4>{title}</h4>
+      <div className="mpf-chips">
+        {options.map((opt) => {
+          const on = selected.has(opt.value);
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              aria-pressed={on}
+              className={`mpf-chip ${on ? 'is-on' : ''}`}
+              onClick={() => onToggle(opt.value)}
+            >
+              {on && <Check size={14} strokeWidth={2.6} />}
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function MarketplaceFilters({
   selectedTypes,
@@ -46,78 +72,34 @@ export default function MarketplaceFilters({
 
   return (
     <aside className="mp-filters-panel">
-      {/* TURI */}
-      <div className="mp-filters-section">
-        <h4>{t('marketplaceFilters.types')}</h4>
-        {typeOptions.map((opt) => (
-          <label key={opt.value} className="mp-filter-checkbox">
-            <input
-              type="checkbox"
-              checked={selectedTypes.has(opt.value)}
-              onChange={() => onToggleType(opt.value)}
-            />
-            <span>{opt.label}</span>
-          </label>
-        ))}
-      </div>
+      <ChipGroup title={t('marketplaceFilters.types')} options={typeOptions} selected={selectedTypes} onToggle={onToggleType} />
 
-      {/* XIZMAT YO'NALISHI */}
-      {serviceDirections.length > 0 && (
-        <div className="mp-filters-section">
-          <h4>{t('marketplaceFilters.serviceTags')}</h4>
-          <div className="mp-filters-scroll">
-            {serviceDirections.map((slug) => (
-              <label key={slug} className="mp-filter-checkbox">
-                <input
-                  type="checkbox"
-                  checked={selectedServiceCats.has(slug)}
-                  onChange={() => onToggleServiceCat(slug)}
-                />
-                <span>{directionLabel(slug)}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* TOVAR KATEGORIYASI */}
-      <div className="mp-filters-section">
-        <h4>{t('marketplaceFilters.category', 'Kategoriya')}</h4>
-        <div className="mp-filters-scroll">
-          {categories.map((cat) => (
-            <label key={cat.id} className="mp-filter-checkbox">
-              <input
-                type="checkbox"
-                checked={selectedLevel1s.has(cat.id)}
-                onChange={() => onToggleLevel1(cat.id)}
-              />
-              <span>{cat.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+      <ChipGroup
+        title={t('marketplaceFilters.category', 'Kategoriya')}
+        options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
+        selected={selectedLevel1s}
+        onToggle={onToggleLevel1}
+      />
 
       {activeCategory && onToggleSub && (
-        <div className="mp-filters-section">
-          <h4>{activeCategory.name}</h4>
-          <div className="mp-filters-scroll">
-            {activeCategory.subs.map((sub) => (
-              <label key={sub.id} className="mp-filter-checkbox">
-                <input
-                  type="checkbox"
-                  checked={selectedSubs.has(sub.id)}
-                  onChange={() => onToggleSub(sub.id)}
-                />
-                <span>{sub.name}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+        <ChipGroup
+          title={activeCategory.name}
+          options={activeCategory.subs.map((sub) => ({ value: sub.id, label: sub.name }))}
+          selected={selectedSubs}
+          onToggle={onToggleSub}
+        />
       )}
 
+      <ChipGroup
+        title={t('marketplaceFilters.serviceTags')}
+        options={serviceDirections.map((slug) => ({ value: slug, label: directionLabel(slug) }))}
+        selected={selectedServiceCats}
+        onToggle={onToggleServiceCat}
+      />
+
       {hasActiveFilters && (
-        <button className="mp-filters-clear" onClick={onClearAll}>
-          <X size={14} /> {t('marketplaceFilters.clear')}
+        <button type="button" className="mp-filters-clear mpf-clear" onClick={onClearAll}>
+          <X size={15} /> {t('marketplaceFilters.clear')}
         </button>
       )}
     </aside>

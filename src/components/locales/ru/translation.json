@@ -1069,7 +1069,11 @@
       "serviceTags": "Теги услуг"
     },
     "noResults": "Подходящих категорий или объявлений не найдено",
-    "search": "Поиск"
+    "search": "Поиск",
+    "all": "Все",
+    "sortNew": "Сначала новые",
+    "sortCheap": "Сначала дешёвые",
+    "sortExpensive": "Сначала дорогие"
   },
   "marketplaceFilters": {
     "types": "Тип",

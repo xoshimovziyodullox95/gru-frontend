@@ -8,6 +8,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { X, Clock, Navigation, MapPin } from 'lucide-react';
+import useEscapeClose from '../hooks/useEscapeClose';
 
 // Xarita (Leaflet) og'ir — faqat oyna ochilganda yuklanadi
 const RequestMap = lazy(() => import('../common/RequestMap'));
@@ -32,6 +33,8 @@ export default function IncomingRequestModal({
     const timer = setTimeout(() => onClose?.(), AUTO_CLOSE_MS);
     return () => clearTimeout(timer);
   }, [isOpen, onClose]);
+
+  useEscapeClose(isOpen && Boolean(request), onClose);
 
   if (!isOpen || !request) return null;
 

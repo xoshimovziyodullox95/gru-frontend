@@ -1030,6 +1030,13 @@ export default function ChatPage() {
     };
   }, []);
 
+  // Suhbat boshqa sahifadan ochilgan bo'lsa (masalan, e'londagi "Sotuvchiga yozish") — yopilganda
+  // ro'yxatga emas, o'sha sahifaga qaytamiz; chat ro'yxatidan ochilgan bo'lsa — ro'yxatga
+  const closeChat = () => {
+    if (targetUserId && activeChat?.userId === targetUserId && window.history.state?.idx > 0) navigate(-1);
+    else setActiveChat(null);
+  };
+
   // "Orqaga" / Escape: avval ochiq oyna va menyular, keyin suhbatdan ro'yxatga (Telegram kabi)
   useEffect(() => {
     const onKey = (e) => {
@@ -1037,11 +1044,13 @@ export default function ChatPage() {
       if (document.querySelector('.tg-msg-menu, .tg-lightbox, .tg-wall-sheet, .tg-react-picker, .rv-viewer, [role="dialog"][aria-modal="true"]')) return;
       if (showEmoji) { setShowEmoji(false); return; }
       if (headerMenuOpen) { setHeaderMenuOpen(false); return; }
-      setActiveChat(null);
+      closeChat();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [activeChat, showEmoji, headerMenuOpen]);
+    // closeChat faqat activeChat va targetUserId'ga bog'liq
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChat, showEmoji, headerMenuOpen, targetUserId]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -1555,7 +1564,7 @@ export default function ChatPage() {
                 <button
                   type="button"
                   className="tg-icon-btn tg-back-mobile"
-                  onClick={() => setActiveChat(null)}
+                  onClick={closeChat}
                   aria-label={T('Orqaga')}
                 >
                   <ArrowLeft size={20} />

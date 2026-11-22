@@ -9,6 +9,7 @@ import { useProductCategories } from '../utils/productCategories';
 import { getServiceTaxonomy } from '../services/serviceProviders';
 import { safeGoBack } from '../utils/navigation.js';
 import { T } from '../utils/T';
+import '../../styles/marketplaceHub.css';
 import '../../styles/marketplaceCatalog.css';
 
 const formatSlug = (slug = '') => slug.replace(/[-_]+/g, ' ').replace(/^./, (c) => c.toUpperCase());

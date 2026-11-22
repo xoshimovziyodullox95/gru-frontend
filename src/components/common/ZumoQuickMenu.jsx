@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import '../../styles/zumoQuickMenu.css';
 import { openZumoGuide } from './zumoGuideEvents.js';
+import { useAuth } from '../context/AuthContext';
+import { getUnreadCount as getNotifUnreadCount } from '../services/notifications';
 
 import { T } from '../utils/T';
 const ACTIONS = [
@@ -33,6 +35,18 @@ export default function ZumoQuickMenu({ isOpen, onToggle }) {
   const navigate = useNavigate();
   const rootRef = useRef(null);
   const drawerRef = useRef(null);
+  const { user } = useAuth();
+  const [notifUnread, setNotifUnread] = useState(0);
+
+  // Instagram kabi: o'ng tepada bildirishnoma qo'ng'irog'i, o'qilmaganlar soni bilan
+  useEffect(() => {
+    if (!user) return undefined;
+    const refresh = () => getNotifUnreadCount().then((res) => setNotifUnread(res.data.count || 0)).catch(() => {});
+    refresh();
+    const interval = setInterval(refresh, 30000);
+    window.addEventListener('focus', refresh);
+    return () => { clearInterval(interval); window.removeEventListener('focus', refresh); };
+  }, [user]);
   // Yopilganda panel darrov yo'qolmasin — chapga qaytib ketish animatsiyasi tugaguncha ko'rsatamiz
   const [rendered, setRendered] = useState(isOpen);
   if (isOpen && !rendered) setRendered(true);
@@ -78,7 +92,15 @@ export default function ZumoQuickMenu({ isOpen, onToggle }) {
         <img src="/ZUMO.png" alt="" className="zumo-topbar__z" loading="eager" />
         <span className="zumo-topbar__umo">UMO</span>
       </div>
-      <div className="zumo-topbar__actions" aria-hidden="true" />
+      <div className="zumo-topbar__actions">
+        <button type="button" className="zumo-topbar__icon" onClick={() => navigate('/saved')} aria-label={T('Saqlangan e’lonlar')}>
+          <Heart size={22} strokeWidth={2.1} />
+        </button>
+        <button type="button" className="zumo-topbar__icon" onClick={() => navigate('/notifications')} aria-label={T('Bildirishnomalar')}>
+          <Bell size={22} strokeWidth={2.1} />
+          {notifUnread > 0 && <span className="zumo-topbar__badge">{notifUnread > 99 ? '99+' : notifUnread}</span>}
+        </button>
+      </div>
 
     </header>
     {/* Panel sarlavhadan tashqarida: sarlavhaning backdrop-filter'i fixed elementni o'ziga qamab qo'yadi */}

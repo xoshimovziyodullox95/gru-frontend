@@ -1,6 +1,6 @@
 // src/components/UniversalCard.jsx
 import { Link } from 'react-router-dom';
-import { Heart, Flame, ShieldCheck, ShoppingCart } from 'lucide-react';
+import { Heart, Flame, ShieldCheck, ShoppingCart, Star, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useFavorites } from '../hooks/useFavorites';
 import { useCart } from '../hooks/useCart';
@@ -14,12 +14,14 @@ export default function UniversalCard({
   title,
   image,
   price,
-  currency,        // <-- BU QATOR bormi?
+  currency,
   link,
   isTop = false,
   isVerified = false,
   maxQuantity,
   saleMode = 'store',
+  rating,          // xizmat reytingi (0–5)
+  subtitle,        // kompaniya / manzil — nom ostida kichik qator
 })  {
   const { t } = useTranslation();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -39,6 +41,11 @@ export default function UniversalCard({
     toggleFavorite({ id, type, title, image, price, link });
   };
 
+  const priceText = typeof price === 'number' ? formatPrice(price, currency) : price;
+  // "Narxi mavjud emas" kabi matnlar narx emas — kichik, kulrang ko'rinadi
+  const hasPrice = Boolean(priceText) && /\d/.test(String(priceText));
+  const ratingValue = Number(rating) || 0;
+
   const isOrderableProduct = type === 'equipment' && saleMode !== 'classified';
 
   const getBadgeText = (badgeType) => {
@@ -51,13 +58,12 @@ export default function UniversalCard({
     <Link to={link} className="uc-card">
       <div className="uc-image-wrap">
         <img
-  src={getImageUrl(image)}
+          src={getImageUrl(image)}
           alt={title}
           className="uc-image"
+          loading="lazy"
           onError={(e) => { e.target.onerror = null; e.target.src = '/images/zumo-placeholder.svg'; }}
         />
-
-  
 
         <button
           type="button"
@@ -65,13 +71,18 @@ export default function UniversalCard({
           onClick={handleFavoriteClick}
           aria-label={favored ? t('universalCard.favRemove') : t('universalCard.favAdd')}
         >
-          <Heart size={16} fill={favored ? 'currentColor' : 'none'} />
+          <Heart size={17} strokeWidth={2.2} fill={favored ? 'currentColor' : 'none'} />
         </button>
 
-        {(isTop || isVerified) && (
+        {(isTop || isVerified || type !== 'equipment') && (
           <div className="uc-badges">
             {isTop && <span className="uc-badge uc-badge--top"><Flame size={11} /> {getBadgeText('top')}</span>}
             {isVerified && <span className="uc-badge uc-badge--verified"><ShieldCheck size={11} /> {getBadgeText('verified')}</span>}
+            {type !== 'equipment' && (
+              <span className="uc-badge uc-badge--type">
+                {t(`marketplace.types.${type}`, { defaultValue: type === 'service' ? 'Xizmat' : 'Joy' })}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -79,10 +90,22 @@ export default function UniversalCard({
       {/* Uzum uslubi: narx → nom → bitta amal. Butun karta havola, shuning uchun "Batafsil" tugmasi yo'q */}
       {/* Xizmatda esa nom asosiy: "Narx so'rov asosida" katta sarlavha bo'lib turmasin */}
       <div className={`uc-body ${type === 'service' ? 'uc-body--service' : ''}`}>
-        <span className="uc-price">
-          {(typeof price === 'number' ? formatPrice(price, currency) : price) || t('universalCard.priceNotAvailable')}
+        <span className={`uc-price ${hasPrice ? '' : 'uc-price--muted'}`}>
+          {hasPrice ? priceText : t('universalCard.priceNotAvailable')}
         </span>
         <h3 className="uc-title">{title}</h3>
+        {(ratingValue > 0 || subtitle) && (
+          <div className="uc-meta">
+            {ratingValue > 0 && (
+              <span><Star size={12} className="uc-meta__star" /> <strong>{ratingValue.toFixed(1)}</strong></span>
+            )}
+            {subtitle && (
+              <span className="uc-meta__text">
+                {type === 'location' && <MapPin size={11} />} {subtitle}
+              </span>
+            )}
+          </div>
+        )}
         {type === 'equipment' && !isOrderableProduct && (
           <span className="uc-sale-hint">{t('universalCard.contactSeller', 'Sotuvchi bilan kelishiladi')}</span>
         )}

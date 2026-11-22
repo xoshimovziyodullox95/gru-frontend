@@ -12,6 +12,7 @@ import { getUserProfile } from '../services/user';
 import { getUnreadCount as getChatUnreadCount } from '../services/chat';
 import { getImageUrl } from '../utils/imageUrl';
 import { T } from '../utils/T';
+import { goHomeRoot } from '../utils/homeRoot';
 import '../../styles/marketplaceLayout.css';
 
 const formatBadge = (n) => (n > 99 ? '99+' : n);
@@ -91,6 +92,36 @@ export default function MarketplaceTabbar({ homePath = '/marketplace', floating 
 
   const homeActive = location.pathname === homePath;
 
+  // Instagram/YouTube kabi: tablar orasida yurish tarixni to'ldirmaydi — istalgan tabdan
+  // "orqaga" Bosh sahifaga qaytaradi. Bosh sahifadan ochilgan tab buni history state'da eslab qoladi.
+  const TAB_ROOTS = [homePath, '/cart', '/chat', '/marketplace/profile', '/profile'];
+  const goTab = (path, extraState = {}) => {
+    const here = location.pathname;
+    if (here === path) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const onTabRoot = TAB_ROOTS.includes(here);
+    const fromHome = Boolean(location.state?.tabFromHome);
+    if (path === homePath) {
+      if (onTabRoot && fromHome) navigate(-1);
+      else if (onTabRoot) navigate(homePath, { replace: true });
+      else goHomeRoot(navigate, homePath);
+      return;
+    }
+    if (here === homePath) navigate(path, { state: { ...extraState, tabFromHome: true } });
+    else if (onTabRoot) navigate(path, { replace: true, state: { ...extraState, tabFromHome: fromHome } });
+    else navigate(path, { state: extraState });
+  };
+
+  // "+" menyusi ochiq bo'lsa, telefonning "orqaga" tugmasi (Escape) avval uni yopadi
+  useEffect(() => {
+    if (!addMenuOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setAddMenuOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [addMenuOpen]);
+
   return (
     <>
       <nav className={`mkt-tabbar ${floating ? 'mkt-tabbar--floating' : ''}`}>
@@ -98,7 +129,7 @@ export default function MarketplaceTabbar({ homePath = '/marketplace', floating 
         <button
           type="button"
           className={`mkt-tab ${homeActive ? 'mkt-tab--active' : ''}`}
-          onClick={() => navigate(homePath)}
+          onClick={() => goTab(homePath)}
         >
           <img
             src="/ZUMO.png"
@@ -114,7 +145,7 @@ export default function MarketplaceTabbar({ homePath = '/marketplace', floating 
         <button
           type="button"
           className={`mkt-tab ${isActive('/cart') ? 'mkt-tab--active' : ''}`}
-          onClick={() => navigate('/cart', { state: { from: location.pathname + location.search, fromHome: homePath } })}
+          onClick={() => goTab('/cart', { from: location.pathname + location.search, fromHome: homePath })}
         >
           <span className="mkt-tab__iconwrap">
             <ShoppingCart size={23} strokeWidth={isActive('/cart') ? 2.5 : 1.9} />
@@ -141,7 +172,7 @@ export default function MarketplaceTabbar({ homePath = '/marketplace', floating 
           type="button"
           className={`mkt-tab ${isActive('/chat') ? 'mkt-tab--active' : ''}`}
           data-tour="chat"
-          onClick={() => navigate('/chat')}
+          onClick={() => goTab('/chat')}
         >
           <span className="mkt-tab__iconwrap">
             <MessageCircle size={23} strokeWidth={isActive('/chat') ? 2.5 : 1.9} />
@@ -161,7 +192,7 @@ export default function MarketplaceTabbar({ homePath = '/marketplace', floating 
             isActive('/marketplace/profile') ? 'mkt-tab--active' : ''
           }`}
           data-tour="profile"
-          onClick={() => navigate('/marketplace/profile')}
+          onClick={() => goTab('/marketplace/profile')}
         >
           {user ? (
             <img src={avatarUrl} alt="" className="mkt-tab__avatar" />

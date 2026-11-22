@@ -522,7 +522,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user && !userId) {
-      navigate('/login');
+      navigate('/login', { replace: true });
       return undefined;
     }
     const timer = setTimeout(loadData, 0);
@@ -784,6 +784,20 @@ export default function ProfilePage() {
             )}
           </div>
         </section>
+
+        {/* ---------- Tezkor kirish: saqlanganlar va buyurtmalar ---------- */}
+        {isOwnProfile && (
+          <nav className="pf-shortcuts">
+            <Link to="/saved" className="pf-shortcut">
+              <span className="pf-shortcut__icon pf-shortcut__icon--fav"><Heart size={19} /></span>
+              <span>{t('settingsPage.saved', 'Saqlanganlar')}</span>
+            </Link>
+            <Link to="/my-orders" className="pf-shortcut">
+              <span className="pf-shortcut__icon"><Package size={19} /></span>
+              <span>{t('nav.myOrders', 'Buyurtmalarim')}</span>
+            </Link>
+          </nav>
+        )}
 
         {/* ---------- Premium ---------- */}
         {isOwnProfile && (isPremium || !IS_IOS_APP) && (

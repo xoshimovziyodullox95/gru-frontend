@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
+import useEscapeClose from '../hooks/useEscapeClose';
 
 import '../../styles/requestTracker.css';
 
@@ -17,6 +18,7 @@ export default function CancelReasonModal({ isOpen, role, onClose, onConfirm }) 
   const [selected, setSelected] = useState(null);
   const [customText, setCustomText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  useEscapeClose(isOpen && !submitting, () => { setSelected(null); setCustomText(''); onClose?.(); });
 
   if (!isOpen) return null;
 

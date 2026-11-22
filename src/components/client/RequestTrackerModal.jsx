@@ -21,6 +21,7 @@ import {
 
 import { serviceLabel, formatSum } from '../utils/i18nHelpers';
 import CancelReasonModal from '../common/CancelReasonModal';
+import useEscapeClose from '../hooks/useEscapeClose';
 import '../../styles/requestTracker.css';
 
 // Socket uzilsa ham holat yangilanib tursin
@@ -94,6 +95,8 @@ export default function RequestTrackerModal({ isOpen, request: initialRequest, o
   const [cancelling, setCancelling] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  // Ichidagi bekor qilish oynasi ochiq bo'lsa — avval o'sha yopiladi
+  useEscapeClose(isOpen && !cancelModalOpen, onClose);
 
   const requestId = initialRequest?._id ? String(initialRequest._id) : null;
 

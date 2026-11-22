@@ -29,7 +29,7 @@ export default function BusinessDashboard() {
 
   useEffect(() => {
     if (!user) {
-      navigate('/login');
+      navigate('/login', { replace: true });
       return;
     }
 

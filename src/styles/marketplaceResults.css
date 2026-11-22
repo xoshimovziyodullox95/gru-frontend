@@ -1,0 +1,269 @@
+/* ============================================================
+   Barcha e'lonlar / filtr natijalari — Uzum/Ozon uslubi, ZUMO ranglarida
+   ============================================================ */
+
+.mkt-content > .marketplace-page {
+  min-height: 0;
+  padding: 0 0 24px;
+  background: transparent;
+}
+
+/* ---------- Tepadagi yopishqoq panel: orqaga · qidiruv · filtr ---------- */
+.mpx-top {
+  position: sticky;
+  top: -18px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -18px -16px 0;
+  padding: 12px 16px 10px;
+  background: var(--bg);
+}
+.mpx-icon-btn {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.mpx-icon-btn:active { transform: scale(0.92); }
+.mpx-icon-btn.is-on {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 10%, var(--card));
+}
+.mpx-icon-btn__badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #00D4FF, #0A84FF);
+  border: 2px solid var(--bg);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  line-height: 15px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.mpx-search {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 12px;
+  border: 1.5px solid color-mix(in srgb, var(--cyan) 55%, var(--border));
+  border-radius: 14px;
+  background: var(--card);
+  cursor: text;
+}
+.mpx-search__icon { flex-shrink: 0; color: var(--cyan); }
+.mpx-search__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.9rem;
+  color: var(--textMuted);
+}
+.mpx-search__text.has-value { color: var(--text); font-weight: 600; }
+.mpx-search__clear {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+  color: var(--textSoft);
+  cursor: pointer;
+}
+
+/* ---------- Tur chiplari (gorizontal aylanadi) ---------- */
+.mpx-chips {
+  display: flex;
+  gap: 8px;
+  margin: 2px -16px 0;
+  padding: 2px 16px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mpx-chips::-webkit-scrollbar { display: none; }
+.mpx-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--textSoft);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.mpx-chip.is-on {
+  border-color: transparent;
+  background: linear-gradient(135deg, #00D4FF 0%, #0A84FF 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 150, 255, 0.25);
+}
+.mpx-chip--removable { padding-right: 12px; }
+
+/* ---------- Sarlavha + soni + saralash ---------- */
+.mpx-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 14px 0 12px;
+}
+.mpx-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.mpx-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--textMuted);
+}
+.mpx-sort {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--cyan) 10%, transparent);
+  color: var(--cyan);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Ichki bo'limlar — tur chiplaridan yengilroq */
+.marketplace-page .mp-subcats { margin: 0 0 14px; }
+.marketplace-page .mp-subcat {
+  min-height: 32px;
+  padding: 0 13px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+/* ---------- Filtr oynasi (pastdan chiqadi) ---------- */
+.mp-mobile-filter-overlay {
+  background: rgba(4, 12, 24, 0.55);
+  backdrop-filter: blur(2px);
+}
+.mp-mobile-filter-sheet {
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  border-radius: 24px 24px 0 0;
+  background: var(--surface);
+}
+.mp-mobile-filter-sheet::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+}
+.mp-mobile-filter-header h3 { font-size: 1.15rem; font-weight: 800; }
+.mp-mobile-filter-sheet .mp-mobile-filter-apply {
+  position: sticky;
+  bottom: 0;
+  height: 50px;
+  padding: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #00D4FF 0%, #0A84FF 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 20px rgba(0, 150, 255, 0.3);
+}
+
+.mpf-section + .mpf-section { margin-top: 18px; }
+.mpf-section h4 {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--textMuted);
+}
+.mpf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.mpf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.mpf-chip.is-on {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 12%, var(--card));
+  color: var(--cyan);
+}
+.mpf-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 18px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--danger);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Kompyuterda yon panel */
+@media (min-width: 901px) {
+  .mpx-top { margin: 0; top: 0; padding: 0 0 12px; }
+  .mpx-chips { margin: 0; padding: 0 0 4px; }
+}

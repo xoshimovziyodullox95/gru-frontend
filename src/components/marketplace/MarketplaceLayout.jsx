@@ -14,6 +14,7 @@ import { getUnreadCount as getNotifUnreadCount } from '../services/notifications
 import '../../styles/marketplaceLayout.css';
 
 import MarketplaceTabbar from './MarketplaceTabbar';
+import { getHomeRoot, goHomeRoot, rememberHomeRoot } from '../utils/homeRoot';
 const formatBadge = (n) => (n > 99 ? '99+' : n);
 
 export default function MarketplaceLayout({ children, mode = 'shell', homePath = '/marketplace' }) {
@@ -21,9 +22,15 @@ export default function MarketplaceLayout({ children, mode = 'shell', homePath =
   const location = useLocation();
   const { t } = useTranslation();
   const { user } = useAuth();
+  // Marketplace bosh sahifasining o'zidan tashqari hamma joyda "uy" — foydalanuvchi kelgan bosh sahifa
+  const onMarketHome = location.pathname === homePath;
   const resolvedHomePath = location.pathname === '/cart'
-    ? (location.state?.fromHome || homePath)
-    : homePath;
+    ? (location.state?.fromHome || getHomeRoot(homePath))
+    : onMarketHome ? homePath : getHomeRoot(homePath);
+
+  useEffect(() => {
+    if (onMarketHome) rememberHomeRoot(homePath);
+  }, [onMarketHome, homePath]);
   const closeTarget = location.pathname === resolvedHomePath ? '/home' : resolvedHomePath;
 
   const isLayout = mode === 'layout';
@@ -56,7 +63,8 @@ export default function MarketplaceLayout({ children, mode = 'shell', homePath =
     if (isLayout) return;
     setClosing(true);
     window.setTimeout(() => {
-      navigate(closeTarget, { replace: true });
+      if (closeTarget === resolvedHomePath) goHomeRoot(navigate, closeTarget);
+      else navigate(closeTarget, { replace: true });
     }, 300);
   };
 
@@ -71,7 +79,7 @@ export default function MarketplaceLayout({ children, mode = 'shell', homePath =
         <button
           type="button"
           className="mkt-navbar__logo"
-            onClick={() => navigate(resolvedHomePath)}
+            onClick={() => (onMarketHome ? window.scrollTo({ top: 0, behavior: 'smooth' }) : goHomeRoot(navigate, resolvedHomePath))}
         >
           ZUMO
         </button>
