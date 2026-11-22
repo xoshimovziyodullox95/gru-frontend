@@ -4,11 +4,17 @@ export const getConversations = () => api.get('/chat/conversations');
 export const getMessages = (userId) => api.get(`/chat/messages/${userId}`);
 export const sendMessage = (data) => api.post('/chat/send', data);
 
-export const sendMedia = (userId, file) => {
+export const sendMedia = (userId, file, { onProgress, signal } = {}) => {
   const formData = new FormData();
   formData.append('media', file);
   return api.post(`/chat/media/${userId}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    signal,
+    // Katta video uzoq yuklanadi — umumiy timeout uni uzib qo'ymasin
+    timeout: 0,
+    onUploadProgress: (e) => {
+      if (onProgress && e.total) onProgress((e.loaded / e.total) * 100);
+    },
   });
 };
 

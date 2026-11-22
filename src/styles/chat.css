@@ -2060,3 +2060,65 @@ html.dark .tg-bubble.sent .tg-voice__wave i.on { background: #fff; }
   font-size: 24px; line-height: 1;
 }
 .tg-msg-menu .tg-msg-menu__reactions button:active { transform: scale(1.25); }
+
+/* ===== Telegram uslubidagi media yuklanishi ===== */
+.tg-media-wrap.is-loading { min-width: 200px; min-height: 160px; background: linear-gradient(135deg, #1b2d48, #0d1a2e); }
+.tg-media-wrap.is-loading .tg-media-img { opacity: 0; }
+.tg-media-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  pointer-events: none;
+}
+.tg-media-loader--error { pointer-events: auto; cursor: pointer; }
+.tg-media-loader__spin { animation: tgSpin 0.9s linear infinite; }
+@keyframes tgSpin { to { transform: rotate(360deg); } }
+
+/* Yuborilayotgan media: rasm xiraroq, markazda progress halqasi + bekor qilish */
+.tg-bubble--uploading .tg-media-img { filter: brightness(0.7); }
+.tg-progress {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  cursor: pointer;
+}
+.tg-progress > * { grid-area: 1 / 1; }
+.tg-progress__ring { width: 54px; height: 54px; transform: rotate(-90deg); }
+.tg-progress__track { fill: none; stroke: rgba(255, 255, 255, 0.2); stroke-width: 3; }
+.tg-progress__bar { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.25s ease; }
+.tg-progress__pct {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.tg-upload-file { min-width: 220px; min-height: 76px; padding: 12px 70px 12px 12px; cursor: default; }
+.tg-upload-file .tg-progress { left: auto; right: 10px; margin-left: 0; }
+.tg-upload-file .tg-progress__pct { display: none; }
+.tg-upload-file__name { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; overflow-wrap: anywhere; }
+
+/* Ko'rish oynasida yuklab olish tugmasi — yopish tugmasi yonida */
+.tg-lightbox__download { right: 76px; }

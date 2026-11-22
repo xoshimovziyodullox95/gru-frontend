@@ -84,7 +84,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Rasmni galereyaga saqlash uchun ruxsat kerak.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Video yozishda ovozni yozib olish uchun mikrofon kerak.</string>
+	<string>Chatda ovozli xabar va video yozish uchun mikrofon kerak.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Usta manzilingizni topishi va yaqin e'lonlarni ko'rsatish uchun joylashuvingiz kerak.</string>
 	<key>UIBackgroundModes</key>

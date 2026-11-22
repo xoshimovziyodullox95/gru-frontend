@@ -52,4 +52,15 @@
     <!-- "Yaqin joylar" va xarita uchun -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Chatdagi ovozli xabar va video yozish uchun (WebView getUserMedia ruxsat so'raydi) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- Rasm/video olish: e'lon, profil, chat -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Eski Android (9 va past): chatdagi rasm/videoni galereyaga saqlash -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <!-- Kamera/mikrofonsiz qurilmalarda ham ilova Play'da ko'rinsin -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
 </manifest>

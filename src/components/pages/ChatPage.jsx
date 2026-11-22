@@ -36,6 +36,7 @@ import {
   MoreVertical, MessageSquare, Loader2, Inbox, Palette, Image as ImageIcon,
   Pencil, Trash2, Copy, Volume2, VolumeX, PlayCircle,
   ExternalLink, Film, Package, Mic, Square, Forward, Pause, Play, ChevronDown,
+  Download, RotateCw, FileText,
 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import toast from 'react-hot-toast';
@@ -43,6 +44,7 @@ import '../../styles/chat.css';
 
 import { T } from '../utils/T';
 import { getImageUrl } from '../utils/imageUrl';
+import { downloadMedia } from '../utils/downloadMedia';
 const LOCATION_PREFIX = 'LOC::';
 const REEL_PREFIX = 'REEL::';
 const LISTING_PREFIX = 'LISTING::';
@@ -406,7 +408,8 @@ export default function ChatPage() {
   const [mediaPreview, setMediaPreview] = useState(null);
   const [typingUsers, setTypingUsers] = useState({});
   const [onlineStatus, setOnlineStatus] = useState({});
-  const [sendingMedia, setSendingMedia] = useState(false);
+  // Telegram kabi: yuborilayotgan rasm/video darhol chatda, ustida progress halqasi bilan
+  const [uploads, setUploads] = useState([]);
   const [replyTo, setReplyTo] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordSeconds, setRecordSeconds] = useState(0);
@@ -1102,36 +1105,50 @@ export default function ChatPage() {
     }
   };
 
-  const handleSendMedia = async () => {
-    if (!mediaPreview || !activeChat) return;
-    setSendingMedia(true);
+  const uploadFile = async (file) => {
+    const chat = activeChatRef.current;
+    if (!chat || !file) return;
+    const id = `up-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const type = file.type?.startsWith('video') ? 'video' : file.type?.startsWith('image') ? 'image' : 'file';
+    const url = type === 'file' ? '' : URL.createObjectURL(file);
+    const controller = new AbortController();
+    setUploads((prev) => [...prev, { id, url, type, name: file.name, progress: 0, controller, toUserId: chat.userId }]);
+    // O'z yuborganimizni doim ko'ramiz: pastga tushamiz va rasm yuklanganda ham pastda qolamiz
+    nearBottomRef.current = true;
+    setTimeout(() => {
+      const box = messagesBoxRef.current;
+      if (box) box.scrollTop = box.scrollHeight;
+    }, 60);
     try {
-      const res = await sendMedia(activeChat.userId, mediaPreview.file);
-      setMessages((prev) => [...prev, res.data]);
+      const res = await sendMedia(chat.userId, file, {
+        signal: controller.signal,
+        onProgress: (pct) => setUploads((prev) => prev.map((u) => (u.id === id ? { ...u, progress: pct } : u))),
+      });
+      // Yuklanish paytida boshqa chatga o'tilgan bo'lsa — xabar o'sha chatga yozilmaydi
+      if (activeChatRef.current?.userId === chat.userId) {
+        setMessages((prev) => [...prev, res.data]);
+      }
       bumpAfterSend(res.data);
-      setMediaPreview(null);
     } catch (err) {
-      toast.error(T('Media yuborilmadi'));
+      if (err?.name !== 'CanceledError' && err?.code !== 'ERR_CANCELED') toast.error(T('Media yuborilmadi'));
     } finally {
-      setSendingMedia(false);
+      setUploads((prev) => prev.filter((u) => u.id !== id));
+      if (url) URL.revokeObjectURL(url);
     }
   };
 
-  const handleMultipleFiles = async (e) => {
+  const handleSendMedia = () => {
+    if (!mediaPreview || !activeChat) return;
+    const { file } = mediaPreview;
+    setMediaPreview(null);
+    uploadFile(file);
+  };
+
+  const handleMultipleFiles = (e) => {
     const files = Array.from(e.target.files || []);
-    if (!files.length || !activeChat) return;
-    setSendingMedia(true);
-    for (const file of files) {
-      try {
-        const res = await sendMedia(activeChat.userId, file);
-        setMessages((prev) => [...prev, res.data]);
-        bumpAfterSend(res.data);
-      } catch (err) {
-        toast.error(T('Media yuborilmadi'));
-      }
-    }
-    setSendingMedia(false);
     e.target.value = '';
+    if (!files.length || !activeChat) return;
+    files.forEach((file) => uploadFile(file));
   };
 
   const sendLocation = () => {
@@ -1148,7 +1165,10 @@ export default function ChatPage() {
           })
           .catch(() => toast.error(T('Joylashuv yuborilmadi')));
       },
-      () => toast.error(T('Joylashuv olinmadi'))
+      (err) => toast.error(err?.code === 1
+        ? T('Joylashuvga ruxsat berilmadi — sozlamalardan yoqing')
+        : T('Joylashuv olinmadi — GPS yoqilganini tekshiring')),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
     );
   };
 
@@ -1723,43 +1743,13 @@ export default function ChatPage() {
                               </div>
                             )}
 
-                            {msg.mediaUrl && msg.mediaType === 'image' && (
-                              <div
-                                className="tg-media-wrap"
-                                onClick={() =>
-                                  setLightbox({ url: getImageUrl(msg.mediaUrl), type: 'image' })
-                                }
-                              >
-                                <img
-                                  src={getImageUrl(msg.mediaUrl)}
-                                  alt=""
-                                  className="tg-media-img"
-                                  onLoad={keepBottom}
-                                />
-                              </div>
-                            )}
-
-                            {msg.mediaUrl && msg.mediaType === 'video' && (
-                              <div
-                                className="tg-media-wrap tg-media-video"
-                                onClick={() =>
-                                  setLightbox({ url: getImageUrl(msg.mediaUrl), type: 'video' })
-                                }
-                              >
-                                {/* #t=0.1 — birinchi kadr muqova bo'lib ko'rinadi */}
-                                <video
-                                  src={`${getImageUrl(msg.mediaUrl)}#t=0.1`}
-                                  muted
-                                  playsInline
-                                  preload="metadata"
-                                  poster={TRANSPARENT_POSTER}
-                                  className="tg-media-img"
-                                  onLoadedMetadata={keepBottom}
-                                />
-                                <div className="tg-play-overlay">
-                                  <span className="tg-play-btn"><PlayCircle size={30} /></span>
-                                </div>
-                              </div>
+                            {msg.mediaUrl && (msg.mediaType === 'image' || msg.mediaType === 'video') && (
+                              <ChatMedia
+                                url={getImageUrl(msg.mediaUrl)}
+                                type={msg.mediaType}
+                                onReady={keepBottom}
+                                onOpen={() => setLightbox({ url: getImageUrl(msg.mediaUrl), type: msg.mediaType })}
+                              />
                             )}
 
                             {msg.mediaUrl && msg.mediaType === 'voice' && (
@@ -1848,6 +1838,11 @@ export default function ChatPage() {
                                 <button onClick={() => openForward(msg)}>
                                   <Forward size={14} /> {T('Ulashish')}
                                 </button>
+                                {msg.mediaUrl && (msg.mediaType === 'image' || msg.mediaType === 'video') && (
+                                  <button onClick={() => { setOpenMenuId(null); downloadMedia(getImageUrl(msg.mediaUrl), msg.mediaType); }}>
+                                    <Download size={14} /> {T('Yuklab olish')}
+                                  </button>
+                                )}
                                 {msg.message && !isLocation && (
                                   <button onClick={() => handleCopy(msg)}>
                                     <Copy size={14} />{' '}
@@ -1873,6 +1868,24 @@ export default function ChatPage() {
                     );
                   })
                 )}
+                {uploads.filter((u) => u.toUserId === activeChat?.userId).map((u) => (
+                  <div key={u.id} className="tg-message-row sent">
+                    <div className="tg-message-wrapper">
+                      <div className={`tg-bubble sent tail-right tg-bubble--uploading ${u.type === 'file' ? '' : 'tg-bubble--media'}`}>
+                        <div className={`tg-media-wrap ${u.type === 'file' ? 'tg-upload-file' : ''}`}>
+                          {u.type === 'image' && <img src={u.url} alt="" className="tg-media-img" onLoad={keepBottom} />}
+                          {u.type === 'video' && <video src={u.url} muted playsInline preload="metadata" className="tg-media-img" onLoadedMetadata={keepBottom} />}
+                          {u.type === 'file' && <span className="tg-upload-file__name"><FileText size={18} /> {u.name}</span>}
+                          <button type="button" className="tg-progress" onClick={() => u.controller.abort()} aria-label={T('Bekor qilish')}>
+                            <ProgressRing value={u.progress} />
+                            <X size={18} strokeWidth={2.6} />
+                          </button>
+                          <span className="tg-progress__pct">{Math.round(u.progress)}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
                 <div ref={messagesEndRef} />
               </div>
 
@@ -1943,9 +1956,8 @@ export default function ChatPage() {
                     type="button"
                     className="tg-media-preview__send"
                     onClick={handleSendMedia}
-                    disabled={sendingMedia}
                   >
-                    {sendingMedia ? T('Yuborilmoqda...') : T('Yuborish')}
+                    {T('Yuborish')}
                   </button>
                 </div>
               )}
@@ -2183,6 +2195,56 @@ export default function ChatPage() {
   );
 }
 
+// Aylana progress (Telegram'dagi yuklanish halqasi)
+function ProgressRing({ value }) {
+  const r = 20;
+  const c = 2 * Math.PI * r;
+  const pct = Math.max(3, Math.min(100, value || 0));
+  return (
+    <svg className="tg-progress__ring" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r={r} className="tg-progress__track" />
+      <circle cx="24" cy="24" r={r} className="tg-progress__bar" strokeDasharray={c} strokeDashoffset={c * (1 - pct / 100)} />
+    </svg>
+  );
+}
+
+// Chatdagi rasm/video: yuklanguncha xira fon + aylanuvchi indikator, xato bo'lsa — qayta urinish
+function ChatMedia({ url, type, onReady, onOpen }) {
+  const [state, setState] = useState('loading');
+  const [attempt, setAttempt] = useState(0);
+  const ready = () => { setState('ready'); onReady?.(); };
+  const fail = () => setState('error');
+  const src = attempt ? `${url}${url.includes('?') ? '&' : '?'}r=${attempt}` : url;
+
+  return (
+    <div
+      className={`tg-media-wrap ${type === 'video' ? 'tg-media-video' : ''} ${state !== 'ready' ? 'is-loading' : ''}`}
+      onClick={(e) => {
+        if (state === 'error') { e.stopPropagation(); setState('loading'); setAttempt((n) => n + 1); return; }
+        onOpen();
+      }}
+    >
+      {type === 'video' ? (
+        // #t=0.1 — birinchi kadr muqova bo'lib ko'rinadi
+        <video key={src} src={`${src}#t=0.1`} muted playsInline preload="metadata" poster={TRANSPARENT_POSTER} className="tg-media-img" onLoadedData={ready} onLoadedMetadata={ready} onError={fail} />
+      ) : (
+        <img key={src} src={src} alt="" className="tg-media-img" onLoad={ready} onError={fail} />
+      )}
+      {state === 'loading' && (
+        <span className="tg-media-loader" aria-hidden="true"><Loader2 size={26} className="tg-media-loader__spin" /></span>
+      )}
+      {state === 'error' && (
+        <span className="tg-media-loader tg-media-loader--error"><RotateCw size={22} /></span>
+      )}
+      {type === 'video' && state === 'ready' && (
+        <div className="tg-play-overlay">
+          <span className="tg-play-btn"><PlayCircle size={30} /></span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // To'liq ekranli rasm/video ko'rish. role="dialog" — Android "orqaga" tugmasi Escape yuboradi va oyna yopiladi
 function MediaLightbox({ media, onClose }) {
   const [loading, setLoading] = useState(true);
@@ -2196,6 +2258,14 @@ function MediaLightbox({ media, onClose }) {
     <div className="tg-lightbox" role="dialog" aria-modal="true" onClick={onClose}>
       <button type="button" className="tg-lightbox__close" onClick={onClose} aria-label={T('Yopish')}>
         <X size={24} />
+      </button>
+      <button
+        type="button"
+        className="tg-lightbox__close tg-lightbox__download"
+        onClick={(e) => { e.stopPropagation(); downloadMedia(media.url, media.type); }}
+        aria-label={T('Yuklab olish')}
+      >
+        <Download size={22} />
       </button>
       {loading && <Loader2 className="tg-lightbox__spinner" size={36} aria-hidden="true" />}
       <div className="tg-lightbox__body" onClick={(e) => e.stopPropagation()}>
