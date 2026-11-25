@@ -110,7 +110,12 @@ function openFromPush(url) {
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
 
+// iPhone'da Firebase (GoogleService-Info.plist + APNs kaliti) sozlanmaguncha native push'ga tegmaymiz:
+// FirebaseApp sozlanmagan holda Messaging chaqirilsa ilova yopilib qolishi mumkin. Sozlangach VITE_IOS_PUSH=1.
+const nativePushReady = (platform) => platform === 'android' || (platform === 'ios' && import.meta.env.VITE_IOS_PUSH === '1');
+
 async function registerMobilePush(platform) {
+  if (!nativePushReady(platform)) return false;
   try {
     const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
 
@@ -169,6 +174,7 @@ export const registerPush = async () => {
 
 export const getPushPermission = async () => {
   if (detectPlatform() !== 'web') {
+    if (!nativePushReady(detectPlatform())) return 'unsupported';
     try {
       const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
       const { receive } = await FirebaseMessaging.checkPermissions();
@@ -190,6 +196,7 @@ export const getPushPermission = async () => {
 export const unregisterPush = async () => {
   try {
     if (detectPlatform() !== 'web') {
+      if (!nativePushReady(detectPlatform())) return true;
       if (mobileToken) await api.post('/push/unsubscribe', { fcmToken: mobileToken });
       const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
       await FirebaseMessaging.deleteToken().catch(() => {});

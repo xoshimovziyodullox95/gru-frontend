@@ -55,3 +55,64 @@ workflows:
           zip -r "$CM_BUILD_DIR/ZUMO-simulator.zip" App.app
     artifacts:
       - ZUMO-simulator.zip
+
+  # ios-appstore: App Store / TestFlight uchun imzolangan .ipa yig'adi va App Store Connect'ga yuklaydi.
+  # Kerak (bir marta, Codemagic'da):
+  #   1) Teams → Integrations → Developer Portal → App Store Connect API kaliti, nomi: zumo_asc
+  #      (App Store Connect → Users and Access → Integrations → App Store Connect API, rol: App Manager)
+  #   2) "zumo" guruhiga APP_STORE_APPLE_ID — App Store Connect'dagi ilovaning "Apple ID" raqami
+  #      (App Information sahifasida, masalan 6741234567)
+  #   Sertifikat va profilni Codemagic o'zi yaratadi (ios_signing).
+  ios-appstore:
+    name: App Store (TestFlight)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: zumo_asc
+    environment:
+      groups:
+        - zumo
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: uz.zumo.marketplace
+      node: 22
+      xcode: latest
+    triggering:
+      events: []
+    scripts:
+      - name: Sozlamalarni tekshirish
+        script: |
+          for v in VITE_API_URL VITE_SUPABASE_URL VITE_SUPABASE_ANON_KEY APP_STORE_APPLE_ID; do
+            if [ -z "${!v}" ]; then
+              echo "XATO: $v berilmagan — Environment variables'da 'zumo' guruhiga qo'shing"
+              exit 1
+            fi
+          done
+          case "$VITE_API_URL" in
+            https://*) ;;
+            *) echo "XATO: VITE_API_URL https:// bilan boshlanishi kerak: $VITE_API_URL"; exit 1 ;;
+          esac
+      - name: Paketlar
+        script: npm ci
+      - name: Web qismini yig'ish va iOS'ga ko'chirish
+        script: |
+          npx vite build
+          npx cap sync ios
+      - name: Imzolash (sertifikat va profil)
+        script: |
+          # ios_signing (yuqorida) sertifikat va profilni tayyorlaydi; bu ularni Xcode loyihasiga ulaydi
+          xcode-project use-profiles
+      - name: Build raqami (TestFlight'dagi oxirgisidan +1)
+        script: |
+          LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          NEXT=$((LATEST + 1))
+          echo "Build raqami: $NEXT"
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $NEXT;/g" ios/App/App.xcodeproj/project.pbxproj
+      - name: .ipa yig'ish
+        script: xcode-project build-ipa --project ios/App/App.xcodeproj --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
