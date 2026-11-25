@@ -91,5 +91,8 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+	<!-- Faqat tizimning standart HTTPS shifrlashi: App Store Connect har build'da shifrlash savolini bermasin -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

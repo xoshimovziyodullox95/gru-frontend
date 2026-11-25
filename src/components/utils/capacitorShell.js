@@ -111,7 +111,24 @@ export async function setupNativeShell() {
   App.getLaunchUrl().then((launch) => launch?.url && onAuthUrl(launch.url)).catch(() => {});
 
   document.documentElement.classList.add('is-native-app');
-  StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
-  StatusBar.setBackgroundColor({ color: '#0A1628' }).catch(() => {});
+  if (Capacitor.getPlatform() === 'ios') {
+    // iPhone'da status bar shaffof va sarlavha ustida turadi: soat/batareya rangi mavzuga mos bo'lsin
+    // (oq fonda oq yozuv ko'rinmay qolardi). Style.Light = qora yozuv, Style.Dark = oq yozuv.
+    const root = document.documentElement;
+    const syncStatusBar = () => {
+      const dark = root.classList.contains('dark') || root.dataset.theme === 'dark';
+      StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light }).catch(() => {});
+    };
+    syncStatusBar();
+    new MutationObserver(syncStatusBar).observe(root, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+
+    // Klaviatura: yuqoridagi "^ v ✓" panelini yashiramiz (ilova o'z yuborish tugmasiga ega)
+    import('@capacitor/keyboard')
+      .then(({ Keyboard }) => Keyboard.setAccessoryBarVisible({ isVisible: false }))
+      .catch(() => {});
+  } else {
+    StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+    StatusBar.setBackgroundColor({ color: '#0A1628' }).catch(() => {});
+  }
   SplashScreen.hide().catch(() => {});
 }
