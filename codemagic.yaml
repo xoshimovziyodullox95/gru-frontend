@@ -67,6 +67,8 @@ workflows:
           zip -r "$CM_BUILD_DIR/ZUMO-simulator.zip" App.app
     artifacts:
       - ZUMO-simulator.zip
+      # Codemagic App Preview (brauzerdagi simulyator) "Quick launch" uchun .app kerak
+      - build/ios/Build/Products/Debug-iphonesimulator/App.app
 
   # ios-appstore: App Store / TestFlight uchun imzolangan .ipa yig'adi va App Store Connect'ga yuklaydi.
   # Kerak (bir marta, Codemagic'da):
