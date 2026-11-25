@@ -5,6 +5,7 @@
    Tahrirlash — pastdan chiqadigan oyna (?edit=1 bilan ham ochiladi).
    ============================================================ */
 
+import { createPortal } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -99,7 +100,8 @@ function Sheet({ title, onClose, children, footer, className = '' }) {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
-  return (
+  // Portal: sahifa konteyneri cheklamasin va pastki menyu (tabbar) ustida tursin — "Saqlash" yopilib qolmasin
+  return createPortal(
     <div className={`pf-sheet ${className}`} onClick={onClose}>
       <div className="pf-sheet__panel" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <div className="pf-sheet__head">
@@ -109,7 +111,8 @@ function Sheet({ title, onClose, children, footer, className = '' }) {
         <div className="pf-sheet__body">{children}</div>
         {footer && <div className="pf-sheet__foot">{footer}</div>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

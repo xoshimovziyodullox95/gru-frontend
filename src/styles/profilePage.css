@@ -519,7 +519,7 @@ body:not(.no-global-navbar-offset) .pf-top { height: 56px; padding-top: 0; }
 .pf-sheet {
   position: fixed;
   inset: 0;
-  z-index: 1100;
+  z-index: 12000; /* pastki menyu (2100) va sarlavha ustida */
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -532,6 +532,7 @@ body:not(.no-global-navbar-offset) .pf-top { height: 56px; padding-top: 0; }
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
+  max-height: 92dvh;
   border-radius: 24px 24px 0 0;
   background: var(--surface);
   color: var(--text);

@@ -85,6 +85,8 @@ export async function setupNativeShell() {
   if (Capacitor.getPlatform() === 'ios') {
     const meta = document.querySelector('meta[name="viewport"]');
     if (meta && !meta.content.includes('viewport-fit')) meta.content += ', viewport-fit=cover';
+    // Kichik shriftli maydon bosilganda iPhone sahifani kattalashtirib yubormasin (ilovada odatiy holat)
+    if (meta && !meta.content.includes('maximum-scale')) meta.content += ', maximum-scale=1';
     document.documentElement.classList.add('is-ios-app');
   }
 
