@@ -1899,3 +1899,21 @@ iframe.reel-modal-video {
 
 /* Vertikal (9:16) video — iPhone'ning cho'ziq ekranida ham qora chiziqsiz, butun ekran (Instagram kabi) */
 .reel-modal-video.is-portrait { object-fit: cover; }
+
+/* Modal endi document.body ichida (portal) — .reels-section o'zgaruvchilari unga yetib bormaydi */
+.reel-modal-overlay {
+  --reel-accent: var(--primary-color, var(--cyan, #00cfff));
+  --reel-blue: #1685ff;
+  --reel-danger: #ff4d5f;
+  --reel-text: #f4fbff;
+}
+
+/* Video fayli topilmasa — qora ekran o'rniga tushunarli xabar */
+.reel-video-failed {
+  position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px; padding: 24px; text-align: center;
+  color: #e6f4ff; background: radial-gradient(circle at center, rgba(7, 36, 56, 0.6), #000711 70%);
+  pointer-events: none;
+}
+.reel-video-failed span { font-weight: 800; font-size: 1.05rem; }
+.reel-video-failed small { opacity: 0.7; font-size: 0.85rem; }

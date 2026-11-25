@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react';
 
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -280,6 +281,7 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
   const videoRef = useRef(null);
   const feedbackTimerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [videoFailed, setVideoFailed] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [feedback, setFeedback] = useState(null);
@@ -383,8 +385,15 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
         onTimeUpdate={handleTimeUpdate}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
+        onError={() => setVideoFailed(true)}
         onClick={togglePlayback}
       />
+      {videoFailed && (
+        <div className="reel-video-failed">
+          <span>{T('Video ochilmadi')}</span>
+          <small>{T('Keyingisiga o‘tish uchun suring')}</small>
+        </div>
+      )}
 
       <button
         type="button"
@@ -741,7 +750,8 @@ function ReelViewer({
     }
   };
 
-  return (
+  // Portal: sahifa konteyneri (transform/overflow) fixed oynani cheklab qo'ymasin — reels butun ekran, sarlavha va menyu ustida
+  return createPortal(
     <div
       className="reel-modal-overlay"
       role="dialog"
@@ -788,6 +798,7 @@ function ReelViewer({
           <YoutubeReelPlayer reel={reel} slideDirection={slideDirection} />
         ) : (
           <LocalReelPlayer
+            key={reel.id}
             reel={reel}
             slideDirection={slideDirection}
             isMuted={isMuted}
@@ -1054,7 +1065,7 @@ function ReelViewer({
       </div>
       </div>
     </div>
-  );
+  , document.body);
 }
 
 /* ============================================================

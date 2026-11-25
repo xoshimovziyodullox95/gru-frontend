@@ -24,7 +24,19 @@ function saveRoute() {
 
 // Faqat Android ilovani o'zi yopgan bo'lsa (MainActivity → Launch plagini) oxirgi sahifaga qaytamiz.
 // Foydalanuvchi ilovani qatordan o'chirsa yoki chiqib ketsa — landing'dan noldan boshlanadi.
+// iPhone: iOS fondagi ilovani xotira uchun tez-tez yopadi (foydalanuvchi buni sezmaydi) —
+// yaqinda (15 daqiqa ichida) ishlatilgan bo'lsa, qayta ochilganda o'sha sahifadan davom etamiz.
+const IOS_RESTORE_MS = 15 * 60 * 1000;
+
 async function shouldRestore() {
+  if (Capacitor.getPlatform() === 'ios') {
+    try {
+      const saved = JSON.parse(localStorage.getItem(LAST_ROUTE_KEY) || 'null');
+      return Boolean(saved && Date.now() - saved.at < IOS_RESTORE_MS);
+    } catch {
+      return false;
+    }
+  }
   try {
     const { restored } = await registerPlugin('Launch').wasRestored();
     return restored;
@@ -54,6 +66,8 @@ export function restoreLastRoute() {
     };
   }
   window.addEventListener('popstate', saveRoute);
+  // Fonga o'tayotganda vaqtni yangilaymiz — uzoq bitta sahifada turilgan bo'lsa ham tiklanadi
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveRoute(); });
 }
 
 function showExitHint() {

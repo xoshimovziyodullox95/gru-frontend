@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import FirebaseCore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,7 +8,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Push (FCM): GoogleService-Info.plist build vaqtida Codemagic'dan qo'yiladi; yo'q bo'lsa ilova yiqilmasin
+        if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+           let options = NSDictionary(contentsOfFile: path),
+           options["GOOGLE_APP_ID"] != nil {
+            FirebaseApp.configure()
+        }
         return true
     }
 

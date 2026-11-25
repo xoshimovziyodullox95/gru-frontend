@@ -34,6 +34,18 @@ workflows:
           echo "Server: $VITE_API_URL"
       - name: Paketlar
         script: npm ci
+      - name: Firebase (iOS push) sozlamasi
+        script: |
+          # GOOGLE_SERVICE_INFO_PLIST — Firebase'dan olingan GoogleService-Info.plist'ning base64 ko'rinishi ("zumo" guruhida)
+          if [ -z "$GOOGLE_SERVICE_INFO_PLIST" ]; then
+            # Fayl berilmagan: bo'sh plist — ilova Firebase'ni ishga tushirmaydi, iPhone'da push o'chiq qoladi
+            echo "Ogohlantirish: GOOGLE_SERVICE_INFO_PLIST yo'q — iOS push o'chiq"
+            echo '<?xml version="1.0" encoding="UTF-8"?><plist version="1.0"><dict/></plist>' > ios/App/App/GoogleService-Info.plist
+          else
+            echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/App/App/GoogleService-Info.plist
+            plutil -lint ios/App/App/GoogleService-Info.plist
+            echo "VITE_IOS_PUSH=1" >> $CM_ENV
+          fi
       - name: Web qismini yig'ish va iOS'ga ko'chirish
         script: |
           npx vite build
@@ -94,6 +106,18 @@ workflows:
           esac
       - name: Paketlar
         script: npm ci
+      - name: Firebase (iOS push) sozlamasi
+        script: |
+          # GOOGLE_SERVICE_INFO_PLIST — Firebase'dan olingan GoogleService-Info.plist'ning base64 ko'rinishi ("zumo" guruhida)
+          if [ -z "$GOOGLE_SERVICE_INFO_PLIST" ]; then
+            # Fayl berilmagan: bo'sh plist — ilova Firebase'ni ishga tushirmaydi, iPhone'da push o'chiq qoladi
+            echo "Ogohlantirish: GOOGLE_SERVICE_INFO_PLIST yo'q — iOS push o'chiq"
+            echo '<?xml version="1.0" encoding="UTF-8"?><plist version="1.0"><dict/></plist>' > ios/App/App/GoogleService-Info.plist
+          else
+            echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/App/App/GoogleService-Info.plist
+            plutil -lint ios/App/App/GoogleService-Info.plist
+            echo "VITE_IOS_PUSH=1" >> $CM_ENV
+          fi
       - name: Web qismini yig'ish va iOS'ga ko'chirish
         script: |
           npx vite build
