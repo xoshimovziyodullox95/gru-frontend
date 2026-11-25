@@ -9,6 +9,7 @@ import AuthBackButton from '../common/AuthBackButton';
 import { signInWithGoogle, authRedirectUrl, APPLE_LOGIN_ENABLED } from '../utils/googleAuth';
 import AppleSignInButton from '../common/AppleSignInButton';
 import ConsentNote from '../common/ConsentNote';
+import AuthBrand from '../common/AuthBrand';
 import '../../styles/auth.css';
 import '../../styles/authModern.css';
 import { T } from '../utils/T';
@@ -152,7 +153,7 @@ export default function RegisterPage() {
         <AuthBackButton />
 
         <header className="am-head">
-          <div className="am-logo" aria-hidden="true">Z</div>
+          <AuthBrand />
           <h1 className="am-title">{T('Hisob yarating')}</h1>
           <p className="am-sub">{T('ZUMO’da e’lon bering, usta toping va xarid qiling')}</p>
         </header>

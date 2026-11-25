@@ -25,7 +25,7 @@
   z-index: 2;
   width: min(320px, 84vw);
   overflow-y: auto;
-  padding: calc(16px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom));
+  padding: calc(24px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom));
   color: #15283d;
   background: #ffffff;
   border: 1px solid rgba(21, 40, 61, 0.12);

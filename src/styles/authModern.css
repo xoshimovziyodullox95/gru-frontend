@@ -183,3 +183,21 @@
   .am-card { padding: 52px 16px 18px; border-radius: 24px; }
   .am-title { font-size: 1.35rem; }
 }
+
+/* ZUMO logotipi (AuthBrand) — bosh sahifa sarlavhasidagi bilan bir xil */
+.am-brand { display: inline-flex; align-items: center; justify-content: center; gap: 2px; margin: 0 auto 14px; }
+.am-brand__z { display: block; height: 44px; width: auto; object-fit: contain; }
+.am-brand__umo {
+  font: 900 2.1rem/1 'Inter', system-ui, sans-serif; letter-spacing: -0.02em;
+  background: linear-gradient(105deg, #4fd8ff 0%, #00cfff 45%, #168df2 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+}
+.am-head .am-brand { display: flex; width: fit-content; }
+/* Kirish sahifasidagi telefon/email tanlovi */
+.am-page .auth-method-switch { margin: 16px 0 0; }
+.am-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 0.84rem; color: var(--textMuted); }
+.am-row a { color: var(--cyan); font-weight: 700; text-decoration: none; }
+.am-check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.am-check input { width: 18px; height: 18px; accent-color: #0a84ff; }
+.am-error { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.am-error .resend-btn { margin-left: auto; border: 0; background: none; color: var(--cyan); font-weight: 700; cursor: pointer; }

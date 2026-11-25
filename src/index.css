@@ -211,3 +211,17 @@ html.is-native-app *::-webkit-scrollbar { display: none; width: 0; height: 0; }
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
 .ios-edge-back.is-ready { color: #fff; background: linear-gradient(135deg, #00c8f8, #0a84ff); }
+
+/* iPhone ilovasi: sahifa (ayniqsa chat) yon tomonga surilib ketmasin */
+html.is-ios-app, html.is-ios-app body { overflow-x: hidden; overscroll-behavior-x: none; max-width: 100%; }
+html.is-ios-app .tg-chat, html.is-ios-app .tg-messages, html.is-ios-app .tg-chat-body { overflow-x: hidden; }
+.tg-text, .tg-bubble { overflow-wrap: anywhere; word-break: break-word; }
+
+/* Zumik tugmasi aylantirish paytida yashirinadi — tugma va kartalarni yopib qo'ymasin */
+.ai-chat-toggle { transition: opacity 0.2s ease, transform 0.2s ease; }
+body.zumik-scrolling .ai-chat-toggle { opacity: 0; transform: scale(0.6); pointer-events: none; }
+/* Biror oyna (kategoriyalar, filtr, tahrirlash...) ochiq bo'lsa Zumik tugmasi uning ustida turmasin */
+body:has([aria-modal="true"]:not(.ai-chat-modal)) .ai-chat-toggle,
+body:has(.reel-modal-overlay) .ai-chat-toggle,
+body:has(.pf-sheet) .ai-chat-toggle,
+body:has(.mp-mobile-filter-overlay) .ai-chat-toggle { opacity: 0; pointer-events: none; transform: scale(0.6); }

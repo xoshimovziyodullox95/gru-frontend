@@ -123,7 +123,8 @@
 .zumo-topbar__brand {
   position: absolute;
   left: 50%;
-  top: 50%;
+  /* Balandlikka orolcha (safe-area) ham kiradi — markaz faqat 52px qism bo'yicha, aks holda logo orolcha ostiga chiqadi */
+  top: calc(50% + env(safe-area-inset-top, 0px) / 2);
   transform: translate(-50%, -50%);
 
   display: inline-flex;
