@@ -1,8 +1,9 @@
 // Marketplace tovar kategoriyalari — qatorda 5 ta, rasm bilan (OLX ilovasidagidek).
-// Yig'iq holatda 2 qator: 9 ta kategoriya + "Hammasi" tugmasi.
+// 2 qator: 9 ta kategoriya + "Hammasi" tugmasi — u barcha kategoriyalar oynasini ochadi.
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronUp, LayoutGrid } from 'lucide-react';
+import { LayoutGrid } from 'lucide-react';
+import CategoryModal from './CategoryModal';
 import { categoryPath } from '../utils/productCategories';
 import { T } from '../utils/T';
 import '../../styles/productCategoryGrid.css';
@@ -36,23 +37,22 @@ function CategoryTile({ category }) {
 }
 
 export default function ProductCategoryGrid({ categories }) {
-  const [expanded, setExpanded] = useState(false);
+  const [open, setOpen] = useState(false);
   if (!categories.length) return null;
 
   const canCollapse = categories.length > COLLAPSED + 1;
-  const visible = expanded || !canCollapse ? categories : categories.slice(0, COLLAPSED);
+  const visible = canCollapse ? categories.slice(0, COLLAPSED) : categories;
 
   return (
     <div className="pcg-grid">
       {visible.map((category) => <CategoryTile key={category.id} category={category} />)}
       {canCollapse && (
-        <button type="button" className="pcg-tile pcg-tile--more" onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}>
-          <span className="pcg-tile__media">
-            {expanded ? <ChevronUp size={38} strokeWidth={2.4} /> : <LayoutGrid size={38} strokeWidth={2.4} />}
-          </span>
-          <span className="pcg-tile__name">{expanded ? T('Yig‘ish') : T('Hammasi')}</span>
+        <button type="button" className="pcg-tile pcg-tile--more" onClick={() => setOpen(true)} aria-haspopup="dialog">
+          <span className="pcg-tile__media"><LayoutGrid size={38} strokeWidth={2.4} /></span>
+          <span className="pcg-tile__name">{T('Hammasi')}</span>
         </button>
       )}
+      {open && <CategoryModal categories={categories} onClose={() => setOpen(false)} />}
     </div>
   );
 }

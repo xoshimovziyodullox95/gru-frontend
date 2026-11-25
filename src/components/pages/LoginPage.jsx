@@ -7,6 +7,7 @@ import { Eye, EyeOff, LogIn, Mail, Lock, AlertCircle, Smartphone } from 'lucide-
 import toast from 'react-hot-toast';
 import { getReturnPath, clearReturnPath, markAccountCreated } from '../../hooks/useGuestMode';
 import PhoneOtpLoginForm from '../forms/PhoneOtpLoginForm';
+import useAppConfig from '../hooks/useAppConfig';
 import { getUserProfile } from '../services/user';
 import AuthBackButton from '../common/AuthBackButton';
 import { signInWithGoogle, authRedirectUrl } from '../utils/googleAuth';
@@ -24,7 +25,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [showResend, setShowResend] = useState(false);
-  const [loginMethod, setLoginMethod] = useState('email');
+  const [loginMethodState, setLoginMethod] = useState('email');
+  // Telefon (SMS) orqali kirish serverdagi yoqgich bilan boshqariladi — SMS xizmati ulangunicha yashirin
+  const { phoneLogin } = useAppConfig();
+  const loginMethod = phoneLogin ? loginMethodState : 'email';
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -164,26 +168,28 @@ navigate(target, { replace: true });
         <AppleSignInButton />
         <ConsentNote />
 
-        <div className="auth-method-switch" role="tablist" aria-label={T('Kirish usulini tanlang')}>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={loginMethod === 'phone'}
-            className={loginMethod === 'phone' ? 'active' : ''}
-            onClick={() => { setLoginMethod('phone'); setError(''); }}
-          >
-            <Smartphone size={17} /> {T('Telefon')}
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={loginMethod === 'email'}
-            className={loginMethod === 'email' ? 'active' : ''}
-            onClick={() => { setLoginMethod('email'); setError(''); }}
-          >
-            <Mail size={17} /> {T('Email')}
-          </button>
-        </div>
+        {phoneLogin && (
+          <div className="auth-method-switch" role="tablist" aria-label={T('Kirish usulini tanlang')}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={loginMethod === 'phone'}
+              className={loginMethod === 'phone' ? 'active' : ''}
+              onClick={() => { setLoginMethod('phone'); setError(''); }}
+            >
+              <Smartphone size={17} /> {T('Telefon')}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={loginMethod === 'email'}
+              className={loginMethod === 'email' ? 'active' : ''}
+              onClick={() => { setLoginMethod('email'); setError(''); }}
+            >
+              <Mail size={17} /> {T('Email')}
+            </button>
+          </div>
+        )}
 
         <div className="divider"><span>{loginMethod === 'phone' ? T('SMS kod bilan kirish') : T('email orqali kirish')}</span></div>
 

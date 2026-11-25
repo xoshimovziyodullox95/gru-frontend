@@ -55,6 +55,7 @@
     <!-- Chatdagi ovozli xabar va video yozish uchun (WebView getUserMedia ruxsat so'raydi) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Rasm/video olish: e'lon, profil, chat -->
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Eski Android (9 va past): chatdagi rasm/videoni galereyaga saqlash -->

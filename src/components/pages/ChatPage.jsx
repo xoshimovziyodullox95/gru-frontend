@@ -36,7 +36,7 @@ import {
   MoreVertical, MessageSquare, Loader2, Inbox, Palette, Image as ImageIcon,
   Pencil, Trash2, Copy, Volume2, VolumeX, PlayCircle,
   ExternalLink, Film, Package, Mic, Square, Forward, Pause, Play, ChevronDown,
-  Download, RotateCw, FileText,
+  Download, RotateCw, FileText, Lock, ChevronUp, ChevronLeft,
 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import toast from 'react-hot-toast';
@@ -413,6 +413,11 @@ export default function ChatPage() {
   const [replyTo, setReplyTo] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordSeconds, setRecordSeconds] = useState(0);
+  // Telegram kabi: bosib turib yozish → qo'yib yuborsa yuboriladi, chapga sursa bekor, tepaga sursa qulflanadi
+  const [recMode, setRecMode] = useState('idle'); // idle | hold | locked
+  const [recDrag, setRecDrag] = useState({ dx: 0, dy: 0 });
+  const recStartAtRef = useRef(0);
+  const recGestureRef = useRef(null);
   const [reactPickerId, setReactPickerId] = useState(null);
   const [forwardMsg, setForwardMsg] = useState(null);
   const [forwardSearch, setForwardSearch] = useState('');
@@ -1176,20 +1181,29 @@ export default function ChatPage() {
      OVOZLI XABAR
      ============================================================ */
   const startRecording = async () => {
-    if (!activeChat || isRecording) return;
+    if (!activeChatRef.current || mediaRecorderRef.current) return false;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Ruxsat oynasi chiqqan yoki barmoq allaqachon qo'yib yuborilgan — yozmaymiz
+      if (recGestureRef.current?.released) {
+        stream.getTracks().forEach((t) => t.stop());
+        return false;
+      }
       const mr = new MediaRecorder(stream);
       recordedChunksRef.current = [];
       mr.ondataavailable = (e) => { if (e.data.size > 0) recordedChunksRef.current.push(e.data); };
       mr.onstop = () => stream.getTracks().forEach((t) => t.stop());
       mr.start();
       mediaRecorderRef.current = mr;
+      recStartAtRef.current = Date.now();
+      navigator.vibrate?.(30);
       setIsRecording(true);
       setRecordSeconds(0);
       recordTimerRef.current = setInterval(() => setRecordSeconds((s) => s + 1), 1000);
+      return true;
     } catch {
       toast.error(T('Mikrofonga ruxsat berilmadi'));
+      return false;
     }
   };
 
@@ -1209,15 +1223,16 @@ export default function ChatPage() {
   const stopAndSendRecording = () => {
     const mr = mediaRecorderRef.current;
     if (!mr) return;
-    const duration = recordSeconds;
+    const duration = Math.max(1, Math.round((Date.now() - recStartAtRef.current) / 1000));
+    const chat = activeChatRef.current;
     clearInterval(recordTimerRef.current);
     mr.onstop = async () => {
       mr.stream.getTracks().forEach((t) => t.stop());
       const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
       recordedChunksRef.current = [];
-      if (blob.size > 0 && activeChat) {
+      if (blob.size > 0 && chat) {
         try {
-          const res = await sendVoice(activeChat.userId, blob, duration);
+          const res = await sendVoice(chat.userId, blob, duration);
           setMessages((prev) => [...prev, res.data]);
           bumpAfterSend(res.data);
         } catch {
@@ -1229,6 +1244,79 @@ export default function ChatPage() {
     mediaRecorderRef.current = null;
     setIsRecording(false);
     setRecordSeconds(0);
+  };
+
+  const finishCancelRecording = () => {
+    cancelRecording();
+    setRecMode('idle');
+    setRecDrag({ dx: 0, dy: 0 });
+  };
+  const finishSendRecording = () => {
+    stopAndSendRecording();
+    setRecMode('idle');
+    setRecDrag({ dx: 0, dy: 0 });
+  };
+
+  const onMicPointerDown = (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault();
+    const gesture = { x: e.clientX, y: e.clientY, released: false };
+    recGestureRef.current = gesture;
+    setRecDrag({ dx: 0, dy: 0 });
+    setRecMode('hold');
+
+    const detach = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onCancel);
+    };
+    const onMove = (ev) => {
+      const dx = Math.min(0, ev.clientX - gesture.x);
+      const dy = Math.min(0, ev.clientY - gesture.y);
+      if (dx < -120) {
+        detach();
+        gesture.released = true;
+        navigator.vibrate?.(20);
+        finishCancelRecording();
+      } else if (dy < -90) {
+        detach();
+        navigator.vibrate?.(20);
+        setRecMode('locked');
+        setRecDrag({ dx: 0, dy: 0 });
+      } else {
+        setRecDrag({ dx, dy });
+      }
+    };
+    const onUp = () => {
+      detach();
+      gesture.released = true;
+      if (!mediaRecorderRef.current) {
+        // Yozish hali boshlanmagan (ruxsat so'ralmoqda) — hech narsa yubormaymiz
+        setRecMode('idle');
+        return;
+      }
+      if (Date.now() - recStartAtRef.current < 600) {
+        finishCancelRecording();
+        toast(T('Yozish uchun tugmani bosib turing'), { id: 'rec-hint' });
+        return;
+      }
+      finishSendRecording();
+    };
+    const onCancel = () => {
+      detach();
+      gesture.released = true;
+      finishCancelRecording();
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onCancel);
+
+    startRecording().then((ok) => {
+      if (!ok) {
+        detach();
+        setRecMode('idle');
+      }
+    });
   };
 
   /* ============================================================
@@ -1976,16 +2064,17 @@ export default function ChatPage() {
                 </div>
               )}
 
-              {isRecording ? (
+              {isRecording && recMode !== 'hold' ? (
                 <div className="tg-input tg-input--recording">
-                  <button type="button" className="tg-input__icon danger" onClick={cancelRecording} aria-label={T('Bekor qilish')}>
+                  <button type="button" className="tg-input__icon danger" onClick={finishCancelRecording} aria-label={T('Bekor qilish')}>
                     <Trash2 size={20} />
                   </button>
                   <div className="tg-recording-indicator">
                     <span className="tg-recording-dot" />
                     {Math.floor(recordSeconds / 60)}:{String(recordSeconds % 60).padStart(2, '0')}
+                    <span className="tg-rec-locked-hint"><Lock size={13} /> {T('Qulflangan')}</span>
                   </div>
-                  <button type="button" className="tg-input__send" onClick={stopAndSendRecording} aria-label={T('Yuborish')}>
+                  <button type="button" className="tg-input__send" onClick={finishSendRecording} aria-label={T('Yuborish')}>
                     <Send size={20} />
                   </button>
                 </div>
@@ -2082,13 +2171,37 @@ export default function ChatPage() {
                   !editingMessage && (
                     <button
                       type="button"
-                      className="tg-input__send"
-                      onClick={startRecording}
-                      aria-label={T('Ovozli xabar')}
+                      className="tg-input__send tg-mic-btn"
+                      onPointerDown={onMicPointerDown}
+                      onContextMenu={(e) => e.preventDefault()}
+                      aria-label={T('Ovozli xabar — bosib turing')}
                     >
                       <Mic size={20} />
                     </button>
                   )
+                )}
+                {recMode === 'hold' && (
+                  <div className="tg-rec-hold">
+                    <div className="tg-recording-indicator tg-recording-indicator--hold">
+                      <span className="tg-recording-dot" />
+                      {Math.floor(recordSeconds / 60)}:{String(recordSeconds % 60).padStart(2, '0')}
+                    </div>
+                    <div
+                      className="tg-rec-slide"
+                      style={{ transform: `translateX(${recDrag.dx * 0.7}px)`, opacity: Math.max(0.15, 1 + recDrag.dx / 130) }}
+                    >
+                      <ChevronLeft size={16} className="tg-rec-slide__arrow" /> {T('Bekor qilish uchun suring')}
+                    </div>
+                    <div className="tg-rec-lock" style={{ transform: `translateY(${recDrag.dy * 0.6}px)`, opacity: recDrag.dy < -20 ? 1 : 0.92 }}>
+                      <span className="tg-rec-lock__inner">
+                        <Lock size={17} />
+                        <ChevronUp size={15} />
+                      </span>
+                    </div>
+                    <div className="tg-rec-mic" style={{ transform: `translate(${recDrag.dx}px, ${recDrag.dy}px)` }}>
+                      <Mic size={28} />
+                    </div>
+                  </div>
                 )}
               </div>
               )}

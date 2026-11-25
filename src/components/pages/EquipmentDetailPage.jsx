@@ -21,7 +21,8 @@ import {
   ChevronLeft, ChevronRight, MessageCircle,
   Share2, Layers,
   Cpu, UtensilsCrossed, Sofa, Palette,
-  ShoppingCart, Check, BadgeCheck, RotateCcw, ShieldAlert
+  ShoppingCart, Check, BadgeCheck, RotateCcw, ShieldAlert,
+  Tag,
 } from 'lucide-react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
@@ -40,6 +41,7 @@ import ReviewsSection from '../reviews/ReviewsSection';
 import '../../styles/detailModern.css';
 
 import { T } from '../utils/T';
+import { describeAttrs } from '../utils/listingSpec';
 
 // ============================================================
 // MAHSULOT TURI META
@@ -374,7 +376,10 @@ export default function EquipmentDetailPage() {
 
   const specs = equipment.technical_specs || {};
   const hasLegacySpecs = !!(specs.power || specs.frequency || specs.requirements);
-  const attributeItems = buildAttributeItems(equipment.productType, equipment.attributes || {}, t);
+  const attributeItems = [
+    ...describeAttrs(equipment.category, equipment.attributes || {}).map((a) => ({ ...a, icon: Tag })),
+    ...buildAttributeItems(equipment.productType, equipment.attributes || {}, t),
+  ];
   const productTypeMeta = getProductTypeMeta(equipment.productType, t);
 
   const owner = equipment.userId && typeof equipment.userId === 'object' ? equipment.userId : null;
@@ -609,7 +614,7 @@ export default function EquipmentDetailPage() {
           </aside>
         </div>
 
-        <EquipmentRelatedListings currentId={equipment._id} />
+        <EquipmentRelatedListings currentId={equipment._id} equipment={equipment} />
 
         {/* TELEFONDA: PASTKI PANEL */}
         {!isOwner && !isSold && (

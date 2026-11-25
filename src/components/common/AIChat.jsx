@@ -11,7 +11,9 @@ const AiMarkdown = lazy(() => import('./AiMarkdown'));
 import { T } from '../utils/T';
 import ZumoBot from './ZumoBot.jsx';
 import useTypewriter from '../hooks/useTypewriter';
+import useEscapeClose from '../hooks/useEscapeClose';
 import '../../styles/aiChat.css';
+import '../../styles/zumikChat.css';
 
 const MAX_INPUT = 1500;
 const NOOP = () => {};
@@ -93,6 +95,13 @@ export default function AIChat() {
   ]);
 
   const messagesEndRef = useRef(null);
+
+  // Telefondagi "orqaga" tugmasi chatni yopsin; chat ochiq turganda suzuvchi tugma yashirinadi
+  useEscapeClose(isOpen, () => setIsOpen(false));
+  useEffect(() => {
+    document.body.classList.toggle('ai-chat-open', isOpen);
+    return () => document.body.classList.remove('ai-chat-open');
+  }, [isOpen]);
 
   // Personaj: Zumik seansda bir marta o'zini tanishtiradi, vaqti-vaqti bilan qo'l silkitadi
   const [introVisible, setIntroVisible] = useState(false);
@@ -190,7 +199,7 @@ export default function AIChat() {
       </button>
 
       {isOpen && (
-        <div className="ai-chat-modal" role="dialog" aria-label={T('Zumik — yordamchi')}>
+        <div className="ai-chat-modal" role="dialog" aria-modal="true" aria-label={T('Zumik — yordamchi')}>
           <div className="ai-chat-header">
             <div className="ai-chat-title">
               <span className="ai-chat-title__bot"><ZumoBot size={38} still talking={talking} emotion={headerEmotion} /></span>

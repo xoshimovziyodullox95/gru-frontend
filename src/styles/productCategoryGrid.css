@@ -42,12 +42,13 @@
 .pcg-tile__media::after { display: none; }
 .pcg-tile__image {
   position: absolute;
-  inset: 0;
+  /* 3D ikonka chetigacha to'la — atrofida havo qoldiramiz, aks holda "kattalashgan" ko'rinadi */
+  inset: 13%;
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.0);
+  width: 74%;
+  height: 74%;
+  object-fit: contain;
+  transform: none;
   border-radius: 0;
   transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
 }

@@ -10,6 +10,7 @@ import { useProductCategories } from '../utils/productCategories';
 import { formatPrice } from '../utils/formatPrice';
 import { safeGoBack } from '../utils/navigation';
 import useEscapeClose from '../hooks/useEscapeClose';
+import { conditionOptions, getFilterFacets, itemGender } from '../utils/listingSpec';
 
 import {
   MapPin, Ruler, Tag, ArrowLeft, ArrowUpDown,
@@ -22,6 +23,7 @@ import '../../styles/marketplace.css';
 import '../../styles/marketplaceResults.css';
 
 import { T } from '../utils/T';
+import { searchWords, wordHits } from '../utils/searchMatch';
 const searchableText = (value) => (typeof value === 'string' ? value.toLocaleLowerCase('uz-UZ') : '');
 // Saralash uchun narxning birinchi sonini olamiz ("100 000 - 300 000 so'm" → 100000)
 const priceNumber = (value) => {
@@ -45,6 +47,9 @@ export default function MarketplacePage() {
   const [selectedLevel1s, setSelectedLevel1s] = useUrlSet('level1');
   const [selectedServiceCats, setSelectedServiceCats] = useUrlSet('svc');
   const [selectedSubs, setSelectedSubs] = useUrlSet('sub');
+  const [selectedConds, setSelectedConds] = useUrlSet('cond');
+  const [selectedGenders, setSelectedGenders] = useUrlSet('gender');
+  const [selectedSizes, setSelectedSizes] = useUrlSet('size');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [sort, setSort] = useUrlParam('sort');
   useEscapeClose(showMobileFilters, () => setShowMobileFilters(false));
@@ -107,6 +112,8 @@ export default function MarketplacePage() {
           image: item.images?.[0] || '/images/zumo-placeholder.svg',
           link: `/equipment/${item._id}`,
           createdAt: item.createdAt,
+          condition: item.condition,
+          attrs: item.attributes || {},
           meta: [],
           maxQuantity: typeof item.stockQuantity === 'number' ? item.stockQuantity : undefined,
           saleMode: item.saleMode,
@@ -161,7 +168,7 @@ const services = asArray(servRes).map(item => ({
     : null;
 
   // ========== FILTRLASH ==========
-  const filteredItems = useMemo(() => {
+  const { list: filteredItems, similar: similarItems, similarKind } = useMemo(() => {
     let result = items;
 
     // 1. TYPE bo'yicha filtr
@@ -177,26 +184,46 @@ const services = asArray(servRes).map(item => ({
       result = result.filter((item) => item.type === 'equipment' && selectedSubs.has(item.sub));
     }
 
+    // Holati, jins va o'lcham — faqat tovar e'lonlarida bor
+    if (selectedConds.size > 0) {
+      result = result.filter((item) => item.type === 'equipment' && selectedConds.has(item.condition));
+    }
+    if (selectedGenders.size > 0) {
+      result = result.filter((item) => item.type === 'equipment' && selectedGenders.has(itemGender(item)));
+    }
+    if (selectedSizes.size > 0) {
+      result = result.filter((item) => item.type === 'equipment' && selectedSizes.has(item.attrs?.size));
+    }
+
     // 3. Xizmat yo'nalishi bo'yicha (mutaxassisning level1 si — yo'nalish slug'i)
     if (selectedServiceCats.size > 0) {
       result = result.filter((item) => item.type === 'service' && selectedServiceCats.has(item.level1));
     }
 
-    // 4. Qidiruv bo'yicha filtr
-    if (searchTerm.trim()) {
-      const term = searchableText(searchTerm);
-      result = result.filter(item => {
-        return (
-          searchableText(item.title).includes(term) ||
-          searchableText(item.description).includes(term) ||
-          searchableText(item.level1).includes(term) ||
-          searchableText(categoryNames.get(item.level1)).includes(term) ||
-          searchableText(categoryNames.get(`${item.level1}/${item.sub}`)).includes(term) ||
-          searchableText(item.type).includes(term) ||
-          (item.serviceTags || []).some((tag) => searchableText(tag).includes(term)) ||
-          (item.meta && item.meta.some((meta) => searchableText(meta.text).includes(term)))
-        );
-      });
+    // 4. Qidiruv: hamma so'z mos kelgani — aniq natija. Hech biri yo'q bo'lsa — o'xshashlari (pastda)
+    let similar = [];
+    let similarKind = 'similar';
+    const words = searchWords(searchTerm);
+    if (words.length) {
+      const haystack = (item) => [
+        item.title, item.description, item.level1, categoryNames.get(item.level1),
+        categoryNames.get(`${item.level1}/${item.sub}`), ...(item.serviceTags || []),
+        ...((item.meta || []).map((meta) => meta.text)),
+      ].map(searchableText).join(' ');
+      const titleHits = (item, fuzzy) => wordHits(item.title, words, fuzzy);
+      const exact = result.filter((item) => wordHits(haystack(item), words) === words.length);
+      if (!exact.length) {
+        // Hech bo'lmasa bitta so'z (xato yozilganini ham — so'z boshi bo'yicha) mos kelganlar, ko'p moslari oldinda
+        similar = result
+          .map((item) => ({ item, score: wordHits(haystack(item), words, true) * 2 + titleHits(item, true) }))
+          .filter((x) => x.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 24)
+          .map((x) => x.item);
+        // O'xshashi ham yo'q — bo'sh sahifa o'rniga shu bo'limdagi eng yangi e'lonlar
+        if (!similar.length) { similar = result.slice(0, 12); similarKind = 'latest'; }
+      }
+      result = exact.sort((a, b) => titleHits(b) - titleHits(a));
     }
 
     // 5. Saralash — narxi yo'qlar oxirida
@@ -209,10 +236,40 @@ const services = asArray(servRes).map(item => ({
       });
     }
 
-    return result;
-  }, [items, searchTerm, selectedTypes, selectedLevel1s, selectedSubs, selectedServiceCats, categoryNames, sort]);
+    return { list: result, similar, similarKind };
+  }, [items, searchTerm, selectedTypes, selectedLevel1s, selectedSubs, selectedServiceCats, selectedConds, selectedGenders, selectedSizes, categoryNames, sort]);
 
-  const activeFilterCount = selectedTypes.size + selectedLevel1s.size + selectedSubs.size + selectedServiceCats.size;
+  const activeFilterCount = selectedTypes.size + selectedLevel1s.size + selectedSubs.size + selectedServiceCats.size
+    + selectedConds.size + selectedGenders.size + selectedSizes.size;
+
+  // Kategoriyaga qarab qo'shimcha filtrlar: holati (hammasida), jins va o'lcham (kiyim, bolalar)
+  const toggleIn = (setter) => (value) => setter((prev) => {
+    const next = new Set(prev);
+    next.has(value) ? next.delete(value) : next.add(value);
+    return next;
+  });
+  const facets = useMemo(() => {
+    const list = [];
+    const onlyFood = selectedLevel1s.size > 0 && [...selectedLevel1s].every((id) => id === 'oziqovqat');
+    const equipmentAllowed = selectedTypes.size === 0 || selectedTypes.has('equipment');
+    if (equipmentAllowed && !onlyFood) {
+      list.push({ key: 'cond', title: T('Holati'), options: conditionOptions(), selected: selectedConds, onToggle: toggleIn(setSelectedConds) });
+    }
+    if (equipmentAllowed) {
+      const f = getFilterFacets(selectedLevel1s, selectedSubs);
+      if (f.gender.length) {
+        list.push({ key: 'gender', title: T('Kimlar uchun'), options: f.gender, selected: selectedGenders, onToggle: toggleIn(setSelectedGenders) });
+      }
+      f.sizeGroups.forEach((g) => {
+        const title = f.sizeGroups.length > 1
+          ? `${T('O‘lcham')} · ${g.kind === 'shoes' ? T('Poyabzal') : g.kind === 'kids' ? T('Bolalar') : T('Kiyim')}`
+          : T('O‘lcham');
+        list.push({ key: `size-${g.kind}`, title, options: g.options, selected: selectedSizes, onToggle: toggleIn(setSelectedSizes) });
+      });
+    }
+    return list;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLevel1s, selectedSubs, selectedTypes, selectedConds, selectedGenders, selectedSizes, categories]);
   const sortLabels = {
     new: t('marketplacePage.sortNew', 'Avval yangilari'),
     cheap: t('marketplacePage.sortCheap', 'Avval arzonlari'),
@@ -253,9 +310,13 @@ const services = asArray(servRes).map(item => ({
       return next;
     });
     setSelectedSubs(new Set()); // ichki bo'lim boshqa kategoriyaga tegishli bo'lib qolmasin
+    setSelectedGenders(new Set());
+    setSelectedSizes(new Set()); // o'lcham/jins kategoriyaga xos — eskisi qolib natijani yashirmasin
   };
 
   const toggleSub = (sub) => {
+    setSelectedGenders(new Set());
+    setSelectedSizes(new Set());
     setSelectedSubs((prev) => {
       const next = new Set(prev);
       next.has(sub) ? next.delete(sub) : next.add(sub);
@@ -276,6 +337,9 @@ const services = asArray(servRes).map(item => ({
     setSelectedLevel1s(new Set());
     setSelectedServiceCats(new Set());
     setSelectedSubs(new Set());
+    setSelectedConds(new Set());
+    setSelectedGenders(new Set());
+    setSelectedSizes(new Set());
     setSearchTerm('');
   };
 
@@ -376,6 +440,7 @@ const services = asArray(servRes).map(item => ({
           onToggleSub={toggleSub}
           selectedServiceCats={selectedServiceCats}
           onToggleServiceCat={toggleServiceCat}
+          facets={facets}
           onClearAll={clearAllFilters}
         />
 
@@ -411,11 +476,40 @@ const services = asArray(servRes).map(item => ({
               </div>
             </div>
           )}
-          {filteredItems.length === 0 ? (
+          {filteredItems.length === 0 && similarItems.length > 0 ? (
+            <div className="mpx-similar">
+              <div className="mpx-similar__note">
+                <Search size={18} />
+                <div>
+                  <strong>{T('«{{q}}» bo‘yicha aniq natija topilmadi', { q: searchTerm.trim() })}</strong>
+                  <span>{similarKind === 'latest' ? T('O‘xshashi ham yo‘q. Balki bular qiziqtirar:') : T('Shunga o‘xshash e’lonlar:')}</span>
+                </div>
+              </div>
+              <div className="uc-grid">
+                {similarItems.map((item) => (
+                  <UniversalCard
+                    key={`${item.type}-${item.id}`}
+                    id={item.id}
+                    type={item.type}
+                    title={item.title}
+                    image={item.image}
+                    price={item.price}
+                    link={item.link}
+                    isTop={item.isTop}
+                    isVerified={item.isVerified}
+                    maxQuantity={item.maxQuantity}
+                    saleMode={item.saleMode}
+                    rating={item.rating}
+                    subtitle={item.subtitle}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : filteredItems.length === 0 ? (
             <div className="marketplace-empty">
               <Inbox size={48} />
               <p>{t('marketplacePage.empty')}</p>
-              {(searchTerm || selectedTypes.size > 0 || selectedLevel1s.size > 0 || selectedSubs.size > 0 || selectedServiceCats.size > 0) && (
+              {(searchTerm || activeFilterCount > 0) && (
                 <button
                   className="marketplace-clear-search-btn"
                   onClick={clearAllFilters}
@@ -464,6 +558,7 @@ const services = asArray(servRes).map(item => ({
               onToggleSub={toggleSub}
               selectedServiceCats={selectedServiceCats}
               onToggleServiceCat={toggleServiceCat}
+              facets={facets}
               onClearAll={clearAllFilters}
             />
             <button className="mp-mobile-filter-apply" onClick={() => setShowMobileFilters(false)}>

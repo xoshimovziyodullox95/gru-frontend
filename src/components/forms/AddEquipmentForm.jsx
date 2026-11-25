@@ -13,6 +13,7 @@ import { safeGoBack } from '../utils/navigation.js';
 import { T } from '../utils/T';
 import { Field, FormSection, PhotoPicker, Segmented } from './listingKit';
 import { REGIONS } from './listingConstants';
+import { getListingFields } from '../utils/listingSpec';
 import { useProductCategories } from '../utils/productCategories';
 import '../../styles/aienhance.css';
 
@@ -41,6 +42,8 @@ export default function AddEquipmentForm() {
     region: '',
     phone: '',
   });
+  // Kategoriyaga xos maydonlar (o'lcham, jins) — ichki bo'lim o'zgarsa tozalanadi
+  const [extra, setExtra] = useState({});
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -64,7 +67,10 @@ export default function AddEquipmentForm() {
     if (form.title.trim().length < 3) e.title = T('Sarlavhani yozing (kamida 3 ta belgi)');
     if (!form.level1) e.level1 = T('Kategoriyani tanlang');
     else if (!form.sub) e.level1 = T('Ichki bo‘limni tanlang');
-    if (!(Number(form.price) > 0)) e.price = T('Narxni kiriting');
+    getListingFields(form.sub).forEach((f) => {
+      if (f.required && !extra[f.key]) e[`x_${f.key}`] = T('Tanlang');
+    });
+    if (!isFree && !(Number(form.price) > 0)) e.price = T('Narxni kiriting');
     if (!form.region) e.region = T('Viloyatni tanlang');
     if (form.phone.replace(/\D/g, '').length < 9) e.phone = T('Telefon raqamini kiriting');
     setErrors(e);
@@ -73,11 +79,25 @@ export default function AddEquipmentForm() {
 
   const activeCategory = categories.find((c) => c.id === form.level1) || null;
   const isFood = form.level1 === 'oziqovqat';
+  const isFree = form.level1 === 'otdam-darom'; // narx so'ralmaydi
 
   const chooseCategory = (id) => {
     setForm((f) => ({ ...f, level1: id, sub: f.level1 === id ? f.sub : '' }));
+    if (form.level1 !== id) setExtra({});
     setErrors((e) => ({ ...e, level1: undefined }));
   };
+
+  const chooseSub = (id) => {
+    if (form.sub !== id) setExtra({});
+    set('sub', id);
+  };
+
+  const setExtraValue = (key, value) => {
+    setExtra((x) => ({ ...x, [key]: x[key] === value && !getListingFields(form.sub).find((f) => f.key === key)?.required ? '' : value }));
+    setErrors((e) => ({ ...e, [`x_${key}`]: undefined }));
+  };
+
+  const extraFields = getListingFields(form.sub);
 
   const submit = async (ev) => {
     ev.preventDefault();
@@ -92,7 +112,7 @@ export default function AddEquipmentForm() {
       const res = await createEquipment({
         title: form.title.trim(),
         description: form.description.trim(),
-        price: Number(form.price),
+        price: isFree ? 0 : Number(form.price),
         currency: form.currency,
         condition: isFood ? 'new' : form.condition,
         saleMode: form.saleMode,
@@ -100,7 +120,11 @@ export default function AddEquipmentForm() {
         stockQuantity: form.saleMode === 'store' ? Math.max(1, parseInt(form.stockQuantity, 10) || 1) : 1,
         level1: form.level1,
         category: form.sub,
-        attributes: { region: form.region, negotiable: form.negotiable },
+        attributes: {
+          region: form.region,
+          negotiable: form.negotiable,
+          ...Object.fromEntries(Object.entries(extra).filter(([k, v]) => v && extraFields.some((f) => f.key === k))),
+        },
       });
       const id = res.data._id;
       const fd = new FormData();
@@ -186,7 +210,7 @@ export default function AddEquipmentForm() {
                   role="radio"
                   aria-checked={form.sub === sub.id}
                   className={`lf-sub ${form.sub === sub.id ? 'is-on' : ''}`}
-                  onClick={() => set('sub', sub.id)}
+                  onClick={() => chooseSub(sub.id)}
                 >
                   {sub.name}
                 </button>
@@ -195,6 +219,27 @@ export default function AddEquipmentForm() {
             {errors.level1 && <span className="lf-field__error">{errors.level1}</span>}
           </div>
         )}
+
+        {extraFields.map((f) => (
+          <div className="lf-field" key={f.key}>
+            <span className="lf-field__label">{f.label}{!f.required && <small>{T('ixtiyoriy')}</small>}</span>
+            <div className="lf-chips" role="radiogroup" aria-label={f.label}>
+              {f.options.map((o) => (
+                <button
+                  key={o.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={extra[f.key] === o.value}
+                  className={`lf-chip ${extra[f.key] === o.value ? 'is-on' : ''}`}
+                  onClick={() => setExtraValue(f.key, o.value)}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            {errors[`x_${f.key}`] && <span className="lf-field__error">{errors[`x_${f.key}`]}</span>}
+          </div>
+        ))}
 
         {form.level1 && !isFood && (
           <div className="lf-field">
@@ -209,6 +254,7 @@ export default function AddEquipmentForm() {
         )}
       </FormSection>
 
+      {!isFree && (
       <FormSection title={T('Narx')}>
         <div className="lf-row lf-row--price">
           <Field label={T('Narxi')} error={errors.price}>
@@ -233,6 +279,7 @@ export default function AddEquipmentForm() {
           {T('Kelishiladi')}
         </label>
       </FormSection>
+      )}
 
       <FormSection title={T('Tavsif')}>
         <Field label={T('Tovar haqida')} counter={`${form.description.length}/${DESC_MAX}`} hint={T('Holati, o‘lchami, rangi, nima uchun sotilayotgani — xaridor nimani bilishi kerak bo‘lsa')}>

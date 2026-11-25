@@ -43,6 +43,7 @@ export default function MarketplaceFilters({
   onToggleSub,
   selectedServiceCats,
   onToggleServiceCat,
+  facets = [],
   onClearAll,
 }) {
   const { t } = useTranslation();
@@ -63,7 +64,8 @@ export default function MarketplaceFilters({
   ];
 
   const hasActiveFilters =
-    selectedTypes.size > 0 || selectedLevel1s.size > 0 || selectedSubs.size > 0 || selectedServiceCats.size > 0;
+    selectedTypes.size > 0 || selectedLevel1s.size > 0 || selectedSubs.size > 0 || selectedServiceCats.size > 0
+    || facets.some((f) => f.selected.size > 0);
 
   // Ichki bo'limlar faqat bitta kategoriya tanlanganda ko'rinadi
   const activeCategory = selectedLevel1s.size === 1
@@ -89,6 +91,10 @@ export default function MarketplaceFilters({
           onToggle={onToggleSub}
         />
       )}
+
+      {facets.map((f) => (
+        <ChipGroup key={f.key} title={f.title} options={f.options} selected={f.selected} onToggle={f.onToggle} />
+      ))}
 
       <ChipGroup
         title={t('marketplaceFilters.serviceTags')}
