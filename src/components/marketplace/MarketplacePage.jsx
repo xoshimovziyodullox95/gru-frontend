@@ -14,7 +14,7 @@ import { conditionOptions, getFilterFacets, itemGender } from '../utils/listingS
 
 import {
   MapPin, Ruler, Tag, ArrowLeft, ArrowUpDown,
-  Search, Loader2, Inbox, SlidersHorizontal, X
+  Search, Loader2, Inbox, SlidersHorizontal, X, ChevronLeft
 } from 'lucide-react';
 import UniversalCard from '../pages/UniversalCard';
 import MarketplaceFilters from '../marketplace/MarketplaceFilters';
@@ -546,8 +546,11 @@ const services = asArray(servRes).map(item => ({
         <div className="mp-mobile-filter-overlay" onClick={() => setShowMobileFilters(false)}>
           <div className="mp-mobile-filter-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="mp-mobile-filter-header">
+              <button type="button" className="mp-mobile-filter-back" onClick={() => setShowMobileFilters(false)} aria-label={T('Orqaga')}>
+                <ChevronLeft size={22} />
+              </button>
               <h3>{t('marketplacePage.mobileFilterTitle')}</h3>
-              <button onClick={() => setShowMobileFilters(false)}><X size={20} /></button>
+              <button type="button" onClick={() => setShowMobileFilters(false)} aria-label={T('Yopish')}><X size={20} /></button>
             </div>
             <MarketplaceFilters
               selectedTypes={selectedTypes}

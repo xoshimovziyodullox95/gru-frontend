@@ -225,3 +225,37 @@ body:has([aria-modal="true"]:not(.ai-chat-modal)) .ai-chat-toggle,
 body:has(.reel-modal-overlay) .ai-chat-toggle,
 body:has(.pf-sheet) .ai-chat-toggle,
 body:has(.mp-mobile-filter-overlay) .ai-chat-toggle { opacity: 0; pointer-events: none; transform: scale(0.6); }
+
+/* Rasm ko'ruvchi (e'lon/joy sahifasi) — to'liq ekran, qorong'i fon, menyu ustida */
+.ImageViewerOverlay { z-index: 12000 !important; background: #03070e !important; animation: none !important;
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+.ImageViewerCloseBtn { top: calc(14px + env(safe-area-inset-top)) !important; }
+
+/* Bozor sahifasida video lentasi ostida ortiqcha bo'sh joy bo'lmasin (82px faqat bosh sahifa oxiri uchun) */
+.mkt-block--reels .reels-section--home { padding-bottom: 12px; }
+.reels-track { background: transparent; }
+@media (hover: none) { .reels-track { scrollbar-width: none; } .reels-track::-webkit-scrollbar { display: none; } }
+
+/* Mobil filtr oynasi pastki menyu ustida — "Natijalarni ko'rsatish" tugmasi yopilmasin */
+.mp-mobile-filter-overlay { z-index: 12000 !important; }
+
+/* Profil: umumiy ZUMO sarlavhasi bor joyda ichki panel yopishib turmasin (rasm ustiga chiqib qolardi) */
+body:not(.no-global-navbar-offset) .pf-top { position: relative; }
+
+/* Mobil filtr: sarlavha (orqaga + nom + yopish) tepada, "Natijalar" tugmasi pastda doim ko'rinadi */
+.mp-mobile-filter-sheet { max-height: 88dvh; padding-top: 0; padding-bottom: 0; }
+.mp-mobile-filter-header {
+  position: sticky; top: 0; z-index: 2; margin: 0 -1.25rem 0.75rem; padding: 12px 1.25rem 10px;
+  background: var(--bg); border-bottom: 1px solid rgba(var(--text-rgb), 0.08);
+  display: grid !important; grid-template-columns: 40px 1fr 40px; align-items: center;
+}
+.mp-mobile-filter-header h3 { text-align: center; }
+.mp-mobile-filter-header button {
+  display: grid; place-items: center; width: 40px; height: 40px; padding: 0 !important;
+  border-radius: 50%; background: rgba(var(--text-rgb), 0.06) !important; color: var(--text) !important;
+}
+.mp-mobile-filter-apply {
+  position: sticky; bottom: 0; z-index: 2;
+  margin-bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+  box-shadow: 0 -10px 20px var(--bg);
+}

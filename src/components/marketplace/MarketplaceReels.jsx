@@ -231,7 +231,8 @@ function ReelThumb({ reel, onOpen, isPriority, t }) {
           muted
           loop
           playsInline
-          preload={isPreviewing ? 'auto' : 'metadata'}
+          // Muqovasiz videoda iPhone kadrni faqat ma'lumot yuklansa chizadi (metadata bilan qora qoladi)
+          preload={isPreviewing || !reel?.thumbnailUrl ? 'auto' : 'metadata'}
           onError={() => setMediaError(true)}
         />
       ) : (

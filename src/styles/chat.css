@@ -2197,3 +2197,12 @@ html.dark .tg-bubble.sent .tg-voice__wave i.on { background: #fff; }
 }
 @keyframes tgRecMicIn { from { scale: 0.6; } to { scale: 1; } }
 .tg-rec-locked-hint { display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; font-size: 12px; color: var(--tg-muted, #8a97a6); }
+
+/* Optimistik yuborish: yangi o'z xabarimiz pastdan yumshoq chiqadi; yuborilguncha soat, xato bo'lsa qizil belgi */
+.tg-message-row.sent.is-pending { animation: tg-send-in 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+.tg-message-row.is-pending .tg-bubble { opacity: 0.85; }
+@keyframes tg-send-in { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: none; } }
+.tg-check--pending { animation: tg-pending-pulse 1.2s ease-in-out infinite; }
+@keyframes tg-pending-pulse { 50% { opacity: 0.35; } }
+.tg-check--failed { color: #ef4444 !important; }
+.tg-message-row.is-failed .tg-bubble { opacity: 0.7; }

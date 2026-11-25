@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { safeGoBack } from '../utils/navigation.js';
 import { recordRecentlyViewed } from '../utils/recentlyViewed.js';
 import { listingChatUrl } from '../utils/listingChatUrl.js';
@@ -122,7 +123,8 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
   const currentImage = images?.[activeIndex] || '/images/zumo-placeholder.svg';
   const safeImageUrl = getImageUrl(currentImage) || '/images/zumo-placeholder.svg';
 
-  return (
+  // Portal: sahifa konteyneri cheklamasin — rasm butun ekranda, sarlavha va menyu ustida
+  return createPortal(
     <div className="ImageViewerOverlay">
       <button type="button" className="ImageViewerCloseBtn" onClick={onClose} aria-label={T('Yopish')}>
         <X size={22} />
@@ -155,7 +157,8 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
           })}
         </div>
       )}
-    </div>
+    </div>,
+    document.body,
   );
 };
 

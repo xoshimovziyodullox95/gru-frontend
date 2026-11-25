@@ -3,7 +3,7 @@ export const BACKEND_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/ap
 
 export function getImageUrl(path) {
   if (!path) return '/images/zumo-placeholder.svg';
-  if (path.startsWith('http')) return path;   // allaqachon to'liq manzil
+  if (/^(https?:|data:|blob:)/.test(path)) return path;   // to'liq manzil yoki qurilmadagi vaqtinchalik fayl
   return `${BACKEND_ORIGIN}${path}`;
 }
 // Savat/sevimlilar kabi joylarda saqlangan rasm — kartochkadagi bilan bir xil: server yo'llari

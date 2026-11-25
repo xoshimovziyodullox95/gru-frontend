@@ -36,7 +36,7 @@ import {
   MoreVertical, MessageSquare, Loader2, Inbox, Palette, Image as ImageIcon,
   Pencil, Trash2, Copy, Volume2, VolumeX, PlayCircle,
   ExternalLink, Film, Package, Mic, Square, Forward, Pause, Play, ChevronDown,
-  Download, RotateCw, FileText, Lock, ChevronUp, ChevronLeft,
+  Download, RotateCw, FileText, Lock, ChevronUp, ChevronLeft, Clock, AlertCircle,
 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
 import toast from 'react-hot-toast';
@@ -590,6 +590,28 @@ export default function ChatPage() {
     });
   }, []);
 
+  // Optimistik yuborish (Telegram kabi): xabar darhol pufak bo'lib chiqadi (soat belgisi bilan),
+  // server javobi kelgach haqiqiysi bilan almashadi; xato bo'lsa "yuborilmadi" belgisi qoladi.
+  const addPending = (partial) => {
+    const chat = activeChatRef.current;
+    const tempId = `tmp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    setMessages((prev) => [...prev, {
+      _id: tempId, from: currentUserId, to: chat?.userId, createdAt: new Date().toISOString(), pending: true, ...partial,
+    }]);
+    nearBottomRef.current = true;
+    setTimeout(() => {
+      const box = messagesBoxRef.current;
+      if (box) box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
+    }, 30);
+    return tempId;
+  };
+  const resolvePending = (tempId, real) => setMessages((prev) => {
+    // Haqiqiy xabar (masalan, socket orqali) allaqachon kelgan bo'lsa — vaqtinchalikni olib tashlaymiz
+    if (real?._id && prev.some((m) => toIdStr(m._id) === toIdStr(real._id))) return prev.filter((m) => m._id !== tempId);
+    return prev.map((m) => (m._id === tempId ? real : m));
+  });
+  const failPending = (tempId) => setMessages((prev) => prev.map((m) => (m._id === tempId ? { ...m, pending: false, failed: true } : m)));
+
   const bumpAfterSend = (msg) => {
     const chat = activeChatRef.current;
     if (!chat) return;
@@ -1098,13 +1120,15 @@ export default function ChatPage() {
       : msgText;
     setNewMessage('');
     stopTyping();
+    setPendingListingMessage('');
+    const tempId = addPending({ message: messageText });
 
     try {
       const res = await sendMessage({ to: activeChat.userId, message: messageText });
-      setMessages((prev) => [...prev, res.data]);
+      resolvePending(tempId, res.data);
       bumpAfterSend(res.data);
-      setPendingListingMessage('');
     } catch (err) {
+      failPending(tempId);
       toast.error(T('Xabar yuborilmadi'));
       setNewMessage(msgText);
     }
@@ -1163,12 +1187,16 @@ export default function ChatPage() {
         const { latitude, longitude } = pos.coords;
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
         const msg = `${LOCATION_PREFIX}${url}`;
+        const tempId = addPending({ message: msg });
         sendMessage({ to: activeChat.userId, message: msg })
           .then((res) => {
-            setMessages((prev) => [...prev, res.data]);
+            resolvePending(tempId, res.data);
             bumpAfterSend(res.data);
           })
-          .catch(() => toast.error(T('Joylashuv yuborilmadi')));
+          .catch(() => {
+            failPending(tempId);
+            toast.error(T('Joylashuv yuborilmadi'));
+          });
       },
       (err) => toast.error(err?.code === 1
         ? T('Joylashuvga ruxsat berilmadi — sozlamalardan yoqing')
@@ -1231,12 +1259,17 @@ export default function ChatPage() {
       const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
       recordedChunksRef.current = [];
       if (blob.size > 0 && chat) {
+        const localUrl = URL.createObjectURL(blob);
+        const tempId = addPending({ mediaType: 'voice', mediaUrl: localUrl, duration, message: '' });
         try {
           const res = await sendVoice(chat.userId, blob, duration);
-          setMessages((prev) => [...prev, res.data]);
+          resolvePending(tempId, res.data);
           bumpAfterSend(res.data);
         } catch {
+          failPending(tempId);
           toast.error(T('Ovozli xabar yuborilmadi'));
+        } finally {
+          setTimeout(() => URL.revokeObjectURL(localUrl), 60000);
         }
       }
     };
@@ -1778,7 +1811,7 @@ export default function ChatPage() {
                         data-msg-id={msg._id}
                         className={`tg-message-row ${isSent ? 'sent' : 'received'} ${
                           isGrouped ? 'grouped' : ''
-                        } ${flashId && flashId === String(msg._id) ? 'tg-flash' : ''}`}
+                        } ${flashId && flashId === String(msg._id) ? 'tg-flash' : ''} ${msg.pending ? 'is-pending' : ''} ${msg.failed ? 'is-failed' : ''}`}
                       >
                         <div className="tg-message-wrapper">
                           <div
@@ -1890,9 +1923,15 @@ export default function ChatPage() {
                               {msg.edited && <span className="tg-edited">{T('tahrirlandi')}</span>}
                               <span className="tg-time">{formatTime(msg.createdAt)}</span>
                               {isSent && (
-                                <span className={`tg-check ${msg.isRead ? 'read' : ''}`}>
-                                  {msg.isRead ? <CheckCheck size={15} /> : <Check size={15} />}
-                                </span>
+                                msg.pending ? (
+                                  <span className="tg-check tg-check--pending" aria-label={T('Yuborilmoqda...')}><Clock size={13} /></span>
+                                ) : msg.failed ? (
+                                  <span className="tg-check tg-check--failed" aria-label={T('Xabar yuborilmadi')}><AlertCircle size={14} /></span>
+                                ) : (
+                                  <span className={`tg-check ${msg.isRead ? 'read' : ''}`}>
+                                    {msg.isRead ? <CheckCheck size={15} /> : <Check size={15} />}
+                                  </span>
+                                )
                               )}
                             </div>
 

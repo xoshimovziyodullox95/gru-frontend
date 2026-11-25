@@ -80,8 +80,11 @@ export default function MarketplaceLayout({ children, mode = 'shell', homePath =
           type="button"
           className="mkt-navbar__logo"
             onClick={() => (onMarketHome ? window.scrollTo({ top: 0, behavior: 'smooth' }) : goHomeRoot(navigate, resolvedHomePath))}
+          aria-label="ZUMO"
         >
-          ZUMO
+          {/* Bosh sahifa sarlavhasidagi kabi: "Z" logotip + "UMO" */}
+          <img src="/ZUMO.png" alt="" className="mkt-navbar__z" />
+          <span className="mkt-navbar__umo">UMO</span>
         </button>
 
         <div className="mkt-navbar__actions">

@@ -63,17 +63,25 @@
 }
 
 .mkt-navbar__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   padding: 0;
   border: 0;
-  background: linear-gradient(135deg, #00e5ff, #0096ff);
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+.mkt-navbar__z { display: block; height: 30px; width: auto; object-fit: contain; }
+.mkt-navbar__umo {
+  font-size: 1.32rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  background: linear-gradient(105deg, #4fd8ff 0%, #00cfff 45%, #168df2 100%);
   background-clip: text;
   -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
-  font: inherit;
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  cursor: pointer;
 }
 
 .mkt-navbar__actions {
