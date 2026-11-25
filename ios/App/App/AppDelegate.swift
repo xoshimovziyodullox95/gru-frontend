@@ -1,6 +1,5 @@
 import UIKit
 import Capacitor
-import FirebaseCore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -8,12 +7,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Push (FCM): GoogleService-Info.plist build vaqtida Codemagic'dan qo'yiladi; yo'q bo'lsa ilova yiqilmasin
-        if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
-           let options = NSDictionary(contentsOfFile: path),
-           options["GOOGLE_APP_ID"] != nil {
-            FirebaseApp.configure()
-        }
+        // Firebase'ni @capacitor-firebase/messaging plagini o'zi ishga tushiradi (GoogleService-Info.plist bo'lsa)
         return true
     }
 

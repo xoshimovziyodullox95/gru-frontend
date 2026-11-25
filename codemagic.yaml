@@ -38,9 +38,9 @@ workflows:
         script: |
           # GOOGLE_SERVICE_INFO_PLIST — Firebase'dan olingan GoogleService-Info.plist'ning base64 ko'rinishi ("zumo" guruhida)
           if [ -z "$GOOGLE_SERVICE_INFO_PLIST" ]; then
-            # Fayl berilmagan: bo'sh plist — ilova Firebase'ni ishga tushirmaydi, iPhone'da push o'chiq qoladi
+            # Fayl berilmagan: uni loyihadan olib tashlaymiz (bo'sh plist Firebase plaginini yiqitadi) — iPhone'da push o'chiq qoladi
             echo "Ogohlantirish: GOOGLE_SERVICE_INFO_PLIST yo'q — iOS push o'chiq"
-            echo '<?xml version="1.0" encoding="UTF-8"?><plist version="1.0"><dict/></plist>' > ios/App/App/GoogleService-Info.plist
+            sed -i '' '/GoogleService-Info.plist/d' ios/App/App.xcodeproj/project.pbxproj
           else
             echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/App/App/GoogleService-Info.plist
             plutil -lint ios/App/App/GoogleService-Info.plist
@@ -112,9 +112,9 @@ workflows:
         script: |
           # GOOGLE_SERVICE_INFO_PLIST — Firebase'dan olingan GoogleService-Info.plist'ning base64 ko'rinishi ("zumo" guruhida)
           if [ -z "$GOOGLE_SERVICE_INFO_PLIST" ]; then
-            # Fayl berilmagan: bo'sh plist — ilova Firebase'ni ishga tushirmaydi, iPhone'da push o'chiq qoladi
+            # Fayl berilmagan: uni loyihadan olib tashlaymiz (bo'sh plist Firebase plaginini yiqitadi) — iPhone'da push o'chiq qoladi
             echo "Ogohlantirish: GOOGLE_SERVICE_INFO_PLIST yo'q — iOS push o'chiq"
-            echo '<?xml version="1.0" encoding="UTF-8"?><plist version="1.0"><dict/></plist>' > ios/App/App/GoogleService-Info.plist
+            sed -i '' '/GoogleService-Info.plist/d' ios/App/App.xcodeproj/project.pbxproj
           else
             echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > ios/App/App/GoogleService-Info.plist
             plutil -lint ios/App/App/GoogleService-Info.plist
