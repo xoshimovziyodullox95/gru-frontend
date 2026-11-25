@@ -34,6 +34,7 @@ import { useProductCategories } from '../utils/productCategories';
 import { getPosts } from '../services/videos';
 import { getLocations } from '../services/locations';
 import { getEquipment } from '../services/equipment';
+import { useScrollRestore } from '../hooks/useUrlState';
 import { getServiceProviders } from '../services/serviceProviders';
 import { getRecentlyViewed } from '../utils/recentlyViewed.js';
 
@@ -288,6 +289,9 @@ export default function HomePage() {
       mounted = false;
     };
   }, [userId]);
+
+  // E'londan "orqaga" qaytilganda ro'yxatdagi o'sha joyga qaytamiz (tepaga sakramasin)
+  useScrollRestore(homeContentLoaded);
 
   /* ==========================================================
      DERIVED

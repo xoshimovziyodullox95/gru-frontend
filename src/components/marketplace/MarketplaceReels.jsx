@@ -334,6 +334,10 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
   const handleMetadata = (event) => {
     const video = event.currentTarget;
     setDuration(Number.isFinite(video.duration) ? video.duration : 0);
+    // Vertikal video ekranni to'liq egallaydi (Instagram kabi); gorizontal — butunligicha ko'rinadi
+    if (video.videoWidth && video.videoHeight) {
+      video.classList.toggle('is-portrait', video.videoHeight / video.videoWidth >= 1.5);
+    }
   };
 
   const handleTimeUpdate = (event) => {
@@ -520,6 +524,8 @@ function ReelViewer({
   const [slideDirection, setSlideDirection] = useState('down');
   // Instagram kabi: video barmoq ortidan suriladi, ostidan keyingisi ko'rinadi
   const [dragY, setDragY] = useState(0);
+  // Lenta balandligi (max-height: 920px) — iPhone Pro Max'da ekrandan past; surish shu bo'yicha
+  const trackRef = useRef(null);
   const [dragAnimating, setDragAnimating] = useState(false);
   // Ikki marta bosish — like (Instagram kabi, faqat qo'yadi, olmaydi)
   const lastTapRef = useRef(0);
@@ -653,7 +659,7 @@ function ReelViewer({
 
     const direction = delta < 0 ? 1 : -1;
     const target = index + direction;
-    const height = window.innerHeight || 800;
+    const height = trackRef.current?.offsetHeight || window.innerHeight || 800;
     const flick = Math.abs(delta) > 40 && Math.abs(delta) / elapsed > 0.45;
     const commit = target >= 0 && target < reels.length && (Math.abs(delta) > height * 0.18 || flick);
 
@@ -758,6 +764,7 @@ function ReelViewer({
       </button>
 
       <div
+        ref={trackRef}
         className="reel-track"
         style={{
           transform: `translate3d(0, ${dragY}px, 0)`,

@@ -1896,3 +1896,6 @@ iframe.reel-modal-video {
   70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -60%) scale(1.05); }
 }
+
+/* Vertikal (9:16) video — iPhone'ning cho'ziq ekranida ham qora chiziqsiz, butun ekran (Instagram kabi) */
+.reel-modal-video.is-portrait { object-fit: cover; }

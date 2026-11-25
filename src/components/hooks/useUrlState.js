@@ -68,9 +68,17 @@ export function useScrollRestore(ready) {
     let y = 0;
     try { y = Number(sessionStorage.getItem(storeKey)) || 0; } catch { /* storage yo'q */ }
     if (y <= 0) return;
-    const el = getScroller();
-    if (el) el.scrollTop = y;
-    else window.scrollTo(0, y);
+    // scroll-behavior: smooth bo'lsa ham darhol (animatsiyasiz) o'sha joyga; rasmlar/kartalar hali
+    // chizilmagan bo'lsa sahifa yetarli uzun bo'lguncha bir necha kadr qayta urinamiz
+    let tries = 0;
+    const apply = () => {
+      const el = getScroller();
+      const target = el || window;
+      target.scrollTo({ top: y, behavior: 'instant' });
+      const now = readY(el);
+      if (Math.abs(now - y) > 4 && tries++ < 20) requestAnimationFrame(apply);
+    };
+    apply();
   }, [ready, storeKey]);
 }
 

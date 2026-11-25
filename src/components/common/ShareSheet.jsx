@@ -15,6 +15,7 @@ import toast from 'react-hot-toast';
 import '../../styles/share-sheet.css';
 
 import { T } from '../utils/T';
+import { publicUrl } from '../utils/publicUrl';
 const AVATAR_PLACEHOLDER = '/images/zumo-placeholder.svg';
 
 function toIdStr(v) {
@@ -72,7 +73,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
     const q = search.trim().toLowerCase();
     if (!q) return users;
     return users.filter((u) =>
-      (u.fullName || u.full_name || u.email || '').toLowerCase().includes(q)
+      (u.fullName || u.full_name || '').toLowerCase().includes(q)
     );
   }, [users, search]);
 
@@ -80,7 +81,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
 
   const buildUrl = () => {
     if (shareItem.itemType === 'youtube-external') return shareItem.link || '';
-    return `${window.location.origin}${shareItem.link || ''}`;
+    return publicUrl(shareItem.link || '');
   };
 
   const buildMessage = () => {
@@ -214,7 +215,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
                     )}
                   </span>
                   <span className="share-person__name">
-                    {(u.fullName || u.email || '').split(' ')[0]}
+                    {(u.fullName || T('Foydalanuvchi')).split(' ')[0]}
                   </span>
                   <span className="share-person__sub">{T('Yuborish')}</span>
                 </button>
@@ -282,8 +283,8 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
                     {u.isOnline && <span className="share-user__online" />}
                   </div>
                   <div className="share-user__info">
-                    <strong>{u.fullName || u.email}</strong>
-                    <small>{u.email}</small>
+                    {/* Boshqa foydalanuvchilarning emaili ko'rsatilmaydi (maxfiylik) */}
+                    <strong>{u.fullName || T('Foydalanuvchi')}</strong>
                   </div>
                   <span className="share-user__send">
                     {isSending ? (

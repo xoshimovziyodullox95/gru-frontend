@@ -80,6 +80,22 @@ export async function setupNativeShell() {
     import('@capacitor/splash-screen'),
   ]);
 
+  // iPhone: chap chetdan surish — Android "orqaga" bilan bir xil: oyna → oldingi sahifa (ilovadan chiqmaydi)
+  if (Capacitor.getPlatform() === 'ios') {
+    const { setupIosEdgeSwipe } = await import('./iosEdgeSwipe');
+    setupIosEdgeSwipe(() => {
+      if (document.querySelector(OVERLAYS)) {
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        return;
+      }
+      if (ROOT_PATHS.includes(window.location.pathname)) return;
+      const routerIdx = window.history.state?.idx;
+      if (Number.isInteger(routerIdx) && routerIdx > 0) return window.history.back();
+      window.history.replaceState(null, '', '/home');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+  }
+
   // Android "orqaga" tugmasi: oyna → oldingi sahifa → (faqat bosh sahifada) ikki bosishda chiqish
   App.addListener('backButton', ({ canGoBack }) => {
     if (document.querySelector(OVERLAYS)) {

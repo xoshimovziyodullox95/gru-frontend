@@ -115,4 +115,5 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # Ichki testerlar uchun tashqi beta tekshiruviga yuborish shart emas (test info talab qiladi)
+        submit_to_testflight: false

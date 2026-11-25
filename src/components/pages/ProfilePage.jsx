@@ -43,6 +43,7 @@ import '../../styles/profilePage.css';
 
 import { T } from '../utils/T';
 import { IS_IOS_APP } from '../utils/platform';
+import { publicUrl } from '../utils/publicUrl';
 /* ============================================================
    YORDAMCHILAR
    ============================================================ */
@@ -575,7 +576,7 @@ export default function ProfilePage() {
 
   const name = profile.fullName || t('profile.noName', 'Ism kiritilmagan');
   const listingsCount = myLocations.length + myEquipment.length + myServices.length;
-  const profileUrl = `${window.location.origin}/profile/${profile._id}`;
+  const profileUrl = publicUrl(`/profile/${profile._id}`);
 
   // Rollar bir-birini o'chirmaydi: har kim mijoz; mutaxassis, sotuvchi, biznes — qo'shimcha imkoniyat
   const roleChips = [

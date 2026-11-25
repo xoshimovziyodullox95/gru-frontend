@@ -31,6 +31,9 @@ body:has(.pf-page) { padding-top: 0 !important; }
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(var(--text-rgb), 0.06);
 }
+/* Umumiy ZUMO sarlavhasi ko'rinib turganda u iPhone orolchasi joyini allaqachon egallaydi —
+   bu panelga xavfsiz zonani ikkinchi marta qo'shmaymiz (tepada katta bo'sh joy qolardi) */
+body:not(.no-global-navbar-offset) .pf-top { height: 56px; padding-top: 0; }
 .pf-top h1 { flex: 1; margin: 0; font-size: 1.08rem; font-weight: 800; }
 .pf-top__actions { display: flex; gap: 2px; }
 .pf-icon-btn {

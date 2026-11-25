@@ -200,3 +200,14 @@ html.is-native-app footer.footer { display: none; }
 }
 html.is-native-app * { scrollbar-width: none; }
 html.is-native-app *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* iPhone: chap chetdan surib orqaga qaytish ko'rsatkichi (utils/iosEdgeSwipe.js) */
+.ios-edge-back {
+  position: fixed; left: 0; z-index: 100000; pointer-events: none;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--text); background: color-mix(in srgb, var(--surface, #fff) 92%, transparent);
+  box-shadow: 0 6px 20px rgba(4, 16, 40, 0.22);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.ios-edge-back.is-ready { color: #fff; background: linear-gradient(135deg, #00c8f8, #0a84ff); }

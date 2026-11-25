@@ -30,6 +30,7 @@ import { openZumoGuide } from '../common/zumoGuideEvents.js';
 import QRCodeGenerator from './QRCodeGenerator';
 
 import '../../styles/settingsPage.css';
+import { publicUrl } from '../utils/publicUrl';
 
 // NotificationListener ham shu kalitlarni o'qiydi (ilova ochiq paytdagi toast/ovoz uchun)
 const PREFS_KEY = 'zumo_notification_preferences';
@@ -224,7 +225,7 @@ export default function SettingsPage() {
 
   /* ---------- Hisob ---------- */
 
-  const profileUrl = profile?._id ? `${window.location.origin}/profile/${profile._id}` : '';
+  const profileUrl = profile?._id ? publicUrl(`/profile/${profile._id}`) : '';
 
   const copyId = async () => {
     try {
