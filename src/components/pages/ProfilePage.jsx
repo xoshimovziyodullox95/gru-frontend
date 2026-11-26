@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 import {
   ArrowLeft, Settings, Camera, BadgeCheck, Wrench, Briefcase, Store, Phone, Mail,
   Pencil, Share2, Crown, UserPlus, UserCheck, MessageCircle, MapPin, Package, Play,
@@ -219,6 +220,25 @@ export default function ProfilePage() {
   const roleKey = resolveRole(profile);
   const isProvider = roleKey === 'provider' || Boolean(myProvider);
   const isBusiness = roleKey === 'business';
+  const isAdminRole = String(profile?.role || '').toLowerCase() === 'admin';
+  const [switchingRole, setSwitchingRole] = useState(false);
+  const switchToBusiness = async () => {
+    if (!window.confirm(T('Biznes akkauntga o‘tasizmi? Do‘kon mahsulotlari, kelgan buyurtmalar va statistika ochiladi.'))) return;
+    setSwitchingRole(true);
+    try {
+      // Rol Supabase metadata'da; server keyingi so'rovda user → business qilib yangilaydi (faqat ko'tariladi)
+      const { error } = await supabase.auth.updateUser({ data: { role: 'business' } });
+      if (error) throw error;
+      await supabase.auth.refreshSession();
+      const res = await getUserProfile();
+      setProfile(res.data || { ...profile, role: 'business' });
+      toast.success(T('Biznes akkaunt yoqildi ✅'));
+    } catch (e) {
+      toast.error(e?.message || T('Nomaʼlum xatolik yuz berdi'));
+    } finally {
+      setSwitchingRole(false);
+    }
+  };
   const isCompany = roleKey === 'company';
   const isSeller = roleKey === 'seller';
   const isPremium = Boolean(profile?.isPremium);
@@ -877,6 +897,20 @@ export default function ProfilePage() {
 
         {isOwnProfile && isBusiness && <BusinessSummaryWidget />}
         {isOwnProfile && isCompany && <SupplierStatsWidget />}
+
+        {/* Oddiy foydalanuvchi o'zi biznes akkauntga o'tadi (Instagram/OLX kabi): do'kon mahsuloti, savat orqali buyurtma, statistika */}
+        {isOwnProfile && !isBusiness && !isCompany && !isAdminRole && (
+          <section className="pf-biz-cta">
+            <span className="pf-biz-cta__icon"><Briefcase size={20} /></span>
+            <div className="pf-biz-cta__text">
+              <strong>{T('Biznes akkauntga o‘tish')}</strong>
+              <small>{T('Do‘kon mahsulotlari qo‘shing — xaridorlar savat orqali buyurtma beradi. Bepul.')}</small>
+            </div>
+            <button type="button" className="pf-biz-cta__btn" disabled={switchingRole} onClick={switchToBusiness}>
+              {switchingRole ? T('Yuklanmoqda...') : T('O‘tish')}
+            </button>
+          </section>
+        )}
 
         {isOwnProfile && sellerActions.length > 0 && (
           <section className="pf-actions-grid">

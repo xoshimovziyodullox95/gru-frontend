@@ -2,7 +2,7 @@
 // "Narsa sotaman" — OLX uslubidagi qisqa forma: rasm, sarlavha, kategoriya, holat, narx, tavsif, joy, telefon.
 // Kategoriya = marketplace tovar kategoriyasi (level1) + ichki bo'lim (category), ro'yxat backend'dan.
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createEquipment, uploadEquipmentMedia } from '../services/equipment';
@@ -171,6 +171,12 @@ export default function AddEquipmentForm() {
             ? T('Xaridor savatga qo‘shib buyurtma beradi; narx va qoldiq ko‘rinadi.')
             : T('Narx e’londa ko‘rinadi. Xaridor sotuvchi bilan chat yoki telefon orqali kelishadi.')}</span>
         </div>
+        )}
+        {!canSellAsStore && (
+          <p className="lf-field__hint lf-biz-hint">
+            {T('Do‘kon sifatida sotmoqchimisiz (savat orqali buyurtma)?')}{' '}
+            <Link to="/profile">{T('Profilda biznes akkauntga o‘ting')}</Link>
+          </p>
         )}
         <Field label={T('Sarlavha')} counter={`${form.title.length}/${TITLE_MAX}`} error={errors.title}>
           <input

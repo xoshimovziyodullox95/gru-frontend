@@ -315,3 +315,15 @@ video::-webkit-media-controls-panel { display: none !important; }
 /* Ilova ichida (iPhone/Android) hech qayerda scrollbar chiqmasin */
 html.is-native-app *, html.is-native-app { scrollbar-width: none; }
 html.is-native-app *::-webkit-scrollbar { display: none; }
+
+/* Profil: biznes akkauntga o'tish kartasi */
+.pf-biz-cta { display: flex; align-items: center; gap: 12px; margin: 12px 0; padding: 14px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(0,180,255,0.14), rgba(0,120,255,0.06)); border: 1px solid rgba(0,180,255,0.28); }
+.pf-biz-cta__icon { flex: 0 0 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(0,180,255,0.18); color: #23c4ff; }
+.pf-biz-cta__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.pf-biz-cta__text strong { font-size: 0.95rem; }
+.pf-biz-cta__text small { font-size: 0.78rem; opacity: 0.75; line-height: 1.3; }
+.pf-biz-cta__btn { flex: 0 0 auto; padding: 9px 16px; border-radius: 999px; border: 0; font-weight: 700;
+  background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; cursor: pointer; }
+.pf-biz-cta__btn:disabled { opacity: 0.6; }
+.lf-biz-hint a { color: #23c4ff; font-weight: 600; }
