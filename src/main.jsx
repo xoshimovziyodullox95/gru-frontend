@@ -4,6 +4,9 @@ import App from './App';
 import './index.css';
 import './components/utils/i18n'; // 🔥 to'g'ri yo'l bilan tuzatildi
 import { setupNativeShell, restoreLastRoute } from './components/utils/capacitorShell';
+import { installPinchZoom } from './components/utils/pinchZoom';
+
+installPinchZoom();
 
 restoreLastRoute();
 
