@@ -95,6 +95,18 @@ function Avatar({ src, name, size = 96 }) {
   );
 }
 
+// Biznes yo'nalishlari — ro'yxatdan o'tishdagi kompaniya yo'nalishlari bilan bir xil
+const BIZ_DIRECTIONS = [
+  { id: 'dokonlar', label: T('Do‘konlar') },
+  { id: 'xizmatlar', label: T('Xizmatlar') },
+  { id: 'restoran', label: T('Restoran / Kafe') },
+  { id: 'agro', label: T('Qishloq xo‘jaligi') },
+  { id: 'klinika', label: T('Klinika') },
+  { id: 'talim', label: T('Ta’lim') },
+  { id: 'kongilochar', label: T('Ko‘ngilochar') },
+  { id: 'yangi-biznes', label: T('Yangi biznes') },
+];
+
 function Sheet({ title, onClose, children, footer, className = '' }) {
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -222,23 +234,44 @@ export default function ProfilePage() {
   const isBusiness = roleKey === 'business';
   const isAdminRole = String(profile?.role || '').toLowerCase() === 'admin';
   const [switchingRole, setSwitchingRole] = useState(false);
+  const [bizOpen, setBizOpen] = useState(false);
+  const [bizForm, setBizForm] = useState({ name: '', direction: '', phone: '', address: '', agree: false });
+  const [bizErr, setBizErr] = useState('');
+  const openBiz = () => {
+    const digits = String(profile?.phone || '').replace(/\D/g, '').replace(/^998/, '');
+    setBizForm((f) => ({ ...f, phone: f.phone || digits.slice(-9) }));
+    setBizErr('');
+    setBizOpen(true);
+  };
   const switchToBusiness = async () => {
-    if (!window.confirm(T('Biznes akkauntga o‘tasizmi? Do‘kon mahsulotlari, kelgan buyurtmalar va statistika ochiladi.'))) return;
+    const name = bizForm.name.trim();
+    const phone = bizForm.phone.replace(/\D/g, '');
+    if (name.length < 2) return setBizErr(T('Biznes nomini kiriting'));
+    if (!bizForm.direction) return setBizErr(T('Iltimos, yo‘nalishni tanlang'));
+    if (phone.length !== 9) return setBizErr(T('Telefon raqamini to‘liq kiriting (9 ta raqam)'));
+    if (!bizForm.agree) return setBizErr(T('Davom etish uchun shartlarga rozilik bildiring'));
+    setBizErr('');
     setSwitchingRole(true);
     try {
-      // Rol Supabase metadata'da; server keyingi so'rovda user → business qilib yangilaydi (faqat ko'tariladi)
-      const { error } = await supabase.auth.updateUser({ data: { role: 'business' } });
+      // Rol va biznes ma'lumotlari Supabase metadata'da; server ularni profilga ko'chiradi (rol faqat ko'tariladi)
+      const { error } = await supabase.auth.updateUser({ data: {
+        role: 'business', company_name: name, direction: bizForm.direction,
+        business_address: bizForm.address.trim(), business_since: new Date().toISOString(),
+      } });
       if (error) throw error;
       await supabase.auth.refreshSession();
+      await updateUserProfile({ phone: `+998${phone}` }).catch(() => {});
       const res = await getUserProfile();
       setProfile(res.data || { ...profile, role: 'business' });
+      setBizOpen(false);
       toast.success(T('Biznes akkaunt yoqildi ✅'));
     } catch (e) {
-      toast.error(e?.message || T('Nomaʼlum xatolik yuz berdi'));
+      setBizErr(e?.message || T('Nomaʼlum xatolik yuz berdi'));
     } finally {
       setSwitchingRole(false);
     }
   };
+
   const isCompany = roleKey === 'company';
   const isSeller = roleKey === 'seller';
   const isPremium = Boolean(profile?.isPremium);
@@ -906,7 +939,7 @@ export default function ProfilePage() {
               <strong>{T('Biznes akkauntga o‘tish')}</strong>
               <small>{T('Do‘kon mahsulotlari qo‘shing — xaridorlar savat orqali buyurtma beradi. Bepul.')}</small>
             </div>
-            <button type="button" className="pf-biz-cta__btn" disabled={switchingRole} onClick={switchToBusiness}>
+            <button type="button" className="pf-biz-cta__btn" disabled={switchingRole} onClick={openBiz}>
               {switchingRole ? T('Yuklanmoqda...') : T('O‘tish')}
             </button>
           </section>
@@ -993,6 +1026,58 @@ export default function ProfilePage() {
       </div>
 
       {/* ---------- Tahrirlash oynasi ---------- */}
+        {bizOpen && (
+        <Sheet
+          title={T('Biznes akkauntga o‘tish')}
+          onClose={() => !switchingRole && setBizOpen(false)}
+          footer={(
+            <>
+              <button type="button" className="pf-btn pf-btn--ghost" onClick={() => setBizOpen(false)} disabled={switchingRole}>
+                {t('profile.cancel', 'Bekor qilish')}
+              </button>
+              <button type="button" className="pf-btn pf-btn--primary" onClick={switchToBusiness} disabled={switchingRole}>
+                {switchingRole && <Loader2 size={16} className="pf-spin" />} {T('Biznesni yoqish')}
+              </button>
+            </>
+          )}
+        >
+          <p className="pf-biz-lead">{T('Xaridorlar sizni shu ma’lumotlar bo‘yicha taniydi. Keyin profilda o‘zgartirish mumkin.')}</p>
+          {bizErr && <div className="pf-biz-err" role="alert">{bizErr}</div>}
+          <label className="pf-field">
+            <span>{T('Biznes yoki do‘kon nomi')} *</span>
+            <input value={bizForm.name} maxLength={60} onChange={(e) => setBizForm((f) => ({ ...f, name: e.target.value }))}
+              placeholder={T('Masalan: Texno Market')} autoComplete="organization" />
+          </label>
+          <div className="pf-field">
+            <span>{T('Yo‘nalish')} *</span>
+            <div className="pf-biz-chips">
+              {BIZ_DIRECTIONS.map((d) => (
+                <button key={d.id} type="button" className={`pf-biz-chip ${bizForm.direction === d.id ? 'is-on' : ''}`}
+                  onClick={() => setBizForm((f) => ({ ...f, direction: d.id }))}>{d.label}</button>
+              ))}
+            </div>
+          </div>
+          <label className="pf-field">
+            <span>{T('Aloqa telefoni')} *</span>
+            <div className="pf-biz-phone">
+              <b>+998</b>
+              <input inputMode="numeric" value={bizForm.phone} maxLength={12}
+                onChange={(e) => setBizForm((f) => ({ ...f, phone: e.target.value.replace(/[^\d ]/g, '') }))} placeholder="90 123 45 67" />
+            </div>
+          </label>
+          <label className="pf-field">
+            <span>{T('Manzil (ixtiyoriy)')}</span>
+            <input value={bizForm.address} maxLength={120} onChange={(e) => setBizForm((f) => ({ ...f, address: e.target.value }))}
+              placeholder={T('Masalan: Toshkent, Chilonzor, 9-kvartal')} />
+          </label>
+          <label className="pf-biz-agree">
+            <input type="checkbox" checked={bizForm.agree} onChange={(e) => setBizForm((f) => ({ ...f, agree: e.target.checked }))} />
+            <span>{T('Tovar narxi, qoldig‘i va buyurtmalarni o‘z vaqtida bajarish uchun javobgarlikni olaman.')}{' '}
+              <Link to="/terms">{T('Foydalanish shartlari')}</Link></span>
+          </label>
+        </Sheet>
+        )}
+
       {editOpen && (
         <Sheet
           title={t('profile.editProfile', 'Profilni tahrirlash')}

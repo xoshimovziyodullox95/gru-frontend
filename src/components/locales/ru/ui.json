@@ -1503,5 +1503,16 @@
   "Biznes akkauntga o‘tasizmi? Do‘kon mahsulotlari, kelgan buyurtmalar va statistika ochiladi.": "Перейти на бизнес-аккаунт? Откроются товары магазина, входящие заказы и статистика.",
   "Biznes akkaunt yoqildi ✅": "Бизнес-аккаунт включён ✅",
   "Do‘kon sifatida sotmoqchimisiz (savat orqali buyurtma)?": "Хотите продавать как магазин (заказ через корзину)?",
-  "Profilda biznes akkauntga o‘ting": "Перейдите на бизнес-аккаунт в профиле"
+  "Profilda biznes akkauntga o‘ting": "Перейдите на бизнес-аккаунт в профиле",
+  "Biznes nomini kiriting": "Введите название бизнеса",
+  "Telefon raqamini to‘liq kiriting (9 ta raqam)": "Введите номер телефона полностью (9 цифр)",
+  "Biznesni yoqish": "Включить бизнес",
+  "Xaridorlar sizni shu ma’lumotlar bo‘yicha taniydi. Keyin profilda o‘zgartirish mumkin.": "Покупатели узнают вас по этим данным. Позже их можно изменить в профиле.",
+  "Biznes yoki do‘kon nomi": "Название бизнеса или магазина",
+  "Masalan: Texno Market": "Например: Техно Маркет",
+  "Aloqa telefoni": "Контактный телефон",
+  "Manzil (ixtiyoriy)": "Адрес (необязательно)",
+  "Masalan: Toshkent, Chilonzor, 9-kvartal": "Например: Ташкент, Чиланзар, 9-квартал",
+  "Tovar narxi, qoldig‘i va buyurtmalarni o‘z vaqtida bajarish uchun javobgarlikni olaman.": "Я беру ответственность за цены, остатки товара и своевременное выполнение заказов.",
+  "Muqova videoning birinchi kadridan olinadi. “Keyingi”ni bosing.": "Обложка будет взята из первого кадра видео. Нажмите «Далее»."
 }

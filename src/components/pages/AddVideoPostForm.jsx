@@ -75,9 +75,11 @@ export default function AddVideoPostForm() {
 
   const tooLong = meta.duration > MAX_VIDEO_SECONDS + 0.5;
   const isPortrait = meta.height > meta.width;
+  // iPhone davomiylik/kadrni video o'ynatilmaguncha bermasligi mumkin — bu holda ham davom etish mumkin
+  // (server hajm va formatni o'zi tekshiradi; muqova ixtiyoriy)
   const canNext = [
-    Boolean(file) && meta.duration > 0 && !tooLong,
-    Boolean(cover),
+    Boolean(file) && !tooLong,
+    !framesLoading || Boolean(cover),
     true,
     true,
   ][step];
@@ -110,7 +112,7 @@ export default function AddVideoPostForm() {
   const [coverT, setCoverT] = useState(null);
   const [framesLoading, setFramesLoading] = useState(false);
   useEffect(() => {
-    if (step !== 1 || !previewUrl || !meta.duration || frames.length >= FRAME_COUNT) return undefined;
+    if (step !== 1 || !previewUrl || frames.length >= FRAME_COUNT) return undefined;
     let cancelled = false;
     const v = document.createElement('video');
     Object.assign(v, { muted: true, playsInline: true, preload: 'auto', src: previewUrl });
@@ -122,10 +124,17 @@ export default function AddVideoPostForm() {
     });
     (async () => {
       setFramesLoading(true);
+      v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', ''); v.setAttribute('muted', '');
+      v.load();
+      // iPhone: muted inline play() dekoderni uyg'otadi, aks holda loadeddata kelmaydi
+      v.play().then(() => v.pause()).catch(() => {});
       if (!(await once('loadeddata'))) { setFramesLoading(false); return; }
+      const dur = meta.duration || (Number.isFinite(v.duration) ? v.duration : 0);
+      if (!dur) { setFramesLoading(false); return; }
+      if (!meta.duration) setMeta({ duration: dur, width: v.videoWidth || 0, height: v.videoHeight || 0 });
       const out = [];
       for (let i = 0; i < FRAME_COUNT && !cancelled; i += 1) {
-        const t = Math.min(meta.duration - 0.05, ((i + 0.5) / FRAME_COUNT) * meta.duration);
+        const t = Math.min(dur - 0.05, ((i + 0.5) / FRAME_COUNT) * dur);
         v.currentTime = t;
         if (!(await once('seeked'))) break;
         // seeked'dan keyin kadr ekranga chizilishini kutamiz — aks holda oldingi kadr qayta olinadi
@@ -226,7 +235,8 @@ export default function AddVideoPostForm() {
           ) : (
             <>
               <div className="avs-player">
-                <video src={`${previewUrl}#t=0.1`} poster={TRANSPARENT_POSTER} controls playsInline preload="metadata" onLoadedMetadata={onMeta} />
+                <video src={`${previewUrl}#t=0.1`} poster={TRANSPARENT_POSTER} controls playsInline webkit-playsinline="true"
+                  muted autoPlay loop preload="auto" disablePictureInPicture onLoadedMetadata={onMeta} />
               </div>
               <div className="avs-file">
                 <span className="avs-file__icon"><Film size={18} /></span>
@@ -251,6 +261,9 @@ export default function AddVideoPostForm() {
               {cover ? <img src={cover} alt="" /> : <span className="avs-spinner" />}
             </div>
             {framesLoading && <p className="avs-lead avs-lead--center">{T('Kadrlar tayyorlanmoqda…')}</p>}
+            {!framesLoading && frames.length === 0 && (
+              <p className="avs-lead avs-lead--center">{T('Muqova videoning birinchi kadridan olinadi. “Keyingi”ni bosing.')}</p>
+            )}
             {frames.length > 0 && (
               <div className="avs-strip" role="listbox" aria-label={T('Muqova kadri')}>
                 {frames.map((f) => (

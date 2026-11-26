@@ -1486,5 +1486,16 @@
   "Biznes akkauntga o‘tasizmi? Do‘kon mahsulotlari, kelgan buyurtmalar va statistika ochiladi.": "Switch to a business account? Store products, incoming orders and statistics will be unlocked.",
   "Biznes akkaunt yoqildi ✅": "Business account enabled ✅",
   "Do‘kon sifatida sotmoqchimisiz (savat orqali buyurtma)?": "Want to sell as a store (orders via cart)?",
-  "Profilda biznes akkauntga o‘ting": "Switch to a business account in your profile"
+  "Profilda biznes akkauntga o‘ting": "Switch to a business account in your profile",
+  "Biznes nomini kiriting": "Enter the business name",
+  "Telefon raqamini to‘liq kiriting (9 ta raqam)": "Enter the full phone number (9 digits)",
+  "Biznesni yoqish": "Enable business",
+  "Xaridorlar sizni shu ma’lumotlar bo‘yicha taniydi. Keyin profilda o‘zgartirish mumkin.": "Buyers will recognise you by these details. You can change them later in your profile.",
+  "Biznes yoki do‘kon nomi": "Business or store name",
+  "Masalan: Texno Market": "E.g. Techno Market",
+  "Aloqa telefoni": "Contact phone",
+  "Manzil (ixtiyoriy)": "Address (optional)",
+  "Masalan: Toshkent, Chilonzor, 9-kvartal": "E.g. Tashkent, Chilanzar, block 9",
+  "Tovar narxi, qoldig‘i va buyurtmalarni o‘z vaqtida bajarish uchun javobgarlikni olaman.": "I take responsibility for prices, stock and fulfilling orders on time.",
+  "Muqova videoning birinchi kadridan olinadi. “Keyingi”ni bosing.": "The cover will be taken from the first frame. Tap “Next”."
 }

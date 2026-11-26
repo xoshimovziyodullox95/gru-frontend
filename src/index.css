@@ -327,3 +327,16 @@ html.is-native-app *::-webkit-scrollbar { display: none; }
   background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; cursor: pointer; }
 .pf-biz-cta__btn:disabled { opacity: 0.6; }
 .lf-biz-hint a { color: #23c4ff; font-weight: 600; }
+
+/* Biznesga o'tish formasi */
+.pf-biz-lead { margin: 0 0 12px; font-size: 0.85rem; opacity: 0.75; line-height: 1.4; }
+.pf-biz-err { margin-bottom: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,80,80,0.12); color: #ff8080; font-size: 0.85rem; }
+.pf-biz-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.pf-biz-chip { padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(127,160,200,0.35); background: transparent; color: inherit; font-size: 0.82rem; cursor: pointer; }
+.pf-biz-chip.is-on { background: linear-gradient(90deg, #00c6ff, #0072ff); border-color: transparent; color: #fff; font-weight: 600; }
+.pf-biz-phone { display: flex; align-items: center; gap: 8px; }
+.pf-biz-phone b { flex: 0 0 auto; font-weight: 600; opacity: 0.8; }
+.pf-biz-phone input { flex: 1; min-width: 0; }
+.pf-biz-agree { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: 0.82rem; line-height: 1.4; }
+.pf-biz-agree input { margin-top: 3px; width: 18px; height: 18px; flex: 0 0 auto; }
+.pf-biz-agree a { color: #23c4ff; }
