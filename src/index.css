@@ -340,3 +340,12 @@ html.is-native-app *::-webkit-scrollbar { display: none; }
 .pf-biz-agree { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: 0.82rem; line-height: 1.4; }
 .pf-biz-agree input { margin-top: 3px; width: 18px; height: 18px; flex: 0 0 auto; }
 .pf-biz-agree a { color: #23c4ff; }
+
+/* Ulashish oynasi har doim video (reels) oynasi ustida */
+.share-overlay { z-index: 13000 !important; }
+/* iPhone: video chizig'i pastki jest chizig'iga tushmasin */
+.reel-player-progress { bottom: env(safe-area-inset-bottom, 0px) !important; }
+
+/* Zumik: model baribir jadval yozsa — siqilmasin, yon tomonga suriladi */
+.ai-chat-modal table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 0.82rem; }
+.ai-chat-modal th, .ai-chat-modal td { min-width: 90px; padding: 6px 8px; word-break: normal; overflow-wrap: normal; }

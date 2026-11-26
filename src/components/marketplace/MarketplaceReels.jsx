@@ -334,6 +334,32 @@ function LocalReelPlayer({ reel, slideDirection, isMuted, onToggleMute }) {
     }
   };
 
+  // iPhone: ovozli avtomatik ijro bloklanadi — video turib qolmasin: avval ovoz bilan, bo'lmasa ovozsiz boshlaymiz
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+    video.muted = isMuted;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    let cancelled = false;
+    const start = () => {
+      if (cancelled) return;
+      const p = video.play();
+      if (p && p.catch) {
+        p.catch((err) => {
+          if (cancelled || err?.name !== 'NotAllowedError') return;
+          video.muted = true;
+          if (!isMuted) onToggleMute();
+          video.play().catch(() => {});
+        });
+      }
+    };
+    if (video.readyState >= 2) start();
+    else video.addEventListener('canplay', start, { once: true });
+    return () => { cancelled = true; video.removeEventListener('canplay', start); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reel.id]);
+
   const handleMetadata = (event) => {
     const video = event.currentTarget;
     setDuration(Number.isFinite(video.duration) ? video.duration : 0);

@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 // src/components/common/ShareSheet.jsx
 /* ============================================================
    SHARE SHEET — ZUMO sayt dizayniga mos (cyan + glow)
@@ -81,7 +82,9 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
 
   const buildUrl = () => {
     if (shareItem.itemType === 'youtube-external') return shareItem.link || '';
-    return publicUrl(shareItem.link || '');
+    const u = publicUrl(shareItem.link || '');
+    // Ilovada ochiq sayt manzili sozlanmagan bo'lsa "capacitor://localhost/..." chiqmasin — boshqa odamda ochilmaydi
+    return /^https?:\/\/(?!localhost)/.test(u) ? u : '';
   };
 
   const buildMessage = () => {
@@ -144,7 +147,8 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
   const previewThumb = shareItem.thumbnailUrl || null;
   const quickUsers = users.slice(0, 8);
 
-  return (
+  // Portal: video (reels) oynasi ustida ochilsin — aks holda video ortida qolib, faqat yopilgandan keyin ko'rinardi
+  return createPortal(
     <div className="share-overlay" onClick={onClose}>
       <div className="share-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
@@ -182,7 +186,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
           </div>
           <div className="share-preview__info">
             <strong>{shareItem.title || (isListing ? T('E’lon') : T('Video'))}</strong>
-            <small>{buildUrl()}</small>
+            <small>{buildUrl() || T('ZUMO ilovasida ochiladi')}</small>
           </div>
         </div>
 
@@ -399,6 +403,7 @@ export default function ShareSheet({ isOpen, onClose, reel, listing }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
