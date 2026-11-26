@@ -59,6 +59,9 @@ export default function AddVideoPostForm() {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
+  const [frames, setFrames] = useState([]);
+  const [coverT, setCoverT] = useState(null);
+  const [framesLoading, setFramesLoading] = useState(false);
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : ''), [file]);
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl); }, [previewUrl]);
@@ -109,9 +112,6 @@ export default function AddVideoPostForm() {
 
   // Muqova bosqichi (Instagram kabi): yashirin videodan bir nechta kadr olinadi, foydalanuvchi bittasini tanlaydi.
   // Ko'rinib turgan <video>ni surish Android WebView'da seek'da osilib qolardi — yashirin element barqaror ishlaydi.
-  const [frames, setFrames] = useState([]);
-  const [coverT, setCoverT] = useState(null);
-  const [framesLoading, setFramesLoading] = useState(false);
   useEffect(() => {
     if (step !== 1 || !previewUrl || frames.length >= FRAME_COUNT) return undefined;
     let cancelled = false;
