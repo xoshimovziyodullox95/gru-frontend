@@ -354,3 +354,10 @@ html.is-native-app *::-webkit-scrollbar { display: none; }
 .mp-mobile-filter-overlay { z-index: 13000 !important; }
 .mp-mobile-filter-sheet { max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 12px) !important; }
 .mp-mobile-filter-apply { margin-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important; }
+
+/* Zumik AI sahifasi (iPhone): sarlavha soat/batareya ostiga tushmasin, kiritish maydoni jest chizig'idan yuqorida */
+.gru-ai-header { padding-top: calc(env(safe-area-inset-top, 0px) + 8px) !important; min-height: calc(56px + env(safe-area-inset-top, 0px)); }
+.gru-ai-input-area, .gru-ai-composer { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px) !important; }
+@media (max-width: 600px) {
+  .gru-ai-header-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1rem; }
+}

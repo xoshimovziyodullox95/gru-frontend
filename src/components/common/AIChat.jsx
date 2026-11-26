@@ -143,7 +143,7 @@ export default function AIChat() {
       const y = window.scrollY;
       const atBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 40;
       if (Math.abs(y - lastY) < 8) return;
-      setHideToggle(y > lastY && y > 120 && !atBottom);
+      setHideToggle(false); // Zumik doim ko'rinadi (aylantirganda yashirinmaydi)
       lastY = y;
     };
     window.addEventListener('scroll', onScroll, { passive: true });
