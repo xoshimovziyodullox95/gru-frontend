@@ -219,7 +219,6 @@ html.is-ios-app .tg-chat, html.is-ios-app .tg-messages, html.is-ios-app .tg-chat
 
 /* Zumik tugmasi aylantirish paytida yashirinadi — tugma va kartalarni yopib qo'ymasin */
 .ai-chat-toggle { transition: opacity 0.2s ease, transform 0.2s ease; }
-body.zumik-scrolling .ai-chat-toggle { opacity: 0; transform: scale(0.6); pointer-events: none; }
 /* Biror oyna (kategoriyalar, filtr, tahrirlash...) ochiq bo'lsa Zumik tugmasi uning ustida turmasin */
 body:has([aria-modal="true"]:not(.ai-chat-modal)) .ai-chat-toggle,
 body:has(.reel-modal-overlay) .ai-chat-toggle,
@@ -258,4 +257,18 @@ body:not(.no-global-navbar-offset) .pf-top { position: relative; }
   position: sticky; bottom: 0; z-index: 2;
   margin-bottom: calc(10px + env(safe-area-inset-bottom)) !important;
   box-shadow: 0 -10px 20px var(--bg);
+}
+
+/* Video lentasi — YouTube Shorts uslubi: 9:16 katta kartalar, 2 ta to'liq + keyingisining chekkasi.
+   iPhone'da <video> qatlami ustidagi yozuv/ikonkalar yo'qolmasin (z-index + translateZ) */
+.reels-section .reels-track { gap: 10px; scroll-padding-inline: 14px; }
+.reels-section .reel-card { flex: 0 0 calc((100% - 10px) / 2.15) !important; width: calc((100% - 10px) / 2.15) !important;
+  max-width: 230px; aspect-ratio: 9 / 16; height: auto !important; border-radius: 14px; }
+.reel-card__media { z-index: 0; }
+.reel-card__overlay, .reel-card__badges, .reel-card__play, .reel-card__info { z-index: 2; transform: translateZ(0); }
+.reel-card__overlay { background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.25) 100%); }
+/* E'lon ostidagi o'xshash e'lonlar: telefonda 3 ta ko'rinadi, aylantirsa davom etadi */
+@media (max-width: 600px) {
+  .eq-related-row { grid-auto-columns: calc((100% - 16px) / 3.1) !important; gap: 8px !important; }
+  .eq-related-card .uc-card { font-size: 0.85em; }
 }

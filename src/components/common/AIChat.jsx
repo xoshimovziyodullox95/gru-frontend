@@ -103,22 +103,6 @@ export default function AIChat() {
     return () => document.body.classList.remove('ai-chat-open');
   }, [isOpen]);
 
-  // Aylantirish paytida suzuvchi tugma yashirinadi (kartadagi tugmalarni yopib qo'ymasin), to'xtagach qaytadi.
-  // capture: true — sahifaning ichki scroll konteynerlari (.mkt-content) ham ushlanadi
-  useEffect(() => {
-    let timer;
-    const onScroll = () => {
-      document.body.classList.add('zumik-scrolling');
-      clearTimeout(timer);
-      timer = setTimeout(() => document.body.classList.remove('zumik-scrolling'), 700);
-    };
-    document.addEventListener('scroll', onScroll, { capture: true, passive: true });
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener('scroll', onScroll, { capture: true });
-      document.body.classList.remove('zumik-scrolling');
-    };
-  }, []);
 
   // Personaj: Zumik seansda bir marta o'zini tanishtiradi, vaqti-vaqti bilan qo'l silkitadi
   const [introVisible, setIntroVisible] = useState(false);
