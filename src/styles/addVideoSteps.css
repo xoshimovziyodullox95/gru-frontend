@@ -117,3 +117,24 @@
 .avs-done strong { font-size: 1.25rem; }
 .avs-done p { margin: 0 0 8px; color: var(--textMuted); line-height: 1.45; }
 .avs-error { display: flex; align-items: center; gap: 8px; margin: 0; padding: 10px 12px; border-radius: 12px; background: rgba(229, 57, 53, 0.12); color: #e53935; font-size: 0.88rem; }
+
+/* Qorong'i rejim: sahifa butunlay ko'k bo'lmasin — YouTube/Instagram kabi neytral qora, ko'k faqat urg'u (tugma, qadam) */
+html.dark .avs-page {
+  --bg: #0b0e14;
+  --surface: #151a23;
+  --border: rgba(255, 255, 255, 0.09);
+  --textMuted: rgba(255, 255, 255, 0.55);
+}
+html.dark .avs-drop {
+  background: #121720;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+html.dark .avs-drop__icon { background: rgba(0, 212, 255, 0.1); }
+html.dark .avs-head { background: rgba(11, 14, 20, 0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+html.dark .avs-file, html.dark .avs-review { background: #151a23; }
+html.dark .avs-field input, html.dark .avs-field textarea,
+html.dark .avs-page input, html.dark .avs-page textarea { background: #151a23; border-color: rgba(255, 255, 255, 0.12); }
+
+/* Butun ekran, hamma narsa ustida (iPhone'da yuqori panel tugmalarni yopardi) */
+.avs-page { position: fixed; inset: 0; z-index: 12500; overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; }
+html:not(.dark) .avs-page { --bg: #f4f6fa; }

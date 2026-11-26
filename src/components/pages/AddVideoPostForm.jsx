@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 ﻿// Video joylash — YouTube Studio / Instagram kabi qadamma-qadam:
 // 1) video tanlash  2) muqova kadri  3) sarlavha va tavsif  4) ko'rib chiqish va joylash
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -197,7 +198,8 @@ export default function AddVideoPostForm() {
     setStep(0);
   };
 
-  return (
+  // Portal + to'liq ekran: ilovaning yuqori paneli va pastki menyusi sarlavhani (orqaga/Keyingi) yopib qo'ymasin
+  return createPortal(
     <main className="avs-page" data-back-handler={uploading || (step > 0 && !done) ? '' : undefined}>
       <header className="avs-head">
         <button type="button" className="avs-icon-btn" onClick={goBack} disabled={uploading} aria-label={T('Orqaga')}>
@@ -344,6 +346,7 @@ export default function AddVideoPostForm() {
 
         {error && <p className="avs-error" role="alert"><AlertCircle size={16} /> {error}</p>}
       </section>
-    </main>
+    </main>,
+    document.body
   );
 }
