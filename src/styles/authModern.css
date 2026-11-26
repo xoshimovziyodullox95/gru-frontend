@@ -201,3 +201,7 @@
 .am-check input { width: 18px; height: 18px; accent-color: #0a84ff; }
 .am-error { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .am-error .resend-btn { margin-left: auto; border: 0; background: none; color: var(--cyan); font-weight: 700; cursor: pointer; }
+
+.am-code { letter-spacing: 0.4em; font-size: 1.2rem; font-weight: 700; }
+.am-link-btn { background: none; border: 0; color: #23c4ff; font: inherit; font-weight: 600; padding: 8px; cursor: pointer; }
+.am-link-btn:disabled { opacity: 0.5; }

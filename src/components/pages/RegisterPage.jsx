@@ -85,6 +85,8 @@ export default function RegisterPage() {
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [codeStep, setCodeStep] = useState(false);
+  const [code, setCode] = useState('');
   const navigate = useNavigate();
 
   const score = useMemo(() => passwordScore(password), [password]);
@@ -127,13 +129,59 @@ export default function RegisterPage() {
       }
       // Bu qurilmada endi "ro'yxatdan o'tgan": landingda faqat "Kirish" ko'rinadi, guest-mode tozalanadi
       markAccountCreated();
-      toast.success(T('✅ Ro‘yxatdan o‘tdingiz! Emailingizni tasdiqlang.'));
-      setTimeout(() => navigate('/login', { replace: true }), 1500);
+      // Sessiya darhol berilsa (tasdiqlash o'chiq) — kirib ketadi; aks holda emaildagi kodni so'raymiz
+      if (data.session) { navigate('/', { replace: true }); return; }
+      setLoading(false);
+      setCodeStep(true);
+      toast.success(T('Kod emailingizga yuborildi'));
     } catch (err) {
       setLoading(false);
       fail(err?.message || T('Nomaʼlum xatolik yuz berdi'));
     }
   };
+
+  const verifyCode = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    const { error: err } = await supabase.auth.verifyOtp({ email: email.trim(), token: code.trim(), type: 'signup' });
+    setLoading(false);
+    if (err) return fail(T('Kod noto‘g‘ri yoki eskirgan'));
+    toast.success(T('✅ Ro‘yxatdan o‘tdingiz!'));
+    navigate('/', { replace: true });
+  };
+
+  const resendCode = async () => {
+    const { error: err } = await supabase.auth.resend({ type: 'signup', email: email.trim() });
+    if (err) fail(err.message); else toast.success(T('Kod emailingizga yuborildi'));
+  };
+
+  if (codeStep) {
+    return (
+      <div className="auth-container am-page">
+        <div className="am-card">
+          <header className="am-head">
+            <AuthBrand />
+            <h1 className="am-title">{T('Emailni tasdiqlang')}</h1>
+            <p className="am-sub">{`${T('Kodni kiriting')}: ${email}`}</p>
+          </header>
+          <form className="am-form" onSubmit={verifyCode}>
+            {error && <div className="am-error" role="alert">{error}</div>}
+            <label className={`am-field ${code ? 'has-value' : ''}`}>
+              <Mail className="am-field__icon" size={18} />
+              <input className="am-field__input am-code" inputMode="numeric" autoComplete="one-time-code" maxLength={8}
+                value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} placeholder=" " required />
+              <span className="am-field__label">{T('Emaildagi kod')}</span>
+            </label>
+            <button type="submit" className="am-submit" disabled={loading || code.length < 6}>
+              {loading ? <Loader2 size={18} className="am-spin" /> : <>{T('Tasdiqlash')} <ArrowRight size={18} /></>}
+            </button>
+            <button type="button" className="am-link-btn" onClick={resendCode}>{T('Kodni qayta yuborish')}</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   const handleGoogle = async () => {
     try {
