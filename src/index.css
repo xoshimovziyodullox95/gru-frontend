@@ -294,3 +294,24 @@ body:not(.no-global-navbar-offset) .pf-top { position: relative; }
 video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 video::-webkit-media-controls { display: none !important; }
 video::-webkit-media-controls-panel { display: none !important; }
+
+/* E'lon ostida (OLX kabi): "O'xshash tovarlar" telefonda 2 ustunli to'r, 6 ta e'lon; joylar va ustalar — kengroq kartali lenta */
+@media (max-width: 600px) {
+  .eq-related-section:first-child .eq-related-row {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-flow: row !important; grid-auto-columns: auto !important;
+    width: auto !important; margin-inline: 0 !important; padding: 2px 0 6px !important;
+    overflow: visible !important; gap: 10px !important;
+  }
+  .eq-related-section:first-child .eq-related-card:nth-child(n + 7) { display: none; }
+  .eq-related-section:first-child .eq-related-actions > button:not(.eq-related-all) { display: none; }
+  .eq-related-section:not(:first-child) .eq-related-row { grid-auto-columns: calc((100vw - 42px) / 1.6) !important; }
+}
+
+/* Gorizontal lentalar ostidagi aylantirish chizig'i (scrollbar) ko'rinmasin — barmoq bilan aylantirish ishlaydi */
+.reels-track, .eq-related-row, .mkt-row, .uc-row, [class*="-track"], [class*="-row"] { scrollbar-width: none; }
+.reels-track::-webkit-scrollbar, .eq-related-row::-webkit-scrollbar, .mkt-row::-webkit-scrollbar,
+.uc-row::-webkit-scrollbar, [class*="-track"]::-webkit-scrollbar, [class*="-row"]::-webkit-scrollbar { display: none; }
+/* Ilova ichida (iPhone/Android) hech qayerda scrollbar chiqmasin */
+html.is-native-app *, html.is-native-app { scrollbar-width: none; }
+html.is-native-app *::-webkit-scrollbar { display: none; }
