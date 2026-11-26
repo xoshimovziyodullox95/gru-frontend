@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 // src/pages/MarketplacePage.jsx
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -543,6 +544,7 @@ const services = asArray(servRes).map(item => ({
       </div>
 
       {showMobileFilters && (
+createPortal(
         <div className="mp-mobile-filter-overlay" onClick={() => setShowMobileFilters(false)}>
           <div className="mp-mobile-filter-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="mp-mobile-filter-header">
@@ -568,7 +570,8 @@ const services = asArray(servRes).map(item => ({
               {t('marketplacePage.showResults')} ({filteredItems.length})
             </button>
           </div>
-        </div>
+        </div>,
+        document.body)
       )}
     </div>
   );

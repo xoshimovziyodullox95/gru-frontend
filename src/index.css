@@ -349,3 +349,8 @@ html.is-native-app *::-webkit-scrollbar { display: none; }
 /* Zumik: model baribir jadval yozsa — siqilmasin, yon tomonga suriladi */
 .ai-chat-modal table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: 0.82rem; }
 .ai-chat-modal th, .ai-chat-modal td { min-width: 90px; padding: 6px 8px; word-break: normal; overflow-wrap: normal; }
+
+/* Filtr oynasi: butun ekran ustida, pastki menyu yopmaydi, tugma jest chizig'idan yuqorida */
+.mp-mobile-filter-overlay { z-index: 13000 !important; }
+.mp-mobile-filter-sheet { max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 12px) !important; }
+.mp-mobile-filter-apply { margin-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important; }
