@@ -261,15 +261,29 @@ body:not(.no-global-navbar-offset) .pf-top { position: relative; }
 
 /* Video lentasi — YouTube Shorts uslubi: 9:16 katta kartalar, 2 ta to'liq + keyingisining chekkasi.
    iPhone'da <video> qatlami ustidagi yozuv/ikonkalar yo'qolmasin (z-index + translateZ) */
-.reels-section .reels-track {
-  gap: 10px; margin-inline: 0; padding: 2px 0 10px !important;
-  scroll-padding-inline: 0; scroll-snap-type: x mandatory;
+.reels-section .reels-track { gap: 10px; padding: 2px 0 10px !important; scroll-snap-type: x mandatory; }
+/* Telefonda gorizontal lentalar ekranning bir chetidan ikkinchisigacha (OLX/Instagram kabi), qutiga qisilmaydi */
+@media (max-width: 600px) {
+  .reels-section .reels-track, .eq-related-row {
+    width: 100vw !important; max-width: none !important; box-sizing: border-box;
+    margin-inline: calc(50% - 50vw) !important;
+    padding-inline: calc(50vw - 50%) !important;
+    scroll-padding-inline: calc(50vw - 50%);
+  }
+  .reels-section .reel-card { flex: 0 0 calc((100vw - 42px) / 2.2) !important; width: calc((100vw - 42px) / 2.2) !important; }
+  .eq-related-row { grid-auto-columns: calc((100vw - 42px) / 2.3) !important; }
 }
 .reels-section .reels-track > * { scroll-snap-align: start; }
 .reels-section .reel-card { flex: 0 0 calc((100% - 10px) / 2.15) !important; width: calc((100% - 10px) / 2.15) !important;
   max-width: 230px; aspect-ratio: 9 / 16; height: auto !important; border-radius: 14px; }
 .reel-card__media { z-index: 0; }
-.reel-card__overlay, .reel-card__badges, .reel-card__play, .reel-card__info { z-index: 2; transform: translateZ(0); }
+.reel-card__overlay, .reel-card__badges, .reel-card__info { z-index: 2; transform: translateZ(0); }
+/* Play tugmasi aynan markazda (translateZ markazlash transformini bekor qilmasin) */
+.reel-card__play { z-index: 2; transform: translate(-50%, -50%) translateZ(0) !important; }
+/* Telefonda bosilganda kartochka siljimasin/kichraymasin (iPhone'da hover "yopishib" qoladi) */
+@media (hover: none) {
+  .reel-card:hover, .reel-card:active { transform: none !important; }
+}
 .reel-card__overlay { background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.25) 100%); }
 /* E'lon ostidagi o'xshash e'lonlar: telefonda 3 ta ko'rinadi, aylantirsa davom etadi */
 @media (max-width: 600px) {
