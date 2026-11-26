@@ -261,7 +261,11 @@ body:not(.no-global-navbar-offset) .pf-top { position: relative; }
 
 /* Video lentasi — YouTube Shorts uslubi: 9:16 katta kartalar, 2 ta to'liq + keyingisining chekkasi.
    iPhone'da <video> qatlami ustidagi yozuv/ikonkalar yo'qolmasin (z-index + translateZ) */
-.reels-section .reels-track { gap: 10px; scroll-padding-inline: 14px; }
+.reels-section .reels-track {
+  gap: 10px; margin-inline: 0; padding: 2px 0 10px !important;
+  scroll-padding-inline: 0; scroll-snap-type: x mandatory;
+}
+.reels-section .reels-track > * { scroll-snap-align: start; }
 .reels-section .reel-card { flex: 0 0 calc((100% - 10px) / 2.15) !important; width: calc((100% - 10px) / 2.15) !important;
   max-width: 230px; aspect-ratio: 9 / 16; height: auto !important; border-radius: 14px; }
 .reel-card__media { z-index: 0; }
@@ -269,6 +273,10 @@ body:not(.no-global-navbar-offset) .pf-top { position: relative; }
 .reel-card__overlay { background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.05) 45%, rgba(0,0,0,0.25) 100%); }
 /* E'lon ostidagi o'xshash e'lonlar: telefonda 3 ta ko'rinadi, aylantirsa davom etadi */
 @media (max-width: 600px) {
-  .eq-related-row { grid-auto-columns: calc((100% - 16px) / 3.1) !important; gap: 8px !important; }
-  .eq-related-card .uc-card { font-size: 0.85em; }
+  .eq-related-row { grid-auto-columns: calc((100% - 10px) / 2.25) !important; gap: 10px !important; }
 }
+
+/* iPhone: avtomatik ijro bo'lmagan videoda tizimning katta "play" tugmasi chiqmasin (hero, reels kartalari) */
+video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+video::-webkit-media-controls { display: none !important; }
+video::-webkit-media-controls-panel { display: none !important; }

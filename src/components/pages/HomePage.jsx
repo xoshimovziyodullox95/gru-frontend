@@ -419,7 +419,11 @@ export default function HomePage() {
             preload="metadata"
             poster={HERO_POSTER}
             aria-hidden="true"
+            disablePictureInPicture
+            controls={false}
             onError={() => setHeroVideoFailed(true)}
+            // iPhone avtomatik ijroni bloklasa (quvvat tejash rejimi) — video o'rniga muqova rasmi
+            ref={(el) => { if (el && !el.dataset.tried) { el.dataset.tried = '1'; el.play()?.catch(() => setHeroVideoFailed(true)); } }}
           >
             <source src="/videos/hero-background.mp4" type="video/mp4" />
           </video>
