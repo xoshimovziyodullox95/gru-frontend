@@ -26,7 +26,7 @@ const SHAPES = [
   [[0,0,1],[1,1,1]],     // L
 ];
 
-const COLORS = ['#22d3ee', '#eab308', '#a855f7', '#22c55e', '#ef4444', '#3b82f6', '#f97316'];
+const COLORS = ['#1A6FD6', '#eab308', '#a855f7', '#22c55e', '#ef4444', '#3b82f6', '#f97316'];
 
 export default function GamePage() {
   const { user } = useAuth();
@@ -73,7 +73,7 @@ export default function GamePage() {
   const drawBoard = useCallback((ctx, board) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = '#161922';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
     ctx.strokeStyle = 'rgba(255,255,255,0.05)';

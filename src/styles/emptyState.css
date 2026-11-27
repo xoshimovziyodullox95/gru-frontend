@@ -4,11 +4,11 @@
 }
 .es-icon {
   display: grid; place-items: center; width: 64px; height: 64px; border-radius: 20px;
-  background: rgba(0, 180, 216, 0.12); color: #0096c7;
+  background: rgba(27, 143, 239, 0.12); color: #1B8FEF;
 }
 .es-title { font-size: 1.05rem; color: var(--text); }
 .es-text { margin: 0; max-width: 300px; font-size: 0.88rem; line-height: 1.5; color: var(--textMuted, #5b6b80); }
 .es-btn {
   margin-top: 8px; padding: 11px 22px; border: 0; border-radius: 12px; cursor: pointer;
-  background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff; font: inherit; font-weight: 700;
+  background: linear-gradient(100deg, #1B8FEF, #1A6FD6); color: #fff; font: inherit; font-weight: 700;
 }

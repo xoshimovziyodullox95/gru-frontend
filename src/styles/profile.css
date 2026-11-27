@@ -12,8 +12,8 @@
   --text: #f0f0f5;
   --textMuted: #9a9ab0;
   --textSecondary: #b8b8cc;
-  --cyan: #00d4ff;
-  --cyan-glow: rgba(0, 212, 255, 0.25);
+  --cyan: #1A6FD6;
+  --cyan-glow: rgba(26, 111, 214, 0.25);
   --orange: #ff8a2a;
   --orange-2: #e8500a;
   --purple: #7c3aed;
@@ -322,7 +322,7 @@
 
 .edit-profile-btn,
 .save-btn {
-  background: linear-gradient(135deg, #0055b3, var(--cyan));
+  background: linear-gradient(135deg, #1A6FD6, var(--cyan));
   color: #0a0a0f;
 }
 .edit-profile-btn:hover,
@@ -332,7 +332,7 @@
 }
 
 .premium-btn {
-  background: linear-gradient(135deg, #4b9eff, #0d47a1);
+  background: linear-gradient(135deg, #4b9eff, #1A6FD6);
   color: #fff;
 }
 .premium-btn:hover {
@@ -372,15 +372,15 @@
 .subscribe-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .become-provider-btn {
-  background: linear-gradient(110deg, #075cca, var(--cyan), #1685ff);
+  background: linear-gradient(110deg, #1A6FD6, var(--cyan), #1A6FD6);
   background-size: 180% 100%;
   color: #fff;
-  box-shadow: 0 8px 20px rgba(0, 170, 240, 0.22);
+  box-shadow: 0 8px 20px rgba(27, 143, 239, 0.22);
 }
 .become-provider-btn:hover {
   background-position: 100% 50%;
   transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(0, 170, 240, 0.32);
+  box-shadow: 0 12px 26px rgba(27, 143, 239, 0.32);
 }
 .become-provider-btn:active { transform: scale(0.97); }
 
@@ -396,7 +396,7 @@
     135deg,
     rgba(255, 138, 42, 0.1) 0%,
     rgba(232, 80, 10, 0.05) 50%,
-    rgba(13, 31, 56, 1) 100%
+    rgba(28, 31, 43, 1) 100%
   );
   border: 1.5px solid rgba(255, 138, 42, 0.3);
   box-shadow:
@@ -510,7 +510,7 @@
 }
 .provider-stat__icon--orange { color: #ffb072; background: rgba(255, 138, 42, 0.18); }
 .provider-stat__icon--green  { color: #4ade80; background: rgba(0, 200, 83, 0.18); }
-.provider-stat__icon--blue   { color: #64b5f6; background: rgba(33, 150, 243, 0.18); }
+.provider-stat__icon--blue   { color: #64b5f6; background: rgba(27, 143, 239, 0.18); }
 .provider-stat__icon--purple { color: #c4b5fd; background: rgba(167, 139, 250, 0.18); }
 
 .provider-stat > div {

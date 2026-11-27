@@ -4,7 +4,7 @@
   min-height: 100vh;
   overflow: hidden;
   padding: 2.5rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
-  background: #010515;
+  background: #07080B;
 }
 
 .premium-bg-video {
@@ -23,7 +23,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: radial-gradient(circle at center 30%, rgba(1, 10, 40, 0.4) 0%, rgba(1, 5, 21, 0.82) 60%, #010515 100%);
+  background: radial-gradient(circle at center 30%, rgba(14, 16, 22, 0.4) 0%, rgba(7, 8, 11, 0.82) 60%, #07080B 100%);
 }
 
 .premium-back {
@@ -38,7 +38,7 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
   color: #fff;
-  background: rgba(10, 17, 40, 0.6);
+  background: rgba(18, 21, 29, 0.6);
   cursor: pointer;
 }
 
@@ -58,7 +58,7 @@
 .premium-header-icon {
   display: block;
   margin: 0 auto 0.5rem;
-  filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.35));
+  filter: drop-shadow(0 0 12px rgba(26, 111, 214, 0.35));
 }
 .premium-header h1 {
   margin: 0 0 0.35rem;
@@ -101,7 +101,7 @@
   overflow: hidden;
   border: 1.5px solid color-mix(in srgb, var(--tone) 28%, transparent);
   border-radius: 1.5rem;
-  background: rgba(10, 17, 40, 0.72);
+  background: rgba(18, 21, 29, 0.72);
   backdrop-filter: blur(16px);
   box-shadow: 0 8px 32px rgba(0, 50, 150, 0.1);
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -208,7 +208,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  color: #04121f;
+  color: #0F1016;
   background: var(--tone);
 }
 .feature-value {
@@ -226,7 +226,7 @@
   margin: 0 1.25rem 1.4rem;
   border: 0;
   border-radius: 2rem;
-  color: #04121f;
+  color: #0F1016;
   background: var(--tone);
   font: inherit;
   font-size: 1rem;

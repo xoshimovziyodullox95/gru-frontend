@@ -20,7 +20,7 @@
   padding: 2rem 1rem; border-radius: 1.5rem; border: 1px solid var(--border);
   background: var(--card); color: var(--text); cursor: pointer; transition: all 0.25s;
 }
-.mph-main-card:hover { border-color: var(--cyan); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,200,255,0.15); }
+.mph-main-card:hover { border-color: var(--cyan); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(27, 143, 239,0.15); }
 .mph-main-card svg { color: var(--cyan); }
 .mph-main-card span { font-weight: 700; font-size: 1rem; }
 .mph-main-card small { color: var(--textMuted); font-size: 0.8rem; }
@@ -68,7 +68,7 @@
 .mph-catalog-list-item:hover {
   border-color: var(--cyan);
   transform: translateX(4px);
-  box-shadow: 0 4px 16px rgba(0, 200, 255, 0.08);
+  box-shadow: 0 4px 16px rgba(27, 143, 239, 0.08);
 }
 
 .mph-catalog-list-img {
@@ -138,7 +138,7 @@
 .mph-customer-tabs button.active {
   background: var(--cyan);
   border-color: var(--cyan);
-  color: #071022;
+  color: #101218;
 }
 
 /* ===== KATEGORIYA KARTALARI (grid) ===== */
@@ -169,8 +169,8 @@
 .mph-bank-category-card:hover {
   border-color: var(--cyan);
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 200, 255, 0.12);
-  background: rgba(0, 200, 255, 0.04);
+  box-shadow: 0 8px 24px rgba(27, 143, 239, 0.12);
+  background: rgba(27, 143, 239, 0.04);
 }
 
 .mph-bank-category-card svg {
@@ -241,7 +241,7 @@
 .mph-customer-tabs button.active {
   background: var(--cyan);
   border-color: var(--cyan);
-  color: #071022;
+  color: #101218;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -292,8 +292,8 @@
 .mph-scroll-top-btn:hover {
   transform: translateY(-4px);
   border-color: var(--cyan);
-  box-shadow: 0 8px 30px rgba(0, 200, 255, 0.2);
-  background: rgba(0, 200, 255, 0.06);
+  box-shadow: 0 8px 30px rgba(27, 143, 239, 0.2);
+  background: rgba(27, 143, 239, 0.06);
 }
 
 .mph-scroll-top-btn svg {
@@ -344,8 +344,8 @@
 .mph-bank-category-card:hover {
   border-color: var(--cyan);
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 200, 255, 0.12);
-  background: rgba(0, 200, 255, 0.04);
+  box-shadow: 0 8px 24px rgba(27, 143, 239, 0.12);
+  background: rgba(27, 143, 239, 0.04);
 }
 
 .mph-bank-category-card svg {
@@ -475,7 +475,7 @@
 .mph-back:hover {
   color: var(--cyan);
   border-color: var(--cyan);
-  background: rgba(0, 200, 255, 0.08);
+  background: rgba(27, 143, 239, 0.08);
   transform: translateX(-3px);
 }
 
@@ -505,7 +505,7 @@
   padding: 2.4rem 1rem;
   border-radius: 1.8rem;
   border: 1px solid var(--border);
-  background: linear-gradient(160deg, var(--card) 0%, rgba(0, 150, 255, 0.03) 100%);
+  background: linear-gradient(160deg, var(--card) 0%, rgba(27, 143, 239, 0.03) 100%);
   color: var(--text);
   cursor: pointer;
   overflow: hidden;
@@ -516,7 +516,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% -20%, rgba(0, 229, 255, 0.15), transparent 70%);
+  background: radial-gradient(circle at 50% -20%, rgba(26, 111, 214, 0.15), transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -524,7 +524,7 @@
 .mph-main-card:hover {
   border-color: var(--cyan);
   transform: translateY(-6px);
-  box-shadow: 0 20px 45px rgba(0, 200, 255, 0.2);
+  box-shadow: 0 20px 45px rgba(27, 143, 239, 0.2);
 }
 .mph-main-card:hover::before {
   opacity: 1;
@@ -534,7 +534,7 @@
   color: var(--cyan);
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.35));
+  filter: drop-shadow(0 0 10px rgba(26, 111, 214, 0.35));
   transition: transform 0.3s ease;
 }
 .mph-main-card:hover svg {
@@ -585,7 +585,7 @@
 .mph-catalog-card:hover {
   border-color: var(--cyan);
   transform: translateY(-5px);
-  box-shadow: 0 16px 38px rgba(0, 200, 255, 0.18);
+  box-shadow: 0 16px 38px rgba(27, 143, 239, 0.18);
 }
 
 .mph-catalog-img {
@@ -649,10 +649,10 @@
   color: var(--cyan);
 }
 .mph-customer-tabs button.active {
-  background: linear-gradient(135deg, #0088cc, var(--cyan));
+  background: linear-gradient(135deg, #1A6FD6, var(--cyan));
   border-color: transparent;
-  color: #071022;
-  box-shadow: 0 6px 20px rgba(0, 200, 255, 0.3);
+  color: #101218;
+  box-shadow: 0 6px 20px rgba(27, 143, 239, 0.3);
 }
 
 /* ============================================================
@@ -687,7 +687,7 @@
   color: var(--text);
 }
 .sub-food-cat-filter button.active {
-  background: rgba(0, 200, 255, 0.14);
+  background: rgba(27, 143, 239, 0.14);
   border-color: var(--cyan);
   color: var(--cyan);
   font-weight: 700;
@@ -713,7 +713,7 @@
   padding: 2rem 1rem;
   border-radius: 1.6rem;
   border: 1px solid var(--border);
-  background: linear-gradient(160deg, var(--card) 0%, rgba(0, 150, 255, 0.03) 100%);
+  background: linear-gradient(160deg, var(--card) 0%, rgba(27, 143, 239, 0.03) 100%);
   color: var(--text);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -721,11 +721,11 @@
 .home-market-card:hover {
   border-color: var(--cyan);
   transform: translateY(-5px);
-  box-shadow: 0 16px 38px rgba(0, 200, 255, 0.18);
+  box-shadow: 0 16px 38px rgba(27, 143, 239, 0.18);
 }
 .home-market-card svg {
   color: var(--cyan);
-  filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.3));
+  filter: drop-shadow(0 0 8px rgba(26, 111, 214, 0.3));
 }
 .home-market-card span {
   font-weight: 700;
@@ -786,8 +786,8 @@
 .mph-service-cat-card:hover {
   border-color: var(--cyan);
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 200, 255, 0.12);
-  background: rgba(0, 200, 255, 0.04);
+  box-shadow: 0 8px 24px rgba(27, 143, 239, 0.12);
+  background: rgba(27, 143, 239, 0.04);
 }
 
 .mph-service-cat-icon {

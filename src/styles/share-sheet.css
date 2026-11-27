@@ -3,12 +3,12 @@
    ============================================================ */
 
 .share-overlay {
-  --sh-bg: var(--card, #071c32);
-  --sh-bg-deep: var(--bg, #041326);
+  --sh-bg: var(--card, #181A24);
+  --sh-bg-deep: var(--bg, #11131A);
   --sh-text: var(--text, #f5fbff);
   --sh-muted: var(--text-muted, var(--textMuted, #78b9de));
-  --sh-border: var(--border, rgba(0, 207, 255, 0.2));
-  --sh-cyan: var(--primary-color, var(--primary, var(--cyan, #00cfff)));
+  --sh-border: var(--border, rgba(27, 143, 239, 0.2));
+  --sh-cyan: var(--primary-color, var(--primary, var(--cyan, #1B8FEF)));
   --sh-shadow: var(--shadow, rgba(0, 0, 0, 0.28));
 
   position: fixed;
@@ -445,7 +445,7 @@
   height: 36px;
   flex-shrink: 0;
 
-  color: #04263a;
+  color: #1C1F2B;
   background: linear-gradient(
     135deg,
     color-mix(in srgb, var(--sh-cyan) 75%, #ffffff),

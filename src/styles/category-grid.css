@@ -22,7 +22,7 @@ font-weight: 500;
 transition: 0.3s;
 }
 .cat-back-btn:hover {
-color: #00e5ff;
+color: #1A6FD6;
 transform: translateX(-3px);
 }
 .cat-title {
@@ -55,7 +55,7 @@ color: #5e88a8;
 width: 100%;
 padding: 0.8rem 1rem 0.8rem 2.8rem;
 background: rgba(var(--surface-rgb), 0.8);
-border: 1px solid rgba(0, 130, 255, 0.4);
+border: 1px solid rgba(26, 111, 214, 0.4);
 border-radius: 2rem;
 color: var(--text);
 font-size: 0.9rem;
@@ -64,8 +64,8 @@ transition: 0.3s;
 }
 .cat-search-input:focus {
 outline: none;
-border-color: #0096ff;
-box-shadow: 0 0 12px rgba(0, 150, 255, 0.4);
+border-color: #1B8FEF;
+box-shadow: 0 0 12px rgba(27, 143, 239, 0.4);
 }
 
 /* Grid - 5 ta karta katta ekranda */
@@ -121,7 +121,7 @@ will-change: transform;
 }
 .cat-card:hover {
 transform: translateY(-8px) scale(1.02);
-box-shadow: 0 20px 32px rgba(0, 150, 255, 0.3);
+box-shadow: 0 20px 32px rgba(27, 143, 239, 0.3);
 }
 
 /* Rasm wrapper - to'liq maydon */
@@ -246,8 +246,8 @@ color: var(--textMuted);
 .cat-loading-spinner {
 width: 48px;
 height: 48px;
-border: 3px solid rgba(0, 229, 255, 0.2);
-border-top-color: #00e5ff;
+border: 3px solid rgba(26, 111, 214, 0.2);
+border-top-color: #1A6FD6;
 border-radius: 50%;
 animation: spin 1s linear infinite;
 margin: 20vh auto;

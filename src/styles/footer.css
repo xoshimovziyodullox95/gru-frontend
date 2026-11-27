@@ -23,7 +23,7 @@
   transform: translateX(-50%);
   width: 600px;
   height: 240px;
-  background: radial-gradient(ellipse at center, rgba(0, 150, 255, 0.10), transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(27, 143, 239, 0.10), transparent 70%);
   pointer-events: none;
 }
 
@@ -79,8 +79,8 @@
 .footer-brand .badge {
   font-size: 0.65rem;
   font-weight: 600;
-  background: rgba(0, 229, 255, 0.10);
-  border: 1px solid rgba(0, 229, 255, 0.25);
+  background: rgba(26, 111, 214, 0.10);
+  border: 1px solid rgba(26, 111, 214, 0.25);
   padding: 0.15rem 0.6rem;
   border-radius: 9999px;
   color: var(--cyan);
@@ -117,7 +117,7 @@
 
 .footer-socials a:hover {
   color: #ffffff;
-  background: linear-gradient(135deg, var(--cyan), #00e5ff);
+  background: linear-gradient(135deg, var(--cyan), #1A6FD6);
   border-color: transparent;
   transform: translateY(-3px);
   box-shadow: 0 6px 16px var(--shadow);
@@ -140,7 +140,7 @@
   bottom: 0;
   width: 28px;
   height: 2px;
-  background: linear-gradient(90deg, var(--cyan), #00e5ff);
+  background: linear-gradient(90deg, var(--cyan), #1A6FD6);
   border-radius: 2px;
 }
 
@@ -197,8 +197,8 @@
 }
 
 .footer-apps a:hover {
-  background: rgba(0, 150, 255, 0.08);
-  border-color: rgba(0, 229, 255, 0.30);
+  background: rgba(27, 143, 239, 0.08);
+  border-color: rgba(26, 111, 214, 0.30);
   transform: translateY(-2px);
 }
 
@@ -314,7 +314,7 @@
 }
 
 .footer-subscribe-form button {
-  background: linear-gradient(95deg, #0066cc, var(--cyan));
+  background: linear-gradient(95deg, #1A6FD6, var(--cyan));
   color: #ffffff;
   padding: 0.65rem 1.2rem;
   border: none;
@@ -383,8 +383,8 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid rgba(0, 229, 255, 0.30);
-  background: linear-gradient(135deg, var(--cyan), #00c2ff);
+  border: 1px solid rgba(26, 111, 214, 0.30);
+  background: linear-gradient(135deg, var(--cyan), #1B8FEF);
   color: #ffffff;
   display: flex;
   align-items: center;

@@ -8,7 +8,7 @@
   --text: #ffffff;
   --textMuted: #a0a0a0;
   --shadow: rgba(0, 0, 0, 0.5);
-  --cyan: #00e5ff;
+  --cyan: #1A6FD6;
 }
 
 /* ============================================================
@@ -63,7 +63,7 @@
   align-items: center;
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--cyan), #0096ff);
+  background: linear-gradient(135deg, var(--cyan), #1B8FEF);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -110,7 +110,7 @@
   right: 0;
   bottom: -2px;
   height: 2px;
-  background: linear-gradient(90deg, var(--cyan), #00e5ff);
+  background: linear-gradient(90deg, var(--cyan), #1A6FD6);
   border-radius: 2px;
   transform: scaleX(0);
   transition: transform 0.2s ease;
@@ -476,7 +476,7 @@
   transition: background 0.2s;
 }
 .gru-add-menu-item:hover {
-  background: rgba(0, 229, 255, 0.08);
+  background: rgba(26, 111, 214, 0.08);
 }
 
 /* ============================================================

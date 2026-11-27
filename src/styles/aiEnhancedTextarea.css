@@ -18,8 +18,8 @@
   gap: 5px;
   padding: 0.35rem 0.7rem;
   border-radius: 1rem;
-  border: 1px solid rgba(0, 229, 255, 0.35);
-  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(26, 111, 214, 0.35);
+  background: rgba(26, 111, 214, 0.08);
   color: var(--cyan);
   font-size: 0.75rem;
   font-weight: 700;
@@ -28,11 +28,11 @@
   transition: all 0.2s ease;
 }
 .aet-trigger:hover:not(:disabled) {
-  background: rgba(0, 229, 255, 0.15);
+  background: rgba(26, 111, 214, 0.15);
 }
 .aet-trigger.open {
   background: var(--cyan);
-  color: #071022;
+  color: #101218;
 }
 .aet-trigger:disabled {
   opacity: 0.5;
@@ -125,7 +125,7 @@
   top: 0;
   bottom: 0;
   width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(26, 111, 214, 0.15), transparent);
   animation: aetShimmerMove 1.8s ease-in-out infinite;
 }
 @keyframes aetShimmerMove {
@@ -161,8 +161,8 @@
 .aet-orb-1 {
   width: 26px; height: 26px;
   top: 0; left: 17px;
-  background: radial-gradient(circle at 30% 30%, rgba(0, 229, 255, 0.9), transparent 70%);
-  box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+  background: radial-gradient(circle at 30% 30%, rgba(26, 111, 214, 0.9), transparent 70%);
+  box-shadow: 0 0 16px rgba(26, 111, 214, 0.6);
   animation: aetOrbPulse 1.4s ease-in-out infinite;
 }
 .aet-orb-2 {
@@ -175,8 +175,8 @@
 .aet-orb-3 {
   width: 16px; height: 16px;
   bottom: 4px; right: 0;
-  background: radial-gradient(circle at 30% 30%, rgba(0, 150, 255, 0.9), transparent 70%);
-  box-shadow: 0 0 12px rgba(0, 150, 255, 0.6);
+  background: radial-gradient(circle at 30% 30%, rgba(27, 143, 239, 0.9), transparent 70%);
+  box-shadow: 0 0 12px rgba(27, 143, 239, 0.6);
   animation: aetOrbPulse 1.4s ease-in-out infinite 0.6s;
 }
 @keyframes aetOrbPulse {

@@ -288,7 +288,7 @@ export default function ZumoGuide() {
     <div className="zumo-tour" aria-live="polite">
       <svg className="zumo-tour__shade" width="100%" height="100%" aria-hidden="true">
         <defs><mask id="zumo-tour-cutout"><rect width="100%" height="100%" fill="white" />{rect && <rect x={Math.max(0, rect.left - 7)} y={Math.max(0, rect.top - 7)} width={rect.width + 14} height={rect.height + 14} rx="16" fill="black" />}</mask></defs>
-        <rect width="100%" height="100%" fill="rgba(4,12,27,.76)" mask="url(#zumo-tour-cutout)" />
+        <rect width="100%" height="100%" fill="rgba(12, 13, 18,.76)" mask="url(#zumo-tour-cutout)" />
         {rect && <rect className="zumo-tour__ring" x={Math.max(0, rect.left - 7)} y={Math.max(0, rect.top - 7)} width={rect.width + 14} height={rect.height + 14} rx="16" />}
       </svg>
       <aside className="zumo-tour-card" style={{ left: cardLeft, top: cardTop }} role="dialog" aria-modal="true" aria-labelledby="zumo-tour-title">

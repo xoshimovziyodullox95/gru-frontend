@@ -395,7 +395,7 @@ export default function RequestPage({ defaultCategory = '' }) {
                           role="tab"
                           aria-selected={activeDir === key}
                           className={`rq-tab ${activeDir === key ? 'is-on' : ''}`}
-                          style={{ '--svc': key === 'all' ? '#0096c7' : (DIRECTION_STYLE[key]?.color || '#0096c7') }}
+                          style={{ '--svc': key === 'all' ? '#1B8FEF' : (DIRECTION_STYLE[key]?.color || '#1B8FEF') }}
                           onClick={() => setActiveDir(key)}
                         >
                           <TabIcon size={16} /> {label}

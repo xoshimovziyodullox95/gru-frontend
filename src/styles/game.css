@@ -90,7 +90,7 @@
   padding: 0.65rem 2rem;
   border: none;
   border-radius: 2rem;
-  background: linear-gradient(135deg, #4B9EFF, #0D47A1);
+  background: linear-gradient(135deg, #4B9EFF, #1A6FD6);
   color: #fff;
   font-weight: 600;
   font-size: 1rem;
@@ -164,7 +164,7 @@
 /* ==========================================================================
    Tetris
    ========================================================================== */
-.tetris-container h1 { color: var(--cyan); text-shadow: 0 0 18px rgba(34,211,238,0.35); }
+.tetris-container h1 { color: var(--cyan); text-shadow: 0 0 18px rgba(26, 111, 214,0.35); }
 
 .tetris-main {
   display: flex;
@@ -181,7 +181,7 @@
   border-radius: 0.9rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  box-shadow: 0 0 0 1px rgba(34,211,238,0.06), 0 12px 30px rgba(var(--surface-rgb), 0.35);
+  box-shadow: 0 0 0 1px rgba(26, 111, 214,0.06), 0 12px 30px rgba(var(--surface-rgb), 0.35);
   flex: 1 1 auto;
 }
 .tetris-board-wrap::after {
@@ -189,7 +189,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(34,211,238,0.08), transparent 30%);
+  background: linear-gradient(180deg, rgba(26, 111, 214,0.08), transparent 30%);
   animation: scan-glow 6s ease-in-out infinite;
 }
 @keyframes scan-glow {
@@ -223,7 +223,7 @@
   border-radius: 0.75rem;
   border: 1px solid var(--border);
   background: var(--bg);
-  box-shadow: 0 0 16px rgba(34,211,238,0.12) inset;
+  box-shadow: 0 0 16px rgba(26, 111, 214,0.12) inset;
 }
 
 .controls-info {
@@ -285,7 +285,7 @@
   border-color: var(--cyan);
 }
 .tc-btn.tc-primary {
-  background: linear-gradient(135deg, #4B9EFF, #0D47A1);
+  background: linear-gradient(135deg, #4B9EFF, #1A6FD6);
   border-color: transparent;
   color: #fff;
 }

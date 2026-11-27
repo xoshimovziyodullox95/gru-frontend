@@ -8,43 +8,43 @@
    (rgba(var(--text-rgb), 0.06)), --on-accent: och ko'k tugma ustidagi matn. */
 :root,
 html.dark {
-  --bg: #0A1628;
-  --bg-rgb: 10, 22, 40;
-  --surface: #0F2040;
-  --surface-rgb: 15, 32, 64;
-  --card: #122A4F;
-  --border: #23508A;
-  --text: #E8F4FD;
-  --text-rgb: 232, 244, 253;
-  --textSoft: #B8D4E8;
-  --textMuted: #8AB4D0;
-  --cyan: #00D4FF;
-  --cyan-rgb: 0, 212, 255;
-  --on-accent: #0A1628;
+  --bg: #0F131C;
+  --bg-rgb: 15, 19, 28;
+  --surface: #171C27;
+  --surface-rgb: 23, 28, 39;
+  --card: #1B2130;
+  --border: #2A3243;
+  --text: #EDF0F5;
+  --text-rgb: 237, 240, 245;
+  --textSoft: #C3C9D4;
+  --textMuted: #8D96A8;
+  --cyan: #1A6FD6;
+  --cyan-rgb: 27, 143, 239;
+  --on-accent: #FFFFFF;
   --danger: #FF6B6B;
   --overlay: rgba(3, 10, 20, 0.6);
-  --glass: rgba(10, 22, 40, 0.88);
+  --glass: rgba(15, 19, 28, 0.9);
   --shadow: rgba(0, 0, 0, 0.35);
 }
 
 html:not(.dark) {
-  --bg: #F0F6FC;
-  --bg-rgb: 240, 246, 252;
+  --bg: #EEF1F7;
+  --bg-rgb: 238, 241, 247;
   --surface: #FFFFFF;
   --surface-rgb: 255, 255, 255;
   --card: #FFFFFF;
-  --border: #D6E1EC;
-  --text: #0A1628;
+  --border: #DDE2EC;
+  --text: #171A24;
   --text-rgb: 10, 22, 40;
-  --textSoft: #33506E;
-  --textMuted: #5A7590;
-  --cyan: #00A6CC;
-  --cyan-rgb: 0, 166, 204;
-  --on-accent: #0A1628;
+  --textSoft: #3A4456;
+  --textMuted: #6B7487;
+  --cyan: #1A6FD6;
+  --cyan-rgb: 26, 111, 214;
+  --on-accent: #FFFFFF;
   --danger: #D93636;
-  --overlay: rgba(10, 22, 40, 0.4);
+  --overlay: rgba(20, 22, 31, 0.4);
   --glass: rgba(255, 255, 255, 0.9);
-  --shadow: rgba(10, 22, 40, 0.08);
+  --shadow: rgba(20, 22, 31, 0.08);
 }
 
 /* Pastdan chiqadigan oyna ochiq paytda AI tugmasi uning ustiga chiqmasin */
@@ -169,7 +169,7 @@ body.no-global-navbar-offset { padding-top: 0 !important; }
   width: 34px;
   height: 34px;
   border: 3px solid rgba(var(--cyan-rgb, 0, 200, 248), 0.2);
-  border-top-color: var(--cyan, #00c8f8);
+  border-top-color: var(--cyan, #1B8FEF);
   border-radius: 50%;
   animation: page-loader-spin 0.8s linear infinite;
 }
@@ -184,7 +184,7 @@ html.is-native-app *::after {
   backdrop-filter: none !important;
 }
 /* Blur yo'qligida yarim shaffof yuqori panel ostidan kontent ko'rinmasin */
-html.is-native-app .zumo-topbar { background: #041326; }
+html.is-native-app .zumo-topbar { background: #11131A; }
 /* Ilovada surganda matn tasodifan belgilanib qolmasin (yozish maydonlari bundan mustasno) */
 html.is-native-app body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 html.is-native-app :is(input, textarea, [contenteditable="true"]) { -webkit-user-select: text; user-select: text; }
@@ -207,10 +207,10 @@ html.is-native-app *::-webkit-scrollbar { display: none; width: 0; height: 0; }
   width: 44px; height: 44px; border-radius: 50%;
   display: grid; place-items: center;
   color: var(--text); background: color-mix(in srgb, var(--surface, #fff) 92%, transparent);
-  box-shadow: 0 6px 20px rgba(4, 16, 40, 0.22);
+  box-shadow: 0 6px 20px rgba(17, 19, 26, 0.22);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
-.ios-edge-back.is-ready { color: #fff; background: linear-gradient(135deg, #00c8f8, #0a84ff); }
+.ios-edge-back.is-ready { color: #fff; background: linear-gradient(135deg, #1B8FEF, #1A6FD6); }
 
 /* iPhone ilovasi: sahifa (ayniqsa chat) yon tomonga surilib ketmasin */
 html.is-ios-app, html.is-ios-app body { overflow-x: hidden; overscroll-behavior-x: none; max-width: 100%; }
@@ -318,28 +318,28 @@ html.is-native-app *::-webkit-scrollbar { display: none; }
 
 /* Profil: biznes akkauntga o'tish kartasi */
 .pf-biz-cta { display: flex; align-items: center; gap: 12px; margin: 12px 0; padding: 14px; border-radius: 16px;
-  background: linear-gradient(135deg, rgba(0,180,255,0.14), rgba(0,120,255,0.06)); border: 1px solid rgba(0,180,255,0.28); }
-.pf-biz-cta__icon { flex: 0 0 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(0,180,255,0.18); color: #23c4ff; }
+  background: linear-gradient(135deg, rgba(26, 111, 214,0.14), rgba(26, 111, 214,0.06)); border: 1px solid rgba(26, 111, 214,0.28); }
+.pf-biz-cta__icon { flex: 0 0 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(26, 111, 214,0.18); color: #1A6FD6; }
 .pf-biz-cta__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .pf-biz-cta__text strong { font-size: 0.95rem; }
 .pf-biz-cta__text small { font-size: 0.78rem; opacity: 0.75; line-height: 1.3; }
 .pf-biz-cta__btn { flex: 0 0 auto; padding: 9px 16px; border-radius: 999px; border: 0; font-weight: 700;
-  background: linear-gradient(90deg, #00c6ff, #0072ff); color: #fff; cursor: pointer; }
+  background: linear-gradient(90deg, #1A6FD6, #1D5FD1); color: #fff; cursor: pointer; }
 .pf-biz-cta__btn:disabled { opacity: 0.6; }
-.lf-biz-hint a { color: #23c4ff; font-weight: 600; }
+.lf-biz-hint a { color: #1A6FD6; font-weight: 600; }
 
 /* Biznesga o'tish formasi */
 .pf-biz-lead { margin: 0 0 12px; font-size: 0.85rem; opacity: 0.75; line-height: 1.4; }
 .pf-biz-err { margin-bottom: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,80,80,0.12); color: #ff8080; font-size: 0.85rem; }
 .pf-biz-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .pf-biz-chip { padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(127,160,200,0.35); background: transparent; color: inherit; font-size: 0.82rem; cursor: pointer; }
-.pf-biz-chip.is-on { background: linear-gradient(90deg, #00c6ff, #0072ff); border-color: transparent; color: #fff; font-weight: 600; }
+.pf-biz-chip.is-on { background: linear-gradient(90deg, #1A6FD6, #1D5FD1); border-color: transparent; color: #fff; font-weight: 600; }
 .pf-biz-phone { display: flex; align-items: center; gap: 8px; }
 .pf-biz-phone b { flex: 0 0 auto; font-weight: 600; opacity: 0.8; }
 .pf-biz-phone input { flex: 1; min-width: 0; }
 .pf-biz-agree { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: 0.82rem; line-height: 1.4; }
 .pf-biz-agree input { margin-top: 3px; width: 18px; height: 18px; flex: 0 0 auto; }
-.pf-biz-agree a { color: #23c4ff; }
+.pf-biz-agree a { color: #1A6FD6; }
 
 /* Ulashish oynasi har doim video (reels) oynasi ustida */
 .share-overlay { z-index: 13000 !important; }
@@ -361,3 +361,34 @@ html.is-native-app *::-webkit-scrollbar { display: none; }
 @media (max-width: 600px) {
   .gru-ai-header-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1rem; }
 }
+
+/* Bosh sahifa: oxirgi blok (video) pastki suzuvchi menyu ostida qolmasin */
+.home-container { padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important; }
+
+/* Yangi palitra (2026-11-27): asosiy tugmalar — to'q ko'k (rasmdagi "Подробнее" kabi) */
+.uc-btn, .uc-btn--ghost { background: #1F3A66 !important; color: #fff !important; border-color: transparent !important; }
+html:not(.dark) .uc-btn, html:not(.dark) .uc-btn--ghost { background: #1E2F52 !important; }
+
+/* Kompyuter (≥1024px): filtr paneli qidiruv qatori ostida, o'zi aylanadi; pastki menyu ixcham markazda */
+@media (min-width: 1024px) {
+  .mp-filters-panel {
+    top: 72px !important; z-index: 10 !important;
+    max-height: calc(100vh - 72px - 83px - 96px); overflow-y: auto; overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  .mpx-top { z-index: 30 !important; }
+  .mkt-tabbar {
+    max-width: 560px; margin: 0 auto 12px !important; left: 0; right: 0;
+    border-radius: 22px !important; border: 1px solid var(--border);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  }
+}
+
+/* E'lon sahifasi tugmalari — yagona uslub: to'q ko'k (navy) to'ldirilgan, oq matn */
+.dp-btn, .dp-phone-btn {
+  background: #1F3A66 !important; color: #fff !important; border-color: transparent !important;
+}
+.dp-btn svg, .dp-phone-btn svg { color: #fff !important; }
+html:not(.dark) .dp-btn, html:not(.dark) .dp-phone-btn { background: #1E2F52 !important; }
+.dp-chip-btn { color: var(--cyan) !important; border-color: rgba(var(--cyan-rgb), 0.35) !important; background: rgba(var(--cyan-rgb), 0.08) !important; }
+.dp-badge { background: rgba(var(--cyan-rgb), 0.12) !important; color: var(--cyan) !important; }

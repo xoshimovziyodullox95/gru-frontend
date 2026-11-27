@@ -195,7 +195,7 @@
   transition: all 0.3s;
 }
 .premium-modal-btn {
-  background: linear-gradient(135deg, #4B9EFF, #0D47A1);
+  background: linear-gradient(135deg, #4B9EFF, #1A6FD6);
   color: #fff;
 }
 .premium-modal-btn.secondary {

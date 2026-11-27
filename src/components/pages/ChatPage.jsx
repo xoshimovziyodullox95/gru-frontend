@@ -242,7 +242,7 @@ const WALLPAPERS = [
   { id: 'zumo', label: () => T('ZUMO naqsh'), css: `${PATTERN_SVG}, var(--tg-bg)`, size: '160px 160px, cover' },
   { id: 'plain', label: () => T('Oddiy'), css: '' },
   { id: 'sky', label: () => T('Osmon'), css: 'linear-gradient(160deg, #cfefff 0%, #e9f7ff 45%, #fdfcff 100%)' },
-  { id: 'night', label: () => T('Tun'), css: `${PATTERN_SVG}, linear-gradient(160deg, #0b1a33 0%, #11284a 50%, #0a1426 100%)`, size: '160px 160px, cover', dark: true },
+  { id: 'night', label: () => T('Tun'), css: `${PATTERN_SVG}, linear-gradient(160deg, #181B26 0%, #252938 50%, #13151D 100%)`, size: '160px 160px, cover', dark: true },
   { id: 'mint', label: () => T('Yalpiz'), css: 'linear-gradient(160deg, #d8f7ec 0%, #effcf7 55%, #ffffff 100%)' },
   { id: 'peach', label: () => T('Shaftoli'), css: 'linear-gradient(160deg, #ffe3d6 0%, #fff1ea 50%, #fffaf7 100%)' },
 ];
@@ -278,7 +278,7 @@ const TRANSPARENT_POSTER = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BA
 // Rasmi yo'q yoki buzilgan bo'lsa — Telegram kabi rangli doirada bosh harflar (internetsiz ham chiqadi)
 const AVATAR_COLORS = [
   ['#ff885e', '#ff516a'], ['#ffcd6a', '#ffa85c'], ['#82b1ff', '#665fff'], ['#a0de7e', '#54cb68'],
-  ['#53edd6', '#28c9b7'], ['#72d5fd', '#2a9ef1'], ['#e0a2f3', '#d669ed'],
+  ['#53edd6', '#1B8FEF'], ['#72d5fd', '#2a9ef1'], ['#e0a2f3', '#d669ed'],
 ];
 const PLACEHOLDER_AVATAR = /zumo-placeholder|placeholder\.jpg/;
 function initialsOf(name) {

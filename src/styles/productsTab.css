@@ -38,8 +38,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(95deg, #0088cc, var(--cyan));
-  color: #0a1128;
+  background: linear-gradient(95deg, #1A6FD6, var(--cyan));
+  color: #12151D;
   border: none;
   border-radius: 2rem;
   padding: 8px 16px;
@@ -264,8 +264,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(95deg, #0088cc, var(--cyan));
-  color: #0a1128;
+  background: linear-gradient(95deg, #1A6FD6, var(--cyan));
+  color: #12151D;
   border: none;
   border-radius: 2rem;
   padding: 8px 16px;
@@ -501,8 +501,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(95deg, #0088cc, var(--cyan));
-  color: #0a1128;
+  background: linear-gradient(95deg, #1A6FD6, var(--cyan));
+  color: #12151D;
   border: none;
   border-radius: 2rem;
   padding: 8px 16px;

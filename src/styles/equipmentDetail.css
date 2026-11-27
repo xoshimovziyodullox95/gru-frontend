@@ -26,7 +26,7 @@
   margin-bottom: 1.5rem;
 }
 .BackActionBtn:hover {
-  background: rgba(0, 100, 200, 0.2);
+  background: rgba(26, 111, 214, 0.2);
   border-color: var(--cyan);
   transform: translateX(-3px);
   color: var(--text);
@@ -56,7 +56,7 @@
   border-radius: 12px;
   padding: 16px;
   margin-top: 12px;
-  border: 1px solid rgba(0,150,255,0.15);
+  border: 1px solid rgba(27, 143, 239,0.15);
 }
 .quantity-selector {
   display: flex;
@@ -65,7 +65,7 @@
   margin-bottom: 12px;
 }
 .qty-btn {
-  background: rgba(0,150,255,0.1);
+  background: rgba(27, 143, 239,0.1);
   border: none;
   width: 32px;
   height: 32px;
@@ -78,7 +78,7 @@
   transition: background 0.2s;
 }
 .qty-btn:hover:not(:disabled) {
-  background: rgba(0,150,255,0.25);
+  background: rgba(27, 143, 239,0.25);
 }
 .qty-btn:disabled {
   opacity: 0.4;
@@ -104,7 +104,7 @@
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background: linear-gradient(135deg, #0096ff, #00c8ff);
+  background: linear-gradient(135deg, #1B8FEF, #1B8FEF);
   color: #fff;
   font-weight: 600;
   display: flex;
@@ -116,7 +116,7 @@
 }
 .add-to-cart-btn:hover:not(:disabled) {
   transform: scale(1.02);
-  box-shadow: 0 4px 20px rgba(0,150,255,0.3);
+  box-shadow: 0 4px 20px rgba(27, 143, 239,0.3);
 }
 .add-to-cart-btn:disabled {
   opacity: 0.5;
@@ -161,7 +161,7 @@
 }
 
 .equipment-gallery-thumbs .gallery-thumb.active {
-  border-color: #00e5ff;
+  border-color: #1A6FD6;
 }
 
 .equipment-gallery-thumbs .gallery-thumb img {
@@ -297,8 +297,8 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(0, 130, 255, 0.08);
-  border: 1px solid rgba(0, 130, 255, 0.22);
+  background: rgba(26, 111, 214, 0.08);
+  border: 1px solid rgba(26, 111, 214, 0.22);
   color: var(--cyan);
   padding: 0.3rem 0.8rem;
   border-radius: 2rem;
@@ -334,8 +334,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 130, 255, 0.08);
-  border: 1px solid rgba(0, 130, 255, 0.28);
+  background: rgba(26, 111, 214, 0.08);
+  border: 1px solid rgba(26, 111, 214, 0.28);
   color: var(--cyan);
   padding: 0.38rem 0.9rem;
   border-radius: 2rem;
@@ -345,7 +345,7 @@
   transition: all 0.2s;
 }
 .VerificationBadge:hover {
-  background: rgba(0, 130, 255, 0.18);
+  background: rgba(26, 111, 214, 0.18);
   border-color: var(--cyan);
   color: var(--text);
 }
@@ -391,14 +391,14 @@
   color: var(--cyan);
   text-decoration: none;
   padding: 0.65rem;
-  border: 1px dashed rgba(0, 150, 255, 0.35);
+  border: 1px dashed rgba(27, 143, 239, 0.35);
   border-radius: 0.75rem;
   text-align: center;
   transition: all 0.2s;
 }
 .DirectPhoneLink:hover {
   border-color: var(--cyan);
-  background: rgba(0, 130, 255, 0.06);
+  background: rgba(26, 111, 214, 0.06);
 }
 .supplier-contact {
   color: var(--textMuted);
@@ -475,8 +475,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(0, 130, 255, 0.08);
-  border: 1px solid rgba(0, 130, 255, 0.25);
+  background: rgba(26, 111, 214, 0.08);
+  border: 1px solid rgba(26, 111, 214, 0.25);
   border-radius: 0.75rem;
   padding: 0.7rem 1rem;
   color: var(--text);
@@ -488,7 +488,7 @@
   text-align: left;
 }
 .service-btn-vertical:hover {
-  background: rgba(0, 130, 255, 0.18);
+  background: rgba(26, 111, 214, 0.18);
   border-color: var(--cyan);
   transform: translateX(5px);
 }
@@ -497,7 +497,7 @@
   align-items: center;
   gap: 6px;
   background: transparent;
-  border: 1px solid rgba(0, 150, 255, 0.40);
+  border: 1px solid rgba(27, 143, 239, 0.40);
   color: var(--cyan);
   font-size: 0.85rem;
   font-weight: 600;
@@ -620,7 +620,7 @@
   transition: background 0.2s;
 }
 .user-info.clickable:hover {
-  background: rgba(0, 130, 255, 0.08);
+  background: rgba(26, 111, 214, 0.08);
 }
 .user-avatar {
   width: 60px;
@@ -667,7 +667,7 @@
   justify-content: center;
   gap: 0.6rem;
   width: 100%;
-  background: linear-gradient(135deg, var(--cyan), #0070cc);
+  background: linear-gradient(135deg, var(--cyan), #1A6FD6);
   border: none;
   border-radius: 2rem;
   padding: 0.75rem 1.2rem;
@@ -681,7 +681,7 @@
 .chat-owner-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 25px var(--shadow);
-  background: linear-gradient(135deg, #1aaaff, #0080dd);
+  background: linear-gradient(135deg, #1B8FEF, #1A6FD6);
 }
 .chat-owner-btn:active {
   transform: scale(0.97);
@@ -695,8 +695,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(0, 130, 255, 0.08);
-  border: 1px solid rgba(0, 150, 255, 0.30);
+  background: rgba(26, 111, 214, 0.08);
+  border: 1px solid rgba(27, 143, 239, 0.30);
   border-radius: 2rem;
   padding: 0.5rem 1.5rem;
   color: var(--cyan);
@@ -705,7 +705,7 @@
   transition: all 0.2s;
 }
 .upload-btn:hover {
-  background: rgba(0, 130, 255, 0.18);
+  background: rgba(26, 111, 214, 0.18);
 }
 .uploading-text {
   margin-left: 0.8rem;

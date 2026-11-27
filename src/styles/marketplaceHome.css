@@ -3,12 +3,12 @@
    ============================================================ */
 
 .mkt-home2 {
-  --h-bg: var(--bg, #041326);
-  --h-card: var(--card, #071c32);
+  --h-bg: var(--bg, #11131A);
+  --h-card: var(--card, #181A24);
   --h-text: var(--text, #f5fbff);
   --h-muted: var(--text-muted, var(--textMuted, #78b9de));
-  --h-border: var(--border, rgba(0, 207, 255, 0.2));
-  --h-cyan: var(--primary-color, var(--primary, var(--cyan, #00cfff)));
+  --h-border: var(--border, rgba(27, 143, 239, 0.2));
+  --h-cyan: var(--primary-color, var(--primary, var(--cyan, #1B8FEF)));
 
   display: flex;
   flex-direction: column;
@@ -77,7 +77,7 @@
   flex: 0 0 34px;
   width: 34px;
   height: 34px;
-  color: #041326;
+  color: #11131A;
   background: var(--h-cyan);
   border: 0;
   border-radius: 11px;
@@ -152,7 +152,7 @@
 }
 
 .mkt-quick__btn {
-  --qa-accent: #00cfff;
+  --qa-accent: #1B8FEF;
 
   position: relative;
   display: flex;
@@ -274,7 +274,7 @@
 
 .mkt-block__more:hover {
   color: #fff;
-  background: linear-gradient(135deg, var(--h-cyan), #1685ff);
+  background: linear-gradient(135deg, var(--h-cyan), #1A6FD6);
   border-color: transparent;
   transform: translateX(2px);
 }
@@ -454,7 +454,7 @@
   padding: 16px;
   color: #fff;
   cursor: pointer;
-  background: linear-gradient(135deg, #00b4e6, #1685ff);
+  background: linear-gradient(135deg, #1B8FEF, #1A6FD6);
   border: 1px solid color-mix(in srgb, var(--h-cyan) 40%, transparent);
   border-radius: 18px;
   box-shadow: 0 10px 24px color-mix(in srgb, var(--h-cyan) 22%, transparent);
@@ -554,7 +554,7 @@
 
 .mkt-tab__logo--active {
   opacity: 1;
-  filter: grayscale(0) drop-shadow(0 0 6px rgba(0, 229, 255, 0.65));
+  filter: grayscale(0) drop-shadow(0 0 6px rgba(26, 111, 214, 0.65));
 }
 
 .mkt-tab--active .mkt-tab__logo {

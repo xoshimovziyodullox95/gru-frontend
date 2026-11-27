@@ -151,10 +151,10 @@
 
   background: linear-gradient(
     135deg,
-    rgba(33, 150, 243, 0.12),
+    rgba(27, 143, 239, 0.12),
     rgba(100, 181, 246, 0.06)
   );
-  border: 1px solid rgba(33, 150, 243, 0.25);
+  border: 1px solid rgba(27, 143, 239, 0.25);
   border-radius: 16px;
 }
 
@@ -165,8 +165,8 @@
   display: grid;
   place-items: center;
 
-  color: #2196f3;
-  background: rgba(33, 150, 243, 0.18);
+  color: #1B8FEF;
+  background: rgba(27, 143, 239, 0.18);
   border-radius: 14px;
 
   flex-shrink: 0;
@@ -252,8 +252,8 @@
 }
 
 .ir-meta__icon--distance {
-  color: #00b4d8;
-  background: rgba(0, 180, 216, 0.15);
+  color: #1B8FEF;
+  background: rgba(27, 143, 239, 0.15);
 }
 
 .ir-meta__icon--time {

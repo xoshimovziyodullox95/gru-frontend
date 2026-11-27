@@ -25,8 +25,8 @@ body.landing-page-active #root {
    * Global theme ranglari mavjud bo‘lsa, ulardan foydalanadi.
    * Fallback ranglar faqat cyan va ko‘k.
    */
-  --splash-bg: var(--bg, #010719);
-  --splash-surface: var(--card, #03152b);
+  --splash-bg: var(--bg, #090A0E);
+  --splash-surface: var(--card, #12151D);
   --splash-text: var(--text, #f4fbff);
 
   --splash-muted:
@@ -38,11 +38,11 @@ body.landing-page-active #root {
   --splash-cyan:
     var(
       --cyan,
-      #00cfff
+      #1B8FEF
     );
 
-  --splash-blue: #1677ff;
-  --splash-blue-dark: #0759d1;
+  --splash-blue: #1A6FD6;
+  --splash-blue-dark: #1A6FD6;
   --splash-light-cyan: #a8f2ff;
 
   position: fixed;
@@ -63,19 +63,19 @@ body.landing-page-active #root {
   background:
     radial-gradient(
       circle at 50% 44%,
-      rgba(0, 207, 255, 0.13) 0%,
+      rgba(27, 143, 239, 0.13) 0%,
       transparent 38%
     ),
     radial-gradient(
       circle at 8% 8%,
-      rgba(22, 119, 255, 0.13) 0%,
+      rgba(26, 111, 214, 0.13) 0%,
       transparent 33%
     ),
     linear-gradient(
       145deg,
-      #020d28 0%,
+      #0F1117 0%,
       var(--splash-bg) 52%,
-      #03142b 100%
+      #12141C 100%
     );
 
   opacity: 1;
@@ -100,7 +100,7 @@ body.landing-page-active #root {
     radial-gradient(
       circle at center,
       transparent 28%,
-      rgba(0, 5, 20, 0.25) 100%
+      rgba(7, 7, 10, 0.25) 100%
     );
 
   pointer-events: none;
@@ -265,8 +265,8 @@ body.landing-page-active #root {
   background:
     radial-gradient(
       circle,
-      rgba(0, 207, 255, 0.24) 0%,
-      rgba(22, 119, 255, 0.13) 38%,
+      rgba(27, 143, 239, 0.24) 0%,
+      rgba(26, 111, 214, 0.13) 38%,
       transparent 70%
     );
 
@@ -316,7 +316,7 @@ body.landing-page-active #root {
 
   filter:
     drop-shadow(
-      0 5px 22px rgba(0, 183, 255, 0.42)
+      0 5px 22px rgba(27, 143, 239, 0.42)
     );
 }
 
@@ -341,7 +341,7 @@ body.landing-page-active #root {
   line-height: 1;
   letter-spacing: 7px;
   text-indent: 7px;
-  filter: drop-shadow(0 3px 14px rgba(0, 183, 255, 0.3));
+  filter: drop-shadow(0 3px 14px rgba(27, 143, 239, 0.3));
 }
 
 /* ============================================================
@@ -358,7 +358,7 @@ body.landing-page-active #root {
       135deg,
       var(--splash-light-cyan) 0%,
       var(--splash-cyan) 35%,
-      #0096ff 68%,
+      #1B8FEF 68%,
       var(--splash-blue) 100%
     );
 
@@ -435,8 +435,8 @@ body.landing-page-active #root {
   background: var(--splash-cyan);
 
   box-shadow:
-    0 0 8px rgba(0, 207, 255, 0.9),
-    0 0 18px rgba(0, 150, 255, 0.7);
+    0 0 8px rgba(27, 143, 239, 0.9),
+    0 0 18px rgba(27, 143, 239, 0.7);
 
   opacity: 0;
   transform: scale(0);
@@ -570,11 +570,11 @@ body.landing-page-active #root {
       90deg,
       var(--splash-blue-dark),
       var(--splash-cyan),
-      #0096ff
+      #1B8FEF
     );
 
   box-shadow:
-    0 0 12px rgba(0, 207, 255, 0.68);
+    0 0 12px rgba(27, 143, 239, 0.68);
 
   animation:
     gru-splash-loader-progress
@@ -630,7 +630,7 @@ body.landing-page-active #root {
 [data-theme='light'] .gru-splash {
   --splash-bg: var(--bg, #edf8fd);
   --splash-surface: var(--card, #ffffff);
-  --splash-text: var(--text, #08283e);
+  --splash-text: var(--text, #1F222F);
 
   --splash-muted:
     var(
@@ -641,12 +641,12 @@ body.landing-page-active #root {
   background:
     radial-gradient(
       circle at 50% 44%,
-      rgba(0, 207, 255, 0.15) 0%,
+      rgba(27, 143, 239, 0.15) 0%,
       transparent 40%
     ),
     radial-gradient(
       circle at 8% 8%,
-      rgba(22, 119, 255, 0.12) 0%,
+      rgba(26, 111, 214, 0.12) 0%,
       transparent 34%
     ),
     linear-gradient(
@@ -677,7 +677,7 @@ html.light .gru-splash,
 html:not(.dark) .gru-splash {
   --splash-bg: var(--bg, #edf8fd);
   --splash-surface: var(--card, #ffffff);
-  --splash-text: var(--text, #08283e);
+  --splash-text: var(--text, #1F222F);
 
   --splash-muted:
     var(
@@ -688,12 +688,12 @@ html:not(.dark) .gru-splash {
   background:
     radial-gradient(
       circle at 50% 44%,
-      rgba(0, 207, 255, 0.15) 0%,
+      rgba(27, 143, 239, 0.15) 0%,
       transparent 40%
     ),
     radial-gradient(
       circle at 8% 8%,
-      rgba(22, 119, 255, 0.12) 0%,
+      rgba(26, 111, 214, 0.12) 0%,
       transparent 34%
     ),
     linear-gradient(

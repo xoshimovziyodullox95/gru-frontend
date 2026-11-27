@@ -293,7 +293,7 @@ body:has(.rd-page) { padding-top: 0 !important; }
 .rd-inline-link {
   align-self: flex-start;
   margin-top: 4px;
-  color: var(--cyan, #00a6c7);
+  color: var(--cyan, #1B8FEF);
   font-size: 0.8rem;
   font-weight: 700;
   text-decoration: underline;

@@ -4,7 +4,7 @@ import { Boxes } from 'lucide-react';
 export default function CategoryCard({
   title,
   icon: Icon = Boxes,
-  colors = ['#00c8f8', '#1267d8'],
+  colors = ['#1B8FEF', '#1A6FD6'],
   linkTo,
   delay = 0,
 }) {

@@ -1,14 +1,14 @@
 
 .bp-page {
-  --bp-bg: var(--bg, #031326);
-  --bp-card: var(--card, #071d33);
+  --bp-bg: var(--bg, #11131A);
+  --bp-card: var(--card, #181B25);
   --bp-text: var(--text, #f4fbff);
   --bp-muted: var(--text-muted, var(--textMuted, #83abc3));
-  --bp-border: var(--border, rgba(0, 207, 255, 0.17));
-  --bp-accent: var(--primary-color, var(--cyan, #00cfff));
-  --bp-blue: #1685ff;
-  --bp-blue-dark: #075cca;
-  --bp-green: #18c895;
+  --bp-border: var(--border, rgba(27, 143, 239, 0.17));
+  --bp-accent: var(--primary-color, var(--cyan, #1B8FEF));
+  --bp-blue: #1A6FD6;
+  --bp-blue-dark: #1A6FD6;
+  --bp-green: #1B8FEF;
   --bp-danger: #ff4d5f;
   --bp-shadow: var(--shadow, rgba(0, 0, 0, 0.3));
 
@@ -48,7 +48,7 @@
     ),
     radial-gradient(
       circle at 85% 80%,
-      rgba(22, 133, 255, 0.08),
+      rgba(26, 111, 214, 0.08),
       transparent 36%
     ),
     var(--bp-bg);
@@ -1275,9 +1275,9 @@ html:not(.dark) .bp-card {
 .bp-page .media-upload-area,
 main .media-upload-area {
   padding: 18px;
-  border: 2px dashed color-mix(in srgb, var(--cyan, #00a6c7) 45%, transparent);
+  border: 2px dashed color-mix(in srgb, var(--cyan, #1B8FEF) 45%, transparent);
   border-radius: 16px;
-  background: color-mix(in srgb, var(--cyan, #00a6c7) 6%, transparent);
+  background: color-mix(in srgb, var(--cyan, #1B8FEF) 6%, transparent);
   text-align: center;
 }
 main .media-upload-area .upload-btn {
@@ -1288,8 +1288,8 @@ main .media-upload-area .upload-btn {
   min-height: 46px;
   padding: 0 18px;
   border-radius: 999px;
-  background: var(--cyan, #00a6c7);
-  color: #04121f;
+  background: var(--cyan, #1B8FEF);
+  color: #0F1016;
   font-weight: 800;
   cursor: pointer;
 }

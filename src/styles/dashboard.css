@@ -124,7 +124,7 @@
   padding: 0.5rem 1.2rem;
   border: none;
   border-radius: 2rem;
-  background: linear-gradient(135deg, #4B9EFF, #0D47A1);
+  background: linear-gradient(135deg, #4B9EFF, #1A6FD6);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -341,7 +341,7 @@
   padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 2rem;
-  background: linear-gradient(135deg, #4B9EFF, #0D47A1);
+  background: linear-gradient(135deg, #4B9EFF, #1A6FD6);
   color: #fff;
   font-weight: 600;
   cursor: pointer;

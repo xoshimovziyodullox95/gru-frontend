@@ -128,7 +128,7 @@
 .marketplace-search-input:focus {
   outline: none;
   border-color: var(--cyan);
-  box-shadow: 0 0 0 3px rgba(0, 200, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(27, 143, 239, 0.15);
 }
 
 .marketplace-search-clear {
@@ -275,7 +275,7 @@
 .marketplace-all-btn:hover {
   border-color: var(--cyan);
   color: var(--cyan);
-  background: rgba(0, 200, 255, 0.05);
+  background: rgba(27, 143, 239, 0.05);
 }
 
 /* ============================================================
@@ -393,7 +393,7 @@
   padding: 0 5px;
   border-radius: 999px;
   background: var(--cyan);
-  color: #06202e;
+  color: #171A24;
   font-size: 0.68rem;
   font-weight: 700;
   margin-left: auto;
@@ -489,7 +489,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(0, 130, 255, 0.35), rgba(0, 80, 200, 0.55));
+  background: linear-gradient(135deg, rgba(26, 111, 214, 0.35), rgba(26, 111, 214, 0.55));
   color: #ffffff;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -601,8 +601,8 @@
   padding: 0.8rem;
   border: none;
   border-radius: 2rem;
-  background: linear-gradient(95deg, #0088cc, var(--cyan));
-  color: #0a1128;
+  background: linear-gradient(95deg, #1A6FD6, var(--cyan));
+  color: #12151D;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -792,7 +792,7 @@
 .bsl-tab.active {
   background: var(--cyan);
   border-color: var(--cyan);
-  color: #071022;
+  color: #101218;
 }
 
 /* ---------- Ichki bo'limlar (OLX kabi chiplar) ---------- */

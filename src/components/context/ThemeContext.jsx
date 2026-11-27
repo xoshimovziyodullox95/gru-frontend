@@ -49,7 +49,7 @@ export const ThemeProvider = ({ children }) => {
     const root = document.documentElement;
     root.classList.toggle('dark', theme === 'dark');
     root.style.colorScheme = theme;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0A1628' : '#F0F6FC');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#14161F' : '#F0F6FC');
   }, [theme]);
 
   const setMode = (next) => {

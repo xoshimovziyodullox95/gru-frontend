@@ -387,7 +387,7 @@ button.st-row:active { background: rgba(var(--text-rgb), 0.07); }
   height: 56px;
   margin-bottom: 4px;
   border-radius: 18px;
-  background: linear-gradient(140deg, #05c8d4, #087ce1);
+  background: linear-gradient(140deg, #1B8FEF, #1A6FD6);
   color: #fff;
   font-size: 1.7rem;
   font-weight: 900;

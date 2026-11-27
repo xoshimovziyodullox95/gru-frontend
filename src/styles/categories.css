@@ -20,13 +20,13 @@
   backdrop-filter: blur(8px);
   border-radius: 1.2rem;
   overflow: hidden;
-  border: 1px solid rgba(0, 229, 255, 0.3);
+  border: 1px solid rgba(26, 111, 214, 0.3);
   transition: all 0.3s;
 }
 
 .category-card:hover .category-card-inner {
-  border-color: #00E5FF;
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+  border-color: #1A6FD6;
+  box-shadow: 0 0 20px rgba(26, 111, 214, 0.3);
 }
 
 .category-image-wrapper {
@@ -76,18 +76,18 @@
 }
 
 .show-more-btn {
-  background: linear-gradient(95deg, #0088CC, #00E5FF);
+  background: linear-gradient(95deg, #1A6FD6, #1A6FD6);
   border: none;
   border-radius: 2rem;
   padding: 0.7rem 2rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #0A1128;
+  color: #12151D;
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .show-more-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 15px rgba(26, 111, 214, 0.4);
 }

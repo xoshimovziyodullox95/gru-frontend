@@ -2,12 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
-  --dark-bg: #0A1128;
-  --card-bg: rgba(12, 20, 45, 0.85);
+  --dark-bg: #12151D;
+  --card-bg: rgba(21, 24, 33, 0.85);
   --neon-white: #E0F2FE;
-  --neon-cyan: #00E5FF;
-  --border-glow: rgba(0, 229, 255, 0.3);
-  --input-bg: rgba(2, 8, 23, 0.6);
+  --neon-cyan: #1A6FD6;
+  --border-glow: rgba(26, 111, 214, 0.3);
+  --input-bg: rgba(9, 10, 14, 0.6);
 }
 
 * {
@@ -31,7 +31,7 @@ body {
   background: var(--dark-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--neon-cyan), #0088CC);
+  background: linear-gradient(135deg, var(--neon-cyan), #1A6FD6);
   border-radius: 10px;
 }
 
@@ -45,7 +45,7 @@ body {
 }
 .glass-card:hover {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 20px rgba(26, 111, 214, 0.3);
   transform: translateY(-4px);
 }
 

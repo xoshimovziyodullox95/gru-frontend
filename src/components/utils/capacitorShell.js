@@ -160,7 +160,7 @@ export async function setupNativeShell() {
       .catch(() => {});
   } else {
     StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
-    StatusBar.setBackgroundColor({ color: '#0A1628' }).catch(() => {});
+    StatusBar.setBackgroundColor({ color: '#14161F' }).catch(() => {});
   }
   SplashScreen.hide().catch(() => {});
 }

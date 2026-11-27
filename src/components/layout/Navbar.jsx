@@ -430,7 +430,7 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  background: '#00E5FF',
+                  background: '#1A6FD6',
                   color: '#0a0a0a',
                   padding: '6px 14px',
                   borderRadius: '20px',
@@ -439,11 +439,11 @@ export default function Navbar() {
                   textDecoration: 'none',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#00BFFF';
+                  e.currentTarget.style.background = '#1A6FD6';
                   e.currentTarget.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#00E5FF';
+                  e.currentTarget.style.background = '#1A6FD6';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
               >

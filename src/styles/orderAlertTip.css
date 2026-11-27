@@ -3,13 +3,13 @@
   margin: 0 0 14px;
   padding: 14px 16px;
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(0, 207, 255, 0.14), rgba(0, 207, 255, 0.04));
-  border: 1px solid rgba(0, 207, 255, 0.35);
+  background: linear-gradient(135deg, rgba(27, 143, 239, 0.14), rgba(27, 143, 239, 0.04));
+  border: 1px solid rgba(27, 143, 239, 0.35);
   color: var(--text, #e8f6ff);
   font-size: 0.88rem;
   line-height: 1.45;
 }
-.oat-head { display: flex; align-items: center; gap: 8px; color: #00cfff; margin-bottom: 6px; padding-right: 24px; }
+.oat-head { display: flex; align-items: center; gap: 8px; color: #1B8FEF; margin-bottom: 6px; padding-right: 24px; }
 .oat-head strong { color: var(--text, #fff); font-size: 0.95rem; }
 .oat-card p { margin: 0 0 6px; opacity: 0.85; }
 .oat-card ol { margin: 0 0 12px; padding-left: 18px; }
@@ -20,6 +20,6 @@
 .oat-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .oat-btn {
   flex: 1 1 130px; min-height: 40px; border-radius: 12px; font-weight: 600; cursor: pointer;
-  background: transparent; color: var(--primary, #00a6d6); border: 1px solid rgba(0, 207, 255, 0.5);
+  background: transparent; color: var(--primary, #1B8FEF); border: 1px solid rgba(27, 143, 239, 0.5);
 }
-.oat-btn--main { background: #00cfff; color: #04121f; border-color: #00cfff; }
+.oat-btn--main { background: #1B8FEF; color: #0F1016; border-color: #1B8FEF; }

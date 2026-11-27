@@ -12,8 +12,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(0, 130, 255, 0.08);
-  border: 1px solid rgba(0, 130, 255, 0.25);
+  background: rgba(26, 111, 214, 0.08);
+  border: 1px solid rgba(26, 111, 214, 0.25);
   padding: 0.55rem 1.2rem;
   border-radius: 2rem;
   color: var(--cyan);
@@ -25,7 +25,7 @@
   font-family: inherit;
 }
 .sp-back-btn:hover {
-  background: rgba(0, 130, 255, 0.18);
+  background: rgba(26, 111, 214, 0.18);
   transform: translateX(-3px);
 }
 
@@ -113,7 +113,7 @@
 .sp-filter-btn--active {
   background: var(--cyan);
   border-color: var(--cyan);
-  color: #071022;
+  color: #101218;
 }
 
 .sp-sort-wrap {
@@ -228,7 +228,7 @@
   color: #fbbf24;
 }
 .sp-card-badge--verified {
-  background: rgba(0, 150, 255, 0.15);
+  background: rgba(27, 143, 239, 0.15);
   color: #60b4ff;
 }
 
@@ -283,7 +283,7 @@
   height: 32px;
   border-radius: 50%;
   background: var(--cyan);
-  color: #071022;
+  color: #101218;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -309,13 +309,13 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: rgba(0, 130, 255, 0.08);
+  background: rgba(26, 111, 214, 0.08);
   animation: sp-pulse 1.4s ease infinite;
 }
 .sp-skeleton-line {
   height: 12px;
   border-radius: 6px;
-  background: rgba(0, 130, 255, 0.08);
+  background: rgba(26, 111, 214, 0.08);
   animation: sp-pulse 1.4s ease infinite;
 }
 .sp-skeleton-line--lg { width: 90%; height: 16px; }

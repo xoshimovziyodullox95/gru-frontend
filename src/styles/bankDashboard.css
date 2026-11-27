@@ -67,7 +67,7 @@
 }
 .bd-app-item.unread {
   border-color: var(--cyan);
-  background: rgba(0, 229, 255, 0.04);
+  background: rgba(26, 111, 214, 0.04);
 }
 .bd-app-icon {
   width: 40px;

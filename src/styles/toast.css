@@ -23,7 +23,7 @@
   padding-right: 40px;
   margin-bottom: 10px;
 
-  background: linear-gradient(135deg, #0d1f38 0%, #071c32 100%);
+  background: linear-gradient(135deg, #1C1F2B 0%, #181A24 100%);
   border: 1.5px solid rgba(100, 181, 246, 0.2);
   border-radius: 14px;
 
@@ -59,17 +59,17 @@
   height: 3px !important;
   background: linear-gradient(
     90deg,
-    #2196f3 0%,
-    #00b4ff 100%
+    #1B8FEF 0%,
+    #1A6FD6 100%
   ) !important;
-  box-shadow: 0 0 10px rgba(33, 150, 243, 0.6);
+  box-shadow: 0 0 10px rgba(27, 143, 239, 0.6);
 }
 
 .Toastify__progress-bar--success {
   background: linear-gradient(
     90deg,
     #00c853 0%,
-    #00bfa5 100%
+    #1B8FEF 100%
   ) !important;
   box-shadow: 0 0 10px rgba(0, 200, 83, 0.6);
 }
@@ -94,8 +94,8 @@
 .Toastify__progress-bar--info {
   background: linear-gradient(
     90deg,
-    #2196f3 0%,
-    #00b4ff 100%
+    #1B8FEF 0%,
+    #1A6FD6 100%
   ) !important;
 }
 
@@ -157,7 +157,7 @@
   background: linear-gradient(
     135deg,
     rgba(0, 200, 83, 0.08),
-    rgba(13, 31, 56, 1) 60%
+    rgba(28, 31, 43, 1) 60%
   );
 }
 
@@ -171,7 +171,7 @@
   background: linear-gradient(
     135deg,
     rgba(239, 68, 68, 0.08),
-    rgba(13, 31, 56, 1) 60%
+    rgba(28, 31, 43, 1) 60%
   );
 }
 
@@ -185,7 +185,7 @@
   background: linear-gradient(
     135deg,
     rgba(255, 176, 32, 0.08),
-    rgba(13, 31, 56, 1) 60%
+    rgba(28, 31, 43, 1) 60%
   );
 }
 
@@ -195,11 +195,11 @@
 
 /* INFO */
 .Toastify__toast--info {
-  border-color: rgba(33, 150, 243, 0.35);
+  border-color: rgba(27, 143, 239, 0.35);
   background: linear-gradient(
     135deg,
-    rgba(33, 150, 243, 0.08),
-    rgba(13, 31, 56, 1) 60%
+    rgba(27, 143, 239, 0.08),
+    rgba(28, 31, 43, 1) 60%
   );
 }
 

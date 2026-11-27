@@ -9,7 +9,7 @@
 
 .tg-chat,
 .tg-loading {
-  --tg-bg: #0e1621;
+  --tg-bg: #13151D;
   --tg-sidebar: #17212b;
   --tg-panel: #17212b;
   --tg-header: #17212b;
@@ -60,7 +60,7 @@ body[data-theme='light'] .tg-loading {
   --tg-bubble-in: #ffffff;
   --tg-bubble-out: #effdde;
   --tg-accent: #3390ec;
-  --tg-accent-2: #168acd;
+  --tg-accent-2: #1A6FD6;
   --tg-online: #4dcd5e;
   --tg-text: #0a0a0a;
   --tg-text-2: #707579;
@@ -98,7 +98,7 @@ html:not(.dark) .tg-loading {
   --tg-bubble-in: #ffffff;
   --tg-bubble-out: #effdde;
   --tg-accent: #3390ec;
-  --tg-accent-2: #168acd;
+  --tg-accent-2: #1A6FD6;
   --tg-online: #4dcd5e;
   --tg-text: #0a0a0a;
   --tg-text-2: #707579;
@@ -1516,7 +1516,7 @@ html:not(.dark) .tg-loading {
   height: 100%;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #0d1a30, #1a0d30);
+  background: linear-gradient(135deg, #181B25, #1a0d30);
   color: rgba(255, 255, 255, 0.35);
 }
 
@@ -1743,8 +1743,8 @@ html:not(.dark) .tg-loading {
 /* ============================================================
    MEDIA: video muqovasi va to'liq ekranli ko'rish
    ============================================================ */
-.tg-media-video { position: relative; background: #0b1220; min-height: 140px; }
-.tg-media-video .tg-media-img { background: #0b1220; }
+.tg-media-video { position: relative; background: #11131A; min-height: 140px; }
+.tg-media-video .tg-media-img { background: #11131A; }
 .tg-play-overlay { pointer-events: none; }
 .tg-play-btn {
   display: grid; place-items: center;
@@ -1790,7 +1790,7 @@ html:not(.dark) .tg-loading {
    REELS kartochkasi — tik (9:16), nom pastda (Instagram uslubi)
    ============================================================ */
 .tg-reel-card { width: 200px; max-width: 62vw; padding: 0; overflow: hidden; border-radius: 16px; }
-.tg-reel-card__thumb { position: relative; aspect-ratio: 9 / 16; width: 100%; height: auto; background: #0b1220; }
+.tg-reel-card__thumb { position: relative; aspect-ratio: 9 / 16; width: 100%; height: auto; background: #11131A; }
 .tg-reel-card__thumb img,
 .tg-reel-card__thumb video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .tg-reel-card__placeholder { position: absolute; inset: 0; display: grid; place-items: center; color: #7fdcff; }
@@ -1818,14 +1818,14 @@ html:not(.dark) .tg-loading {
 .tg-swipe-reply {
   position: absolute; left: -40px; top: 50%; margin-top: -14px;
   display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
-  background: rgba(0, 180, 216, 0.18); color: #0096c7;
+  background: rgba(27, 143, 239, 0.18); color: #1B8FEF;
 }
 .tg-reply-preview { cursor: pointer; display: flex; align-items: center; gap: 8px; }
-.tg-reply-thumb { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex: 0 0 auto; background: #0b1220; }
+.tg-reply-thumb { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex: 0 0 auto; background: #11131A; }
 .tg-message-row.tg-flash .tg-bubble { animation: tgFlash 1.4s ease; }
 @keyframes tgFlash {
-  0%, 60% { box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.55); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+  0%, 60% { box-shadow: 0 0 0 3px rgba(27, 143, 239, 0.55); }
+  100% { box-shadow: 0 0 0 0 rgba(27, 143, 239, 0); }
 }
 
 /* Telefonda xabar menyusi — pastdan chiqadigan panel (uzoq bosish bilan ochiladi) */
@@ -1865,7 +1865,7 @@ html:not(.dark) .tg-loading {
   position: relative; display: block; width: 100%; aspect-ratio: 3 / 4; border-radius: 14px;
   border: 2px solid var(--tg-border, rgba(0,0,0,.1)); overflow: hidden; background-size: 80px 80px, cover !important;
 }
-.tg-wall-opt.is-active .tg-wall-opt__swatch { border-color: #00a6d6; box-shadow: 0 0 0 2px rgba(0, 166, 214, 0.35); }
+.tg-wall-opt.is-active .tg-wall-opt__swatch { border-color: #1B8FEF; box-shadow: 0 0 0 2px rgba(27, 143, 239, 0.35); }
 .tg-wall-opt__b1, .tg-wall-opt__b2 { position: absolute; height: 12px; border-radius: 8px; }
 .tg-wall-opt__b1 { left: 8px; top: 28%; width: 55%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .tg-wall-opt__b2 { right: 8px; top: 52%; width: 45%; background: #2aa9e0; }
@@ -1904,7 +1904,7 @@ div.tg-reply-bar { width: auto; }
   border: 0; border-radius: 10px; background: transparent; color: inherit; font: inherit; font-size: 15px; text-align: left; cursor: pointer;
 }
 .tg-head-menu__list button:hover { background: var(--tg-active, rgba(0,0,0,.05)); }
-.tg-wall-opt__swatch--photo { display: grid; place-items: center; color: #00a6d6; background: rgba(0, 166, 214, 0.08) !important; }
+.tg-wall-opt__swatch--photo { display: grid; place-items: center; color: #1B8FEF; background: rgba(27, 143, 239, 0.08) !important; }
 .tg-wall-opt__swatch--photo[style] { background-size: cover !important; }
 
 /* Ovozli xabar pufakchasi */
@@ -1925,7 +1925,7 @@ div.tg-reply-bar { width: auto; }
   display: inline-flex; align-items: center; gap: 2px; padding: 2px 7px; border-radius: 12px;
   background: var(--tg-active, rgba(0,0,0,.06)); font-size: 13px; cursor: pointer; user-select: none;
 }
-.tg-reaction.mine { background: rgba(0, 166, 214, 0.22); }
+.tg-reaction.mine { background: rgba(27, 143, 239, 0.22); }
 .tg-react-picker {
   position: absolute; bottom: 100%; margin-bottom: 6px; display: flex; gap: 4px; padding: 6px 8px;
   background: var(--tg-bg-elevated, #1c2733); border-radius: 20px; box-shadow: 0 8px 24px rgba(0,0,0,.25);
@@ -2062,7 +2062,7 @@ html.dark .tg-bubble.sent .tg-voice__wave i.on { background: #fff; }
 .tg-msg-menu .tg-msg-menu__reactions button:active { transform: scale(1.25); }
 
 /* ===== Telegram uslubidagi media yuklanishi ===== */
-.tg-media-wrap.is-loading { min-width: 200px; min-height: 160px; background: linear-gradient(135deg, #1b2d48, #0d1a2e); }
+.tg-media-wrap.is-loading { min-width: 200px; min-height: 160px; background: linear-gradient(135deg, #1b2d48, #181A24); }
 .tg-media-wrap.is-loading .tg-media-img { opacity: 0; }
 .tg-media-loader {
   position: absolute;
@@ -2188,9 +2188,9 @@ html.dark .tg-bubble.sent .tg-voice__wave i.on { background: #fff; }
   height: 76px;
   margin-top: -38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00D4FF 0%, #0A84FF 100%);
+  background: linear-gradient(135deg, #1A6FD6 0%, #1A6FD6 100%);
   color: #fff;
-  box-shadow: 0 0 0 8px rgba(0, 166, 214, 0.18), 0 8px 24px rgba(0, 120, 255, 0.35);
+  box-shadow: 0 0 0 8px rgba(27, 143, 239, 0.18), 0 8px 24px rgba(26, 111, 214, 0.35);
   pointer-events: none;
   z-index: 5;
   animation: tgRecMicIn 0.18s ease-out;

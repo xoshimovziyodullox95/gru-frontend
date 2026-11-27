@@ -8,7 +8,7 @@ import { getProductCategories } from '../services/categories';
 
 export const CATEGORY_LOOK = {
   elektronika: { icon: Smartphone, image: 'electronics', colors: ['#4b8dff', '#2a4fe0'] },
-  'maishiy-texnika': { icon: Refrigerator, image: 'appliances', colors: ['#00c8f8', '#1267d8'] },
+  'maishiy-texnika': { icon: Refrigerator, image: 'appliances', colors: ['#1B8FEF', '#1A6FD6'] },
   'uy-mebel': { icon: Sofa, image: 'furniture', colors: ['#ff9f43', '#e8590c'] },
   qurilish: { icon: Hammer, image: 'construction', colors: ['#ffb020', '#d97706'] },
   transport: { icon: Car, image: 'transport', colors: ['#5b6cff', '#3b2fd0'] },
@@ -16,13 +16,13 @@ export const CATEGORY_LOOK = {
   bolalar: { icon: Baby, image: 'kids', colors: ['#ff7ac6', '#d63384'] },
   gozallik: { icon: HeartPulse, image: 'beauty', colors: ['#c06cff', '#8b2fe0'] },
   oziqovqat: { icon: Apple, image: 'groceries', colors: ['#2fd576', '#0a9a52'] },
-  'biznes-jihozlar': { icon: Store, image: 'business', colors: ['#14b8a6', '#0f766e'] },
+  'biznes-jihozlar': { icon: Store, image: 'business', colors: ['#1B8FEF', '#0f766e'] },
   'qishloq-xojaligi': { icon: Tractor, image: 'agriculture', colors: ['#84cc16', '#4d7c0f'] },
   hayvonlar: { icon: PawPrint, image: 'animals', colors: ['#f59e0b', '#c2410c'] },
   'otdam-darom': { icon: Gift, image: 'freebies', colors: ['#3b82f6', '#1d4ed8'] },
   'sport-hobbi': { icon: Dumbbell, image: 'sports', colors: ['#f43f5e', '#be123c'] },
 };
-const FALLBACK_LOOK = { icon: Boxes, colors: ['#00c8f8', '#1267d8'] };
+const FALLBACK_LOOK = { icon: Boxes, colors: ['#1B8FEF', '#1A6FD6'] };
 
 // Backend hali yangilanmagan bo'lsa ham yangi kategoriyalar ro'yxatda ko'rinsin (e'lon joylash esa serverda tekshiriladi)
 const nm = (uz, ru, en) => ({ uz, ru, en });

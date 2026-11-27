@@ -33,7 +33,7 @@
 }
 
 .oh-back:hover {
-  background: rgba(33, 150, 243, 0.2);
+  background: rgba(27, 143, 239, 0.2);
 }
 
 .oh-header h1 {
@@ -81,8 +81,8 @@
 
 .oh-tab.is-on {
   color: #ffffff;
-  background: linear-gradient(135deg, #2196f3, #00b4ff);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.35);
+  background: linear-gradient(135deg, #1B8FEF, #1A6FD6);
+  box-shadow: 0 4px 12px rgba(27, 143, 239, 0.35);
 }
 
 /* Filter */
@@ -177,7 +177,7 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #2196f3, #00b4ff);
+  background: linear-gradient(135deg, #1B8FEF, #1A6FD6);
   color: #ffffff;
   display: grid;
   place-items: center;
@@ -337,7 +337,7 @@
   border-radius: 16px;
   background: linear-gradient(90deg,
     rgba(var(--surface-rgb), 0.5) 0%,
-    rgba(33, 150, 243, 0.1) 50%,
+    rgba(27, 143, 239, 0.1) 50%,
     rgba(var(--surface-rgb), 0.5) 100%);
   background-size: 200% 100%;
   animation: ohShimmer 1.5s infinite;

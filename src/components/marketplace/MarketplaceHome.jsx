@@ -247,7 +247,7 @@ export function RoleCarousel() {
         id: 'seller',
         image: ROLE_IMAGES.seller,
         icon: Store,
-        accent: '#00cfff',
+        accent: '#1B8FEF',
         title: t('home.providerBanner.sellerTitle', 'Tovaringiz bormi?'),
         subtitle: t('home.providerBanner.sellerSubtitle', 'Biz bilan soting'),
         path: '/add-equipment',
@@ -256,7 +256,7 @@ export function RoleCarousel() {
         id: 'business',
         image: ROLE_IMAGES.business,
         icon: Briefcase,
-        accent: '#22c995',
+        accent: '#1B8FEF',
         title: t('home.providerBanner.businessTitle', 'Biznesingiz bormi?'),
         subtitle: t(
           'home.providerBanner.businessSubtitle',

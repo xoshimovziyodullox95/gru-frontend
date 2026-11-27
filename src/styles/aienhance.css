@@ -9,8 +9,8 @@
   padding: 10px 12px;
   border-radius: 14px;
   background:
-    linear-gradient(var(--card, #0f1d33), var(--card, #0f1d33)) padding-box,
-    linear-gradient(120deg, #7c5cff, #00cfff 55%, #2ee6a6) border-box;
+    linear-gradient(var(--card, #1A1E29), var(--card, #1A1E29)) padding-box,
+    linear-gradient(120deg, #7c5cff, #1B8FEF 55%, #2ee6a6) border-box;
   border: 1.5px solid transparent;
 }
 
@@ -20,7 +20,7 @@
   gap: 6px;
   font-size: 0.8rem;
   font-weight: 800;
-  background: linear-gradient(120deg, #a48bff, #00cfff);
+  background: linear-gradient(120deg, #a48bff, #1B8FEF);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -52,8 +52,8 @@
 }
 .ai-chip svg { color: #a48bff; flex-shrink: 0; }
 .ai-chip:hover:not(:disabled) {
-  border-color: #00cfff;
-  background: color-mix(in srgb, #00cfff 14%, transparent);
+  border-color: #1B8FEF;
+  background: color-mix(in srgb, #1B8FEF 14%, transparent);
 }
 .ai-chip:active:not(:disabled) { transform: scale(0.96); }
 .ai-chip:disabled { opacity: 0.45; cursor: default; }
@@ -61,7 +61,7 @@
   opacity: 1;
   color: #fff;
   border-color: transparent;
-  background: linear-gradient(120deg, #7c5cff, #00cfff);
+  background: linear-gradient(120deg, #7c5cff, #1B8FEF);
 }
 .ai-chip.is-loading svg { color: #fff; }
 
@@ -75,8 +75,8 @@
 /* AI ishlayotganda chegaradagi gradient aylanib yuradi */
 .ai-bar.is-busy {
   background:
-    linear-gradient(var(--card, #0f1d33), var(--card, #0f1d33)) padding-box,
-    linear-gradient(120deg, #7c5cff, #00cfff, #2ee6a6, #7c5cff) border-box;
+    linear-gradient(var(--card, #1A1E29), var(--card, #1A1E29)) padding-box,
+    linear-gradient(120deg, #7c5cff, #1B8FEF, #2ee6a6, #7c5cff) border-box;
   background-size: 100% 100%, 300% 100%;
   animation: ai-bar-flow 1.6s linear infinite;
 }

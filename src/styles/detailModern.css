@@ -54,7 +54,7 @@
   display: grid; place-items: center;
   width: 40px; height: 40px; padding: 0;
   border: 0; border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92); color: #0b1a2e;
+  background: rgba(255, 255, 255, 0.92); color: #171A23;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   cursor: pointer;
 }
@@ -112,7 +112,7 @@
 /* ---------- Egasi ---------- */
 .dp-owner { flex-direction: row; align-items: center; gap: 12px; }
 .dp-owner__avatar { width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; object-fit: cover; }
-.dp-owner__avatar--letter { display: grid; place-items: center; background: linear-gradient(140deg, #05c8d4, #087ce1); color: #fff; font-size: 1.2rem; font-weight: 900; }
+.dp-owner__avatar--letter { display: grid; place-items: center; background: linear-gradient(140deg, #1B8FEF, #1A6FD6); color: #fff; font-size: 1.2rem; font-weight: 900; }
 .dp-owner__text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
 .dp-owner__text span { color: rgba(var(--text-rgb), 0.55); font-size: 0.78rem; }
 .dp-owner__text strong { overflow: hidden; font-size: 1rem; text-overflow: ellipsis; white-space: nowrap; }
@@ -147,7 +147,7 @@
 }
 .dp-btn:active { transform: scale(0.98); }
 .dp-btn:disabled { opacity: 0.55; cursor: not-allowed; }
-.dp-btn--primary { background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff; box-shadow: 0 6px 18px rgba(8, 140, 220, 0.28); }
+.dp-btn--primary { background: linear-gradient(100deg, #1B8FEF, #1A6FD6); color: #fff; box-shadow: 0 6px 18px rgba(26, 111, 214, 0.28); }
 .dp-btn--done { background: #16A34A; color: #fff; }
 .dp-btn--ghost { border: 1px solid rgba(var(--cyan-rgb), 0.35); background: transparent; color: var(--cyan); }
 .dp-btn--icon { flex: 0 0 50px; padding: 0; border: 1px solid rgba(var(--cyan-rgb), 0.35); background: rgba(var(--cyan-rgb), 0.08); color: var(--cyan); }
@@ -199,7 +199,7 @@
 
 /* Rasm yo'q — katta bo'sh logo o'rniga past banner */
 .dp-gallery--empty .dp-gallery__track { aspect-ratio: auto; height: 180px; }
-.dp-gallery--empty .dp-gallery__track { background: #0b1830; }
+.dp-gallery--empty .dp-gallery__track { background: #171A23; }
 .dp-gallery--empty .dp-gallery__slide img { object-fit: cover; padding: 0; }
 @media (min-width: 900px) {
   .dp-gallery--empty .dp-gallery__track { height: 260px; }
@@ -217,5 +217,5 @@
 }
 .dp-owner-sold { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .dp-owner-sold span { flex: 1 1 200px; font-size: 0.88rem; color: var(--textMuted, #5b6b80); }
-.dp-safety strong { display: flex; align-items: center; gap: 8px; color: #0089b3; }
+.dp-safety strong { display: flex; align-items: center; gap: 8px; color: #1A6FD6; }
 .dp-safety ul { margin: 8px 0 0; padding-left: 18px; font-size: 0.86rem; line-height: 1.55; color: var(--textMuted, #5b6b80); }

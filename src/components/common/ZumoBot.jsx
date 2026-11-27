@@ -27,7 +27,7 @@ export default function ZumoBot({ angle = null, size = 72, className = '', talki
       <defs>
         <linearGradient id={shell} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#3fe6ff" />
-          <stop offset="1" stopColor="#0a84e0" />
+          <stop offset="1" stopColor="#1A6FD6" />
         </linearGradient>
       </defs>
 
@@ -41,11 +41,11 @@ export default function ZumoBot({ angle = null, size = 72, className = '', talki
 
         {/* tana */}
         <rect x="23" y="51" width="34" height="21" rx="9" fill={fill} />
-        <path d="M34 58h12l-11 8h12" fill="none" stroke="#06223f" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M34 58h12l-11 8h12" fill="none" stroke="#1D202C" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
 
         {/* bosh */}
         <rect x="13" y="16" width="54" height="37" rx="15" fill={fill} />
-        <rect x="19" y="23" width="42" height="22" rx="11" fill="#06162e" />
+        <rect x="19" y="23" width="42" height="22" rx="11" fill="#141720" />
         <g className="zumo-bot__eyes">
           {isHappy || isLove ? (
             <>
@@ -127,10 +127,10 @@ export default function ZumoBot({ angle = null, size = 72, className = '', talki
           style={pointing ? { transform: `rotate(${angle}deg)` } : still ? { transform: 'rotate(75deg)' } : undefined}
         >
           <rect x="56" y="55.3" width="21" height="5.4" rx="2.7" fill={fill} />
-          <circle cx="79" cy="58" r="5.2" fill="#e8fbff" stroke="#0a84e0" strokeWidth="1.4" />
-          <rect x="82" y="56.5" width="8" height="3" rx="1.5" fill="#e8fbff" stroke="#0a84e0" strokeWidth="1" />
+          <circle cx="79" cy="58" r="5.2" fill="#e8fbff" stroke="#1A6FD6" strokeWidth="1.4" />
+          <rect x="82" y="56.5" width="8" height="3" rx="1.5" fill="#e8fbff" stroke="#1A6FD6" strokeWidth="1" />
         </g>
-        <circle cx="58" cy="58" r="3.4" fill="#0a84e0" />
+        <circle cx="58" cy="58" r="3.4" fill="#1A6FD6" />
       </g>
     </svg>
   );

@@ -304,7 +304,7 @@
   overflow-wrap: anywhere;
 }
 .lf-cats--grid .lf-cat.is-on { box-shadow: 0 0 0 1px var(--cyan) inset; }
-.lf-cats--grid .lf-cat.is-on .lf-cat__icon { background: var(--cyan); color: var(--on-accent, #04121f); }
+.lf-cats--grid .lf-cat.is-on .lf-cat__icon { background: var(--cyan); color: var(--on-accent, #0F1016); }
 @media (min-width: 640px) {
   .lf-cats--grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }

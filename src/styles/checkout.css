@@ -1,6 +1,6 @@
 .co-overlay {
   position: fixed; inset: 0; z-index: 2000; display: flex; align-items: flex-end; justify-content: center;
-  background: rgba(3, 12, 29, 0.55); animation: coFade 0.2s ease;
+  background: rgba(12, 13, 19, 0.55); animation: coFade 0.2s ease;
 }
 .co-sheet {
   display: flex; flex-direction: column; width: min(560px, 100%); max-height: 94dvh;
@@ -22,11 +22,11 @@
 }
 .co-option span { display: flex; flex-direction: column; gap: 2px; }
 .co-option small { color: var(--textMuted, #6b7a8f); font-size: 0.75rem; }
-.co-option.is-on { border-color: #00a6d6; background: rgba(0, 180, 216, 0.1); color: #0089b3; }
+.co-option.is-on { border-color: #1B8FEF; background: rgba(27, 143, 239, 0.1); color: #1A6FD6; }
 .co-option.is-on small { color: #2a8fb0; }
 .co-address {
   display: flex; align-items: center; gap: 10px; width: 100%; min-height: 50px; padding: 10px 12px; border-radius: 14px;
-  border: 1.5px dashed rgba(0, 166, 214, 0.5); background: rgba(0, 180, 216, 0.05); color: #0089b3;
+  border: 1.5px dashed rgba(27, 143, 239, 0.5); background: rgba(27, 143, 239, 0.05); color: #1A6FD6;
   font: inherit; text-align: left; cursor: pointer;
 }
 .co-address.is-set { border-style: solid; color: var(--text); }
@@ -49,7 +49,7 @@
 .co-error { margin: 0 0 8px; color: #e5484d; font-size: 0.85rem; font-weight: 600; }
 .co-submit {
   width: 100%; min-height: 52px; border: 0; border-radius: 14px; cursor: pointer;
-  background: linear-gradient(100deg, #08c8d4, #087ee0); color: #fff; font: inherit; font-size: 1rem; font-weight: 800;
+  background: linear-gradient(100deg, #1B8FEF, #1A6FD6); color: #fff; font: inherit; font-size: 1rem; font-weight: 800;
 }
 .co-submit:disabled { opacity: 0.6; }
 @keyframes coFade { from { opacity: 0; } to { opacity: 1; } }
@@ -57,7 +57,7 @@
 .co-phone-saved { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(0, 200, 120, 0.08); color: #00895a; }
 .co-phone-saved span { flex: 1; display: flex; flex-direction: column; gap: 2px; color: var(--text); }
 .co-phone-saved small { color: var(--textMuted, #5b6b80); font-size: 0.74rem; line-height: 1.35; }
-.co-phone-saved button { border: 0; background: transparent; color: #0089b3; font: inherit; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+.co-phone-saved button { border: 0; background: transparent; color: #1A6FD6; font: inherit; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 .co-field-hint { margin: 8px 2px 0; font-size: 0.75rem; line-height: 1.45; color: var(--textMuted, #6b7a8f); }
 .co-line { align-items: center; }
 .co-line__img { width: 40px; height: 40px; flex: 0 0 auto; border-radius: 10px; object-fit: cover; background: #eef3f8; }

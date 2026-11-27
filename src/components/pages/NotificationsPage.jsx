@@ -25,18 +25,18 @@ function NotificationRow({ notif, onClick, t }) {
     icon = <Heart size={16} color="#ff3040" />;
     text = t('notifications.liked');
   } else if (notif.type === 'comment') {
-    icon = <CommentIcon size={16} color="#0095f6" />;
+    icon = <CommentIcon size={16} color="#1A6FD6" />;
     const commentText = notif.commentText || '';
     text = t('notifications.commented') + (commentText ? `: "${commentText}"` : '');
   } else if (notif.type === 'follow') {
-    icon = <UserPlus size={16} color="#00b4d8" />;
+    icon = <UserPlus size={16} color="#1B8FEF" />;
     text = T('sizga obuna bo‘ldi');
   } else if (notif.type === 'reply') {
-    icon = <CommentIcon size={16} color="#0095f6" />;
+    icon = <CommentIcon size={16} color="#1A6FD6" />;
     const replyText = notif.replyText || '';
     text = t('notifications.replied') + (replyText ? `: "${replyText}"` : '');
   } else if (notif.type === 'order') {
-    icon = <ShoppingBag size={16} color="#00E5FF" />;
+    icon = <ShoppingBag size={16} color="#1A6FD6" />;
     const qty = notif.orderInfo?.quantity;
     const title = notif.orderInfo?.title || '';
     let orderText = t('notifications.ordered');
@@ -72,7 +72,7 @@ function NotificationRow({ notif, onClick, t }) {
       icon = <Star size={16} color="#fbbf24" />;
       text = notif.commentText;
     } else {
-      icon = <Wrench size={16} color="#00b4d8" />;
+      icon = <Wrench size={16} color="#1B8FEF" />;
       text = notif.commentText || t('notifications.newNotification');
     }
   } else if (notif.type === 'ad_broadcast') {

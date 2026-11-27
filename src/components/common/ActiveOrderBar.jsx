@@ -39,7 +39,7 @@ const STATUS_INFO = {
   },
   open: {
     icon: Loader2,
-    color: '#2196f3',
+    color: '#1B8FEF',
     spin: true,
     progress: 20,
   },

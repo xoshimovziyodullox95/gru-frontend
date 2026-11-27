@@ -35,7 +35,7 @@ export default function WarehouseManageView() {
           <thead><tr><th>{T('Nomi')}</th><th>{T('Manzil')}</th><th></th></tr></thead>
           <tbody>
             {warehouses.map((w) => (
-              <tr key={w._id} style={{ background: activeWarehouse?._id === w._id ? 'rgba(0,229,255,0.06)' : 'transparent' }}>
+              <tr key={w._id} style={{ background: activeWarehouse?._id === w._id ? 'rgba(26, 111, 214,0.06)' : 'transparent' }}>
                 <td>{w.name} {w.isDefault && <span className="pt-muted">(asosiy)</span>}</td>
                 <td className="pt-muted">{w.address || '—'}</td>
                 <td>

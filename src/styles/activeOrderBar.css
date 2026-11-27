@@ -4,7 +4,7 @@
    ============================================================ */
 
 .aob {
-  --aob-color: #2196f3;
+  --aob-color: #1B8FEF;
 
   position: relative;
 
@@ -21,8 +21,8 @@
 
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--aob-color) 15%, #0d1f38),
-    #0d1f38
+    color-mix(in srgb, var(--aob-color) 15%, #1C1F2B),
+    #1C1F2B
   );
   border: 1.5px solid color-mix(in srgb, var(--aob-color) 45%, transparent);
   border-radius: 14px;

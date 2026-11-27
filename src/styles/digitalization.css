@@ -45,8 +45,8 @@
   width: 100%;
   height: 100%;
   background-image:
-    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    linear-gradient(rgba(26, 111, 214,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 111, 214,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 .dig-hero-glow {
@@ -56,7 +56,7 @@
   transform: translateX(-50%);
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(26, 111, 214,0.08) 0%, transparent 70%);
   border-radius: 50%;
 }
 .dig-hero-content {
@@ -70,8 +70,8 @@
   align-items: center;
   gap: 6px;
   padding: 0.4rem 1.2rem;
-  background: rgba(0,229,255,0.1);
-  border: 1px solid rgba(0,229,255,0.3);
+  background: rgba(26, 111, 214,0.1);
+  border: 1px solid rgba(26, 111, 214,0.3);
   border-radius: 2rem;
   color: var(--cyan);
   font-size: 0.85rem;
@@ -120,7 +120,7 @@
   align-items: center;
   gap: 8px;
   padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, #0055b3, var(--cyan));
+  background: linear-gradient(135deg, #1A6FD6, var(--cyan));
   color: #fff;
   border: none;
   border-radius: 3rem;
@@ -128,11 +128,11 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 8px 32px rgba(0,229,255,0.25);
+  box-shadow: 0 8px 32px rgba(26, 111, 214,0.25);
 }
 .dig-cta-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0,229,255,0.4);
+  box-shadow: 0 12px 40px rgba(26, 111, 214,0.4);
 }
 
 /* ===== Umumiy section sarlavhalari ===== */
@@ -217,7 +217,7 @@
 .dig-standard-icon {
   display: inline-flex;
   padding: 0.8rem;
-  background: rgba(0,229,255,0.1);
+  background: rgba(26, 111, 214,0.1);
   border-radius: 1rem;
   color: var(--cyan);
   margin-bottom: 1rem;
@@ -273,7 +273,7 @@
 .dig-software-icon {
   display: inline-flex;
   padding: 0.7rem;
-  background: rgba(0,229,255,0.1);
+  background: rgba(26, 111, 214,0.1);
   border-radius: 0.8rem;
   color: var(--cyan);
   margin-bottom: 1rem;
@@ -470,7 +470,7 @@
 .dig-submit-btn {
   width: 100%;
   padding: 0.9rem;
-  background: linear-gradient(135deg, #0055b3, var(--cyan));
+  background: linear-gradient(135deg, #1A6FD6, var(--cyan));
   color: #fff;
   border: none;
   border-radius: 0.8rem;

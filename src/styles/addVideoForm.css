@@ -4,8 +4,8 @@
    ============================================================ */
 
 .avf-page {
-  --avf-bg: var(--bg, #031326);
-  --avf-card: var(--card, #071d33);
+  --avf-bg: var(--bg, #11131A);
+  --avf-card: var(--card, #181B25);
   --avf-text: var(--text, #f4fbff);
 
   --avf-muted:
@@ -17,18 +17,18 @@
   --avf-border:
     var(
       --border,
-      rgba(0, 207, 255, 0.17)
+      rgba(27, 143, 239, 0.17)
     );
 
   --avf-accent:
     var(
       --primary-color,
-      var(--cyan, #00cfff)
+      var(--cyan, #1B8FEF)
     );
 
-  --avf-blue: #1685ff;
-  --avf-blue-dark: #075cca;
-  --avf-green: #1bc991;
+  --avf-blue: #1A6FD6;
+  --avf-blue-dark: #1A6FD6;
+  --avf-green: #1B8FEF;
   --avf-danger: #ff4d5f;
 
   --avf-shadow:
@@ -77,7 +77,7 @@
     ),
     radial-gradient(
       circle at 82% 75%,
-      rgba(22, 133, 255, 0.08),
+      rgba(26, 111, 214, 0.08),
       transparent 36%
     ),
     var(--avf-bg);
@@ -507,9 +507,9 @@
   padding: 5px 9px;
 
   color: var(--text);
-  background: rgba(0, 22, 41, 0.68);
+  background: rgba(17, 19, 27, 0.68);
 
-  border: 1px solid rgba(0, 207, 255, 0.25);
+  border: 1px solid rgba(27, 143, 239, 0.25);
   border-radius: 999px;
 
   backdrop-filter: blur(10px);
@@ -528,7 +528,7 @@
   padding: 0;
 
   color: var(--text);
-  background: rgba(0, 12, 24, 0.7);
+  background: rgba(10, 11, 15, 0.7);
 
   border: 1px solid rgba(var(--text-rgb), 0.13);
   border-radius: 50%;

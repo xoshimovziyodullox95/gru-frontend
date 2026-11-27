@@ -69,7 +69,7 @@
   background: linear-gradient(
     135deg,
     rgba(0, 200, 83, 0.18),
-    rgba(0, 191, 165, 0.08)
+    rgba(27, 143, 239, 0.08)
   );
   border-bottom: 1px solid rgba(0, 200, 83, 0.2);
 }
@@ -139,10 +139,10 @@
 
   background: linear-gradient(
     135deg,
-    rgba(33, 150, 243, 0.1),
+    rgba(27, 143, 239, 0.1),
     rgba(100, 181, 246, 0.05)
   );
-  border: 1px solid rgba(33, 150, 243, 0.25);
+  border: 1px solid rgba(27, 143, 239, 0.25);
   border-radius: 16px;
 }
 
@@ -154,14 +154,14 @@
   place-items: center;
 
   color: #ffffff;
-  background: linear-gradient(135deg, #2196f3, #00b4ff);
+  background: linear-gradient(135deg, #1B8FEF, #1A6FD6);
   border-radius: 16px;
 
   font-size: 1.3rem;
   font-weight: 800;
 
   flex-shrink: 0;
-  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+  box-shadow: 0 6px 16px rgba(27, 143, 239, 0.4);
 }
 
 .io-master__info {
@@ -215,7 +215,7 @@
   background: linear-gradient(
     135deg,
     rgba(0, 200, 83, 0.12),
-    rgba(0, 191, 165, 0.06)
+    rgba(27, 143, 239, 0.06)
   );
   border: 1px solid rgba(0, 200, 83, 0.3);
   border-radius: 16px;
@@ -327,8 +327,8 @@
 
   padding: 10px 14px;
 
-  background: rgba(33, 150, 243, 0.08);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  background: rgba(27, 143, 239, 0.08);
+  border: 1px solid rgba(27, 143, 239, 0.2);
   border-radius: 10px;
 
   color: #93c5fd;
@@ -390,7 +390,7 @@
 
 .io-btn--accept {
   color: #ffffff;
-  background: linear-gradient(135deg, #00c853, #00bfa5);
+  background: linear-gradient(135deg, #00c853, #1B8FEF);
   box-shadow:
     0 8px 20px rgba(0, 200, 83, 0.4),
     inset 0 1px 0 rgba(var(--text-rgb), 0.2);
@@ -418,7 +418,7 @@
 .io-progress__bar {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #00c853, #00bfa5);
+  background: linear-gradient(90deg, #00c853, #1B8FEF);
   transform-origin: left;
   animation: ioProgress 60s linear forwards;
 }

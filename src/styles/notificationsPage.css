@@ -11,7 +11,7 @@
   gap: 12px;
   padding: 16px;
   padding-top: calc(16px + env(safe-area-inset-top));
-  border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+  border-bottom: 1px solid rgba(26, 111, 214, 0.15);
   position: sticky;
   top: 0;
   background: var(--bg-color, var(--bg));
@@ -40,8 +40,8 @@
 }
 
 .notif-mark-all-btn {
-  background: rgba(0, 229, 255, 0.1);
-  color: #00E5FF;
+  background: rgba(26, 111, 214, 0.1);
+  color: #1A6FD6;
 }
 
 .notifications-list {
@@ -65,7 +65,7 @@
 }
 
 .notif-row--unread {
-  background: rgba(0, 229, 255, 0.05);
+  background: rgba(26, 111, 214, 0.05);
 }
 
 .notif-row-avatar {
@@ -100,7 +100,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #00E5FF;
+  background: #1A6FD6;
   flex-shrink: 0;
 }
 
@@ -119,8 +119,8 @@
 .loader {
   width: 24px;
   height: 24px;
-  border: 3px solid rgba(0, 229, 255, 0.2);
-  border-top-color: #00E5FF;
+  border: 3px solid rgba(26, 111, 214, 0.2);
+  border-top-color: #1A6FD6;
   border-radius: 50%;
   animation: notif-spin 0.7s linear infinite;
 }

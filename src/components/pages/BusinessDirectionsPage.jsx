@@ -16,7 +16,7 @@ const CATEGORY_META = {
   Agro: { icon: Sprout, color: '#20b86a' },
   'Restoran/Kafe': { icon: UtensilsCrossed, color: '#ec405d' },
   Klinika: { icon: HeartPulse, color: '#315fe1' },
-  Service: { icon: Wrench, color: '#0da99d' },
+  Service: { icon: Wrench, color: '#1B8FEF' },
   "Ta'lim": { icon: GraduationCap, color: '#7547d8' },
   "Do'konlar": { icon: Store, color: '#ed690d' },
   "Ko'ngilochar": { icon: PartyPopper, color: '#c826a5' },

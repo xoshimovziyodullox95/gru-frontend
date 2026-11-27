@@ -55,8 +55,8 @@
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.92);
-  color: #0A1628;
-  box-shadow: 0 2px 8px rgba(10, 22, 40, 0.18);
+  color: #14161F;
+  box-shadow: 0 2px 8px rgba(20, 22, 31, 0.18);
   cursor: pointer;
   transition: transform 0.2s ease, color 0.2s ease;
 }
@@ -86,8 +86,8 @@
   color: #fff;
 }
 .uc-badge--top { background: linear-gradient(135deg, #ff9f1c, #ff5e3a); }
-.uc-badge--verified { background: linear-gradient(135deg, #00C2FF, #0A84FF); }
-.uc-badge--type { background: rgba(10, 22, 40, 0.72); backdrop-filter: blur(6px); }
+.uc-badge--verified { background: linear-gradient(135deg, #1B8FEF, #1A6FD6); }
+.uc-badge--type { background: rgba(20, 22, 31, 0.72); backdrop-filter: blur(6px); }
 
 /* ===== Matn: narx → nom → qo'shimcha → bitta amal ===== */
 .uc-body {
@@ -149,13 +149,13 @@
   padding: 0 10px;
   border: none;
   border-radius: 11px;
-  background: linear-gradient(135deg, #00D4FF 0%, #0A84FF 100%);
+  background: linear-gradient(135deg, #1A6FD6 0%, #1A6FD6 100%);
   color: #fff;
   font: inherit;
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 150, 255, 0.25);
+  box-shadow: 0 4px 12px rgba(27, 143, 239, 0.25);
   transition: filter 0.2s, transform 0.15s;
 }
 .uc-btn:hover { filter: brightness(1.06); }
@@ -208,11 +208,11 @@
   position: relative;
   padding: 1.2rem 1.2rem 1.3rem;
   background: var(--bg);
-  border: 1px solid rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(26, 111, 214, 0.15);
   overflow: hidden;
 }
 .bsc-chip-card:hover {
-  border-color: rgba(0, 229, 255, 0.4);
+  border-color: rgba(26, 111, 214, 0.4);
 }
 
 /* Fon naqshi - konsentrik yoylar */
@@ -223,7 +223,7 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(0, 229, 255, 0.14) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(26, 111, 214, 0.14) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -329,7 +329,7 @@
   height: 38px;
   border-radius: 50%;
   background: var(--cyan);
-  color: #071022;
+  color: #101218;
   display: flex;
   align-items: center;
   justify-content: center;

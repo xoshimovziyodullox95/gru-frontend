@@ -9,12 +9,12 @@ import {
 
 // Yo'nalish: ikonka va rang (fon — shu rangning och tusi)
 export const DIRECTION_STYLE = {
-  'maishiy-va-uy-xizmatlari': { Icon: Home, color: '#0096c7' },
+  'maishiy-va-uy-xizmatlari': { Icon: Home, color: '#1B8FEF' },
   'tozalash-va-sanitariya': { Icon: Sparkles, color: '#10b981' },
   'qurilish-va-tamirlash': { Icon: HardHat, color: '#f59e0b' },
   'talim-va-psixologiya': { Icon: GraduationCap, color: '#6366f1' },
   'oila-va-parvarish': { Icon: Heart, color: '#ec4899' },
-  'transport-va-maxsus-texnika': { Icon: Truck, color: '#0ea5e9' },
+  'transport-va-maxsus-texnika': { Icon: Truck, color: '#1A6FD6' },
   'biznes-huquq-va-it': { Icon: Briefcase, color: '#475569' },
   'gozallik-moda-va-tadbirlar': { Icon: Scissors, color: '#a855f7' },
   'boshqa-xizmatlar': { Icon: LayoutGrid, color: '#64748b' },

@@ -293,7 +293,7 @@
 }
 
 .physic-card-modern:hover .physic-card-badge {
-  background: rgba(0, 229, 255, 0.25);
+  background: rgba(26, 111, 214, 0.25);
   border-color: var(--cyan);
   color: var(--cyan);
 }
@@ -343,15 +343,15 @@
 }
 
 .physic-btn-coming {
-  background: rgba(0, 229, 255, 0.15);
-  border-color: rgba(0, 229, 255, 0.3);
+  background: rgba(26, 111, 214, 0.15);
+  border-color: rgba(26, 111, 214, 0.3);
   color: var(--cyan);
 }
 
 .physic-btn-coming:hover {
-  background: rgba(0, 229, 255, 0.25);
+  background: rgba(26, 111, 214, 0.25);
   border-color: var(--cyan);
-  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.2);
+  box-shadow: 0 8px 25px rgba(26, 111, 214, 0.2);
 }
 
 /* ============================================================
@@ -599,15 +599,15 @@
 }
 
 .physic-btn-coming {
-  background: rgba(0, 229, 255, 0.15);
-  border-color: rgba(0, 229, 255, 0.3);
+  background: rgba(26, 111, 214, 0.15);
+  border-color: rgba(26, 111, 214, 0.3);
   color: var(--cyan);
 }
 
 .physic-btn-coming:hover {
-  background: rgba(0, 229, 255, 0.25);
+  background: rgba(26, 111, 214, 0.25);
   border-color: var(--cyan);
-  box-shadow: 0 8px 25px rgba(0, 229, 255, 0.2);
+  box-shadow: 0 8px 25px rgba(26, 111, 214, 0.2);
 }
 
 /* ===== RESPONSIVE ===== */

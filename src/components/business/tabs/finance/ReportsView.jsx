@@ -46,8 +46,8 @@ export default function ReportsView() {
       {
         label: T('Kirim'),
         data: cashflow.map((d) => d.cashIn),
-        borderColor: '#00E5FF',
-        backgroundColor: 'rgba(0,229,255,0.1)',
+        borderColor: '#1A6FD6',
+        backgroundColor: 'rgba(26, 111, 214,0.1)',
         fill: true,
         tension: 0.4,
       },
@@ -76,7 +76,7 @@ export default function ReportsView() {
     <div>
       {/* ==================== P&L KARTOCHKALARI ==================== */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 24 }}>
-        <SummaryCard label={T('Sotuvlar')} value={pnl?.totalRevenue} color="#00E5FF" />
+        <SummaryCard label={T('Sotuvlar')} value={pnl?.totalRevenue} color="#1A6FD6" />
         <SummaryCard label={T('Tannarx')} value={pnl?.totalCost} color="#ffaa00" />
         <SummaryCard label={T('Yalpi foyda')} value={pnl?.grossProfit} color="#00c864" />
         <SummaryCard label={T('Xarajatlar')} value={pnl?.totalExpenses} color="#ff5c5c" />

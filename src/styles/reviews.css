@@ -84,7 +84,7 @@
 }
 .rv-card__head { display: flex; align-items: center; gap: 10px; }
 .rv-card__avatar { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; object-fit: cover; }
-.rv-card__avatar--letter { display: grid; place-items: center; background: linear-gradient(140deg, #05c8d4, #087ce1); color: #fff; font-weight: 800; }
+.rv-card__avatar--letter { display: grid; place-items: center; background: linear-gradient(140deg, #1B8FEF, #1A6FD6); color: #fff; font-weight: 800; }
 .rv-card__who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .rv-card__who strong { overflow: hidden; color: var(--text); font-size: 0.92rem; text-overflow: ellipsis; white-space: nowrap; }
 .rv-card__who span { color: rgba(var(--text-rgb), 0.55); font-size: 0.76rem; }
@@ -123,7 +123,7 @@
 .rv-viewer__count { position: absolute; bottom: calc(18px + env(safe-area-inset-bottom)); color: #fff; font-size: 0.85rem; }
 
 /* ---------- Sharh yozish oynasi ---------- */
-.rv-sheet { position: fixed; inset: 0; z-index: 1900; display: flex; align-items: flex-end; justify-content: center; background: rgba(4, 12, 26, 0.55); }
+.rv-sheet { position: fixed; inset: 0; z-index: 1900; display: flex; align-items: flex-end; justify-content: center; background: rgba(11, 13, 18, 0.55); }
 .rv-sheet__panel {
   display: flex; flex-direction: column;
   width: min(100%, 560px); max-height: 92vh;

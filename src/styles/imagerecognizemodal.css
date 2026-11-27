@@ -44,8 +44,8 @@
 }
 .irm-orb-1 {
   width: 16px; height: 16px; top: 0; left: 10px;
-  background: radial-gradient(circle at 30% 30%, #00e5ff, transparent 70%);
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+  background: radial-gradient(circle at 30% 30%, #1A6FD6, transparent 70%);
+  box-shadow: 0 0 10px rgba(26, 111, 214, 0.6);
 }
 .irm-orb-2 {
   width: 12px; height: 12px; bottom: 2px; left: 0;
@@ -54,8 +54,8 @@
 }
 .irm-orb-3 {
   width: 10px; height: 10px; bottom: 2px; right: 0;
-  background: radial-gradient(circle at 30% 30%, #0096ff, transparent 70%);
-  box-shadow: 0 0 8px rgba(0, 150, 255, 0.6);
+  background: radial-gradient(circle at 30% 30%, #1B8FEF, transparent 70%);
+  box-shadow: 0 0 8px rgba(27, 143, 239, 0.6);
 }
 
 .irm-products-list {

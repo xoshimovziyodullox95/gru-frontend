@@ -32,10 +32,10 @@
   overflow: hidden;
   border-radius: 18px;
   background: #fff;
-  color: var(--pcg-from, #00a6cc);
+  color: var(--pcg-from, #1A6FD6);
   box-shadow:
-    0 6px 16px rgba(12, 35, 62, 0.14),
-    0 0 0 1.5px color-mix(in srgb, var(--pcg-from, #00a6cc) 25%, transparent);
+    0 6px 16px rgba(30, 34, 47, 0.14),
+    0 0 0 1.5px color-mix(in srgb, var(--pcg-from, #1A6FD6) 25%, transparent);
   isolation: isolate;
   transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
 }
@@ -58,8 +58,8 @@
   .pcg-tile:hover .pcg-tile__media {
     transform: translateY(-3px) scale(1.05);
     box-shadow:
-      0 12px 24px rgba(12, 35, 62, 0.3),
-      0 0 0 2px var(--pcg-from, #00a6cc);
+      0 12px 24px rgba(30, 34, 47, 0.3),
+      0 0 0 2px var(--pcg-from, #1A6FD6);
   }
   .pcg-tile:hover .pcg-tile__image { transform: scale(1.1); }
 }

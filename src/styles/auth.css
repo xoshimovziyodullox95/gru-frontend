@@ -266,13 +266,13 @@
 /* Tugma (Sign in / Sign up) */
 .auth-button {
   width: 100%;
-  background: linear-gradient(95deg, #0088CC, var(--cyan));
+  background: linear-gradient(95deg, #1A6FD6, var(--cyan));
   border: none;
   border-radius: 2.5rem;
   padding: 0.8rem;
   font-size: 1rem;
   font-weight: 600;
-  color: #0A1128;
+  color: #12151D;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -285,7 +285,7 @@
 .auth-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(var(--cyan-rgb), 0.3);
-  background: linear-gradient(95deg, var(--cyan), #0088CC);
+  background: linear-gradient(95deg, var(--cyan), #1A6FD6);
 }
 
 /* Xatolik va muvaffaqiyat xabarlari */
@@ -405,6 +405,6 @@
   margin: 4px 0 14px; font-size: 0.85rem; line-height: 1.45; color: var(--textMuted, #5b6b80);
   cursor: pointer; text-align: left;
 }
-.auth-consent input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; accent-color: #00a6d6; }
-.auth-consent a, .auth-consent-note a { color: #00a6d6; font-weight: 600; text-decoration: none; }
+.auth-consent input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; accent-color: #1B8FEF; }
+.auth-consent a, .auth-consent-note a { color: #1B8FEF; font-weight: 600; text-decoration: none; }
 .auth-consent-note { margin: 8px 0 0; font-size: 0.75rem; line-height: 1.45; color: var(--textMuted, #7a8799); text-align: center; }

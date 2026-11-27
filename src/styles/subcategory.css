@@ -31,15 +31,15 @@
   font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.3s ease;
-  border: 1px solid rgba(0, 150, 255, 0.2);
+  border: 1px solid rgba(27, 143, 239, 0.2);
 }
 
 .sub-back-btn:hover {
-  background: rgba(0, 150, 255, 0.2);
+  background: rgba(27, 143, 239, 0.2);
   color: #fff;
   transform: translateX(-4px);
   border-color: var(--cyan);
-  box-shadow: 0 0 20px rgba(0, 150, 255, 0.15);
+  box-shadow: 0 0 20px rgba(27, 143, 239, 0.15);
 }
 
 .sub-hero {
@@ -87,14 +87,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(0, 150, 255, 0.15);
+  background: rgba(27, 143, 239, 0.15);
   backdrop-filter: blur(8px);
   padding: 0.4rem 1.2rem;
   border-radius: 2rem;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--cyan);
-  border: 1px solid rgba(0, 229, 255, 0.3);
+  border: 1px solid rgba(26, 111, 214, 0.3);
 }
 
 .sub-premium-lock {
@@ -174,8 +174,8 @@
 .sub-type-filter > button.active {
   background: var(--cyan);
   border-color: var(--cyan);
-  color: #071022;
-  box-shadow: 0 4px 16px rgba(0, 200, 255, 0.25);
+  color: #101218;
+  box-shadow: 0 4px 16px rgba(27, 143, 239, 0.25);
 }
 .sub-type-filter > button svg {
   flex-shrink: 0;
@@ -215,7 +215,7 @@
   color: var(--text);
 }
 .sub-food-cat-filter > button.active {
-  background: rgba(0, 200, 255, 0.12);
+  background: rgba(27, 143, 239, 0.12);
   border-color: var(--cyan);
   color: var(--cyan);
   font-weight: 700;
@@ -281,7 +281,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: rgba(0, 150, 255, 0.05);
+  background: rgba(27, 143, 239, 0.05);
   margin-bottom: 1rem;
 }
 
@@ -306,7 +306,7 @@
 .sub-loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(0, 229, 255, 0.15);
+  border: 4px solid rgba(26, 111, 214, 0.15);
   border-top-color: var(--cyan);
   border-radius: 50%;
   animation: spin 1s linear infinite;

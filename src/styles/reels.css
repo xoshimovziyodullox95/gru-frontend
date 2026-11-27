@@ -4,8 +4,8 @@
    ============================================================ */
 
 .reels-section {
-  --reel-bg: var(--bg, #031326);
-  --reel-card: var(--card, #071d33);
+  --reel-bg: var(--bg, #11131A);
+  --reel-card: var(--card, #181B25);
   --reel-text: var(--text, #f4fbff);
 
   --reel-muted:
@@ -17,18 +17,18 @@
   --reel-border:
     var(
       --border,
-      rgba(0, 207, 255, 0.17)
+      rgba(27, 143, 239, 0.17)
     );
 
   --reel-accent:
     var(
       --primary-color,
-      var(--cyan, #00cfff)
+      var(--cyan, #1B8FEF)
     );
 
-  --reel-blue: #1685ff;
+  --reel-blue: #1A6FD6;
   --reel-danger: #ff4d5f;
-  --reel-deep: #020c18;
+  --reel-deep: #0A0C10;
 
   width: 100%;
   padding: 28px 0;
@@ -156,7 +156,7 @@
   overflow: hidden;
 
   color: #ffffff;
-  background: #04101e;
+  background: #0E0F15;
 
   border: 1px solid
     color-mix(
@@ -242,7 +242,7 @@
 
   object-fit: cover;
 
-  background: #04101e;
+  background: #0E0F15;
 }
 
 .reel-card__placeholder {
@@ -255,13 +255,13 @@
   background:
     radial-gradient(
       circle at 50% 40%,
-      rgba(0, 207, 255, 0.13),
+      rgba(27, 143, 239, 0.13),
       transparent 38%
     ),
     linear-gradient(
       145deg,
-      #09223b,
-      #03101f
+      #1C202C,
+      #0E0F15
     );
 }
 
@@ -324,16 +324,16 @@
   margin-left: auto;
 
   color: #dff8ff;
-  background: rgba(2, 17, 31, 0.76);
+  background: rgba(14, 15, 21, 0.76);
 
-  border: 1px solid rgba(0, 207, 255, 0.24);
+  border: 1px solid rgba(27, 143, 239, 0.24);
 
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
 }
 
 .reel-priority-badge {
-  color: #03111f;
+  color: #0E1016;
   background: var(--reel-accent);
 }
 
@@ -354,7 +354,7 @@
   justify-content: center;
 
   color: #ffffff;
-  background: rgba(0, 15, 29, 0.58);
+  background: rgba(12, 13, 19, 0.58);
 
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 50%;
@@ -381,7 +381,7 @@
     color-mix(
       in srgb,
       var(--reel-accent) 48%,
-      rgba(0, 15, 29, 0.7)
+      rgba(12, 13, 19, 0.7)
     );
 
   transform:
@@ -462,10 +462,10 @@
   --reel-accent:
     var(
       --primary-color,
-      var(--cyan, #00cfff)
+      var(--cyan, #1B8FEF)
     );
 
-  --reel-blue: #1685ff;
+  --reel-blue: #1A6FD6;
   --reel-danger: #ff4d5f;
 
   position: fixed;
@@ -479,7 +479,7 @@
   background:
     radial-gradient(
       circle at center,
-      rgba(7, 36, 56, 0.42),
+      rgba(28, 31, 42, 0.42),
       transparent 45%
     ),
     rgba(0, 4, 11, 0.98);
@@ -592,9 +592,9 @@ iframe.reel-modal-video {
   padding: 0;
 
   color: #ffffff;
-  background: rgba(4, 25, 42, 0.78);
+  background: rgba(20, 22, 30, 0.78);
 
-  border: 1px solid rgba(0, 207, 255, 0.24);
+  border: 1px solid rgba(27, 143, 239, 0.24);
   border-radius: 50%;
 
   backdrop-filter: blur(12px);
@@ -609,8 +609,8 @@ iframe.reel-modal-video {
 }
 
 .reel-modal-close:hover {
-  background: rgba(0, 138, 203, 0.75);
-  border-color: rgba(0, 207, 255, 0.48);
+  background: rgba(26, 111, 214, 0.75);
+  border-color: rgba(27, 143, 239, 0.48);
   transform: scale(1.06);
 }
 
@@ -636,9 +636,9 @@ iframe.reel-modal-video {
   padding: 0;
 
   color: #ffffff;
-  background: rgba(4, 31, 51, 0.78);
+  background: rgba(24, 27, 37, 0.78);
 
-  border: 1px solid rgba(0, 207, 255, 0.38);
+  border: 1px solid rgba(27, 143, 239, 0.38);
   border-radius: 50%;
 
   backdrop-filter: blur(10px);
@@ -654,7 +654,7 @@ iframe.reel-modal-video {
 }
 
 .reel-modal-nav:hover {
-  background: rgba(0, 142, 207, 0.78);
+  background: rgba(26, 111, 214, 0.78);
 
   transform:
     translateX(-50%)
@@ -699,7 +699,7 @@ iframe.reel-modal-video {
   padding: 0;
 
   color: #ffffff;
-  background: rgba(0, 12, 24, 0.55);
+  background: rgba(10, 11, 15, 0.55);
 
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
@@ -719,8 +719,8 @@ iframe.reel-modal-video {
 }
 
 .reel-player-sound:hover {
-  background: rgba(0, 119, 178, 0.68);
-  border-color: rgba(0, 207, 255, 0.34);
+  background: rgba(26, 111, 214, 0.68);
+  border-color: rgba(27, 143, 239, 0.34);
   transform: scale(1.06);
 }
 
@@ -745,7 +745,7 @@ iframe.reel-modal-video {
   justify-content: center;
 
   color: #ffffff;
-  background: rgba(0, 13, 25, 0.58);
+  background: rgba(10, 12, 16, 0.58);
 
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
@@ -790,7 +790,7 @@ iframe.reel-modal-video {
   padding: 0;
 
   color: #ffffff;
-  background: rgba(0, 12, 24, 0.55);
+  background: rgba(10, 11, 15, 0.55);
 
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 50%;
@@ -936,7 +936,7 @@ iframe.reel-modal-video {
   opacity: 1;
 
   box-shadow:
-    0 0 0 3px rgba(0, 207, 255, 0.2);
+    0 0 0 3px rgba(27, 143, 239, 0.2);
 }
 
 /* Firefox */
@@ -1068,9 +1068,9 @@ iframe.reel-modal-video {
   padding: 3px 7px;
 
   color: #dff8ff;
-  background: rgba(0, 139, 205, 0.22);
+  background: rgba(26, 111, 214, 0.22);
 
-  border: 1px solid rgba(0, 207, 255, 0.22);
+  border: 1px solid rgba(27, 143, 239, 0.22);
   border-radius: 999px;
 
   font-size: 0.61rem;
@@ -1147,7 +1147,7 @@ iframe.reel-modal-video {
   justify-content: center;
 
   color: #ffffff;
-  background: rgba(0, 15, 28, 0.5);
+  background: rgba(12, 13, 18, 0.5);
 
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 15px;
@@ -1164,8 +1164,8 @@ iframe.reel-modal-video {
 
 .reel-action:hover .reel-action__icon {
   color: var(--reel-accent);
-  background: rgba(0, 121, 181, 0.45);
-  border-color: rgba(0, 207, 255, 0.3);
+  background: rgba(26, 111, 214, 0.45);
+  border-color: rgba(27, 143, 239, 0.3);
 
   transform: scale(1.06);
 }
@@ -1176,8 +1176,8 @@ iframe.reel-modal-video {
 
 .reel-action.is-liked .reel-action__icon {
   color: var(--reel-accent);
-  background: rgba(0, 159, 219, 0.26);
-  border-color: rgba(0, 207, 255, 0.38);
+  background: rgba(27, 143, 239, 0.26);
+  border-color: rgba(27, 143, 239, 0.38);
 }
 
 .reel-action.is-disliked .reel-action__icon {
@@ -1221,11 +1221,11 @@ iframe.reel-modal-video {
   background:
     linear-gradient(
       180deg,
-      #092139,
-      #031221
+      #1C1F2A,
+      #0F1117
     );
 
-  border-top: 1px solid rgba(0, 207, 255, 0.2);
+  border-top: 1px solid rgba(27, 143, 239, 0.2);
   border-radius: 24px 24px 0 0;
 
   box-shadow:
@@ -1270,7 +1270,7 @@ iframe.reel-modal-video {
 
   padding: 9px 15px 12px;
 
-  border-bottom: 1px solid rgba(0, 207, 255, 0.1);
+  border-bottom: 1px solid rgba(27, 143, 239, 0.1);
 }
 
 .reel-comments-header strong {
@@ -1308,7 +1308,7 @@ iframe.reel-modal-video {
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color:
-    rgba(0, 207, 255, 0.25)
+    rgba(27, 143, 239, 0.25)
     transparent;
 }
 
@@ -1317,7 +1317,7 @@ iframe.reel-modal-video {
 }
 
 .reel-comments-list::-webkit-scrollbar-thumb {
-  background: rgba(0, 207, 255, 0.25);
+  background: rgba(27, 143, 239, 0.25);
   border-radius: 999px;
 }
 
@@ -1360,7 +1360,7 @@ iframe.reel-modal-video {
   margin-left: 35px;
   padding-left: 10px;
 
-  border-left: 2px solid rgba(0, 207, 255, 0.12);
+  border-left: 2px solid rgba(27, 143, 239, 0.12);
 }
 
 .reel-comment__row img {
@@ -1371,7 +1371,7 @@ iframe.reel-modal-video {
 
   object-fit: cover;
 
-  border: 1px solid rgba(0, 207, 255, 0.18);
+  border: 1px solid rgba(27, 143, 239, 0.18);
   border-radius: 50%;
 }
 
@@ -1444,7 +1444,7 @@ iframe.reel-modal-video {
   color: #ffffff;
   background: rgba(255, 255, 255, 0.07);
 
-  border: 1px solid rgba(0, 207, 255, 0.13);
+  border: 1px solid rgba(27, 143, 239, 0.13);
   border-radius: 999px;
   outline: 0;
 
@@ -1459,7 +1459,7 @@ iframe.reel-modal-video {
 
 .reel-reply-form input:focus,
 .reel-comment-form input:focus {
-  border-color: rgba(0, 207, 255, 0.5);
+  border-color: rgba(27, 143, 239, 0.5);
 }
 
 .reel-reply-form input::placeholder,
@@ -1515,9 +1515,9 @@ iframe.reel-modal-video {
       )
     );
 
-  background: #03101f;
+  background: #0E0F15;
 
-  border-top: 1px solid rgba(0, 207, 255, 0.1);
+  border-top: 1px solid rgba(27, 143, 239, 0.1);
 }
 
 .reel-comment-form input {
@@ -1902,8 +1902,8 @@ iframe.reel-modal-video {
 
 /* Modal endi document.body ichida (portal) — .reels-section o'zgaruvchilari unga yetib bormaydi */
 .reel-modal-overlay {
-  --reel-accent: var(--primary-color, var(--cyan, #00cfff));
-  --reel-blue: #1685ff;
+  --reel-accent: var(--primary-color, var(--cyan, #1B8FEF));
+  --reel-blue: #1A6FD6;
   --reel-danger: #ff4d5f;
   --reel-text: #f4fbff;
 }
@@ -1912,7 +1912,7 @@ iframe.reel-modal-video {
 .reel-video-failed {
   position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 6px; padding: 24px; text-align: center;
-  color: #e6f4ff; background: radial-gradient(circle at center, rgba(7, 36, 56, 0.6), #000711 70%);
+  color: #e6f4ff; background: radial-gradient(circle at center, rgba(28, 31, 42, 0.6), #000711 70%);
   pointer-events: none;
 }
 .reel-video-failed span { font-weight: 800; font-size: 1.05rem; }

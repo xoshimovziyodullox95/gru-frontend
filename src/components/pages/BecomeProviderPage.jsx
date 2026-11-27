@@ -48,7 +48,7 @@ const DIRECTIONS = {
   'maishiy-va-uy-xizmatlari': {
     label: T('Maishiy va uy xizmatlari'),
     icon: Home,
-    color: '#00c8f8',
+    color: '#1B8FEF',
     categories: {
       konditsioner: 'Konditsionerchi',
       'bir-soatga-usta': 'Bir soatga mutaxassis',
@@ -67,7 +67,7 @@ const DIRECTIONS = {
   'tozalash-va-sanitariya': {
     label: T('Tozalash va sanitariya'),
     icon: SprayCan,
-    color: '#18c895',
+    color: '#1B8FEF',
     categories: {
       'tozalash-klining': 'Tozalash (Klining)',
       ximchistka: 'Ximchistka',
@@ -127,7 +127,7 @@ const DIRECTIONS = {
   'biznes-huquq-va-it': {
     label: T('Biznes, huquq va IT'),
     icon: Briefcase,
-    color: '#1685ff',
+    color: '#1A6FD6',
     categories: {
       'it-xizmatlari': 'IT',
       marketing: 'Marketing',
@@ -144,7 +144,7 @@ const DIRECTIONS = {
   'gozallik-moda-va-tadbirlar': {
     label: T('Go‘zallik, moda va tadbirlar'),
     icon: Palette,
-    color: '#20cdb7',
+    color: '#1B8FEF',
     categories: {
       'shou-biznes': 'Shou-biznes',
       'bazm-xizmatlari': 'Bazm xizmatlari',
@@ -576,7 +576,7 @@ export default function BecomeProviderPage() {
                 active ? 'is-active' : ''
               }`}
               style={{
-                '--bp-item-color': meta.color || '#00c8f8',
+                '--bp-item-color': meta.color || '#1B8FEF',
               }}
               onClick={() => handleSelectDirection(slug)}
             >
