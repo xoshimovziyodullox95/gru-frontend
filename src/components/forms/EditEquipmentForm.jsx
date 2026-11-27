@@ -168,7 +168,7 @@ export default function EditEquipmentForm() {
         
         <div className="form-row">
           <div className="form-group">
-            <label>Narxi *</label>
+            <label>{T('Narxi *')}</label>
             <div className="price-currency-row">
               <input
                 type="number"

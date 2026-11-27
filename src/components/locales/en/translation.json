@@ -164,7 +164,8 @@
       "empty": "No products yet"
     },
     "services": {
-      "catsTitle": "Service categories"
+      "catsTitle": "Service categories",
+      "empty": "Service categories didn’t load."
     }
   },
   "marketplaceReels": {
@@ -744,7 +745,8 @@
     "priceNotAvailable": "Price not available",
     "details": "Details",
     "noImage": "placeholder",
-    "addToCart": "Add to cart"
+    "addToCart": "Add to cart",
+    "contactSeller": "Negotiable with the seller"
   },
   "addListingChoice": {
     "title": "Add new listing",
@@ -2118,7 +2120,8 @@
       "notifications": "Notifications",
       "app": "App",
       "help": "Help",
-      "security": "Security"
+      "security": "Security",
+      "admin": "Management"
     },
     "notifNote": "Turned-off types won’t send push to your phone. They still appear in the in-app list.",
     "back": "Back",
@@ -2140,7 +2143,9 @@
     "guestTitle": "Welcome to ZUMO",
     "guestText": "Sign in to order, post listings and send messages. You can already change the theme and language.",
     "guestLogin": "Sign in",
-    "guestRegister": "Sign up"
+    "guestRegister": "Sign up",
+    "adminPanel": "Admin panel",
+    "adminPanelHint": "Users, statistics, roles"
   },
   "svc": {
     "dir": {
@@ -2484,5 +2489,27 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "week": "This week"
-  }
+  },
+  "cancelReason": {
+    "pro1": "I got busy",
+    "pro2": "Too far away",
+    "pro3": "Couldn’t agree on price",
+    "pro4": "Couldn’t reach the client",
+    "pro5": "I don’t have the right tools",
+    "pro6": "Not my field",
+    "cl1": "Too expensive",
+    "cl2": "Found another specialist",
+    "cl3": "Changed my mind",
+    "cl4": "Waited too long",
+    "cl5": "The problem solved itself",
+    "cl6": "Couldn’t reach the specialist",
+    "eyebrow": "Warning",
+    "title": "Cancel for sure?",
+    "sub": "Pick a reason — the other side will see it",
+    "other": "Other reason",
+    "customPlaceholder": "Write your reason...",
+    "keep": "No, keep it",
+    "confirm": "Cancel"
+  },
+  "Katalog": "Catalog"
 }

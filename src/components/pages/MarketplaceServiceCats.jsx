@@ -1,3 +1,4 @@
+import { T } from '../utils/T';
 ﻿import { safeGoBack } from '../utils/navigation.js';
 // src/components/pages/MarketplaceServiceCats.jsx
 import { useEffect, useState } from 'react';
@@ -40,7 +41,7 @@ export default function MarketplaceServiceCats() {
         <ArrowLeft size={18} /> {t('common.back')}
       </button>
       <h2 className="mph-subtitle">{t('marketplace.services.catsTitle', 'Xizmatlar')}</h2>
-      {loading ? <div className="mph-loading"><LoaderCircle className="spin" /> Yuklanmoqda...</div> : (
+      {loading ? <div className="mph-loading"><LoaderCircle className="spin" /> {T('Yuklanmoqda...')}</div> : (
         <div className="mph-service-groups">
           {groups.map(([direction, categories]) => (
             <section className="mph-service-group" key={direction}>

@@ -5,7 +5,8 @@
 
 import axios from 'axios';
 import { supabase } from '../lib/supabase';
-import { installBlockFilter } from './moderation';
+import { installBlockFilter, installSellerNames } from './moderation';
+import { T } from '../utils/T';
 
 const API_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -136,5 +137,6 @@ api.interceptors.response.use(
 
 
 installBlockFilter(api);
+installSellerNames(api, T);
 
 export default api;

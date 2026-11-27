@@ -1,3 +1,4 @@
+import { useProductCategories } from '../utils/productCategories';
 import { createPortal } from 'react-dom';
 import { safeGoBack } from '../utils/navigation.js';
 import { recordRecentlyViewed } from '../utils/recentlyViewed.js';
@@ -167,6 +168,7 @@ const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex
 // ASOSIY KOMPONENT
 // ============================================================
 export default function EquipmentDetailPage() {
+  const { categories } = useProductCategories();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -401,9 +403,13 @@ export default function EquipmentDetailPage() {
     }
   };
   const priceText = formatPrice(equipment.price, equipment.currency);
+  // Bo'lim nomi joriy tilda (bazada faqat "kompyuterlar" kabi ID saqlanadi)
+  const section = categories.find((c) => c.id === equipment.level1);
+  const sectionSub = section?.subs.find((x) => x.id === (equipment.sub || equipment.category));
+  const sectionName = [section?.name, sectionSub?.name].filter(Boolean).join(' · ') || equipment.category;
   const facts = [
     { label: T('Holati'), value: equipment.condition === 'new' ? t('equipment.conditionNew') : t('equipment.conditionUsed') },
-    equipment.category && { label: T('Bo‘lim'), value: equipment.category },
+    sectionName && { label: T('Bo‘lim'), value: sectionName },
     equipment.supplier && { label: t('equipment.supplier'), value: equipment.supplier },
   ].filter(Boolean);
 

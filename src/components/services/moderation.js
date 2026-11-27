@@ -40,3 +40,12 @@ export async function unblockUser(api, id) {
   await api.delete(`/moderation/blocks/${id}`);
   write(read().filter((x) => x !== String(id)));
 }
+
+// Import qilingan egalar ismi bazada "Sotuvchi ••1234" — ru/en da joriy tilga o'giriladi
+export function installSellerNames(api, translate) {
+  const fix = (u) => { if (u && typeof u.fullName === 'string' && u.fullName.startsWith('Sotuvchi ••')) u.fullName = u.fullName.replace('Sotuvchi', translate('Sotuvchi')); };
+  api.interceptors.response.use((res) => {
+    for (const item of [].concat(res.data?.items || res.data || [])) { fix(item); fix(item?.userId); }
+    return res;
+  });
+}
