@@ -1,0 +1,38 @@
+/* Shikoyat / bloklash oynasi */
+.sf-overlay { position: fixed; inset: 0; z-index: 13500; display: flex; align-items: flex-end; justify-content: center; background: rgba(5, 8, 14, 0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: sf-fade .2s ease; }
+.sf-sheet { box-sizing: border-box; width: 100%; max-width: 480px; max-height: 88dvh; overflow-y: auto; padding: 8px 18px calc(18px + env(safe-area-inset-bottom, 0px)); border-radius: 24px 24px 0 0; background: var(--surface); color: var(--text); box-shadow: 0 -12px 40px rgba(0, 0, 0, .3); animation: sf-up .25s cubic-bezier(.2, .8, .2, 1); }
+@media (min-width: 700px) { .sf-overlay { align-items: center; } .sf-sheet { border-radius: 24px; } }
+.sf-grip { display: block; width: 40px; height: 4px; margin: 0 auto 6px; border-radius: 4px; background: var(--border); }
+.sf-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sf-head h3 { margin: 0; font-size: 1.12rem; font-weight: 800; }
+.sf-x { display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 50%; background: rgba(var(--text-rgb), .07); color: inherit; cursor: pointer; }
+.sf-list { display: flex; flex-direction: column; gap: 10px; }
+.sf-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 18px; background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+.sf-item:active { background: rgba(var(--text-rgb), .05); }
+.sf-item__icon { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 42px; border-radius: 13px; }
+.sf-item__icon--warn { background: rgba(245, 158, 11, .15); color: #f59e0b; }
+.sf-item__icon--danger { background: rgba(239, 68, 68, .14); color: #ef4444; }
+.sf-item__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.sf-item__text small { color: var(--textMuted); font-size: .79rem; }
+.sf-reasons { display: flex; flex-direction: column; gap: 8px; }
+.sf-reason { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px; border: 1px solid var(--border); border-radius: 14px; background: transparent; color: inherit; font: inherit; font-size: .93rem; text-align: left; cursor: pointer; }
+.sf-reason i { display: grid; place-items: center; width: 21px; height: 21px; flex: 0 0 21px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--border); }
+.sf-reason.is-on { border-color: #1B8FEF; background: rgba(27, 143, 239, .1); }
+.sf-reason.is-on i { border-color: #1B8FEF; background: #1B8FEF; color: #fff; }
+.sf-note { box-sizing: border-box; width: 100%; margin-top: 10px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 14px; background: transparent; color: inherit; font: inherit; font-size: 16px; resize: none; }
+.sf-lead { margin: 0 0 14px; color: var(--textMuted); line-height: 1.5; }
+.sf-btn { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 50px; margin-top: 12px; border: 0; border-radius: 15px; background: #1F3A66; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.sf-btn:disabled { opacity: .45; cursor: default; }
+.sf-btn--danger { background: #dc2626; }
+.sf-btn--ghost { background: rgba(var(--text-rgb), .07); color: var(--text); }
+.sf-done { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.sf-done > span { display: grid; place-items: center; width: 68px; height: 68px; margin-bottom: 10px; border-radius: 50%; background: rgba(34, 197, 94, .14); color: #22c55e; }
+.sf-done p { margin: 6px 0 4px; color: var(--textMuted); }
+.sf-link { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; padding: 12px; border: 0; background: transparent; color: var(--textMuted); font: inherit; font-size: .86rem; font-weight: 600; cursor: pointer; }
+.sf-link:hover { color: #ef4444; }
+.sf-blocked { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 2px; border-bottom: 1px solid var(--border); }
+.sf-blocked button { padding: 8px 14px; border: 0; border-radius: 999px; background: rgba(var(--text-rgb), .08); color: inherit; font: inherit; font-weight: 600; cursor: pointer; }
+.sf-spin { animation: sf-rot .8s linear infinite; }
+@keyframes sf-rot { to { transform: rotate(360deg); } }
+@keyframes sf-fade { from { opacity: 0; } }
+@keyframes sf-up { from { transform: translateY(40px); opacity: 0; } }

@@ -47,6 +47,8 @@ import ShareSheet from '../common/ShareSheet';   // ✅ YANGI
 import '../../styles/reels.css';
 
 import { T } from '../utils/T';
+import { openSafety } from '../services/moderation';
+import { Flag } from 'lucide-react';
 /* ============================================================
    CONSTANTS
    ============================================================ */
@@ -924,6 +926,14 @@ function ReelViewer({
               <MessageCircle size={23} />
             </span>
             <small>{comments.length}</small>
+          </button>
+
+          <button type="button" className="reel-action" onClick={(event) => {
+            event.stopPropagation();
+            openSafety({ type: 'post', id: reel.sourceId || reel._id || reel.id, ownerId: reel.userId?._id || reel.userId });
+          }}>
+            <span className="reel-action__icon"><Flag size={22} /></span>
+            <small>{T('Shikoyat')}</small>
           </button>
 
           {/* ✅ SHARE — ShareSheet ochadi */}

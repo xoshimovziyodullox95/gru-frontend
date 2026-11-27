@@ -45,6 +45,8 @@ import '../../styles/chat.css';
 import { T } from '../utils/T';
 import { getImageUrl } from '../utils/imageUrl';
 import { downloadMedia } from '../utils/downloadMedia';
+import { openSafety } from '../services/moderation';
+import { ShieldAlert } from 'lucide-react';
 const LOCATION_PREFIX = 'LOC::';
 const REEL_PREFIX = 'REEL::';
 const LISTING_PREFIX = 'LISTING::';
@@ -1748,6 +1750,9 @@ export default function ChatPage() {
                     <>
                       <button type="button" className="tg-head-menu__backdrop" aria-label={T('Yopish')} onClick={() => setHeaderMenuOpen(false)} />
                       <div className="tg-head-menu__list" role="menu">
+                        <button type="button" role="menuitem" onClick={() => { setHeaderMenuOpen(false); openSafety({ type: 'user', id: activeChat.userId, ownerId: activeChat.userId, ownerName: activeChat.fullName }); }}>
+                          <ShieldAlert size={18} /> {T('Shikoyat / bloklash')}
+                        </button>
                         <button type="button" role="menuitem" onClick={() => { setHeaderMenuOpen(false); setWallpaperOpen(true); }}>
                           <Palette size={18} /> {T('Chat foni')}
                         </button>

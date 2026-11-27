@@ -28,6 +28,7 @@ import ShareSheet from '../common/ShareSheet.jsx';
 
 import { T } from '../utils/T';
 import { serviceLabel } from '../utils/i18nHelpers';
+import { ReportLink } from '../common/SafetySheet';
 // ============================================================
 // IMAGE VIEWER MODAL
 // ============================================================
@@ -295,6 +296,8 @@ export default function ServiceProviderDetailPage() {
                 )}
               </section>
             )}
+
+            {!isOwner && <ReportLink type="service" id={provider._id} ownerId={provider.userId?._id || provider.userId} ownerName={ownerName} />}
 
             {/* ALOQA */}
             <section className="dp-card">

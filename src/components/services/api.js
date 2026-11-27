@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import { supabase } from '../lib/supabase';
+import { installBlockFilter } from './moderation';
 
 const API_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -132,5 +133,8 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+
+installBlockFilter(api);
 
 export default api;

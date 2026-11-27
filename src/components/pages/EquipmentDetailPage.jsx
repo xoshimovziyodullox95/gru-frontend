@@ -43,6 +43,7 @@ import '../../styles/detailModern.css';
 
 import { T } from '../utils/T';
 import { describeAttrs } from '../utils/listingSpec';
+import { ReportLink } from '../common/SafetySheet';
 
 // ============================================================
 // MAHSULOT TURI META
@@ -544,6 +545,8 @@ export default function EquipmentDetailPage() {
                 )}
               </section>
             )}
+
+            {!isOwner && <ReportLink type="equipment" id={equipment._id} ownerId={equipment.userId?._id || equipment.userId} ownerName={ownerName} />}
 
             {/* ALOQA */}
             {equipment.phone && (

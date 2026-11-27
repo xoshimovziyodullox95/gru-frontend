@@ -31,6 +31,9 @@ import QRCodeGenerator from './QRCodeGenerator';
 
 import '../../styles/settingsPage.css';
 import { publicUrl } from '../utils/publicUrl';
+import { Ban } from 'lucide-react';
+import { fetchBlocks, unblockUser } from '../services/moderation';
+import '../../styles/safety.css';
 
 // NotificationListener ham shu kalitlarni o'qiydi (ilova ochiq paytdagi toast/ovoz uchun)
 const PREFS_KEY = 'zumo_notification_preferences';
@@ -162,6 +165,7 @@ export default function SettingsPage() {
     getPushPermission().then((state) => { if (alive) setPush(state); });
     return () => { alive = false; };
   }, []);
+  const [blocked, setBlocked] = useState([]);
   const [sheet, setSheet] = useState(null); // 'qr' | 'delete' | 'devices'
   const [confirmText, setConfirmText] = useState('');
   const [busy, setBusy] = useState(false);
@@ -450,6 +454,7 @@ export default function SettingsPage() {
         {!isGuest && (<>
         <Group title={t('settingsPage.group.security', 'Xavfsizlik')}>
           <Row icon={MonitorSmartphone} label={t('settingsPage.logoutAll', 'Barcha qurilmalardan chiqish')} hint={t('settingsPage.logoutAllHint', 'Telefon yo‘qolsa yoki begona kirgan bo‘lsa')} onClick={() => setSheet('devices')} />
+          <Row icon={Ban} label={T('Bloklanganlar')} onClick={() => { setSheet('blocked'); fetchBlocks(api).then(setBlocked).catch(() => toast.error(T('Nomaʼlum xatolik yuz berdi'))); }} />
           <Row icon={Trash2} label={t('settingsPage.deleteAccount', 'Hisobni o‘chirish')} danger onClick={() => setSheet('delete')} />
         </Group>
 
@@ -475,6 +480,18 @@ export default function SettingsPage() {
           <button type="button" className="st-btn st-btn--primary" onClick={logoutEverywhere} disabled={busy}>
             {busy && <Loader2 size={16} className="st-spin" />} {t('settingsPage.logoutAllBtn', 'Hammasidan chiqish')}
           </button>
+        </Sheet>
+      )}
+
+      {sheet === 'blocked' && (
+        <Sheet title={T('Bloklanganlar')} onClose={() => setSheet(null)}>
+          {blocked.length === 0 && <p>{T('Hech kim bloklanmagan')}</p>}
+          {blocked.map((u) => (
+            <div key={u._id} className="sf-blocked">
+              <span>{u.fullName || T('Foydalanuvchi')}</span>
+              <button type="button" onClick={() => unblockUser(api, u._id).then(() => setBlocked((l) => l.filter((x) => x._id !== u._id)))}>{T('Blokdan chiqarish')}</button>
+            </div>
+          ))}
         </Sheet>
       )}
 

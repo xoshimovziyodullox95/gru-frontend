@@ -22,6 +22,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
 import AIChat from './components/common/AIChat';
+import SafetySheet from './components/common/SafetySheet';
 import ActiveOrderBar from './components/common/ActiveOrderBar';
 import NotificationListener from './components/common/NotificationListener';
 import ZumoGuide from './components/common/ZumoGuide.jsx';
@@ -506,6 +507,7 @@ function App() {
               </EntryGate>
 
               {/* ✅ GLOBAL AI CHAT — hamma sahifada ko'rinadi */}
+              <SafetySheet />
               <ZumoGuide />
               {/* Bo'limlardagi Zumik maslahatlari (ZumikPageTips) hozircha o'chirilgan — aralashib qolayotgan edi */}
               <GlobalAIChat />

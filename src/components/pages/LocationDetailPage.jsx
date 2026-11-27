@@ -33,6 +33,7 @@ import UniversalCard from './UniversalCard';
 import NearbySuppliers from '../common/Nearbysuppliers';
 
 import { T } from '../utils/T';
+import { ReportLink } from '../common/SafetySheet';
 
 const ImageViewerModal = ({ isOpen, onClose, images, activeIndex, setActiveIndex, title }) => {
   const closeRef = useRef(onClose);
@@ -559,6 +560,8 @@ export default function LocationDetailPage() {
               )}
             </section>
           )}
+
+            {!isOwner && <ReportLink type="location" id={location._id} ownerId={location.userId?._id || location.userId} ownerName={ownerName} />}
 
           {/* ALOQA */}
           {location.phone && (
